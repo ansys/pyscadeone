@@ -1,0 +1,4 @@
+[aA]nsys
+[pP]yansys
+Scade One
+inout

@@ -1,0 +1,6 @@
+# Sphinx Dictionary Words
+automodule
+autoclass
+currentmodule
+toctree
+maxdepth

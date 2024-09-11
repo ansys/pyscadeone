@@ -1,0 +1,9 @@
+{
+  "Name": "CC_Tests",
+  "Dependencies": [
+    "..\\CruiseControl\\CruiseControl.sproj",
+    "..\\utils\\utils.sproj"
+  ],
+  "Resources": [],
+  "Mappings": []
+}

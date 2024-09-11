@@ -1,0 +1,8 @@
+{
+  "Name": "CruiseControl",
+  "Dependencies": [
+    "..\\utils\\utils.sproj"
+  ],
+  "Resources": [],
+  "Mappings": []
+}

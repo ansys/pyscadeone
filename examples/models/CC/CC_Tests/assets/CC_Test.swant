@@ -1,0 +1,171 @@
+-- version swan: 2025.0 graph: 2.0 swant: 1.1
+use CarTypes;
+
+use Utils;
+
+use CC;
+
+_harness Test
+{
+  diagram
+    (#0 expr (#1, #2)
+      where
+        (#1 group)
+        (#2 group)
+    #pragma diagram {"xy":"H-82950;V-2525"} #end)
+    (#3 block Car
+              #pragma diagram {"xy":"H13050;V-11425","wh":"20000;14000"} #end)
+    (#4 def State
+    #pragma diagram {"xy":"H-15450;V-2525","wh":"10000;3200"} #end)
+    (#5 expr 1.0_f32
+    #pragma diagram {"xy":"H-33350;V22525","wh":"12000;3200"} #end)
+    (#6 _sensor CC::Kp
+    #pragma diagram {"xy":"H-10350;V22525","wh":"16000;3200"} #end)
+    (#7 block Scenario
+              #pragma diagram {"xy":"H-110550;V-2525","wh":"20000;14000"} #end)
+    (#8 expr 1.0_f32
+    #pragma diagram {"xy":"H-33350;V14625","wh":"12000;3200"} #end)
+    (#9 expr #10 pre #11
+      where
+        (#10 group)
+        (#11 group)
+    #pragma diagram {"xy":"H-16450;V-11425"} #end)
+    (#12 def CarSpeed
+    #pragma diagram {"xy":"H42950;V-7925","wh":"12000;3200"} #end)
+    (#13 expr 0.0
+    #pragma diagram {"xy":"H-49350;V-15125"} #end)
+    (#14 #pragma swt under_test #end block CC::CruiseControl
+                                           #pragma diagram {"xy":"H-55350;V-6025","wh":"20000;14000"} #end)
+    (#15 group bypos
+    #pragma diagram {"xy":"H-73950;V-4025"} #end)
+    (#16 _sensor CC::Ki
+    #pragma diagram {"xy":"H-10200;V14625","wh":"16000;3200"} #end)
+    
+    (#17 wire #8 => #16)
+    (#18 wire #7 => #1
+    #pragma diagram {"wp":"v-3200|#7 #1"} #end)
+    (#19 wire #14 .(CruiseState) => #4
+    #pragma diagram {"wp":"v3500|#14 #4"} #end)
+    (#20 wire #3 => #2
+    #pragma diagram {"wp":"v5167|#3 h2000 v11733 h-110400 v-7400 #2"} #end)
+    (#21 wire #3 .(1) => #12
+    #pragma diagram {"wp":"v3500|#3 #12"} #end)
+    (#22 wire #15 => #14)
+    (#23 wire #9 => #3)
+    (#24 wire #14 .(ThrottleCmd) => #11
+    #pragma diagram {"wp":"v-3500|#14 #11"} #end)
+    (#25 wire #5 => #6)
+    (#26 wire #0 => #15
+    #pragma diagram {"wp":"v-1500|#0 #15"} #end)
+    (#27 wire #13 => #10
+    #pragma diagram {"wp":"#13 h13400 v1800 #10"} #end)
+    
+    (var
+        State : CC::tCruiseState;
+        CarSpeed : CarTypes::tSpeed;)
+}
+
+node Scenario ()
+  returns (On: bool default = false;
+           Off : bool default = false;
+           Set : bool default = false;
+           Resume : bool default = false;
+           QuickAccel : bool default = false;
+           QuickDecel : bool default = false;
+           Accel : CarTypes::tPercent default = 0.0;
+           Brake : CarTypes::tPercent default = 0.0;)
+{
+  diagram
+    (var
+        StartAccel: bool default = false;
+        StartBrake: bool default = false;
+        StopAccel: bool default = false;
+        StopBrake: bool default = false;)
+    (automaton $automaton0
+      initial state #1 Start
+      #pragma diagram {"xy":"h-30900;v0","wh":"38400;37540"} #end :
+        diagram
+          (let
+           On = false;
+           Off = false;
+           Set = false;
+           Resume = false;
+           QuickAccel = false;
+           QuickDecel = false;
+           StartAccel = false;
+           StopAccel = false;
+           StartBrake = false;
+           StopBrake = false;
+          #pragma diagram {"xy":"h0;v0","wh":"30400;29540"} #end)
+      state #2 state1
+      #pragma diagram {"xy":"h25100;v0","wh":"50000;30000"} #end :
+      :1: #1 until if (true)
+      restart #2
+      #pragma diagram {"tp":"h19200;v0|#1 h3933 h3934 h-25000;v0|#2"} #end;
+      #pragma diagram {"xy":"H0;V0","wh":"110200;47540"} #end)
+    (automaton $automaton1
+      initial state #4 state0
+      #pragma diagram {"xy":"h-32850;v4500","wh":"31200;11200"} #end :
+        diagram
+          (let Accel = 0.0;
+          #pragma diagram {"xy":"h0;v0","wh":"23200;3200"} #end)
+      state #8 state1
+      #pragma diagram {"xy":"h21150;v4500","wh":"54600;22000"} #end :
+        diagram
+          (#5 block (Utils::ramp \ start: 0.0_f32, limit: 100.0_f32, incr: 10.0_f32)
+                    #pragma diagram {"xy":"h-13300;v0","wh":"20000;14000"} #end)
+          (#6 def Accel
+          #pragma diagram {"xy":"h18300;v0","wh":"10000;3200"} #end)
+          
+          (#7 wire #5 .(data) => #6)
+      :1: #4 until if (StartAccel)
+      restart #8
+      #pragma diagram {"tp":"h15600;v0|#4 h3700 h3700 h-27300;v0|#8"} #end;
+      :1: #8 until if (StopAccel)
+      restart #4
+      #pragma diagram {"tp":"h0;v-11000|#8 v-500 v-500 v-500 v-3750 h-7500;v-3750 h-7500 h-6500 h-6500 h-6500 h-9750 h-9750;v6200 v6200 v667 v666 h0;v-5600|#4"} #end;
+      #pragma diagram {"xy":"H5500;V49500","wh":"106900;41000"} #end)
+    (automaton $automaton2
+      initial state #10 state0
+      #pragma diagram {"xy":"h-31075;v4500","wh":"31200;11200"} #end :
+        diagram
+          (let Brake = 0.0;
+          #pragma diagram {"xy":"h0;v0","wh":"23200;3200"} #end)
+      state #14 state1
+      #pragma diagram {"xy":"h20925;v4500","wh":"51500;22000"} #end :
+        diagram
+          (#11 block (Utils::ramp \ start: 0.0_f32, limit: 100.0_f32, incr: 10.0_f32)
+                     #pragma diagram {"xy":"h-11750;v0","wh":"20000;14000"} #end)
+          (#12 def Brake
+          #pragma diagram {"xy":"h16750;v0","wh":"10000;3200"} #end)
+          
+          (#13 wire #11 => #12)
+      :1: #10 until if (StartBrake)
+      restart #14
+      #pragma diagram {"tp":"h15600;v0|#10 h3550 h3550 h-25750;v0|#14"} #end;
+      :1: #14 until if (StopBrake)
+      restart #10
+      #pragma diagram {"tp":"h0;v-11000|#14 v-500 v-500 v-500 v-3750 h-7500;v-3750 h-7500 h-6167 h-6166 h-6167 h-9250 h-9250;v6200 v6200 v667 v666 h0;v-5600|#10"} #end;
+      #pragma diagram {"xy":"H5500;V-49500","wh":"103350;41000"} #end)
+}
+
+node Car (Throttle: CarTypes::tPercent;)
+  returns (Speed: CarTypes::tPercent;)
+{
+  diagram
+    (#0 expr #1 pre #2
+      where
+        (#1 group)
+        (#2 group)
+    #pragma diagram {"xy":"H0;V0"} #end)
+    (#3 expr Throttle
+    #pragma diagram {"xy":"H-22800;V1900","wh":"13600;3200"} #end)
+    (#4 expr 0.0
+    #pragma diagram {"xy":"H-20000;V-1900"} #end)
+    (#5 def Speed
+    #pragma diagram {"xy":"H21000;V0","wh":"10000;3200"} #end)
+    
+    (#6 wire #3 => #2)
+    (#7 wire #4 => #1)
+    (#8 wire #0 => #5)
+}

@@ -1,0 +1,15 @@
+{
+  "Version": "2.0",
+  "Kind": "Simulation",
+  "Properties": {
+    "Name": "SimulationJob0",
+    "RootDeclarations": [
+      ""
+    ],
+    "FileScenario": "",
+    "CustomArguments": "",
+    "SimulationInputType": "Harness",
+    "TestHarness": "CC_Test::Test"
+  },
+  "InputPaths": []
+}

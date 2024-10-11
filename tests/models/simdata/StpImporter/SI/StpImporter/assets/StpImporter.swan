@@ -1,0 +1,69 @@
+-- version swan: 2025.0 graph: 2.0
+use P1::Defs as P1_Defs;
+
+use P1::P1 as P1_P1;
+
+node OP (Convert_In: P1_Defs::Convert;
+         CMY_In: CMY;
+         CMYArray_In: P1_P1::CMYArray;
+         Str_In: char^5;
+         Float_In: float32;)
+  returns (Convert_Out: P1_Defs::Convert;
+           CMY_Out: CMY;
+           CMYArray_Out: P1_P1::CMYArray;
+           Str_Out: char^5;
+           Float_Out: float32;)
+{
+  diagram
+    (#1 def Float_Out
+    #pragma diagram {"xy":"H107230;V95385","wh":"14000;3200"} #end)
+    (#2 expr Float_In
+    #pragma diagram {"xy":"H71650;V95915","wh":"12000;3200"} #end)
+    (#3 expr Str_In
+    #pragma diagram {"xy":"H84400;V75800","wh":"10000;3200"} #end)
+    (#4 def Str_Out
+    #pragma diagram {"xy":"H126500;V75545","wh":"12000;3200"} #end)
+    (#5 $N1 block P1_P1::Op
+                  #pragma diagram {"xy":"H104375;V42200","wh":"17730;14020"} #end)
+    (#6 def CMYArray_Out
+    #pragma diagram {"xy":"H141690;V53315","wh":"16000;3200"} #end)
+    (#7 def CMY_Out
+    #pragma diagram {"xy":"H138940;V42205","wh":"12000;3200"} #end)
+    (#8 def Convert_Out
+    #pragma diagram {"xy":"H141140;V32670","wh":"16000;3200"} #end)
+    (#9 expr CMYArray_In
+    #pragma diagram {"xy":"H67620;V52520","wh":"16000;3200"} #end)
+    (#10 expr CMY_In
+    #pragma diagram {"xy":"H70370;V42200","wh":"10000;3200"} #end)
+    (#11 expr Convert_In
+    #pragma diagram {"xy":"H68170;V31885","wh":"14000;3200"} #end)
+    
+    (#12 wire #5 .(Convert_Out) => #8
+    #pragma diagram {"wp":"v-4005|#5 h17700 v-5525 #8"} #end)
+    (#13 wire #10 => #5 .(CMY_In))
+    (#14 wire #11 => #5 .(Convert_In)
+    #pragma diagram {"wp":"#11 h3600 v6010 #5"} #end)
+    (#15 wire #5 .(CMYArray_Out) => #6
+    #pragma diagram {"wp":"v4008|#5 h7233 v7107 #6"} #end)
+    (#16 wire #9 => #5 .(CMYArray_In)
+    #pragma diagram {"wp":"#9 h11445 v-6015 #5"} #end)
+    (#17 wire #3 => #4
+    #pragma diagram {"wp":"#3 h18105 v-255 #4"} #end)
+    (#18 wire #2 => #1
+    #pragma diagram {"wp":"#2 h19720 v-530 #1"} #end)
+    (#19 wire #5 .(CMY_Out) => #7
+    #pragma diagram {"wp":"v5|#5 #7"} #end)
+}
+
+type CMY = enum {
+    C,
+    M,
+    Y
+  };
+
+const Minus3 : int32 = -3;
+
+sensor 
+  #pragma cg C:name S #end
+  #pragma cg Ada:name S #end
+  S : P1_Defs::RGB;

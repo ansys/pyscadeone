@@ -1,0 +1,6 @@
+@startuml ScadeOne
+ScadeOne *-- "*" Project
+
+Project *-- "*" Project: dependencies
+Project *-- Model
+@enduml

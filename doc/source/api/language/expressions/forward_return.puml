@@ -1,0 +1,26 @@
+@startuml Forward
+skinparam groupInheritance 2
+
+
+class ForwardItemClause {
+    id: Identifier
+}
+ForwardItemClause *-- ForwardLastDefault
+
+ForwardArrayClause *-- ForwardItemClause 
+ForwardArrayClause *-- ForwardArrayClause
+
+ForwardReturnItem <|-- ForwardReturnItemClause
+ForwardReturnItemClause *-- ForwardItemClause
+
+ForwardReturnItem <|-- ForwardReturnArrayClause
+ForwardReturnArrayClause *-- ForwardArrayClause
+class ForwardReturnArrayClause {
+    ret_id: Identifier (optional)
+}
+
+ForwardReturnItem <|-- ProtectedForwardReturnItem
+
+@enduml
+
+

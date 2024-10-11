@@ -1,0 +1,46 @@
+@startuml States and transistion declarations
+skinparam groupInheritance 2
+
+StateMachine *-- StateMachineItem
+
+StateMachineItem <|-- State
+
+State *-- "*" ScopeSection
+
+StateMachineItem <|-- TransitionDecl 
+
+class TransitionDecl {
+   is_strong: bool
+   priority: Union[Literal, None]
+}
+
+TransitionDecl *-- "1" Transition
+
+Transition *-- Arrow
+
+class Arrow {
+   is_resume: bool
+   is_restart: bool
+   target_id: Identification
+}
+
+
+Arrow *-- Scope: guard >
+Arrow *-- Scope: action >
+
+Arrow *-- Target: target >
+Arrow *-- ForkPriorityList: fork >
+
+note top of ForkPriorityList
+ForkPriorityList derives from Fork
+end note
+
+class ForkPriority {
+  priority: Union[Literal, None]
+  is_if_arrow: bool
+}
+
+ForkPriorityList *-- "*" ForkPriority
+
+ForkPriority *-- Arrow
+@enduml

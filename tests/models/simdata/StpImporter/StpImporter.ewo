@@ -1,0 +1,49 @@
+
+[STUDIO\TOOLS\CONFIGURATIONS\Code Generator]
+
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp"="KCG" 
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\TestProject\\TestProject.etp"="Test" 
+
+[STUDIO\TOOLS\CONFIGURATIONS\Metrics and Rules Checker]
+
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp"="MetricRule" 
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\TestProject\\TestProject.etp"="Test" 
+
+[STUDIO\TOOLS\CONFIGURATIONS\Reporter]
+
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp"="HTML" 
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\TestProject\\TestProject.etp"="Test" 
+
+[STUDIO\TOOLS\CONFIGURATIONS\Timing and Stack Analysis Tools]
+
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp"="KCG" 
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\TestProject\\TestProject.etp"="Test" 
+
+[STUDIO\Workspace]
+
+"ActiveProject"="C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp" 
+
+[SCADE\Editor\Shortcut]
+
+"groupNb"="0" 
+
+[SCADE\Editor\Tool]
+
+"UsePolyline"="false" 
+"TransitionKind"="strong" 
+
+[SCADE\Diff\Tool]
+
+"LastProject1"="" 
+"LastProject2"="" 
+"ModifiedOnly"="0" 
+"NoLibs"="0" 
+
+[SCADE\Generator\Tool]
+
+"PragmaTarget"="" 
+
+[STUDIO\TOOLS\CONFIGURATIONS\Test Tool]
+
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\StpImporter.etp"="KCG" 
+"C:\\ansysdev\\Scade One\\repos\\ANSYS.SONE.API.pyscadeone_FEAT\\tests\\models\\simdata\\StpImporter\\TestProject\\TestProject.etp"="Test" 

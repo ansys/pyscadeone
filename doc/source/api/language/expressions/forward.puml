@@ -1,0 +1,28 @@
+@startuml Forward
+skinparam groupInheritance 2
+
+Forward *-- ForwardState
+Forward *-- "1..*" ForwardDim
+Forward *-- ForwardBody
+Forward *-- "*" ForwardReturnItem
+note bottom of ForwardReturnItem: See next figure
+
+ForwardBody *-- "*" ScopeSection
+ForwardBody *-- "0..1" Expression: until
+ForwardBody *-- "0..1" Expression: unless
+
+class ForwardDim {
+    expr: Expression (optional)
+    id: Identifier (optional)
+    protected: str (optional)
+}
+
+ForwardDim *-- "*" ForwardElement
+class ForwardElement {
+    expr: Expression
+}
+ForwardElement *-- ForwardLHS
+
+@enduml
+
+

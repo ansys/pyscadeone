@@ -1,0 +1,65 @@
+{
+  "Children": {
+    "package[0]": {
+      "Hint": "(1,48)",
+      "Children": {
+        "constant[0]": {
+          "Hint": "(2,2)"
+        },
+        "type[1]": {
+          "Hint": "(5,5)"
+        },
+        "type[10]": {
+          "Hint": "(35,35)"
+        },
+        "type[11]": {
+          "Hint": "(38,38)"
+        },
+        "type[12]": {
+          "Hint": "(41,41)"
+        },
+        "type[13]": {
+          "Hint": "(44,44)"
+        },
+        "type[14]": {
+          "Hint": "(47,47)"
+        },
+        "type[2]": {
+          "Hint": "(8,8)"
+        },
+        "type[3]": {
+          "Hint": "(11,11)"
+        },
+        "type[4]": {
+          "Hint": "(14,14)"
+        },
+        "type[5]": {
+          "Hint": "(17,17)"
+        },
+        "type[6]": {
+          "Hint": "(20,20)"
+        },
+        "type[7]": {
+          "Hint": "(23,23)"
+        },
+        "type[8]": {
+          "Hint": "(26,29)"
+        },
+        "type[9]": {
+          "Hint": "(32,32)"
+        }
+      },
+      "Properties": {
+        "Graph": {
+          "Order": 0
+        }
+      }
+    }
+  },
+  "Properties": {
+    "Producer": {
+      "Name": "ScadeOneClient",
+      "Version": "1.7.0.0"
+    }
+  }
+}

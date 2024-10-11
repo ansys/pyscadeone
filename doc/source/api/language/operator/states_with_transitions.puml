@@ -1,0 +1,39 @@
+@startuml States with transitions
+StateMachine *-- StateMachineItem
+
+StateMachineItem <|-- State
+
+State *-- "*" Transition: strong >
+State *-- "*" ScopeSection
+State *-- "*" Transition: weak >
+
+Transition *-- Arrow
+
+class Arrow {
+   is_resume: bool
+   is_restart: bool
+   target_id: Identification
+}
+
+
+Arrow *-- Scope: guard >
+Arrow *-- Scope: action >
+
+Arrow *-- Target: target >
+Arrow *-- ForkTree: fork >
+
+
+
+ForkTree *-- Arrow
+note right on link
+Links:
+if_arrow
+elsif_arrows
+else
+end note
+class ForkTree {
+  if_arrow: Arrow
+  elsif_arrows: Optional[List[Arrow]]
+  else: Optional[List[Arrow]]
+}
+@enduml

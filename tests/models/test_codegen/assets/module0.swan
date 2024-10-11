@@ -1,0 +1,430 @@
+-- version swan: 2025.0 graph: 2.0
+type t_struct1 = {a: int8, b: float32};
+
+type t_enum1 = enum { value1, value2};
+
+type t_syn1 = uint8;
+
+type t_variant1 = F {float32} | I {int32};
+
+type t_imp;
+
+group group0 = (x: int8, y: float32);
+
+group group1 = (int32, bool, e: uint8);
+
+group group2 = (int32, bool, uint8);
+
+sensor sensor_int: uint8;
+
+sensor sensor_float: float32;
+
+sensor sensor_bool: bool;
+
+sensor sensor_struct: t_struct1;
+
+sensor sensor_array: float32^3;
+
+sensor sensor_enum: t_enum1;
+
+sensor sensor_variant: t_variant1;
+
+sensor sensor_syn: t_syn1;
+
+function oper_for_fmu (i0: int32;
+                       i1 : float32^3;
+                       i2 : group0;
+                       i3 : t_struct1;
+                       i4 : group1;
+                       i5 : t_enum1;
+                       i6 : t_syn1;
+                       i7 : t_variant1;
+                       i8 : t_array1^3^2;)
+  returns (o0: int32;
+           o1 : float32;
+           o2 : bool;
+           o3 : group0;
+           o4 : t_struct1;
+           o5 : bool^2;
+           o6 : group1;
+           o7 : t_enum1;
+           o8 : t_syn1;
+           o9 : t_variant1;
+           o10 : t_array1^3^2;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-65238;V-525"} #end)
+    (#1 expr i1
+    #pragma diagram {"xy":"H-126813;V-14438"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H-8200;V35737"} #end)
+    (#3 def o1
+    #pragma diagram {"xy":"H-18624;V-16600"} #end)
+    (#4 def o2
+    #pragma diagram {"xy":"H152446;V25102"} #end)
+    (#5 expr #6[0]
+      where
+        (#6 group)
+    #pragma diagram {"xy":"H-102813;V-14438","wh":"12000;7000"} #end)
+    (#7 expr #8 = #9
+      where
+        (#8 group)
+        (#9 group)
+    #pragma diagram {"xy":"H4955;V8117"} #end)
+    (#10 expr 0
+    #pragma diagram {"xy":"H-10868;V10017"} #end)
+    (#16 def my_probe
+    #pragma diagram {"xy":"H-18525;V19350","wh":"12000;3200"} #end)
+    (#18 expr i2
+    #pragma diagram {"xy":"H-82038;V-33225"} #end)
+    (#19 def o3
+    #pragma diagram {"xy":"H-18525;V-34750"} #end)
+    (#20 group
+    #pragma diagram {"xy":"H-74700;V-36500","wh":"800;14000"} #end)
+    (#21 group
+    #pragma diagram {"xy":"H-26836;V-36500","wh":"800;14000"} #end)
+    (#22 expr #23 + #24
+      where
+        (#23 group)
+        (#24 group)
+    #pragma diagram {"xy":"H-46758;V-48475"} #end)
+    (#25 expr #29 . a
+      where
+        (#29 group)
+    #pragma diagram {"xy":"H-60700;V-53625","wh":"10000;7000"} #end)
+    (#26 expr #27 * #28
+      where
+        (#27 group)
+        (#28 group)
+    #pragma diagram {"xy":"H-43200;V-31325"} #end)
+    (#33 expr i3
+    #pragma diagram {"xy":"H-74100;V-55525"} #end)
+    (#37 expr #38 . b
+      where
+        (#38 group)
+    #pragma diagram {"xy":"H-59681;V-28154","wh":"10000;7000"} #end)
+    (#42 def o4
+    #pragma diagram {"xy":"H-1300;V-48475"} #end)
+    (#43 def o5
+    #pragma diagram {"xy":"H56550;V6217"} #end)
+    (#44 expr {#45}: t_struct1
+      where
+        (#45 group)
+    #pragma diagram {"xy":"H-13868;V-48475","wh":"14000;10000"} #end)
+    (#46 expr #47 < #48
+      where
+        (#47 group)
+        (#48 group)
+    #pragma diagram {"xy":"H-40488;V1375"} #end)
+    (#49 expr [#50, #51]
+      where
+        (#50 group)
+        (#51 group)
+    #pragma diagram {"xy":"H33909;V6217"} #end)
+    (#52 expr 3
+    #pragma diagram {"xy":"H-65238;V6217"} #end)
+    (#57 expr i4
+    #pragma diagram {"xy":"H-126163;V52975"} #end)
+    (#59 expr (#60, #61)
+      where
+        (#60 group)
+        (#61 group)
+    #pragma diagram {"xy":"H-83513;V53563"} #end)
+    (#63 expr (#64)
+      where
+        (#64 group)
+    #pragma diagram {"xy":"H-113263;V55625"} #end)
+    (#58 group
+    #pragma diagram {"xy":"H-74100;V56350","wh":"800;14000"} #end)
+    (#62 group bypos
+    #pragma diagram {"xy":"H-63238;V56350"} #end)
+    (#66 def o6
+    #pragma diagram {"xy":"H-50163;V56350"} #end)
+    (#73 expr i5
+    #pragma diagram {"xy":"H-126163;V72375"} #end)
+    (#74 def o7
+    #pragma diagram {"xy":"H-50163;V72375"} #end)
+    (#76 expr i6
+    #pragma diagram {"xy":"H-127438;V84600"} #end)
+    (#77 def o8
+    #pragma diagram {"xy":"H-50163;V86500"} #end)
+    (#78 expr #79 + #80
+      where
+        (#79 group)
+        (#80 group)
+    #pragma diagram {"xy":"H-83513;V86500"} #end)
+    (#85 expr i7
+    #pragma diagram {"xy":"H-127438;V109725"} #end)
+    (#86 def o9
+    #pragma diagram {"xy":"H-65238;V109725"} #end)
+    (#17 expr sensor_int
+    #pragma diagram {"xy":"H-101096;V92100","wh":"14000;3200"} #end)
+    (#84 expr i5
+    #pragma diagram {"xy":"H19689;V39994"} #end)
+    (#88 expr sensor_enum
+    #pragma diagram {"xy":"H19689;V44474","wh":"16000;3200"} #end)
+    (#89 expr #90 = #91
+      where
+        (#90 group)
+        (#91 group)
+    #pragma diagram {"xy":"H38689;V41894"} #end)
+    (#105 expr sensor_variant
+    #pragma diagram {"xy":"H14943;V66771","wh":"18000;3200"} #end)
+    (#92 expr sensor_array
+    #pragma diagram {"xy":"H16943;V33220","wh":"16000;3200"} #end)
+    (#93 expr i1
+    #pragma diagram {"xy":"H23689;V29420"} #end)
+    (#94 expr #95 = #96
+      where
+        (#95 group)
+        (#96 group)
+    #pragma diagram {"xy":"H38943;V31320"} #end)
+    (#97 block ({op_expr%or%op_expr})
+               #pragma diagram {"xy":"H101634;V25102","wh":"43075;24471"} #end)
+    (#13 expr sensor_struct
+    #pragma diagram {"xy":"H9943;V87375","wh":"18000;3200"} #end)
+    (#106 expr i3
+    #pragma diagram {"xy":"H14943;V83575"} #end)
+    (#107 expr #108 = #109
+      where
+        (#108 group)
+        (#109 group)
+    #pragma diagram {"xy":"H39943;V85475"} #end)
+    (#110 expr #111 = #112
+      where
+        (#111 group)
+        (#112 group)
+    #pragma diagram {"xy":"H38943;V64871"} #end)
+    (#113 expr #114 = #115
+      where
+        (#114 group)
+        (#115 group)
+    #pragma diagram {"xy":"H39943;V74275"} #end)
+    (#116 expr i7
+    #pragma diagram {"xy":"H19943;V62971"} #end)
+    (#117 expr sensor_syn
+    #pragma diagram {"xy":"H11943;V76175","wh":"14000;3200"} #end)
+    (#118 expr i6
+    #pragma diagram {"xy":"H14943;V72375"} #end)
+    (#119 expr #120 + #121
+      where
+        (#120 group)
+        (#121 group)
+    #pragma diagram {"xy":"H-37624;V-16600"} #end)
+    (#129 expr sensor_float
+    #pragma diagram {"xy":"H-60624;V-14700","wh":"16000;3200"} #end)
+    (#130 expr sensor_bool
+    #pragma diagram {"xy":"H36943;V79875","wh":"16000;3200"} #end)
+    (#137 expr i8
+    #pragma diagram {"xy":"H-101096;V33220"} #end)
+    (#138 def o10
+    #pragma diagram {"xy":"H-82038;V33220"} #end)
+    
+    (#11 wire #0 => #2, #8, #16, #47
+    #pragma diagram {"wp":"#0 h13951[v6742[v13133 h20907[v16387 #2, #16], #8], #47]"} #end)
+    (#12 wire #1 => #6)
+    (#14 wire #10 => #9)
+    (#15 wire #7 => #50, #97 .(1)
+    #pragma diagram {"wp":"#7 h6488[v-3800 #50, v7336 #97]"} #end)
+    (#30 wire #18 => #20)
+    (#31 wire #21 => #19
+    #pragma diagram {"wp":"v1750|#21 #19"} #end)
+    (#32 wire #20 .(x) => #24
+    #pragma diagram {"wp":"v-2662|#20 h3533 v-7413 #24"} #end)
+    (#39 wire #25 => #23
+    #pragma diagram {"wp":"#25 h3221 v3250 #23"} #end)
+    (#34 wire #22 => #45 .(a), #21 .(x)
+    #pragma diagram {"wp":"#22 h6130[#45, v9313 #21]"} #end)
+    (#35 wire #26 => #45 .(b), #21 .(y)
+    #pragma diagram {"wp":"#26 h7833[v-13863 #45, #21]"} #end)
+    (#36 wire #20 .(y) => #27
+    #pragma diagram {"wp":"v3275|#20 #27"} #end)
+    (#40 wire #33 => #29, #38
+    #pragma diagram {"wp":"#33 h3900 v1900[#29, v25471 #38]"} #end)
+    (#41 wire #37 => #28
+    #pragma diagram {"wp":"#37 h5202 v-1271 #28"} #end)
+    (#53 wire #44 => #42)
+    (#54 wire #49 => #43)
+    (#55 wire #52 => #48
+    #pragma diagram {"wp":"#52 h7807 v-2942 #48"} #end)
+    (#56 wire #46 => #51
+    #pragma diagram {"wp":"#46 h57909 v6742 #51"} #end)
+    (#65 wire #57 => #64
+    #pragma diagram {"wp":"#57 h5750 v-550 #64"} #end)
+    (#67 wire #59 => #58
+    #pragma diagram {"wp":"v1393|#59 #58"} #end)
+    (#68 wire #63 .(1) => #60
+    #pragma diagram {"wp":"v-5262|#63 #60"} #end)
+    (#69 wire #63 .(2) => #61
+    #pragma diagram {"wp":"v-1462|#63 #61"} #end)
+    (#70 wire #63 .(e) => #58 .(e)
+    #pragma diagram {"wp":"v5969|#63 #58"} #end)
+    (#71 wire #62 => #66)
+    (#72 wire #58 => #62
+    #pragma diagram {"wp":"v0|#58 #62"} #end)
+    (#75 wire #73 => #74)
+    (#82 wire #76 => #79)
+    (#83 wire #78 => #77)
+    (#87 wire #85 => #86)
+    (#122 wire #5 => #120
+    #pragma diagram {"wp":"#5 h25482 v-4062 #120"} #end)
+    (#81 wire #17 => #80
+    #pragma diagram {"wp":"#17 h4292 v-3700 #80"} #end)
+    (#98 wire #84 => #90)
+    (#99 wire #88 => #91
+    #pragma diagram {"wp":"#88 h4500 v-680 #91"} #end)
+    (#100 wire #94 => #97 .(3))
+    (#101 wire #89 => #97 .(2)
+    #pragma diagram {"wp":"#89 h3627 v-6074 #97"} #end)
+    (#102 wire #93 => #95)
+    (#103 wire #92 => #96)
+    (#104 wire #97 => #4
+    #pragma diagram {"wp":"v0|#97 #4"} #end)
+    (#123 wire #13 => #109)
+    (#124 wire #106 => #108)
+    (#125 wire #105 => #112)
+    (#126 wire #116 => #111)
+    (#127 wire #117 => #115)
+    (#128 wire #118 => #114)
+    (#131 wire #129 => #121)
+    (#132 wire #119 => #3)
+    (#133 wire #107 => #97 .(7)
+    #pragma diagram {"wp":"#107 h16732 v-57328 #97"} #end)
+    (#134 wire #110 => #97 .(4)
+    #pragma diagram {"wp":"#110 h9482 v-46244 #97"} #end)
+    (#135 wire #113 => #97 .(5)
+    #pragma diagram {"wp":"#113 h11232 v-52475 #97"} #end)
+    (#136 wire #130 => #97 .(6)
+    #pragma diagram {"wp":"#130 h13982 v-54901 #97"} #end)
+    (#139 wire #137 => #138)
+    
+    (var
+        #pragma cg probe #end  my_probe: int32;)
+}
+
+node oper_misc1 (i0: int32;
+                 i1 : int32 last = 0;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 def o0
+    #pragma diagram {"xy":"H-2600;V-2400"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-66400;V-17850"} #end)
+    (#2 block oper_misc2
+              #pragma diagram {"xy":"H-43350;V-17850","wh":"21500;14000"} #end)
+    (#5 expr #6 + #7
+      where
+        (#6 group)
+        (#7 group)
+    #pragma diagram {"xy":"H-19400;V3200"} #end)
+    (#11 expr last 'i1
+    #pragma diagram {"xy":"H-81750;V4300","wh":"12000;3200"} #end)
+    
+    (#3 wire #1 => #2)
+    (#8 wire #2 => #6
+    #pragma diagram {"wp":"v0|#2 h3538 v19150 #6"} #end)
+    (#10 wire #5 => #0
+    #pragma diagram {"wp":"#5 h5400 v-5600 #0"} #end)
+    (#4 wire #11 => #7
+    #pragma diagram {"wp":"#11 h48750 v800 #7"} #end)
+}
+
+function oper_misc2 (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-92000;V-14550"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H-19600;V-14550"} #end)
+    (#2 block oper_poly
+              #pragma diagram {"xy":"H-63800;V-14550","wh":"20000;14000"} #end)
+    
+    (#3 wire #0 => #2)
+    (#4 wire #2 => #1
+    #pragma diagram {"wp":"v0|#2 #1"} #end)
+}
+
+function oper_poly (i0: 'T;)
+  returns (o0: 'T;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-50400;V-5150"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H-29500;V-5150"} #end)
+    
+    (#2 wire #0 => #1)
+}
+
+function oper_test_imp_func (i0: int32^4;)
+  returns (o0: int32^4;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-55650;V-9350"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H16750;V-9350"} #end)
+    (#1 block oper_imp_func
+              #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
+    
+    (#3 wire #1 => #2
+    #pragma diagram {"wp":"v-1000|#1 #2"} #end)
+    (#4 wire #0 => #1)
+}
+
+node oper_test_imp_node (i0: int32^4;)
+  returns (o0: int32^4;
+           o1 : int32^4;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-55650;V-9350"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H16750;V-9350"} #end)
+    (#1 block oper_imp_func
+              #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
+    (#5 block oper_imp_node
+              #pragma diagram {"xy":"H-25550;V9300","wh":"20000;14000"} #end)
+    (#6 def o1
+    #pragma diagram {"xy":"H16750;V11400"} #end)
+    
+    (#3 wire #1 => #2
+    #pragma diagram {"wp":"v-1000|#1 #2"} #end)
+    (#4 wire #0 => #1, #5
+    #pragma diagram {"wp":"#0 h9550[#1, v18650 #5]"} #end)
+    (#7 wire #5 => #6
+    #pragma diagram {"wp":"v2100|#5 #6"} #end)
+}
+
+{text%function oper_imp_func (i1:int32^4;)
+      returns (o1:int32^4;);%text}
+
+{text%node oper_imp_node (i1:int32^4;)
+      returns (o1:int32^4;);%text}
+
+function op_imptype (i0: t_imp;)
+  returns (o0: t_imp;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-62350;V-22150"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H-39050;V-22150"} #end)
+    
+    (#2 wire #0 => #1)
+}
+
+{text%function oper_no_output (i0: int32)
+      returns ()
+      {
+        var
+          #pragma cg probe #end sig1: bool;
+        emit
+          'sig1
+          if i0 > 0;
+      }%text}
+
+type t_array1 = t_struct1^4;

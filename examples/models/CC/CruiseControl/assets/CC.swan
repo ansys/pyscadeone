@@ -1,0 +1,384 @@
+-- version swan: 2025.0 graph: 2.0
+use CarTypes;
+
+use Utils;
+
+sensor Ki: float32;
+
+sensor Kp: float32;
+
+node CruiseControl (On: bool;
+                    Off : bool;
+                    Set : bool;
+                    Resume : bool;
+                    QuickAccel : bool;
+                    QuickDecel : bool;
+                    Accel : CarTypes::tPercent;
+                    Brake : CarTypes::tPercent;
+                    CarSpeed : CarTypes::tSpeed;)
+  returns (CruiseSpeed: CarTypes::tSpeed default = 0.0;
+           ThrottleCmd : CarTypes::tPercent default = 0.0;
+           CruiseState : tCruiseState default = OFF;)
+{
+  diagram
+    (automaton $automaton0
+      initial state #1 Off
+      #pragma diagram {"xy":"h-121881;v-3662","wh":"20000;13012"} #end :
+      state #41 Enabled
+      #pragma diagram {"xy":"h17406;v3675","wh":"237450;120675"} #end :
+        diagram
+          (#2 expr QuickDecel
+          #pragma diagram {"xy":"h-36150;v54737","wh":"16000;3200"} #end)
+          (#3 block CruiseSpeedManagement
+                    #pragma diagram {"xy":"h3850;v49087","wh":"20000;14000"} #end)
+          (#4 expr Set
+          #pragma diagram {"xy":"h-32150;v43637"} #end)
+          (#5 expr QuickAccel
+          #pragma diagram {"xy":"h-36150;v47337","wh":"16000;3200"} #end)
+          (#6 expr CarSpeed
+          #pragma diagram {"xy":"h-34950;v51037","wh":"13600;3200"} #end)
+          (#7 def localCruiseSpeed
+          #pragma diagram {"xy":"h38950;v49087","wh":"23200;3200"} #end)
+          (let CruiseSpeed = localCruiseSpeed;
+          #pragma diagram {"xy":"h1200;v36387","wh":"46000;3200"} #end)
+          
+          (#9 wire #4 => #3 .(Set))
+          (#10 wire #6 => #3 .(CarSpeed))
+          (#11 wire #2 => #3 .(QuickDecel))
+          (#12 wire #5 => #3 .(QuickAccel))
+          (#13 wire #3 => #7
+          #pragma diagram {"wp":"v0|#3 #7"} #end)
+          
+          (var
+              localCruiseSpeed: CarTypes::tSpeed;)
+          (automaton $CC_On
+            initial state #38 state0
+            #pragma diagram {"xy":"h-32150;v4276","wh":"155150;70900"} #end :
+              diagram
+                (#16 expr CarSpeed > SpeedMin
+                #pragma diagram {"xy":"h-26918;v29116","wh":"21814;3200"} #end)
+                (#17 def StdbyCond
+                #pragma diagram {"xy":"h43775;v24450","wh":"14800;3200"} #end)
+                (#18 expr Accel > PedalMin
+                #pragma diagram {"xy":"h-22625;v19783","wh":"23200;3200"} #end)
+                (#19 block {text%(or)%text}
+                           #pragma diagram {"xy":"h12875;v24450","wh":"20000;14000"} #end)
+                (#20 expr CarSpeed < SpeedMax
+                #pragma diagram {"xy":"h-26918;v24450","wh":"21814;3200"} #end)
+                
+                (#21 wire #20 => #19 .(3))
+                (#22 wire #19 => #17
+                #pragma diagram {"wp":"v0|#19 #17"} #end)
+                (#23 wire #18 => #19 .(1))
+                (#24 wire #16 => #19 .(2))
+                
+                (var
+                    StdbyCond: bool;)
+                (automaton $CC_active
+                  initial state #35 state0
+                  #pragma diagram {"xy":"h-27987;v138","wh":"81175;27600"} #end :
+                    diagram
+                      (#27 block Regulation
+                                 #pragma diagram {"xy":"h3537;v-1613","wh":"20000;14000"} #end)
+                      (#28 expr localCruiseSpeed
+                      #pragma diagram {"xy":"h-23913;v1887","wh":"23200;3200"} #end)
+                      (#29 expr CarSpeed
+                      #pragma diagram {"xy":"h-19113;v-5113","wh":"13600;3200"} #end)
+                      (#30 def ThrottleCmd
+                      #pragma diagram {"xy":"h27987;v-1613","wh":"17200;3200"} #end)
+                      (let CruiseState = ON;
+                      #pragma diagram {"xy":"h1537;v9387","wh":"29200;3200"} #end)
+                      
+                      (#32 wire #28 => #27 .(1))
+                      (#33 wire #29 => #27 .(2))
+                      (#34 wire #27 .(1) => #30
+                      #pragma diagram {"wp":"v0|#27 #30"} #end)
+                  state #37 state1
+                  #pragma diagram {"xy":"h48175;v138","wh":"40800;11200"} #end :
+                    diagram
+                      (let CruiseState = STDBY;
+                      #pragma diagram {"xy":"h0;v0","wh":"32800;3200"} #end)
+                  :1: #35 unless if (StdbyCond)
+                  restart #37
+                  #pragma diagram {"tp":"h40587;v-4335|#35 h5058 h5059 h-20400;v-4335|#37"} #end;
+                  :1: #37 unless if (not StdbyCond)
+                  restart #35
+                  #pragma diagram {"tp":"h-20400;v-1335|#37 h-5058 h-5059 h40587;v-1335|#35"} #end;
+                  #pragma diagram {"xy":"h0;v-12338","wh":"147150;38225"} #end)
+            state #40 Interruped
+            #pragma diagram {"xy":"h90525;v4276","wh":"38400;11200"} #end :
+              diagram
+                (let CruiseState = INT;
+                #pragma diagram {"xy":"h0;v0","wh":"30400;3200"} #end)
+            :1: #38 unless if (Brake > PedalMin)
+            restart #40
+            #pragma diagram {"tp":"h77575;v-2650|#38 h8633 h8634 h-19200;v-2650|#40"} #end;
+            :1: #40 unless if (Resume and Brake < PedalMin)
+            restart #38
+            #pragma diagram {"tp":"h-19200;v2650|#40 h-8633 h-8634 h77575;v2650|#38"} #end;
+            #pragma diagram {"xy":"h0;v-11613","wh":"229450;89450"} #end)
+      :1: #1 unless if (On)
+      restart #41
+      #pragma diagram {"tp":"h10000;v-3104|#1 h3520 h3521 h-118725;v-10441|#41"} #end;
+      :1: #41 unless if (Off)
+      restart #1
+      #pragma diagram {"tp":"h-118725;v-4234|#41 h-3521 h-3521 h10000;v3103|#1"} #end;
+      #pragma diagram {"xy":"H-30081;V2850","wh":"282262;140338"} #end)
+}
+
+node CruiseSpeedManagement (Set: bool;
+                            QuickAccel: bool;
+                            QuickDecel: bool;
+                            CarSpeed : CarTypes::tSpeed;)
+  returns (CruiseSpeed: CarTypes::tPercent last = CarSpeed;)
+{
+  diagram
+    (#26 block (Utils::Limiter \ Min: SpeedMin, Max: SpeedMax)
+               #pragma diagram {"xy":"H0;V0","wh":"20000;14000"} #end)
+    (#27 expr LocalCruiseSpeed
+    #pragma diagram {"xy":"H-40000;V0","wh":"23200;3200"} #end)
+    (#28 def CruiseSpeed
+    #pragma diagram {"xy":"H37900;V0","wh":"17200;3200"} #end)
+    
+    (#29 wire #27 => #26 .(dataIn))
+    (#30 wire #26 .(dataOut) => #28
+    #pragma diagram {"wp":"v0|#26 #28"} #end)
+    
+    (var
+        LocalCruiseSpeed: CarTypes::tPercent;)
+    (activate $ActivateIf0
+      if Set
+      then
+        {
+          diagram
+            (#2 def LocalCruiseSpeed
+            #pragma diagram {"xy":"h11800;v0","wh":"23200;3200"} #end)
+            (#3 expr CarSpeed
+            #pragma diagram {"xy":"h-16600;v0","wh":"13600;3200"} #end)
+            
+            (#4 wire #3 => #2)
+        #pragma diagram {"xy":"h0;v-22300","wh":"83600;9200"} #end
+        }
+      elsif QuickAccel
+      then
+        {
+          diagram
+            (#5 expr last 'CruiseSpeed
+            #pragma diagram {"xy":"h-26600;v-1900","wh":"24400;3200"} #end)
+            (#6 expr SpeedInc
+            #pragma diagram {"xy":"h-21200;v1900","wh":"13600;3200"} #end)
+            (#7 expr #8 + #9
+              where
+                (#8 group)
+                (#9 group)
+            #pragma diagram {"xy":"h600;v0"} #end)
+            (#10 def LocalCruiseSpeed
+            #pragma diagram {"xy":"h27200;v0","wh":"23200;3200"} #end)
+            
+            (#11 wire #7 => #10)
+            (#12 wire #6 => #9)
+            (#13 wire #5 => #8)
+        #pragma diagram {"xy":"h0;v-7000","wh":"83600;13000"} #end
+        }
+      elsif QuickDecel
+      then
+        {
+          diagram
+            (#14 def LocalCruiseSpeed
+            #pragma diagram {"xy":"h27200;v0","wh":"23200;3200"} #end)
+            (#15 expr #16 - #17
+              where
+                (#16 group)
+                (#17 group)
+            #pragma diagram {"xy":"h600;v0"} #end)
+            (#18 expr last 'CruiseSpeed
+            #pragma diagram {"xy":"h-26600;v-1900","wh":"24400;3200"} #end)
+            (#19 expr SpeedInc
+            #pragma diagram {"xy":"h-21200;v1900","wh":"13600;3200"} #end)
+            
+            (#20 wire #15 => #14)
+            (#21 wire #19 => #17)
+            (#22 wire #18 => #16)
+        #pragma diagram {"xy":"h0;v10200","wh":"83600;13000"} #end
+        }
+      else
+        {
+          diagram
+            (#23 def LocalCruiseSpeed
+            #pragma diagram {"xy":"h17200;v0","wh":"23200;3200"} #end)
+            (#24 expr last 'CruiseSpeed
+            #pragma diagram {"xy":"h-16600;v0","wh":"24400;3200"} #end)
+            
+            (#25 wire #24 => #23)
+        #pragma diagram {"xy":"h0;v25500","wh":"83600;9200"} #end
+        }
+    #pragma diagram {"xy":"H-5750;V-41600","wh":"86600;63200"} #end)
+}
+
+function SaturateThrottle (ThrottleIn: CarTypes::tPercent;)
+  returns (ThrottleOut : CarTypes::tPercent;
+           Saturated : bool;)
+{
+  diagram
+    (#0 expr ThrottleIn
+    #pragma diagram {"xy":"H0;V0","wh":"16000;3200"} #end)
+    (#1 expr #2 < #3
+      where
+        (#2 group)
+        (#3 group)
+    #pragma diagram {"xy":"H23000;V-8400"} #end)
+    (#4 expr PercentZero
+    #pragma diagram {"xy":"H-600;V-6500","wh":"17200;3200"} #end)
+    (#5 expr if #6 then #7 else #8
+      where
+        (#6 group)
+        (#7 group)
+        (#8 group)
+    #pragma diagram {"xy":"H50200;V-1900"} #end)
+    (#9 expr #10 > #11
+      where
+        (#10 group)
+        (#11 group)
+    #pragma diagram {"xy":"H70200;V-11900"} #end)
+    (#12 expr ThrottleMax
+    #pragma diagram {"xy":"H46600;V-10000","wh":"17200;3200"} #end)
+    (#13 expr if #14 then #15 else #16
+      where
+        (#14 group)
+        (#15 group)
+        (#16 group)
+    #pragma diagram {"xy":"H94200;V-3800"} #end)
+    (#17 def ThrottleOut
+    #pragma diagram {"xy":"H117800;V-3800","wh":"17200;3200"} #end)
+    (#18 expr #19 or #20
+      where
+        (#19 group)
+        (#20 group)
+    #pragma diagram {"xy":"H92200;V-15400"} #end)
+    (#21 def Saturated
+    #pragma diagram {"xy":"H119000;V-15400","wh":"14800;3200"} #end)
+    
+    (#22 wire #0 => #2, #8
+    #pragma diagram {"wp":"#0 h5000[v-10300 #2, #8]"} #end)
+    (#23 wire #4 => #3, #7
+    #pragma diagram {"wp":"#4 h8000[#3, v2700 #7]"} #end)
+    (#24 wire #1 => #6, #19
+    #pragma diagram {"wp":"#1 h7000[h16700 #6, v-8900 #19]"} #end)
+    (#25 wire #12 => #11, #15
+    #pragma diagram {"wp":"#12 h8000[#11, v4300 #15]"} #end)
+    (#26 wire #9 => #14, #20
+    #pragma diagram {"wp":"#9 h6500[h14000 #14, v-1600 #20]"} #end)
+    (#27 wire #5 => #10, #16
+    #pragma diagram {"wp":"#5 h5000[v-11900 #10, #16]"} #end)
+    (#28 wire #13 => #17)
+    (#29 wire #18 => #21)
+}
+
+node Regulation (CruiseSpeed: CarTypes::tSpeed;
+                 CarSpeed: CarTypes::tSpeed;)
+  returns (Throttle : CarTypes::tPercent;)
+{
+  diagram
+    (#0 expr CruiseSpeed
+    #pragma diagram {"xy":"H0;V0","wh":"17200;3200"} #end)
+    (#1 expr CarSpeed
+    #pragma diagram {"xy":"H1800;V3800","wh":"13600;3200"} #end)
+    (#2 expr #3 - #4
+      where
+        (#3 group)
+        (#4 group)
+    #pragma diagram {"xy":"H23600;V1900"} #end)
+    (#5 expr #6 * #7
+      where
+        (#6 group)
+        (#7 group)
+    #pragma diagram {"xy":"H43600;V7000"} #end)
+    (#8 expr Kp
+    #pragma diagram {"xy":"H24600;V8900"} #end)
+    (#9 expr if #10 then #11 else #12
+      where
+        (#10 group)
+        (#11 group)
+        (#12 group)
+    #pragma diagram {"xy":"H163300;V0"} #end)
+    (#13 expr SpeedZero
+    #pragma diagram {"xy":"H140900;V-1900","wh":"14800;3200"} #end)
+    (#14 expr #15 + #16
+      where
+        (#15 group)
+        (#16 group)
+    #pragma diagram {"xy":"H188100;V1900"} #end)
+    (#17 expr #18 pre #19
+      where
+        (#18 group)
+        (#19 group)
+    #pragma diagram {"xy":"H209100;V-1900"} #end)
+    (#20 expr SpeedZero
+    #pragma diagram {"xy":"H185700;V-3800","wh":"14800;3200"} #end)
+    (#21 expr #22 * #23
+      where
+        (#22 group)
+        (#23 group)
+    #pragma diagram {"xy":"H210100;V5600"} #end)
+    (#24 expr Ki
+    #pragma diagram {"xy":"H189100;V7500"} #end)
+    (#25 expr #26 + #27
+      where
+        (#26 group)
+        (#27 group)
+    #pragma diagram {"xy":"H63600;V8900"} #end)
+    (#28 block SaturateThrottle
+               #pragma diagram {"xy":"H100600;V8900","wh":"20000;14000"} #end)
+    (#29 def Throttle
+    #pragma diagram {"xy":"H141500;V12400","wh":"13600;3200"} #end)
+    (#30 expr #31 pre #32
+      where
+        (#31 group)
+        (#32 group)
+    #pragma diagram {"xy":"H142300;V-7500"} #end)
+    (#33 expr true
+    #pragma diagram {"xy":"H106200;V-9400","wh":"8800;3200"} #end)
+    (let
+    #pragma diagram {"xy":"H103850;V-550"} #end)
+    
+    (#34 wire #0 => #3)
+    (#35 wire #1 => #4)
+    (#36 wire #2 => #6, #12
+    #pragma diagram {"wp":"#2 h6500[v3200 #6, #12]"} #end)
+    (#37 wire #8 => #7)
+    (#38 wire #13 => #11)
+    (#39 wire #9 => #15)
+    (#40 wire #17 => #16
+    #pragma diagram {"wp":"#17 h4500 v12000 h-37000 v-6300 #16"} #end)
+    (#41 wire #20 => #18)
+    (#42 wire #14 => #19, #22
+    #pragma diagram {"wp":"#14 h5000[v-1900 #19, h3000 v1800 #22]"} #end)
+    (#43 wire #24 => #23)
+    (#44 wire #5 => #26)
+    (#45 wire #21 => #27
+    #pragma diagram {"wp":"#21 h3500 v11300 h-160500 v-6100 #27"} #end)
+    (#46 wire #25 => #28 .(ThrottleIn))
+    (#47 wire #28 .(ThrottleOut) => #29
+    #pragma diagram {"wp":"v3500|#28 #29"} #end)
+    (#49 wire #33 => #31)
+    (#50 wire #30 => #10
+    #pragma diagram {"wp":"#30 h16500 #10"} #end)
+    (#51 wire #28 .(Saturated) => #32
+    #pragma diagram {"wp":"v-5267|#28 h11950 v-9233 #32"} #end)
+}
+
+type tCruiseState = enum {OFF, INT, STDBY, ON};
+
+const SpeedInc: CarTypes::tSpeed = 2.5;
+
+const SpeedMax: CarTypes::tSpeed = 150.0;
+
+const SpeedMin: CarTypes::tSpeed = 30.0;
+
+const SpeedZero: CarTypes::tSpeed = 0.0;
+
+const PercentZero: CarTypes::tPercent = 0.0;
+
+const PedalMin: CarTypes::tPercent = 3.0;
+
+const ThrottleMax: CarTypes::tPercent = 100.0;

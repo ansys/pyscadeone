@@ -1,0 +1,12 @@
+@startuml 
+   ' Structure operations
+   skinparam groupInheritance 2
+   left to right direction
+
+   Expression <|-- StructConstructor 
+   Expression <|-- StructProjection 
+   Expression <|-- StructDestructor
+   Expression <|-- FunctionalUpdate
+   note right: structure with update
+
+@enduml

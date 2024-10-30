@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "description": "Swan Simulator JSON test results file schema",
+  "properties": {
+    "version": {
+      "type": "string", 
+      "description": "Schema version"
+    },
+    "test_cases": { "type": "array", "items": { "$ref": "#/$defs/TestCase"}}
+  },
+  "$defs": {
+    "TestCase": {
+      "description": "One test case (=Swan Test harness) and its test items",
+      "type": "object",
+      "properties": {
+        "harness": { "type": "string" },
+        "start": { "type": "string", "format": "date-time", "description": "Test execution start datetime (<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss>.<ms>)"},
+        "end": { "type": "string", "format": "date-time", "description": "Test execution end datetime (<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss>.<ms>)"},
+        "status": { "$ref" : "#/$defs/TestStatus", "description": "Global test case status"},
+        "cycles_count": { "type": "integer", "description": "Number of cycles executed" },
+        "test_items": { "type": "array", "items": { "$ref": "#/$defs/TestItem"}, "description": "List of test items"}
+      },
+      "required": ["harness", "start", "end", "status", "cycles_count"]
+    },
+    "TestStatus": {
+      "enum": [ "passed", "failed", "error" ]
+    },
+    "TestItem": {
+      "description": "One test case item description",
+      "type": "object",
+      "properties": {
+        "kind": { "$ref" : "#/$defs/TestItemKind", "description": "Item kind"},
+        "model_path": { "type": "string", "description": "Item model path" },
+        "passed_count": { "type": "integer", "description": "Number times the item has been successful"},
+        "failures": { "type": "array", "items": { "$ref": "#/$defs/Failure"}, "description": "Failures description for this test items"}
+      },
+      "required": ["kind", "model_path", "passed_count"]
+    },
+    "TestItemKind": {
+      "enum": [ "assert", "oracle" ]
+    },
+    "Failure": {
+      "description": "Test case item failure description",
+      "type": "object",
+      "properties": {
+        "cycle": { "type": "integer", "description": "Cycle number"},
+        "actual": { "type": "string", "description": "Actual value" },
+        "expected": { "type": "string", "description": "Expected value" },
+        "float32_atol": { "type": "number", "description": "Absolute tolerance applied in float32 comparisons" },
+        "float32_rtol": { "type": "number", "description": "Relative tolerance applied in float32 comparisons" },
+        "float64_atol": { "type": "number", "description": "Absolute tolerance applied in float64 comparisons" },
+        "float64_rtol": { "type": "number", "description": "Relative tolerance applied in float64 comparisons" },
+        "parts_error_paths": { "type": "array", "items": { "type": "string"}, "description": "Parts in composite flow with comparison error"}
+      },
+      "required": ["cycle"]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+@startuml 
+' Operator Instance
+skinparam groupInheritance 2
+
+Expression <|-- OperatorInstance
+OperatorInstance *-- OperatorBase
+
+OperatorBase <|-- PathIdOpCall
+OperatorBase <|-- PrefixPrimitive
+note top of PrefixPrimitive
+**flatten**, **pack**, **reverse**
+end note
+PrefixPrimitive <|-- Transpose
+OperatorBase <|-- PrefixOperatorExpression
+note top of PrefixOperatorExpression
+(//op_expr//) [size]
+end note
+PrefixOperatorExpression *-- OperatorExpression
+@enduml

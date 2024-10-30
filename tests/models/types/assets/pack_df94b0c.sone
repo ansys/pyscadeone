@@ -1,0 +1,20 @@
+package types
+  const C0: int8 = 4;
+  type imported T0;
+  type T1 = int32;
+  type T2 = float32;
+  type T3 = unsigned<<12>>;
+  type T4 = signed<<32>>;
+  type T5 = T1;
+  type T6 = 'T;
+  type T7 = {
+    a: bool,
+    b: int32^C0
+  };
+  type T8 = T7^42;
+  type T9 = V1 {};
+  type T10 = V2 {x: float32, y: float32};
+  type T11 = V3 {bool};
+  type T12 = char; T13 = T12;
+  {type%type type15 := int42;%type}
+end

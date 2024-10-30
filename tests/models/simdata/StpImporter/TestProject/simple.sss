@@ -1,0 +1,24 @@
+##############################################################################
+#
+# Initialization Scenario Description
+#
+##############################################################################
+
+## inputs
+# Convert
+SSM::set OP/Convert_In (P1::Defs::R,(0,0,0))
+# CMY
+SSM::set OP/CMY_In C
+# CMYArray
+SSM::set OP/CMYArray_In (C,C)
+# char ^5
+SSM::set OP/Str_In {('!','!','!','!','!')}
+# float32
+SSM::set OP/Float_In 0.0
+## sensors
+# RGB
+SSM::set S P1::Defs::R
+# int32
+SSM::set P1::IS 0
+
+SSM::cycle

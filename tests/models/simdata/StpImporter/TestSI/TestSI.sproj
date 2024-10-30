@@ -1,0 +1,19 @@
+{
+  "Version": "1.0",
+  "Name": "TestSI",
+  "Dependencies": [
+    "..\\SI\\StpImporter\\StpImporter.sproj"
+  ],
+  "Resources": [
+    {
+      "Kind": "SimulationData",
+      "Path": "..\\sd_refs\\Procedure1\\Record1.sd",
+      "Key": "Record"
+    },
+    {
+      "Kind": "SimulationData",
+      "Path": "..\\sd_refs\\Procedure1\\Record1_checks.sd",
+      "Key": "Checks"
+    }
+  ]
+}

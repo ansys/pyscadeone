@@ -1,0 +1,9 @@
+@startuml
+' Sequential 
+Expression <|--  Window
+note as N2
+**pre** and -> are cases of
+unary and binary operators
+end note
+
+@enduml

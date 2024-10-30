@@ -1,0 +1,21 @@
+@startuml 
+' ArrayOperations
+skinparam groupInheritance 2
+left to right direction
+
+Expression <|-- ArrayConstructor
+Expression <|-- ArrayRepetition
+Expression <|-- Slice
+Expression <|-- ArrayProjection
+Expression <|-- ProjectionWithDefault
+Expression <|-- FunctionalUpdate
+note right: array with update
+
+note as N1
+**flatten**, **reverse**, **transpose**, **pack**:
+[[api/language/expressions/array.html#other-array-operations other operations]]
+
+@ is a binary or n-ary expression
+end note
+
+@enduml

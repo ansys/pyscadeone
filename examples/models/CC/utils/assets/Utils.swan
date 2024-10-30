@@ -1,0 +1,299 @@
+-- version swan: 2025.0 graph: 2.0
+node #pragma kcg expand #end PID (set_point: 'T;
+                                  measure : 'T;
+                                  Kp : 'T;
+                                  Ki : 'T;
+                                  Kd : 'T;
+                                  dt : 'T;)
+  returns (command: 'T;)
+  where 'T float
+{
+  diagram
+    (#0 expr #1 - #2
+      where
+        (#1 group)
+        (#2 group)
+    #pragma diagram {"xy":"H0;V0"} #end)
+    (#3 expr 0.0
+    #pragma diagram {"xy":"H-46100;V-10700"} #end)
+    (#4 expr set_point
+    #pragma diagram {"xy":"H-22400;V-1900","wh":"14800;3200"} #end)
+    (#5 expr measure
+    #pragma diagram {"xy":"H-21200;V1900","wh":"12400;3200"} #end)
+    (#6 expr #7 * #8
+      where
+        (#7 group)
+        (#8 group)
+    #pragma diagram {"xy":"H-18700;V-20000"} #end)
+    (#9 expr #10 / #11
+      where
+        (#10 group)
+        (#11 group)
+    #pragma diagram {"xy":"H24900;V-8800"} #end)
+    (#12 expr #13 pre #14
+      where
+        (#13 group)
+        (#14 group)
+    #pragma diagram {"xy":"H-19700;V-8800"} #end)
+    (#15 expr 0.0
+    #pragma diagram {"xy":"H2300;V-27500"} #end)
+    (#16 expr dt
+    #pragma diagram {"xy":"H-46100;V-21900"} #end)
+    (#17 expr #18 + #19
+      where
+        (#18 group)
+        (#19 group)
+    #pragma diagram {"xy":"H1300;V-21900"} #end)
+    (#20 expr #21 pre #22
+      where
+        (#21 group)
+        (#22 group)
+    #pragma diagram {"xy":"H23900;V-25600"} #end)
+    (#23 expr #24 - #25
+      where
+        (#24 group)
+        (#25 group)
+    #pragma diagram {"xy":"H1300;V-12500"} #end)
+    (#26 expr dt
+    #pragma diagram {"xy":"H2300;V-6900"} #end)
+    (#31 def error
+    #pragma diagram {"xy":"H20000;V0","wh":"10000;3200"} #end)
+    (#32 expr error
+    #pragma diagram {"xy":"H-47100;V-18100","wh":"10000;3200"} #end)
+    (#33 def integral
+    #pragma diagram {"xy":"H23100;V-20000","wh":"13600;3200"} #end)
+    (#34 def derivative
+    #pragma diagram {"xy":"H47900;V-8800","wh":"16000;3200"} #end)
+    (#35 def proportional
+    #pragma diagram {"xy":"H-22900;V-14400","wh":"18400;3200"} #end)
+    (#36 def command
+    #pragma diagram {"xy":"H44500;V16000","wh":"12400;3200"} #end)
+    (#37 expr #38 * #39
+      where
+        (#38 group)
+        (#39 group)
+    #pragma diagram {"xy":"H-14100;V23500"} #end)
+    (#40 expr #41 * #42
+      where
+        (#41 group)
+        (#42 group)
+    #pragma diagram {"xy":"H-14100;V8500"} #end)
+    (#43 expr #44 * #45
+      where
+        (#44 group)
+        (#45 group)
+    #pragma diagram {"xy":"H-14100;V16000"} #end)
+    (#46 expr integral
+    #pragma diagram {"xy":"H-35900;V21600","wh":"13600;3200"} #end)
+    (#47 expr Ki
+    #pragma diagram {"xy":"H-33100;V25400"} #end)
+    (#48 expr proportional
+    #pragma diagram {"xy":"H-38300;V6600","wh":"18400;3200"} #end)
+    (#49 expr Kp
+    #pragma diagram {"xy":"H-33100;V10400"} #end)
+    (#50 expr derivative
+    #pragma diagram {"xy":"H-37100;V14100","wh":"16000;3200"} #end)
+    (#51 expr Kd
+    #pragma diagram {"xy":"H-33100;V17900"} #end)
+    (#52 block {text%(+)%text}
+               #pragma diagram {"xy":"H14800;V16000","wh":"20000;14000"} #end)
+    
+    (#53 wire #20 => #18
+    #pragma diagram {"wp":"#20 h3500 v-4500 h-37600 v6300 #18"} #end)
+    (#54 wire #0 => #31)
+    (#55 wire #5 => #2)
+    (#57 wire #4 => #1)
+    (#58 wire #16 => #7)
+    (#59 wire #6 => #19)
+    (#62 wire #12 => #25
+    #pragma diagram {"wp":"#12 h9500 v-1800 #25"} #end)
+    (#63 wire #23 => #10
+    #pragma diagram {"wp":"#23 h10650 v1800 #10"} #end)
+    (#64 wire #26 => #11)
+    (#66 wire #32 => #8, #24, #35, #14
+    #pragma diagram {"wp":"#32 h6500[#8, v3700[v7500[v1600 h30400 v-9100 #24, #14], #35]]"} #end)
+    (#68 wire #9 => #34)
+    (#69 wire #46 => #38)
+    (#70 wire #47 => #39)
+    (#71 wire #48 => #41)
+    (#72 wire #49 => #42)
+    (#73 wire #50 => #44)
+    (#74 wire #51 => #45)
+    (#75 wire #52 => #36
+    #pragma diagram {"wp":"v0|#52 #36"} #end)
+    (#76 wire #37 => #52 .(1)
+    #pragma diagram {"wp":"#37 h10950 v-3750 #52"} #end)
+    (#77 wire #40 => #52 .(2)
+    #pragma diagram {"wp":"#40 h6050 v3750 #52"} #end)
+    (#78 wire #43 => #52 .(3))
+    (#27 wire #3 => #13)
+    (#28 wire #15 => #21)
+    (#29 wire #17 => #33, #22
+    #pragma diagram {"wp":"#17 h5000[h3000 v1900 #33, v-1800 #22]"} #end)
+    
+    (var
+        error: 'T;
+        integral: 'T;
+        derivative: 'T;
+        proportional: 'T;)
+}
+
+function #pragma kcg expand #end Limiter (dataIn: 'T;
+                                          Max : 'T;
+                                          Min : 'T;)
+  returns (dataOut: 'T;)
+  where 'T numeric
+{
+  diagram
+    (#0 expr #1 > #2
+      where
+        (#1 group)
+        (#2 group)
+    #pragma diagram {"xy":"H0;V0"} #end)
+    (#3 expr if #4 then #5 else #6
+      where
+        (#4 group)
+        (#5 group)
+        (#6 group)
+    #pragma diagram {"xy":"H20000;V6500"} #end)
+    (#7 expr #8 < #9
+      where
+        (#8 group)
+        (#9 group)
+    #pragma diagram {"xy":"H40000;V1900"} #end)
+    (#10 expr if #11 then #12 else #13
+      where
+        (#11 group)
+        (#12 group)
+        (#13 group)
+    #pragma diagram {"xy":"H60000;V4600"} #end)
+    (#14 expr dataIn
+    #pragma diagram {"xy":"H-20600;V8400","wh":"11200;3200"} #end)
+    (#15 expr Max
+    #pragma diagram {"xy":"H-19000;V1900"} #end)
+    (#16 expr Min
+    #pragma diagram {"xy":"H21000;V-1600"} #end)
+    (#17 def dataOut
+    #pragma diagram {"xy":"H81200;V4600","wh":"12400;3200"} #end)
+    
+    (#18 wire #14 => #1, #6
+    #pragma diagram {"wp":"#14 h5000[v-10300 #1, #6]"} #end)
+    (#19 wire #15 => #2, #5
+    #pragma diagram {"wp":"#15 h8000[#2, v2700 #5]"} #end)
+    (#20 wire #0 => #4
+    #pragma diagram {"wp":"#0 h16500 #4"} #end)
+    (#21 wire #3 => #8, #13
+    #pragma diagram {"wp":"#3 h8000[v-6500 #8, #13]"} #end)
+    (#22 wire #16 => #9, #12
+    #pragma diagram {"wp":"#16 h5000[v5400 #9, h23000 v4300 #12]"} #end)
+    (#23 wire #7 => #11
+    #pragma diagram {"wp":"#7 h5000 v-4500 h11500 #11"} #end)
+    (#24 wire #10 => #17)
+}
+
+function #pragma kcg expand #end abs (i: 'T;)
+  returns (o: 'T;)
+  where 'T signed
+{
+  diagram
+    (activate $abs
+      if i >= 0
+      then
+        {
+          diagram
+            (#1 expr i
+            #pragma diagram {"xy":"h-9000;v0"} #end)
+            (#2 def o
+            #pragma diagram {"xy":"h9000;v0"} #end)
+            
+            (#3 wire #1 => #2)
+        #pragma diagram {"xy":"h0;v-5100","wh":"32000;9200"} #end
+        }
+      else
+        {
+          diagram
+            (#4 expr - i
+            #pragma diagram {"xy":"h-9000;v0"} #end)
+            (#5 def o
+            #pragma diagram {"xy":"h9000;v0"} #end)
+            
+            (#6 wire #4 => #5)
+        #pragma diagram {"xy":"h0;v8300","wh":"32000;9200"} #end
+        }
+    #pragma diagram {"xy":"H0;V0","wh":"35000;28800"} #end)
+}
+
+node #pragma kcg expand #end ramp (start: 'T;
+                                   limit : 'T;
+                                   incr : 'T;)
+  returns (data: 'T;)
+  where 'T numeric
+{
+  diagram
+    (#0 expr #1 pre #2
+      where
+        (#1 group)
+        (#2 group)
+    #pragma diagram {"xy":"H0;V0"} #end)
+    (#3 expr start
+    #pragma diagram {"xy":"H-23800;V-1900","wh":"10000;3200"} #end)
+    (#4 expr if #5 then #6 else #7
+      where
+        (#5 group)
+        (#6 group)
+        (#7 group)
+    #pragma diagram {"xy":"H61000;V1900"} #end)
+    (#8 expr #9 >= #10
+      where
+        (#9 group)
+        (#10 group)
+    #pragma diagram {"xy":"H21000;V11300"} #end)
+    (#11 expr incr
+    #pragma diagram {"xy":"H1600;V9400","wh":"8800;3200"} #end)
+    (#12 expr (0 :> 'T)
+    #pragma diagram {"xy":"H-1400;V13200","wh":"14800;3200"} #end)
+    (#13 expr #14 < #15
+      where
+        (#14 group)
+        (#15 group)
+    #pragma diagram {"xy":"H21000;V-11200"} #end)
+    (#16 expr #17 + #18
+      where
+        (#17 group)
+        (#18 group)
+    #pragma diagram {"xy":"H21000;V3800"} #end)
+    (#19 expr if #20 then #21 else #22
+      where
+        (#20 group)
+        (#21 group)
+        (#22 group)
+    #pragma diagram {"xy":"H41000;V-5600"} #end)
+    (#23 expr limit
+    #pragma diagram {"xy":"H1000;V-9300","wh":"10000;3200"} #end)
+    (#24 expr #25 < #26
+      where
+        (#25 group)
+        (#26 group)
+    #pragma diagram {"xy":"H21000;V-3700"} #end)
+    (#27 def data
+    #pragma diagram {"xy":"H80400;V1900","wh":"8800;3200"} #end)
+    
+    (#28 wire #3 => #1)
+    (#29 wire #11 => #9, #18
+    #pragma diagram {"wp":"#11 h6500[#9, v-3700 #18]"} #end)
+    (#30 wire #12 => #10)
+    (#31 wire #13 => #21
+    #pragma diagram {"wp":"#13 h6500 v3700 #21"} #end)
+    (#32 wire #0 => #14, #26, #17, #6
+    #pragma diagram {"wp":"#0 h5000[v-1800[v-11300 #14, #26], v1900 #17, #6]"} #end)
+    (#33 wire #23 => #15, #25
+    #pragma diagram {"wp":"#23 h8000[#15, v3700 #25]"} #end)
+    (#34 wire #8 => #20
+    #pragma diagram {"wp":"#8 h61300 v-22400 h-44800 #20"} #end)
+    (#35 wire #24 => #22)
+    (#36 wire #19 => #5
+    #pragma diagram {"wp":"#19 h16500 #5"} #end)
+    (#37 wire #16 => #7)
+    (#38 wire #4 => #27, #2
+    #pragma diagram {"wp":"#4 h3500[#27, v13900 h-77800 v-13900 #2]"} #end)
+}

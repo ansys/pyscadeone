@@ -1,0 +1,16 @@
+{
+  "Version": "2.0",
+  "Kind": "TestExecution",
+  "Properties": {
+    "Name": "TestExecutionJob0",
+    "RootDeclarations": [
+      ""
+    ],
+    "CustomArguments": "",
+    "TestHarness": "",
+    "TestResultFile": "testResults.json"
+  },
+  "InputPaths": [
+    "assets/TestSI.swant"
+  ]
+}

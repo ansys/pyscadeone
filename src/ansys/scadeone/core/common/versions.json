@@ -1,0 +1,21 @@
+{
+    "swan": {
+        "description": "Swan language version",
+        "version": "2025.0"
+    },
+    "swant": {
+        "description": "Swan Test Harness",
+        "version": "1.1"}, 
+    "graph": {
+        "description": "Graphical information format",
+        "version": "2.0"
+    }, 
+    "simdata": {
+        "description": "Simulation data format",
+        "version": "1.1"
+    },
+    "test_results": {
+        "description": "Test results format",
+        "version": "1.0"
+    }
+}

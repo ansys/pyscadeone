@@ -1,0 +1,3169 @@
+# Oracle for test_visitor.Test.test_dump
+visiting class: ModuleBody
+ From: NoneType as property: ModuleBody.None
+ visiting class: PathIdentifier
+  From: ModuleBody as property: PathIdentifier.name
+  visiting class: Identifier
+   From: PathIdentifier as property: Identifier.path_id
+ visiting class: UseDirective
+  From: ModuleBody as property: UseDirective.use_directives
+  visiting class: PathIdentifier
+   From: UseDirective as property: PathIdentifier.path
+   visiting class: Identifier
+    From: PathIdentifier as property: Identifier.path_id
+ visiting class: UseDirective
+  From: ModuleBody as property: UseDirective.use_directives
+  visiting class: PathIdentifier
+   From: UseDirective as property: PathIdentifier.path
+   visiting class: Identifier
+    From: PathIdentifier as property: Identifier.path_id
+ visiting class: SensorDeclarations
+  From: ModuleBody as property: SensorDeclarations.declarations
+  visiting class: SensorDecl
+   From: SensorDeclarations as property: SensorDecl.sensors
+   Object name:: Ki
+   visiting class: Identifier
+    From: SensorDecl as property: Identifier.id
+   visiting class: Float32Type
+    From: SensorDecl as property: Float32Type.type
+ visiting class: SensorDeclarations
+  From: ModuleBody as property: SensorDeclarations.declarations
+  visiting class: SensorDecl
+   From: SensorDeclarations as property: SensorDecl.sensors
+   Object name:: Kp
+   visiting class: Identifier
+    From: SensorDecl as property: Identifier.id
+   visiting class: Float32Type
+    From: SensorDecl as property: Float32Type.type
+ visiting class: Operator
+  From: ModuleBody as property: Operator.declarations
+  Object name:: CruiseControl
+  visiting class: Identifier
+   From: Operator as property: Identifier.id
+  From: ModuleBody as property: Operator.declarations
+  Object name:: CruiseControl
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: On
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: On
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Off
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Off
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Set
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Set
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Resume
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Resume
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickAccel
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickAccel
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickDecel
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickDecel
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Accel
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Accel
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Brake
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Brake
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: VarDecl as property: Literal.default
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: ThrottleCmd
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: ThrottleCmd
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: VarDecl as property: Literal.default
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseState
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseState
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+   visiting class: PathIdExpr
+    From: VarDecl as property: PathIdExpr.default
+    visiting class: PathIdentifier
+     From: PathIdExpr as property: PathIdentifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+  visiting class: Scope
+   From: Operator as property: Scope.body
+   visiting class: Diagram
+    From: Scope as property: Diagram.sections
+    visiting class: StateMachineBlock
+     From: Diagram as property: StateMachineBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: StateMachine
+      From: StateMachineBlock as property: StateMachine.def_by_case
+      visiting class: Luid
+       From: StateMachine as property: Luid.name
+      visiting class: State
+       From: StateMachine as property: State.items
+       Object name:: Off
+       visiting class: Pragma
+       visiting class: Identifier
+        From: State as property: Identifier.id
+       visiting class: Lunum
+        From: State as property: Lunum.lunum
+      visiting class: State
+       From: StateMachine as property: State.items
+       Object name:: Enabled
+       visiting class: Pragma
+       visiting class: Identifier
+        From: State as property: Identifier.id
+       visiting class: Lunum
+        From: State as property: Lunum.lunum
+       visiting class: Diagram
+        From: State as property: Diagram.sections
+        visiting class: ExprBlock
+         From: Diagram as property: ExprBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: ExprBlock as property: Lunum.lunum
+         visiting class: PathIdExpr
+          From: ExprBlock as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+        visiting class: Block
+         From: Diagram as property: Block.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: Block as property: Lunum.lunum
+         visiting class: PathIdOpCall
+          From: Block as property: PathIdOpCall.instance
+          visiting class: PathIdentifier
+           From: PathIdOpCall as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+        visiting class: ExprBlock
+         From: Diagram as property: ExprBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: ExprBlock as property: Lunum.lunum
+         visiting class: PathIdExpr
+          From: ExprBlock as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+        visiting class: ExprBlock
+         From: Diagram as property: ExprBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: ExprBlock as property: Lunum.lunum
+         visiting class: PathIdExpr
+          From: ExprBlock as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+        visiting class: ExprBlock
+         From: Diagram as property: ExprBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: ExprBlock as property: Lunum.lunum
+         visiting class: PathIdExpr
+          From: ExprBlock as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+        visiting class: DefBlock
+         From: Diagram as property: DefBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: DefBlock as property: Lunum.lunum
+         visiting class: EquationLHS
+          From: DefBlock as property: EquationLHS.lhs
+          visiting class: LHSItem
+           From: EquationLHS as property: LHSItem.lhs_items
+           Object name:: localCruiseSpeed
+           visiting class: Identifier
+            From: LHSItem as property: Identifier.id
+        visiting class: SectionBlock
+         From: Diagram as property: SectionBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: LetSection
+          From: SectionBlock as property: LetSection.section
+          visiting class: ExprEquation
+           From: LetSection as property: ExprEquation.equations
+           Object luid:: None
+           visiting class: EquationLHS
+            From: ExprEquation as property: EquationLHS.lhs
+            visiting class: LHSItem
+             From: EquationLHS as property: LHSItem.lhs_items
+             Object name:: CruiseSpeed
+             visiting class: Identifier
+              From: LHSItem as property: Identifier.id
+           visiting class: PathIdExpr
+            From: ExprEquation as property: PathIdExpr.expr
+            visiting class: PathIdentifier
+             From: PathIdExpr as property: PathIdentifier.path_id
+             visiting class: Identifier
+              From: PathIdentifier as property: Identifier.path_id
+        visiting class: Wire
+         From: Diagram as property: Wire.objects
+         Object luid:: None
+         visiting class: Lunum
+          From: Wire as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.source
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.targets
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+          visiting class: GroupAdaptation
+           From: Connection as property: GroupAdaptation.adaptation
+           visiting class: GroupRenaming
+            From: GroupAdaptation as property: GroupRenaming.renamings
+            visiting class: Identifier
+             From: GroupRenaming as property: Identifier.source
+        visiting class: Wire
+         From: Diagram as property: Wire.objects
+         Object luid:: None
+         visiting class: Lunum
+          From: Wire as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.source
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.targets
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+          visiting class: GroupAdaptation
+           From: Connection as property: GroupAdaptation.adaptation
+           visiting class: GroupRenaming
+            From: GroupAdaptation as property: GroupRenaming.renamings
+            visiting class: Identifier
+             From: GroupRenaming as property: Identifier.source
+        visiting class: Wire
+         From: Diagram as property: Wire.objects
+         Object luid:: None
+         visiting class: Lunum
+          From: Wire as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.source
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.targets
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+          visiting class: GroupAdaptation
+           From: Connection as property: GroupAdaptation.adaptation
+           visiting class: GroupRenaming
+            From: GroupAdaptation as property: GroupRenaming.renamings
+            visiting class: Identifier
+             From: GroupRenaming as property: Identifier.source
+        visiting class: Wire
+         From: Diagram as property: Wire.objects
+         Object luid:: None
+         visiting class: Lunum
+          From: Wire as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.source
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.targets
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+          visiting class: GroupAdaptation
+           From: Connection as property: GroupAdaptation.adaptation
+           visiting class: GroupRenaming
+            From: GroupAdaptation as property: GroupRenaming.renamings
+            visiting class: Identifier
+             From: GroupRenaming as property: Identifier.source
+        visiting class: Wire
+         From: Diagram as property: Wire.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: Lunum
+          From: Wire as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.source
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+         visiting class: Connection
+          From: Wire as property: Connection.targets
+          visiting class: PortExpr
+           From: Connection as property: PortExpr.port
+           Object luid:: None
+           visiting class: Lunum
+            From: PortExpr as property: Lunum.lunum
+        visiting class: SectionBlock
+         From: Diagram as property: SectionBlock.objects
+         Object luid:: None
+         visiting class: VarSection
+          From: SectionBlock as property: VarSection.section
+          visiting class: VarDecl
+           From: VarSection as property: VarDecl.var_decls
+           Object name:: localCruiseSpeed
+           visiting class: Identifier
+            From: VarDecl as property: Identifier.id
+           From: VarSection as property: VarDecl.var_decls
+           Object name:: localCruiseSpeed
+           visiting class: TypeGroupTypeExpression
+            From: VarDecl as property: TypeGroupTypeExpression.type
+            visiting class: TypeReferenceExpression
+             From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+             visiting class: PathIdentifier
+              From: TypeReferenceExpression as property: PathIdentifier.alias
+              visiting class: Identifier
+               From: PathIdentifier as property: Identifier.path_id
+              visiting class: Identifier
+               From: PathIdentifier as property: Identifier.path_id
+        visiting class: StateMachineBlock
+         From: Diagram as property: StateMachineBlock.objects
+         Object luid:: None
+         visiting class: Pragma
+         visiting class: StateMachine
+          From: StateMachineBlock as property: StateMachine.def_by_case
+          visiting class: Luid
+           From: StateMachine as property: Luid.name
+          visiting class: State
+           From: StateMachine as property: State.items
+           Object name:: state0
+           visiting class: Pragma
+           visiting class: Identifier
+            From: State as property: Identifier.id
+           visiting class: Lunum
+            From: State as property: Lunum.lunum
+           visiting class: Diagram
+            From: State as property: Diagram.sections
+            visiting class: ExprBlock
+             From: Diagram as property: ExprBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: ExprBlock as property: Lunum.lunum
+             visiting class: BinaryExpr
+              From: ExprBlock as property: BinaryExpr.expr
+              visiting class: BinaryOp
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.left
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.right
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+            visiting class: DefBlock
+             From: Diagram as property: DefBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: DefBlock as property: Lunum.lunum
+             visiting class: EquationLHS
+              From: DefBlock as property: EquationLHS.lhs
+              visiting class: LHSItem
+               From: EquationLHS as property: LHSItem.lhs_items
+               Object name:: StdbyCond
+               visiting class: Identifier
+                From: LHSItem as property: Identifier.id
+            visiting class: ExprBlock
+             From: Diagram as property: ExprBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: ExprBlock as property: Lunum.lunum
+             visiting class: BinaryExpr
+              From: ExprBlock as property: BinaryExpr.expr
+              visiting class: BinaryOp
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.left
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.right
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+            visiting class: Block
+             From: Diagram as property: Block.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: Block as property: Lunum.lunum
+             visiting class: PrefixOperatorExpression
+              From: Block as property: PrefixOperatorExpression.instance
+              visiting class: NAryOperator
+               From: PrefixOperatorExpression as property: NAryOperator.op_expr
+               visiting class: NaryOp
+            visiting class: ExprBlock
+             From: Diagram as property: ExprBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: ExprBlock as property: Lunum.lunum
+             visiting class: BinaryExpr
+              From: ExprBlock as property: BinaryExpr.expr
+              visiting class: BinaryOp
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.left
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.right
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+            visiting class: Wire
+             From: Diagram as property: Wire.objects
+             Object luid:: None
+             visiting class: Lunum
+              From: Wire as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.source
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.targets
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+              visiting class: GroupAdaptation
+               From: Connection as property: GroupAdaptation.adaptation
+               visiting class: GroupRenaming
+                From: GroupAdaptation as property: GroupRenaming.renamings
+                visiting class: Literal
+                 From: GroupRenaming as property: Literal.source
+            visiting class: Wire
+             From: Diagram as property: Wire.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: Lunum
+              From: Wire as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.source
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.targets
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+            visiting class: Wire
+             From: Diagram as property: Wire.objects
+             Object luid:: None
+             visiting class: Lunum
+              From: Wire as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.source
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.targets
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+              visiting class: GroupAdaptation
+               From: Connection as property: GroupAdaptation.adaptation
+               visiting class: GroupRenaming
+                From: GroupAdaptation as property: GroupRenaming.renamings
+                visiting class: Literal
+                 From: GroupRenaming as property: Literal.source
+            visiting class: Wire
+             From: Diagram as property: Wire.objects
+             Object luid:: None
+             visiting class: Lunum
+              From: Wire as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.source
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+             visiting class: Connection
+              From: Wire as property: Connection.targets
+              visiting class: PortExpr
+               From: Connection as property: PortExpr.port
+               Object luid:: None
+               visiting class: Lunum
+                From: PortExpr as property: Lunum.lunum
+              visiting class: GroupAdaptation
+               From: Connection as property: GroupAdaptation.adaptation
+               visiting class: GroupRenaming
+                From: GroupAdaptation as property: GroupRenaming.renamings
+                visiting class: Literal
+                 From: GroupRenaming as property: Literal.source
+            visiting class: SectionBlock
+             From: Diagram as property: SectionBlock.objects
+             Object luid:: None
+             visiting class: VarSection
+              From: SectionBlock as property: VarSection.section
+              visiting class: VarDecl
+               From: VarSection as property: VarDecl.var_decls
+               Object name:: StdbyCond
+               visiting class: Identifier
+                From: VarDecl as property: Identifier.id
+               From: VarSection as property: VarDecl.var_decls
+               Object name:: StdbyCond
+               visiting class: TypeGroupTypeExpression
+                From: VarDecl as property: TypeGroupTypeExpression.type
+                visiting class: BoolType
+                 From: TypeGroupTypeExpression as property: BoolType.type
+            visiting class: StateMachineBlock
+             From: Diagram as property: StateMachineBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: StateMachine
+              From: StateMachineBlock as property: StateMachine.def_by_case
+              visiting class: Luid
+               From: StateMachine as property: Luid.name
+              visiting class: State
+               From: StateMachine as property: State.items
+               Object name:: state0
+               visiting class: Pragma
+               visiting class: Identifier
+                From: State as property: Identifier.id
+               visiting class: Lunum
+                From: State as property: Lunum.lunum
+               visiting class: Diagram
+                From: State as property: Diagram.sections
+                visiting class: Block
+                 From: Diagram as property: Block.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: Lunum
+                  From: Block as property: Lunum.lunum
+                 visiting class: PathIdOpCall
+                  From: Block as property: PathIdOpCall.instance
+                  visiting class: PathIdentifier
+                   From: PathIdOpCall as property: PathIdentifier.path_id
+                   visiting class: Identifier
+                    From: PathIdentifier as property: Identifier.path_id
+                visiting class: ExprBlock
+                 From: Diagram as property: ExprBlock.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: Lunum
+                  From: ExprBlock as property: Lunum.lunum
+                 visiting class: PathIdExpr
+                  From: ExprBlock as property: PathIdExpr.expr
+                  visiting class: PathIdentifier
+                   From: PathIdExpr as property: PathIdentifier.path_id
+                   visiting class: Identifier
+                    From: PathIdentifier as property: Identifier.path_id
+                visiting class: ExprBlock
+                 From: Diagram as property: ExprBlock.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: Lunum
+                  From: ExprBlock as property: Lunum.lunum
+                 visiting class: PathIdExpr
+                  From: ExprBlock as property: PathIdExpr.expr
+                  visiting class: PathIdentifier
+                   From: PathIdExpr as property: PathIdentifier.path_id
+                   visiting class: Identifier
+                    From: PathIdentifier as property: Identifier.path_id
+                visiting class: DefBlock
+                 From: Diagram as property: DefBlock.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: Lunum
+                  From: DefBlock as property: Lunum.lunum
+                 visiting class: EquationLHS
+                  From: DefBlock as property: EquationLHS.lhs
+                  visiting class: LHSItem
+                   From: EquationLHS as property: LHSItem.lhs_items
+                   Object name:: ThrottleCmd
+                   visiting class: Identifier
+                    From: LHSItem as property: Identifier.id
+                visiting class: SectionBlock
+                 From: Diagram as property: SectionBlock.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: LetSection
+                  From: SectionBlock as property: LetSection.section
+                  visiting class: ExprEquation
+                   From: LetSection as property: ExprEquation.equations
+                   Object luid:: None
+                   visiting class: EquationLHS
+                    From: ExprEquation as property: EquationLHS.lhs
+                    visiting class: LHSItem
+                     From: EquationLHS as property: LHSItem.lhs_items
+                     Object name:: CruiseState
+                     visiting class: Identifier
+                      From: LHSItem as property: Identifier.id
+                   visiting class: PathIdExpr
+                    From: ExprEquation as property: PathIdExpr.expr
+                    visiting class: PathIdentifier
+                     From: PathIdExpr as property: PathIdentifier.path_id
+                     visiting class: Identifier
+                      From: PathIdentifier as property: Identifier.path_id
+                visiting class: Wire
+                 From: Diagram as property: Wire.objects
+                 Object luid:: None
+                 visiting class: Lunum
+                  From: Wire as property: Lunum.lunum
+                 visiting class: Connection
+                  From: Wire as property: Connection.source
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+                 visiting class: Connection
+                  From: Wire as property: Connection.targets
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+                  visiting class: GroupAdaptation
+                   From: Connection as property: GroupAdaptation.adaptation
+                   visiting class: GroupRenaming
+                    From: GroupAdaptation as property: GroupRenaming.renamings
+                    visiting class: Literal
+                     From: GroupRenaming as property: Literal.source
+                visiting class: Wire
+                 From: Diagram as property: Wire.objects
+                 Object luid:: None
+                 visiting class: Lunum
+                  From: Wire as property: Lunum.lunum
+                 visiting class: Connection
+                  From: Wire as property: Connection.source
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+                 visiting class: Connection
+                  From: Wire as property: Connection.targets
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+                  visiting class: GroupAdaptation
+                   From: Connection as property: GroupAdaptation.adaptation
+                   visiting class: GroupRenaming
+                    From: GroupAdaptation as property: GroupRenaming.renamings
+                    visiting class: Literal
+                     From: GroupRenaming as property: Literal.source
+                visiting class: Wire
+                 From: Diagram as property: Wire.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: Lunum
+                  From: Wire as property: Lunum.lunum
+                 visiting class: Connection
+                  From: Wire as property: Connection.source
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+                  visiting class: GroupAdaptation
+                   From: Connection as property: GroupAdaptation.adaptation
+                   visiting class: GroupRenaming
+                    From: GroupAdaptation as property: GroupRenaming.renamings
+                    visiting class: Literal
+                     From: GroupRenaming as property: Literal.source
+                 visiting class: Connection
+                  From: Wire as property: Connection.targets
+                  visiting class: PortExpr
+                   From: Connection as property: PortExpr.port
+                   Object luid:: None
+                   visiting class: Lunum
+                    From: PortExpr as property: Lunum.lunum
+              visiting class: State
+               From: StateMachine as property: State.items
+               Object name:: state1
+               visiting class: Pragma
+               visiting class: Identifier
+                From: State as property: Identifier.id
+               visiting class: Lunum
+                From: State as property: Lunum.lunum
+               visiting class: Diagram
+                From: State as property: Diagram.sections
+                visiting class: SectionBlock
+                 From: Diagram as property: SectionBlock.objects
+                 Object luid:: None
+                 visiting class: Pragma
+                 visiting class: LetSection
+                  From: SectionBlock as property: LetSection.section
+                  visiting class: ExprEquation
+                   From: LetSection as property: ExprEquation.equations
+                   Object luid:: None
+                   visiting class: EquationLHS
+                    From: ExprEquation as property: EquationLHS.lhs
+                    visiting class: LHSItem
+                     From: EquationLHS as property: LHSItem.lhs_items
+                     Object name:: CruiseState
+                     visiting class: Identifier
+                      From: LHSItem as property: Identifier.id
+                   visiting class: PathIdExpr
+                    From: ExprEquation as property: PathIdExpr.expr
+                    visiting class: PathIdentifier
+                     From: PathIdExpr as property: PathIdentifier.path_id
+                     visiting class: Identifier
+                      From: PathIdentifier as property: Identifier.path_id
+              visiting class: TransitionDecl
+               From: StateMachine as property: TransitionDecl.items
+               visiting class: Literal
+                From: TransitionDecl as property: Literal.priority
+               visiting class: Transition
+                From: TransitionDecl as property: Transition.transition
+                visiting class: Pragma
+                visiting class: Arrow
+                 From: Transition as property: Arrow.arrow
+                 visiting class: PathIdExpr
+                  From: Arrow as property: PathIdExpr.guard
+                  visiting class: PathIdentifier
+                   From: PathIdExpr as property: PathIdentifier.path_id
+                   visiting class: Identifier
+                    From: PathIdentifier as property: Identifier.path_id
+                 visiting class: Target
+                  From: Arrow as property: Target.target
+                  visiting class: StateRef
+                   From: Target as property: StateRef.target
+                   Object name:: None
+                   visiting class: Lunum
+                    From: StateRef as property: Lunum.lunum
+               visiting class: StateRef
+                From: TransitionDecl as property: StateRef.state_ref
+                Object name:: None
+                visiting class: Lunum
+                 From: StateRef as property: Lunum.lunum
+              visiting class: TransitionDecl
+               From: StateMachine as property: TransitionDecl.items
+               visiting class: Literal
+                From: TransitionDecl as property: Literal.priority
+               visiting class: Transition
+                From: TransitionDecl as property: Transition.transition
+                visiting class: Pragma
+                visiting class: Arrow
+                 From: Transition as property: Arrow.arrow
+                 visiting class: UnaryExpr
+                  From: Arrow as property: UnaryExpr.guard
+                  visiting class: UnaryOp
+                  visiting class: PathIdExpr
+                   From: UnaryExpr as property: PathIdExpr.expr
+                   visiting class: PathIdentifier
+                    From: PathIdExpr as property: PathIdentifier.path_id
+                    visiting class: Identifier
+                     From: PathIdentifier as property: Identifier.path_id
+                 visiting class: Target
+                  From: Arrow as property: Target.target
+                  visiting class: StateRef
+                   From: Target as property: StateRef.target
+                   Object name:: None
+                   visiting class: Lunum
+                    From: StateRef as property: Lunum.lunum
+               visiting class: StateRef
+                From: TransitionDecl as property: StateRef.state_ref
+                Object name:: None
+                visiting class: Lunum
+                 From: StateRef as property: Lunum.lunum
+          visiting class: State
+           From: StateMachine as property: State.items
+           Object name:: Interruped
+           visiting class: Pragma
+           visiting class: Identifier
+            From: State as property: Identifier.id
+           visiting class: Lunum
+            From: State as property: Lunum.lunum
+           visiting class: Diagram
+            From: State as property: Diagram.sections
+            visiting class: SectionBlock
+             From: Diagram as property: SectionBlock.objects
+             Object luid:: None
+             visiting class: Pragma
+             visiting class: LetSection
+              From: SectionBlock as property: LetSection.section
+              visiting class: ExprEquation
+               From: LetSection as property: ExprEquation.equations
+               Object luid:: None
+               visiting class: EquationLHS
+                From: ExprEquation as property: EquationLHS.lhs
+                visiting class: LHSItem
+                 From: EquationLHS as property: LHSItem.lhs_items
+                 Object name:: CruiseState
+                 visiting class: Identifier
+                  From: LHSItem as property: Identifier.id
+               visiting class: PathIdExpr
+                From: ExprEquation as property: PathIdExpr.expr
+                visiting class: PathIdentifier
+                 From: PathIdExpr as property: PathIdentifier.path_id
+                 visiting class: Identifier
+                  From: PathIdentifier as property: Identifier.path_id
+          visiting class: TransitionDecl
+           From: StateMachine as property: TransitionDecl.items
+           visiting class: Literal
+            From: TransitionDecl as property: Literal.priority
+           visiting class: Transition
+            From: TransitionDecl as property: Transition.transition
+            visiting class: Pragma
+            visiting class: Arrow
+             From: Transition as property: Arrow.arrow
+             visiting class: BinaryExpr
+              From: Arrow as property: BinaryExpr.guard
+              visiting class: BinaryOp
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.left
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.right
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+             visiting class: Target
+              From: Arrow as property: Target.target
+              visiting class: StateRef
+               From: Target as property: StateRef.target
+               Object name:: None
+               visiting class: Lunum
+                From: StateRef as property: Lunum.lunum
+           visiting class: StateRef
+            From: TransitionDecl as property: StateRef.state_ref
+            Object name:: None
+            visiting class: Lunum
+             From: StateRef as property: Lunum.lunum
+          visiting class: TransitionDecl
+           From: StateMachine as property: TransitionDecl.items
+           visiting class: Literal
+            From: TransitionDecl as property: Literal.priority
+           visiting class: Transition
+            From: TransitionDecl as property: Transition.transition
+            visiting class: Pragma
+            visiting class: Arrow
+             From: Transition as property: Arrow.arrow
+             visiting class: BinaryExpr
+              From: Arrow as property: BinaryExpr.guard
+              visiting class: BinaryOp
+              visiting class: PathIdExpr
+               From: BinaryExpr as property: PathIdExpr.left
+               visiting class: PathIdentifier
+                From: PathIdExpr as property: PathIdentifier.path_id
+                visiting class: Identifier
+                 From: PathIdentifier as property: Identifier.path_id
+              visiting class: BinaryExpr
+               From: BinaryExpr as property: BinaryExpr.right
+               visiting class: BinaryOp
+               visiting class: PathIdExpr
+                From: BinaryExpr as property: PathIdExpr.left
+                visiting class: PathIdentifier
+                 From: PathIdExpr as property: PathIdentifier.path_id
+                 visiting class: Identifier
+                  From: PathIdentifier as property: Identifier.path_id
+               visiting class: PathIdExpr
+                From: BinaryExpr as property: PathIdExpr.right
+                visiting class: PathIdentifier
+                 From: PathIdExpr as property: PathIdentifier.path_id
+                 visiting class: Identifier
+                  From: PathIdentifier as property: Identifier.path_id
+             visiting class: Target
+              From: Arrow as property: Target.target
+              visiting class: StateRef
+               From: Target as property: StateRef.target
+               Object name:: None
+               visiting class: Lunum
+                From: StateRef as property: Lunum.lunum
+           visiting class: StateRef
+            From: TransitionDecl as property: StateRef.state_ref
+            Object name:: None
+            visiting class: Lunum
+             From: StateRef as property: Lunum.lunum
+      visiting class: TransitionDecl
+       From: StateMachine as property: TransitionDecl.items
+       visiting class: Literal
+        From: TransitionDecl as property: Literal.priority
+       visiting class: Transition
+        From: TransitionDecl as property: Transition.transition
+        visiting class: Pragma
+        visiting class: Arrow
+         From: Transition as property: Arrow.arrow
+         visiting class: PathIdExpr
+          From: Arrow as property: PathIdExpr.guard
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+         visiting class: Target
+          From: Arrow as property: Target.target
+          visiting class: StateRef
+           From: Target as property: StateRef.target
+           Object name:: None
+           visiting class: Lunum
+            From: StateRef as property: Lunum.lunum
+       visiting class: StateRef
+        From: TransitionDecl as property: StateRef.state_ref
+        Object name:: None
+        visiting class: Lunum
+         From: StateRef as property: Lunum.lunum
+      visiting class: TransitionDecl
+       From: StateMachine as property: TransitionDecl.items
+       visiting class: Literal
+        From: TransitionDecl as property: Literal.priority
+       visiting class: Transition
+        From: TransitionDecl as property: Transition.transition
+        visiting class: Pragma
+        visiting class: Arrow
+         From: Transition as property: Arrow.arrow
+         visiting class: PathIdExpr
+          From: Arrow as property: PathIdExpr.guard
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+         visiting class: Target
+          From: Arrow as property: Target.target
+          visiting class: StateRef
+           From: Target as property: StateRef.target
+           Object name:: None
+           visiting class: Lunum
+            From: StateRef as property: Lunum.lunum
+       visiting class: StateRef
+        From: TransitionDecl as property: StateRef.state_ref
+        Object name:: None
+        visiting class: Lunum
+         From: StateRef as property: Lunum.lunum
+ visiting class: Operator
+  From: ModuleBody as property: Operator.declarations
+  Object name:: CruiseSpeedManagement
+  visiting class: Identifier
+   From: Operator as property: Identifier.id
+  From: ModuleBody as property: Operator.declarations
+  Object name:: CruiseSpeedManagement
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: Set
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: Set
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickAccel
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickAccel
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickDecel
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: QuickDecel
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: CruiseSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+   visiting class: PathIdExpr
+    From: VarDecl as property: PathIdExpr.last
+    visiting class: PathIdentifier
+     From: PathIdExpr as property: PathIdentifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+  visiting class: Scope
+   From: Operator as property: Scope.body
+   visiting class: Diagram
+    From: Scope as property: Diagram.sections
+    visiting class: Block
+     From: Diagram as property: Block.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Block as property: Lunum.lunum
+     visiting class: PrefixOperatorExpression
+      From: Block as property: PrefixOperatorExpression.instance
+      visiting class: Partial
+       From: PrefixOperatorExpression as property: Partial.op_expr
+       visiting class: PathIdOpCall
+        From: Partial as property: PathIdOpCall.operator
+        visiting class: PathIdentifier
+         From: PathIdOpCall as property: PathIdentifier.path_id
+         visiting class: Identifier
+          From: PathIdentifier as property: Identifier.path_id
+         visiting class: Identifier
+          From: PathIdentifier as property: Identifier.path_id
+       visiting class: OptGroupItem
+        From: Partial as property: OptGroupItem.partial_group
+        visiting class: GroupItem
+         From: OptGroupItem as property: GroupItem.item
+         visiting class: PathIdExpr
+          From: GroupItem as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+         visiting class: Identifier
+          From: GroupItem as property: Identifier.label
+       visiting class: OptGroupItem
+        From: Partial as property: OptGroupItem.partial_group
+        visiting class: GroupItem
+         From: OptGroupItem as property: GroupItem.item
+         visiting class: PathIdExpr
+          From: GroupItem as property: PathIdExpr.expr
+          visiting class: PathIdentifier
+           From: PathIdExpr as property: PathIdentifier.path_id
+           visiting class: Identifier
+            From: PathIdentifier as property: Identifier.path_id
+         visiting class: Identifier
+          From: GroupItem as property: Identifier.label
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: DefBlock
+     From: Diagram as property: DefBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: DefBlock as property: Lunum.lunum
+     visiting class: EquationLHS
+      From: DefBlock as property: EquationLHS.lhs
+      visiting class: LHSItem
+       From: EquationLHS as property: LHSItem.lhs_items
+       Object name:: CruiseSpeed
+       visiting class: Identifier
+        From: LHSItem as property: Identifier.id
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: GroupAdaptation
+       From: Connection as property: GroupAdaptation.adaptation
+       visiting class: GroupRenaming
+        From: GroupAdaptation as property: GroupRenaming.renamings
+        visiting class: Identifier
+         From: GroupRenaming as property: Identifier.source
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: GroupAdaptation
+       From: Connection as property: GroupAdaptation.adaptation
+       visiting class: GroupRenaming
+        From: GroupAdaptation as property: GroupRenaming.renamings
+        visiting class: Identifier
+         From: GroupRenaming as property: Identifier.source
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: SectionBlock
+     From: Diagram as property: SectionBlock.objects
+     Object luid:: None
+     visiting class: VarSection
+      From: SectionBlock as property: VarSection.section
+      visiting class: VarDecl
+       From: VarSection as property: VarDecl.var_decls
+       Object name:: LocalCruiseSpeed
+       visiting class: Identifier
+        From: VarDecl as property: Identifier.id
+       From: VarSection as property: VarDecl.var_decls
+       Object name:: LocalCruiseSpeed
+       visiting class: TypeGroupTypeExpression
+        From: VarDecl as property: TypeGroupTypeExpression.type
+        visiting class: TypeReferenceExpression
+         From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+         visiting class: PathIdentifier
+          From: TypeReferenceExpression as property: PathIdentifier.alias
+          visiting class: Identifier
+           From: PathIdentifier as property: Identifier.path_id
+          visiting class: Identifier
+           From: PathIdentifier as property: Identifier.path_id
+    visiting class: ActivateIfBlock
+     From: Diagram as property: ActivateIfBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: ActivateIf
+      From: ActivateIfBlock as property: ActivateIf.def_by_case
+      visiting class: Luid
+       From: ActivateIf as property: Luid.name
+      visiting class: IfActivation
+       From: ActivateIf as property: IfActivation.if_activation
+       visiting class: IfActivationBranch
+        From: IfActivation as property: IfActivationBranch.branches
+        visiting class: PathIdExpr
+         From: IfActivationBranch as property: PathIdExpr.condition
+         visiting class: PathIdentifier
+          From: PathIdExpr as property: PathIdentifier.path_id
+          visiting class: Identifier
+           From: PathIdentifier as property: Identifier.path_id
+        visiting class: IfteDataDef
+         From: IfActivationBranch as property: IfteDataDef.branch
+         visiting class: Scope
+          From: IfteDataDef as property: Scope.data_def
+          visiting class: Pragma
+          visiting class: Diagram
+           From: Scope as property: Diagram.sections
+           visiting class: DefBlock
+            From: Diagram as property: DefBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: DefBlock as property: Lunum.lunum
+            visiting class: EquationLHS
+             From: DefBlock as property: EquationLHS.lhs
+             visiting class: LHSItem
+              From: EquationLHS as property: LHSItem.lhs_items
+              Object name:: LocalCruiseSpeed
+              visiting class: Identifier
+               From: LHSItem as property: Identifier.id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: PathIdExpr
+             From: ExprBlock as property: PathIdExpr.expr
+             visiting class: PathIdentifier
+              From: PathIdExpr as property: PathIdentifier.path_id
+              visiting class: Identifier
+               From: PathIdentifier as property: Identifier.path_id
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+       visiting class: IfActivationBranch
+        From: IfActivation as property: IfActivationBranch.branches
+        visiting class: PathIdExpr
+         From: IfActivationBranch as property: PathIdExpr.condition
+         visiting class: PathIdentifier
+          From: PathIdExpr as property: PathIdentifier.path_id
+          visiting class: Identifier
+           From: PathIdentifier as property: Identifier.path_id
+        visiting class: IfteDataDef
+         From: IfActivationBranch as property: IfteDataDef.branch
+         visiting class: Scope
+          From: IfteDataDef as property: Scope.data_def
+          visiting class: Pragma
+          visiting class: Diagram
+           From: Scope as property: Diagram.sections
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: LastExpr
+             From: ExprBlock as property: LastExpr.expr
+             Object name:: 'CruiseSpeed
+             visiting class: Identifier
+              From: LastExpr as property: Identifier.id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: PathIdExpr
+             From: ExprBlock as property: PathIdExpr.expr
+             visiting class: PathIdentifier
+              From: PathIdExpr as property: PathIdentifier.path_id
+              visiting class: Identifier
+               From: PathIdentifier as property: Identifier.path_id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: Bar
+             From: ExprBlock as property: Bar.locals
+             Object luid:: None
+             visiting class: Lunum
+              From: Bar as property: Lunum.lunum
+             visiting class: GroupOperation
+            visiting class: Bar
+             From: ExprBlock as property: Bar.locals
+             Object luid:: None
+             visiting class: Lunum
+              From: Bar as property: Lunum.lunum
+             visiting class: GroupOperation
+            visiting class: BinaryExpr
+             From: ExprBlock as property: BinaryExpr.expr
+             visiting class: BinaryOp
+             visiting class: PortExpr
+              From: BinaryExpr as property: PortExpr.left
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+             visiting class: PortExpr
+              From: BinaryExpr as property: PortExpr.right
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: DefBlock
+            From: Diagram as property: DefBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: DefBlock as property: Lunum.lunum
+            visiting class: EquationLHS
+             From: DefBlock as property: EquationLHS.lhs
+             visiting class: LHSItem
+              From: EquationLHS as property: LHSItem.lhs_items
+              Object name:: LocalCruiseSpeed
+              visiting class: Identifier
+               From: LHSItem as property: Identifier.id
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+       visiting class: IfActivationBranch
+        From: IfActivation as property: IfActivationBranch.branches
+        visiting class: PathIdExpr
+         From: IfActivationBranch as property: PathIdExpr.condition
+         visiting class: PathIdentifier
+          From: PathIdExpr as property: PathIdentifier.path_id
+          visiting class: Identifier
+           From: PathIdentifier as property: Identifier.path_id
+        visiting class: IfteDataDef
+         From: IfActivationBranch as property: IfteDataDef.branch
+         visiting class: Scope
+          From: IfteDataDef as property: Scope.data_def
+          visiting class: Pragma
+          visiting class: Diagram
+           From: Scope as property: Diagram.sections
+           visiting class: DefBlock
+            From: Diagram as property: DefBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: DefBlock as property: Lunum.lunum
+            visiting class: EquationLHS
+             From: DefBlock as property: EquationLHS.lhs
+             visiting class: LHSItem
+              From: EquationLHS as property: LHSItem.lhs_items
+              Object name:: LocalCruiseSpeed
+              visiting class: Identifier
+               From: LHSItem as property: Identifier.id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: Bar
+             From: ExprBlock as property: Bar.locals
+             Object luid:: None
+             visiting class: Lunum
+              From: Bar as property: Lunum.lunum
+             visiting class: GroupOperation
+            visiting class: Bar
+             From: ExprBlock as property: Bar.locals
+             Object luid:: None
+             visiting class: Lunum
+              From: Bar as property: Lunum.lunum
+             visiting class: GroupOperation
+            visiting class: BinaryExpr
+             From: ExprBlock as property: BinaryExpr.expr
+             visiting class: BinaryOp
+             visiting class: PortExpr
+              From: BinaryExpr as property: PortExpr.left
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+             visiting class: PortExpr
+              From: BinaryExpr as property: PortExpr.right
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: LastExpr
+             From: ExprBlock as property: LastExpr.expr
+             Object name:: 'CruiseSpeed
+             visiting class: Identifier
+              From: LastExpr as property: Identifier.id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: PathIdExpr
+             From: ExprBlock as property: PathIdExpr.expr
+             visiting class: PathIdentifier
+              From: PathIdExpr as property: PathIdentifier.path_id
+              visiting class: Identifier
+               From: PathIdentifier as property: Identifier.path_id
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+       visiting class: IfActivationBranch
+        From: IfActivation as property: IfActivationBranch.branches
+        visiting class: IfteDataDef
+         From: IfActivationBranch as property: IfteDataDef.branch
+         visiting class: Scope
+          From: IfteDataDef as property: Scope.data_def
+          visiting class: Pragma
+          visiting class: Diagram
+           From: Scope as property: Diagram.sections
+           visiting class: DefBlock
+            From: Diagram as property: DefBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: DefBlock as property: Lunum.lunum
+            visiting class: EquationLHS
+             From: DefBlock as property: EquationLHS.lhs
+             visiting class: LHSItem
+              From: EquationLHS as property: LHSItem.lhs_items
+              Object name:: LocalCruiseSpeed
+              visiting class: Identifier
+               From: LHSItem as property: Identifier.id
+           visiting class: ExprBlock
+            From: Diagram as property: ExprBlock.objects
+            Object luid:: None
+            visiting class: Pragma
+            visiting class: Lunum
+             From: ExprBlock as property: Lunum.lunum
+            visiting class: LastExpr
+             From: ExprBlock as property: LastExpr.expr
+             Object name:: 'CruiseSpeed
+             visiting class: Identifier
+              From: LastExpr as property: Identifier.id
+           visiting class: Wire
+            From: Diagram as property: Wire.objects
+            Object luid:: None
+            visiting class: Lunum
+             From: Wire as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.source
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+            visiting class: Connection
+             From: Wire as property: Connection.targets
+             visiting class: PortExpr
+              From: Connection as property: PortExpr.port
+              Object luid:: None
+              visiting class: Lunum
+               From: PortExpr as property: Lunum.lunum
+ visiting class: Operator
+  From: ModuleBody as property: Operator.declarations
+  Object name:: SaturateThrottle
+  visiting class: Identifier
+   From: Operator as property: Identifier.id
+  From: ModuleBody as property: Operator.declarations
+  Object name:: SaturateThrottle
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: ThrottleIn
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: ThrottleIn
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: ThrottleOut
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: ThrottleOut
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: Saturated
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: Saturated
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: BoolType
+     From: TypeGroupTypeExpression as property: BoolType.type
+  visiting class: Scope
+   From: Operator as property: Scope.body
+   visiting class: Diagram
+    From: Scope as property: Diagram.sections
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: IfteExpr
+      From: ExprBlock as property: IfteExpr.expr
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.cond_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.then_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.else_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: IfteExpr
+      From: ExprBlock as property: IfteExpr.expr
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.cond_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.then_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.else_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: DefBlock
+     From: Diagram as property: DefBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: DefBlock as property: Lunum.lunum
+     visiting class: EquationLHS
+      From: DefBlock as property: EquationLHS.lhs
+      visiting class: LHSItem
+       From: EquationLHS as property: LHSItem.lhs_items
+       Object name:: ThrottleOut
+       visiting class: Identifier
+        From: LHSItem as property: Identifier.id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: DefBlock
+     From: Diagram as property: DefBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: DefBlock as property: Lunum.lunum
+     visiting class: EquationLHS
+      From: DefBlock as property: EquationLHS.lhs
+      visiting class: LHSItem
+       From: EquationLHS as property: LHSItem.lhs_items
+       Object name:: Saturated
+       visiting class: Identifier
+        From: LHSItem as property: Identifier.id
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+ visiting class: Operator
+  From: ModuleBody as property: Operator.declarations
+  Object name:: Regulation
+  visiting class: Identifier
+   From: Operator as property: Identifier.id
+  From: ModuleBody as property: Operator.declarations
+  Object name:: Regulation
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: CruiseSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: CruiseSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.inputs
+   Object name:: CarSpeed
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: VarDecl
+   From: Operator as property: VarDecl.outputs
+   Object name:: Throttle
+   visiting class: Identifier
+    From: VarDecl as property: Identifier.id
+   From: Operator as property: VarDecl.outputs
+   Object name:: Throttle
+   visiting class: TypeGroupTypeExpression
+    From: VarDecl as property: TypeGroupTypeExpression.type
+    visiting class: TypeReferenceExpression
+     From: TypeGroupTypeExpression as property: TypeReferenceExpression.type
+     visiting class: PathIdentifier
+      From: TypeReferenceExpression as property: PathIdentifier.alias
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+      visiting class: Identifier
+       From: PathIdentifier as property: Identifier.path_id
+  visiting class: Scope
+   From: Operator as property: Scope.body
+   visiting class: Diagram
+    From: Scope as property: Diagram.sections
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: IfteExpr
+      From: ExprBlock as property: IfteExpr.expr
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.cond_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.then_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: IfteExpr as property: PortExpr.else_expr
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: PathIdExpr
+      From: ExprBlock as property: PathIdExpr.expr
+      visiting class: PathIdentifier
+       From: PathIdExpr as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Block
+     From: Diagram as property: Block.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Block as property: Lunum.lunum
+     visiting class: PathIdOpCall
+      From: Block as property: PathIdOpCall.instance
+      visiting class: PathIdentifier
+       From: PathIdOpCall as property: PathIdentifier.path_id
+       visiting class: Identifier
+        From: PathIdentifier as property: Identifier.path_id
+    visiting class: DefBlock
+     From: Diagram as property: DefBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: DefBlock as property: Lunum.lunum
+     visiting class: EquationLHS
+      From: DefBlock as property: EquationLHS.lhs
+      visiting class: LHSItem
+       From: EquationLHS as property: LHSItem.lhs_items
+       Object name:: Throttle
+       visiting class: Identifier
+        From: LHSItem as property: Identifier.id
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: Bar
+      From: ExprBlock as property: Bar.locals
+      Object luid:: None
+      visiting class: Lunum
+       From: Bar as property: Lunum.lunum
+      visiting class: GroupOperation
+     visiting class: BinaryExpr
+      From: ExprBlock as property: BinaryExpr.expr
+      visiting class: BinaryOp
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.left
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: PortExpr
+       From: BinaryExpr as property: PortExpr.right
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: ExprBlock
+     From: Diagram as property: ExprBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: ExprBlock as property: Lunum.lunum
+     visiting class: Literal
+      From: ExprBlock as property: Literal.expr
+    visiting class: SectionBlock
+     From: Diagram as property: SectionBlock.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: LetSection
+      From: SectionBlock as property: LetSection.section
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: GroupAdaptation
+       From: Connection as property: GroupAdaptation.adaptation
+       visiting class: GroupRenaming
+        From: GroupAdaptation as property: GroupRenaming.renamings
+        visiting class: Identifier
+         From: GroupRenaming as property: Identifier.source
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: GroupAdaptation
+       From: Connection as property: GroupAdaptation.adaptation
+       visiting class: GroupRenaming
+        From: GroupAdaptation as property: GroupRenaming.renamings
+        visiting class: Identifier
+         From: GroupRenaming as property: Identifier.source
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+    visiting class: Wire
+     From: Diagram as property: Wire.objects
+     Object luid:: None
+     visiting class: Pragma
+     visiting class: Lunum
+      From: Wire as property: Lunum.lunum
+     visiting class: Connection
+      From: Wire as property: Connection.source
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+      visiting class: GroupAdaptation
+       From: Connection as property: GroupAdaptation.adaptation
+       visiting class: GroupRenaming
+        From: GroupAdaptation as property: GroupRenaming.renamings
+        visiting class: Identifier
+         From: GroupRenaming as property: Identifier.source
+     visiting class: Connection
+      From: Wire as property: Connection.targets
+      visiting class: PortExpr
+       From: Connection as property: PortExpr.port
+       Object luid:: None
+       visiting class: Lunum
+        From: PortExpr as property: Lunum.lunum
+ visiting class: TypeDeclarations
+  From: ModuleBody as property: TypeDeclarations.declarations
+  visiting class: TypeDecl
+   From: TypeDeclarations as property: TypeDecl.types
+   Object name:: tCruiseState
+   visiting class: Identifier
+    From: TypeDecl as property: Identifier.id
+   visiting class: EnumTypeDefinition
+    From: TypeDecl as property: EnumTypeDefinition.definition
+    visiting class: Identifier
+     From: EnumTypeDefinition as property: Identifier.tags
+    visiting class: Identifier
+     From: EnumTypeDefinition as property: Identifier.tags
+    visiting class: Identifier
+     From: EnumTypeDefinition as property: Identifier.tags
+    visiting class: Identifier
+     From: EnumTypeDefinition as property: Identifier.tags
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: SpeedInc
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: SpeedMax
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: SpeedMin
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: SpeedZero
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: PercentZero
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: PedalMin
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value
+ visiting class: ConstDeclarations
+  From: ModuleBody as property: ConstDeclarations.declarations
+  visiting class: ConstDecl
+   From: ConstDeclarations as property: ConstDecl.constants
+   Object name:: ThrottleMax
+   visiting class: Identifier
+    From: ConstDecl as property: Identifier.id
+   visiting class: TypeReferenceExpression
+    From: ConstDecl as property: TypeReferenceExpression.type
+    visiting class: PathIdentifier
+     From: TypeReferenceExpression as property: PathIdentifier.alias
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+     visiting class: Identifier
+      From: PathIdentifier as property: Identifier.path_id
+   visiting class: Literal
+    From: ConstDecl as property: Literal.value

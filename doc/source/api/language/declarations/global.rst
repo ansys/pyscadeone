@@ -57,7 +57,7 @@ A :py:class:`GroupTypeExpression` can be:
     with :py:class:`NamedGroupTypeExpression` instances.
 
 
-.. figure:: _svg/group_type_expr.svg
+.. figure:: group_type_expr.svg
 
 
 .. autoclass:: GroupDecl

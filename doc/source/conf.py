@@ -5,7 +5,6 @@
 from datetime import datetime
 import sys
 from pathlib import Path
-import subprocess
 
 src = Path(__file__).parents[2] / "src"
 if not src.exists():
@@ -43,11 +42,6 @@ supported_versions.write_text(FormatVersions.get_versions())
 # exclude traditional Python prompts from the copied code
 copybutton_prompt_text = r">>> ?|\.\.\. "
 copybutton_prompt_is_regexp = True
-
-# PlantUML configuration
-plantumljar = Path(__file__).parents[2] / "plantuml.jar"
-plantuml = f'java -jar "{plantumljar}"'
-plantuml_output_format = "svg"
 
 # Sphinx extensions
 
@@ -129,7 +123,7 @@ html_short_title = html_title = "PyScadeOne"
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/ansys/pyscadeone",
+    "github_url": "https://github.com/pyansys/pyscadeone",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
@@ -160,51 +154,3 @@ jinja_contexts = {
     "guide_ctx": {"full_guide": config["full_guide"]},
     "clock_ctx": {"clock": config["clock"]},
 }
-
-# PlantUML activation
-# PlantUML sphinx extension is not working, as it generates
-# a random error when attempting to rename a file
-# https://github.com/sphinx-contrib/plantuml/issues/94
-# On the other hand, online use is not recommended.
-# We generate the PlantUML diagrams offline and include them as images.
-# How it works:
-# - given a folder 'dir' with .rst files:
-# - plantuml (.puml) files are in 'dir', with the .rst files
-# - the script below generates the .svg files in the 'dir/_svg' folder
-# - the .rst file includes the .svg files as ".. figure:: _svg/file.svg"
-# - Project Makefile has a target 'clean_svg' to remove the _svg folders
-print("Generating PlantUML SVG in _svg folders")
-doc_sources = Path(__file__).parents[2] / "doc" / "source"
-svg_counter = 0
-svg_untouched = 0
-puml_counter = 0
-svg_errors = 0
-for puml in doc_sources.glob("**/*.puml"):
-    puml_counter += 1
-    out_dir = puml.parent / "_svg"
-    out_dir.mkdir(exist_ok=True)
-    svg = out_dir / (puml.stem + ".svg")
-    if svg.exists() and svg.stat().st_mtime > puml.stat().st_mtime:
-        svg_untouched += 1
-        continue
-    print(f"Processing {puml.relative_to(doc_sources)}", end=" ")
-    uml = puml.read_text()
-    proc = subprocess.run(
-        ["java", "-jar", plantumljar, "-tsvg", "-pipe"],
-        text=True,
-        input=uml,
-        capture_output=True,
-    )
-    if proc.returncode == 0:
-        svg.write_text(proc.stdout)
-        svg_counter += 1
-        print("done")
-    else:
-        svg_errors += 1
-        print(f"Error: {proc.stderr}")
-print(f"PlantUML files {puml_counter}")
-print(
-    f"SVG files: kept: {svg_untouched}, new: {svg_counter}, err: {svg_errors}, "
-    f"total: {svg_counter + svg_untouched}"
-)
-assert svg_errors == 0, "PlantUML to SVG conversion failed"

@@ -7,7 +7,7 @@ This class is the entry point to other APIs to manipulate project and Swan model
 
 Here is the class diagram showing the relationships between classes.
 
-.. figure:: _svg/overview.svg
+.. figure:: overview.svg
    
 A *ScadeOne* instance is created as follows:
 

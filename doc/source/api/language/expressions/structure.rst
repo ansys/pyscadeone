@@ -17,7 +17,7 @@ Structure
     * - **_ with .l** (Functional update)
       - See :doc:`update`    
 
-.. figure:: _svg/structure.svg
+.. figure:: structure.svg
   
 
 .. autoclass:: StructConstructor

@@ -16,14 +16,14 @@ as instances of :py:class:`StateMachineItem`.
 
 The following figure shows the classes hierarchy when one uses states with transitions syntax. 
 
-.. figure:: _svg/states_with_transitions.svg
+.. figure:: states_with_transitions.svg
     
     States with transitions
 
 The following figure shows the classes hierarchy when one uses states without transitions and
 separate transition declaration syntax. 
 
-.. figure:: _svg/states_and_transitions.svg
+.. figure:: states_and_transitions.svg
 
     States and transition declarations
 

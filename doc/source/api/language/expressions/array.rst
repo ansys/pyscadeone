@@ -34,7 +34,7 @@ the syntax given in the Scade One documentation.
     * - **pack**
       - See `Other Array Operations`_
      
-.. figure:: _svg/array_operations.svg
+.. figure:: array_operations.svg
   
 
 Array Operations

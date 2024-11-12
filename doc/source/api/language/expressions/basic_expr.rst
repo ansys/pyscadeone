@@ -10,7 +10,7 @@ Unary and binary expressions are implemented with the :py:class:`UnaryExpr` and 
 
 N-ary expressions correspond to specific operator instance calls which use the :py:class:`NaryOp` enumeration.
 
-.. figure:: _svg/arithmetic.svg
+.. figure:: arithmetic.svg
 
 
 .. list-table:: Operators

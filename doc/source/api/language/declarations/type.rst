@@ -15,7 +15,7 @@ Type definitions
 
 The class hierarchy of type definition is shown in the next figure:
 
-.. figure:: _svg/type_defs.svg
+.. figure:: type_defs.svg
 
   Type definitions class diagram
 
@@ -65,7 +65,7 @@ a :py:class:`ExprTypeDefinition` instance which contains the type expression
 as a :py:class:`TypeExpression` instance. The :py:class:`TypeExpression` is the
 base class for the type expressions given by the following figure:
 
-.. figure:: _svg/type_expr.svg
+.. figure:: type_expr.svg
 
   Type expressions class diagram
 

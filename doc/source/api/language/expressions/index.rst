@@ -8,7 +8,7 @@ Protected expressions are implemented as :py:class:`ProtectedExpr`.
 
 Groups as defined in :ref:`sec_group` are also :py:class:`Expression`.
 
-.. figure:: _svg/protected_expr.svg
+.. figure:: protected_expr.svg
 
 .. autoclass:: Expression
 

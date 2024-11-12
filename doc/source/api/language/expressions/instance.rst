@@ -7,7 +7,7 @@ An :py:class:`OperatorInstance` object is an :py:class:`Expression` object
 representing an operator instance call, the called operator being represented 
 by an instance of the top-level class :py:class:`OperatorBase`
 
-.. figure:: _svg/instance.svg
+.. figure:: instance.svg
 
   Operator instance class diagram
 
@@ -15,7 +15,7 @@ by an instance of the top-level class :py:class:`OperatorBase`
 Higher-order operations (operations using an operator as parameter) are 
 represented by instances of the :py:class:`OperatorExpression` class.
 
-.. figure:: _svg/instance_ho.svg
+.. figure:: instance_ho.svg
   
   Operator higher-order class diagram
 

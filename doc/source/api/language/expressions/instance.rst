@@ -89,7 +89,7 @@ Partial Operator Instance
 N-Ary Operator Instance
 -----------------------
 
-N-ary operator instances are implemented as specific expressions. See :ref:`sec_n_ary_expr` section.
+N-ary operator instances are implemented as specific expressions. See :ref:`ref_n_ary_expr` section.
 
 
 Operator Expressions

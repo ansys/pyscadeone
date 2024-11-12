@@ -1,4 +1,4 @@
-.. _sec_global_decl:
+.. _ref_global_decl:
 
 Global Declarations
 ===================
@@ -40,7 +40,7 @@ Sensors
 
 .. autoclass:: SensorDeclarations
 
-.. _sec_group_decl:
+.. _ref_group_decl:
 
 Groups
 ------

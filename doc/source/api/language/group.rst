@@ -1,4 +1,4 @@
-.. _sec_group:
+.. _ref_group:
 
 Group
 =====

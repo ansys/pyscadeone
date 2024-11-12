@@ -1,4 +1,4 @@
-.. _sec_swan_api:
+.. _ref_swan_api:
 
 *************
 Swan Language

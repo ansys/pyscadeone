@@ -37,4 +37,4 @@ PyScadeOne uses the **ScadeOneException** exception when an error occurs from th
 Errors, warnings, etc. are logged into the `'pyscadeone.log` file located in the 
 folder where the script is launched.
 
-Check out section :ref:`sec_modeler` for more details. 
+Check out section :ref:`ref_modeler` for more details. 

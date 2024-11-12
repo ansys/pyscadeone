@@ -14,7 +14,7 @@ the syntax given in the Scade One documentation.
     * - **^** (Repetition)
       - :py:class:`ArrayRepetition`
     * - **@** (Concatenation)
-      - See :ref:`sec_bin_expr` and :ref:`sec_n_ary_expr`
+      - See :ref:`ref_bin_expr` and :ref:`ref_n_ary_expr`
     * - **[_]** (Array constructor)
       - :py:class:`ArrayConstructor`
     * - **.[i]** (Projection)

@@ -1,4 +1,4 @@
-.. _sec_sd_converter:
+.. _ref_sd_converter:
 
 ========================
 SCADE Suite STP Importer

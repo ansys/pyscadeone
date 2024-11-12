@@ -15,117 +15,116 @@ PyScadeOne
 
 Overview
 ________
-The PyScadeOne project provides a Pythonic interface to Scade One.
+PyScadeOne is a Python library for the
+`Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_:superscript:`TM`
+model-based development environment.
+
+This library allows:
+
+- data access
+
+  - reading projects and navigating in models
+  - reading and editing simulation data files
+  - reading test results
+  - reading information about the generated code
+
+- ecosystem integration
+
+  - importing `SCADE Test <https://www.ansys.com/products/embedded-software/ansys-scade-test>`_ tests procedures
+  - exporting `FMI 2.0 <https://fmi-standard.org/>`_ components
 
 
-How to install
-______________
-Two installation modes are provided: user and developer.
+Documentation and issues
+------------------------
+Documentation for the latest stable release of PyScadeOne is hosted at
+`PyScadeOne documentation <https://scadeone.docs.pyansys.com/version/stable/>`_.
 
-For users
-~~~~~~~~~
-User installation can be performed by running:
+In the upper right corner of the documentation's title bar, there is an option
+for switching from viewing the documentation for the latest stable release to
+viewing the documentation for the development version or previously released
+versions.
 
-    python -m pip install pyscadeone
 
-PyScadeOne requires `.NET runtime 8.0.6 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>`.
+On the
+`PyScadeOne Issues <https://github.com/ansys/pyscadone/issues>`_
+page, you can create issues to report bugs and request new features.
+On the
+`PyScadeOne Discussions <https://github.com/ansys/pyscadone/discussions>`_
+page, you can post questions, share ideas, and get community feedback.
+
+To reach the project support team, email
+`pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
+
+
+Installation
+------------
+The  ``ansys-scadeone-core`` package supports Python 3.7 through Python 3.12 on Windows and Linux.
+
+Install the latest release from `PyPI <https://pypi.org/project/ansys-scadeone-core/>`_ with:
+
+.. code:: console
+
+    pip install ansys-scadeone-core
+
+Dependencies
+------------
+
+PyScadeOne requires
+`.NET runtime 8.0 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>`_.
+
 
 For developers
-~~~~~~~~~~~~~~
-Installing PyScadeOne in developer mode allows to modify the source and enhance it. Before contributing to the project,
-please refer to the `PyAnsys Developer's guide <https://dev.docs.pyansys.com/>`.
-
-You will need to follow these steps:
-
-1. Start by cloning this repository:
+--------------
+If you plan on doing local *development* of PyScadeOne with Git, install
+the latest release with:
 
 .. code:: console
 
-        git clone https://github.com/pyansys/pyscadeone
-
-2. Create a fresh-clean Python environment and activate it. Refer to the
-   official `venv <https://docs.python.org/3/library/venv.html>` documentation if you require further information:
-
-.. code:: console
-
-        # Create a virtual environment
-        python -m venv .venv
-
-        # Activate it in a POSIX system
-        source .venv/bin/activate
-
-        # Activate it in Windows CMD environment
-        .venv\Scripts\activate.bat
-
-        # Activate it in Windows Powershell
-        .venv\Scripts\Activate.ps1
-
-3. Make sure you have the latest version of `pip <https://pypi.org/project/pip/>`:
-
-.. code:: console
-
-    python -m pip install -U pip
-
-4. Install `flit <https://flit.pypa.io/en/stable/index.html>`
-
-.. code:: console
-
-    pip install flit
-
-5. Install the project in editable mode, with all development required packages:
-
-.. code:: console
-
-    flit install --pth_file # Windows/Linux
-    flit install --symlink  # Linux only (preferred)
+   git clone https://github.com/ansys/pyscadeone.git
+   cd pyscadeone
+   pip install pip -U
+   pip install -e .
 
 
-6. Finally, verify your development installation by running:
 
-.. code:: console
+Getting started
+---------------
 
-    pytest
+To use the PyScadeOne library, create a ``ScadeOne`` object:
 
-**Note**
+.. code:: python
 
-These commands (and others) are grouped in the ``Makefile``. Try:
+    from ansys.scadeone.core import ScadeOne
 
-.. code:: console
+    my_project = "some_project.sproj"
 
-    make help
+    with ScadeOne() as app:
+        # load a project
+        project = app.load_project(my_project)
+        # explore project resources: dependencies, files, ...
+        swan_model = app.model
+        # explore the Swan model, read data, ...
 
-to get the targets for setup, build, checks, ...
+If your model uses the libraries provided with the Scade One installation,
+you must create the ``ScadeOne`` object with the path to the Scade One installation:
 
-Style and Testing
-_________________
+.. code:: python
 
-If required, you can always call the style commands (`black <https://github.com/psf/black>`,
-`isort <https://github.com/PyCQA/isort>`, `flake8 <https://flake8.pycqa.org/en/latest/>`...)
-or unit testing ones (`pytest <https://docs.pytest.org/en/stable/>`) from the command line.
+    scadeone_path = "C:/Program Files/Ansys/v251/ScadeOne"
 
-Documentation
-_____________
+    with ScadeOne(install=scadeone_path) as app:
+        ...
 
-For building documentation, you can either run the usual rules provided in the
-`Sphinx <https://www.sphinx-doc.org/en/master/>` ``doc/Makefile``, such as:
-
-.. code:: console
-
-    make -C doc/ html
-
-    # then open the documentation with (under Linux):
-    your_browser_name doc/html/index.html
-
-    # then open the documentation with (under Windows):
-    start doc/html/index.html
+For examples on how to use PyScadeOne, see the
+`Examples <https://scadeone.docs.pyansys.com/version/stable/examples/index.html>`_
+in the PyScadeOne documentation.
 
 License and acknowledgments
-___________________________
+---------------------------
 
 PyScadeOne is licensed under the MIT license.
 
-PyScadeOne makes no commercial claim over Ansys whatsoever. This tool extends the functionality of Scade One by adding
-a Python interface to the Scade One service without changing the core behavior or license of the original software.
-The use of the PyScadeOne requires a legally licensed local copy of Scade One.
 
-To get a copy of Scade One, visit the`Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>` page on the Ansys webside.
+For more information about Ansys Scade One, see the
+`Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_
+page on the Ansys website.

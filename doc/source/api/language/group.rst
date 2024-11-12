@@ -5,7 +5,7 @@ Group
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-Groups can be declared using the **group** :ref:`declaration <sec_group_decl>`.
+Groups can be declared using the **group** :ref:`declaration <ref_group_decl>`.
 
 Groups are used either as a list of group items or as adaptation of an expression
 may for groups.

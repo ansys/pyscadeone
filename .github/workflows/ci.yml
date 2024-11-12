@@ -13,7 +13,12 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   PYTHON_VERSION: '3.10'
-  LIBRARY_NAME: 'ansys-scade-{{Base}}'
+  LIBRARY_NAME: 'ansys-pyscadeone-core'
+  DOCUMENTATION_CNAME: 'docs.ansys.pyscadeone.core'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 

@@ -1,0 +1,48 @@
+repos:
+
+- repo: https://github.com/psf/black
+  rev: 24.10.0
+  hooks:
+  - id: black
+
+- repo: https://github.com/pycqa/isort
+  rev: 5.13.2
+  hooks:
+  - id: isort
+
+- repo: https://github.com/PyCQA/flake8
+  rev: 7.1.1
+  hooks:
+  - id: flake8
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.3.0
+  hooks:
+  - id: codespell
+    exclude: "^(docker/|pyproject.toml)"
+
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.3.0
+  hooks:
+  - id: pydocstyle
+    additional_dependencies: [toml]
+    exclude: "^(tests/|examples/)"
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+  - id: check-merge-conflict
+  - id: trailing-whitespace
+
+- repo: https://github.com/ansys/pre-commit-hooks
+  rev: v0.4.3
+  hooks:
+    - id: add-license-headers
+      files: '(src|examples|tests|docker)/.*\.(py)|\.(proto)'
+      args:
+      - --start_year=2023
+
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.29.4
+  hooks:
+    - id: check-github-workflows

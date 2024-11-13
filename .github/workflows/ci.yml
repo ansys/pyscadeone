@@ -23,7 +23,7 @@ concurrency:
 jobs:
 
   code-style:
-    name: "Code_style"
+    name: Code style
     runs-on: ubuntu-latest
     steps:
       - uses: ansys/actions/code-style@v8
@@ -31,15 +31,15 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
   doc-style:
-    name: "Doc_style"
+    name: Doc style
     runs-on: ubuntu-latest
     steps:
       - uses: ansys/actions/doc-style@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-  docs_build:
-    name: Build Documentation
+  doc-build:
+    name: Doc building
     needs: [doc-style]
     runs-on: [ubuntu-latest]
     steps:
@@ -47,7 +47,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-  build:
+  build-library:
     name: Build
     if: ${{ !contains(github.event.pull_request.title, '[skip tests]') }}
     needs: [code-style]

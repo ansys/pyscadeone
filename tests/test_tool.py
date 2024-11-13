@@ -29,6 +29,7 @@ import ansys.scadeone.core.swan as Swan
 reWS = re.compile(r"[ \r\n\t\f]")
 reText = re.compile(r"^\s*(?:\{text%|%text\})", re.M)
 
+
 def check_string(reference: str, new: str) -> Union[str, None]:
     """Check if two strings from Swan source and API result are 'equal'
 
@@ -136,6 +137,7 @@ def check(project=None, swan=None):
         return f"Exception:\n{e}"
 
     return None
+
 
 # %% Your test goes here
 

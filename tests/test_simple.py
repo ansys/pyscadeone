@@ -63,4 +63,3 @@ class TestApp:
             SwanString("/* some code */").check_swan_version()
         assert str(exc_info.value) == "No version information found."
         assert type(exc_info.value).__name__ == "ScadeOneException"
-        

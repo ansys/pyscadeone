@@ -1,4 +1,4 @@
-.. _sec_op_decl:
+.. _ref_op_decl:
 
 Operator Declaration
 ====================

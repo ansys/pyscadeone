@@ -1,4 +1,4 @@
-.. _sec_simdata:
+.. _ref_simdata:
 
 ===============
 Simulation Data

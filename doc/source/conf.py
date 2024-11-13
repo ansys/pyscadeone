@@ -136,14 +136,14 @@ html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
-html_css_files = [
-    "custom.css",
-]
+html_css_files = []
 
 autodoc_default_options = {
     "members": True,
     "member-order": "groupwise",
     # 'undoc-members': True,
+    """_summary_
+    """
     "exclude-members": "__weakref__",
     "inherited-members": True,
     "show-inheritance": True,

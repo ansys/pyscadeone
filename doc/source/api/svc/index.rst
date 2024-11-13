@@ -1,4 +1,4 @@
-.. _sec_svc:
+.. _ref_svc:
 
 ========
 Services

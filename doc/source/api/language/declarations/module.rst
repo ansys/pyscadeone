@@ -11,7 +11,7 @@ in an other module/interface.
 .. figure:: module.svg
    
 
-See also :ref:`sec_op_decl` and :ref:`sec_global_decl`.
+See also :ref:`ref_op_decl` and :ref:`ref_global_decl`.
 
 .. .. autoclass:: Module
 

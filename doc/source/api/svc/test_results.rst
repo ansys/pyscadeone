@@ -1,4 +1,4 @@
-.. _sec_test_results:
+.. _ref_test_results:
 
 Test Results
 ============

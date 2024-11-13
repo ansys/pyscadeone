@@ -66,5 +66,5 @@ and get its model.
         swan_model = project.model
         # do something nice with the swan model
     
-More details can be found in :ref:`Modeler <sec_modeler>` section,
-and in :ref:`API <sec_api>` sections.
+More details can be found in :ref:`Modeler <ref_modeler>` section,
+and in :ref:`API <ref_api>` sections.

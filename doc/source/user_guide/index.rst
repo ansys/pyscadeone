@@ -1,4 +1,4 @@
-.. _sec_user_guide:
+.. _ref_user_guide:
 
 ==========
 User Guide

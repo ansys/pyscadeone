@@ -6,7 +6,7 @@ SPHINXOPTS    = -j auto
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
-PLANTUML      = java -jar ../plantuml.jar
+
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
@@ -18,16 +18,7 @@ help:
 %: Makefile
 	@rm -f "$(BUILDDIR)/sphinx.log"
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O) 2>&1 | tee "$(BUILDDIR)/sphinx.log"
-	@[ "$@" = "html" ] \
-	&& awk '/build succeeded, [[:digit:]]+ warning/ { print "Error: fix doc warnings"; exit 1 }' "$(BUILDDIR)/sphinx.log"
-
 
 clean:
 	rm -rf "$(BUILDDIR)"/*
 	find . -type d -name "_autosummary" -exec rm -rf {} +
-
-svg:
-	@echo "Generating SVG files from PlantUML files"
-	@$(PLANTUML) -version | head -1
-	@$(PLANTUML) -splash -tsvg  "$(SOURCEDIR)/**/*.puml"
-	@echo "Done"

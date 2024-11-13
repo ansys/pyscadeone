@@ -512,8 +512,8 @@ class Identifier(SwanItem, PragmaBase):
         return self._is_valid
 
     @property
-    def must_be_protected(self) -> bool:
-        """Returns true when Identifier must be protected (not valid)."""
+    def is_protected(self) -> bool:
+        """Returns true when Identifier is protected."""
         return not self.is_valid
 
     @property
@@ -536,8 +536,7 @@ class Identifier(SwanItem, PragmaBase):
             pragmas = " ".join([str(p) for p in self.pragmas]) + " "
         else:
             pragmas = ""
-        value = self.value if self.is_valid else Markup.to_str(self.value)
-        return f"{pragmas}{value}"
+        return f"{pragmas}{self.value}"
 
 
 class PathIdentifier(SwanItem):

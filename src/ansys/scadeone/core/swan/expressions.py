@@ -515,14 +515,8 @@ class GroupConstructor(common.Expression):
         return f"({self.group})"
 
 
-class GroupRenamingBase(common.SwanItem):
-    """Group Renaming Base"""
-
-    pass
-
-
-class GroupRenaming(GroupRenamingBase):
-    """Group Renaming: (( Id | Integer)) [: [Id]].
+class GroupRenaming(common.SwanItem):
+    """Group renaming: (( Id | Integer)) [: [Id]].
 
     - Renaming source index as Id or Integer, either a name or a position. For example: *a* or 2.
     - Optional renaming target index:
@@ -592,7 +586,7 @@ class GroupRenaming(GroupRenamingBase):
         return renaming
 
 
-class ProtectedGroupRenaming(GroupRenamingBase, common.ProtectedItem):
+class ProtectedGroupRenaming(GroupRenaming, common.ProtectedItem):
     """Specific class when a renaming is protected for syntax error.
 
     Source is an adaptation such as: .( {syntax%renaming%syntax} ).

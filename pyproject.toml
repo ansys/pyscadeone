@@ -3,20 +3,19 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "ansys-scadeone"
+name = "ansys-scadeone-core"
 dynamic = ["version"]
 description = "Pythonic Ansys Scade One"
 readme = "README.rst"
 requires-python = ">=3.7,<4"
 license = { file = "LICENSE" }
-authors = [{ name = "ANSYS, Inc.", email = "pyansys.maintainers@ansys.com" }]
-maintainers = [
-    { name = "Scade One developers", email = "xavier.fornari@ansys.com" },
-    #    {name = "ANSYS, Inc.", email = "pyansys.maintainers@ansys.com"}
-]
+authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -29,6 +28,7 @@ classifiers = [
 ]
 dependencies = [
     # Indirect dependencies,
+    "attrs==24.2.0",
     "cffi==1.17.1",
     "clr-loader==0.2.6",
     "jsonschema-specifications==2023.12.1",
@@ -42,7 +42,6 @@ dependencies = [
     "platformdirs==4.3.2",
     "pyparsing==3.1.4",
     "pythonnet==3.0.4",
-    "typing==3.7.4.3",
     "typing_extensions==4.12.2",
 ]
 
@@ -60,10 +59,13 @@ doc = [
     "pytest-sphinx==0.5.0",
     "sphinx-jinja>=2.0.0",
 ]
-checks = ["codespell==2.2.6", "flake8==6.1.0", "pipdeptree==2.23.4"]
+checks = ["codespell==2.2.6", "flake8==6.1.0"]
 
 [project.urls]
 Source = "https://github.com/ansys/pyscadeone"
+Issues = "https://github.com/ansys/pyscadeone/issues"
+Documentation = "https://scadeone.docs.pyansys.com"
+Tracker = "https://github.com/ansys/pyscadeone/issues"
 
 [project.scripts]
 pyscadeone = "ansys.scadeone.core.cli:main"

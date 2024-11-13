@@ -162,7 +162,6 @@ cython_debug/
 .vscode/
 
 doc/source/api/_autosummary/
-doc/source/**/_svg/
 
 # Scade One
 #  Ignore output of jobs

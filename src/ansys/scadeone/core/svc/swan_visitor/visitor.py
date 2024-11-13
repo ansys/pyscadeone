@@ -920,7 +920,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """GroupRenaming visitor function. Should be overridden."""
         # Visit base class(es)
-        self.visit_GroupRenamingBase(swan_obj, owner, swan_property)
+        self.visit_SwanItem(swan_obj, owner, swan_property)
         # Visit properties
         if isinstance(swan_obj.source, swan.Identifier):
             self._visit(swan_obj.source, swan_obj, "source")
@@ -931,16 +931,6 @@ class SwanVisitor(ABC):
             self._visit(swan_obj.renaming, swan_obj, "renaming")
         if swan_obj.is_shortcut is not None:
             self.visit_builtin(swan_obj.is_shortcut, swan_obj, "is_shortcut")
-
-    def visit_GroupRenamingBase(
-        self,
-        swan_obj: swan.GroupRenamingBase,
-        owner: Union[Any, None],
-        swan_property: Union[str, None],
-    ) -> None:
-        """GroupRenamingBase visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, swan_property)
 
     def visit_GroupTypeExpression(
         self,
@@ -1563,7 +1553,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """ProtectedGroupRenaming visitor function. Should be overridden."""
         # Visit base class(es)
-        self.visit_GroupRenamingBase(swan_obj, owner, swan_property)
+        self.visit_GroupRenaming(swan_obj, owner, swan_property)
         self.visit_ProtectedItem(swan_obj, owner, swan_property)
 
     def visit_ProtectedItem(

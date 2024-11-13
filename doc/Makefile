@@ -18,3 +18,4 @@ help:
 %: Makefile
 	@rm -f "$(BUILDDIR)/sphinx.log"
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+

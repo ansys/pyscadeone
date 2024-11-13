@@ -26,19 +26,17 @@ jobs:
     name: "Code_style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@v5
+      - uses: ansys/actions/code-style@v8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          vale-version: "3.4.1"
 
   doc-style:
     name: "Doc_style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@v5
+      - uses: ansys/actions/doc-style@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          vale-version: "3.4.1"
+          token: ${{ secrets.GITHUB_TOKEN }}"
 
   docs_build:
     name: Build Documentation

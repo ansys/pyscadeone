@@ -97,13 +97,12 @@ def main():
     parser.add_argument("--formats", action="store_true", help="Shows supported formats")
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("-v", "--verbosity", action="count", default=0, 
-                       help="Activates verbose mode. Several occurrences increase verbosity level")
+    group.add_argument("-v", "--verbosity", action="count", default=0, help="Activates verbose mode. Several occurrences increase verbosity level")
 
     subparser = parser.add_subparsers(
         title="Sub-commands",
         help="Use: command --help for help (ex: pyscadeone fmu --help)",
-        dest="subparser_command"
+        dest="subparser_command",
     )
 
     # Script mode command

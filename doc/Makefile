@@ -17,9 +17,13 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	echo "debut"
-	echo $(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	echo "fin"
 
 # Customized clean due to examples gallery
 clean: 
 	rm -rf $(BUILDDIR)/*
+
+
+pdf:
+	@echo PDF not yet implemented

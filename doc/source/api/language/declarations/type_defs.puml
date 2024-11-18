@@ -1,0 +1,8 @@
+@startuml 
+' TypeDefinition
+skinparam groupInheritance 2 
+TypeDefinition <|-- ExprTypeDefinition
+TypeDefinition <|-- EnumTypeDefinition
+TypeDefinition <|-- VariantTypeDefinition
+TypeDefinition <|-- StructTypeDefinition
+@enduml

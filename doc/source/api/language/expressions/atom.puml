@@ -1,0 +1,11 @@
+@startuml
+' some atomic expressions
+    skinparam groupInheritance 2
+
+    Expression <|-- Literal
+    Expression <|-- PathIdExpr
+    Expression <|-- LastExpr
+    Expression <|-- LabelOrIndex
+    Expression <|-- PortExpr
+
+@enduml

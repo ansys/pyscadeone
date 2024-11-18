@@ -1,0 +1,18 @@
+{
+  "Version": "2.0",
+  "Kind": "Simulation",
+  "Properties": {
+    "RootDeclarations": [
+      ""
+    ],
+    "Name": "Simu",
+    "CustomArguments": "",
+    "FileScenario": "",
+    "SimulationInputType": "Harness",
+    "TestHarness": "",
+    "UseCycleTime": "False"
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

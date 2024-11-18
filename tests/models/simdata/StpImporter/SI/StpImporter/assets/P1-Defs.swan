@@ -1,0 +1,7 @@
+-- version swan: 2025.0 graph: 2.0
+type Convert = { rgb : RGB, flow : int32^3 };
+type RGB = enum {
+    R,
+    G,
+    B
+  };

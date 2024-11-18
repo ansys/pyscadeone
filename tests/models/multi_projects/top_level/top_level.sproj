@@ -1,0 +1,9 @@
+{
+  "Version": "1.0",
+  "Name": "top_level",
+  "Dependencies": [
+    "..\\sub_project_1\\sub_project_1.sproj",
+    "..\\sub_project_2\\sub_project_2.sproj"
+  ],
+  "Resources": []
+}

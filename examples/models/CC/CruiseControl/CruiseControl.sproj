@@ -1,0 +1,8 @@
+{
+  "Version": "1.0",
+  "Name": "CruiseControl",
+  "Dependencies": [
+    "..\\utils\\utils.sproj"
+  ],
+  "Resources": []
+}

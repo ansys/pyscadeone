@@ -1,0 +1,17 @@
+@startuml 
+' Diagram
+left to right direction
+skinparam groupInheritance 2
+
+Diagram *-- "*" DiagramObject
+DiagramObject <|-- ExprBlock
+DiagramObject <|-- DefBlock
+DiagramObject <|-- Block
+DiagramObject <|-- Bar
+DiagramObject <|-- SectionBlock
+DiagramObject <|-- DefByCaseBlock
+DiagramObject <|-- Wire
+DefByCaseBlock <|-- StateMachineBlock
+DefByCaseBlock <|-- ActivateIfBlock
+DefByCaseBlock <|-- ActivateWhenBlock
+@enduml

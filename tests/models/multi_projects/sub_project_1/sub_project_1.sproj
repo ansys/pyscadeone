@@ -1,0 +1,8 @@
+{
+  "Version": "1.0",
+  "Name": "sub_project_1",
+  "Dependencies": [
+    "..\\common\\common.sproj"
+  ],
+  "Resources": []
+}

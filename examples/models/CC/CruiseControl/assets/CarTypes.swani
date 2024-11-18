@@ -1,0 +1,8 @@
+-- version swan: 2025.0 graph: 2.0
+type tPercent = float32;
+
+type tRpm = float32;
+
+type tSpeed = float32;
+
+type tTorq = float32;

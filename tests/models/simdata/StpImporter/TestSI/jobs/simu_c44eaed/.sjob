@@ -1,0 +1,18 @@
+{
+  "Version": "2.0",
+  "Kind": "Simulation",
+  "Properties": {
+    "RootDeclarations": [
+      ""
+    ],
+    "Name": "SimulationJob0",
+    "CustomArguments": "",
+    "FileScenario": "",
+    "SimulationInputType": "Harness",
+    "TestHarness": "TestSI::harness0",
+    "UseCycleTime": "False"
+  },
+  "InputPaths": [
+    "assets/TestSI.swant"
+  ]
+}

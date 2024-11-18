@@ -1,0 +1,13 @@
+@startuml
+' higher-order
+left to right direction
+skinparam groupInheritance 2
+
+OperatorExpression <|-- Iterator
+OperatorExpression <|-- ActivateEvery
+OperatorExpression <|-- Restart
+OperatorExpression <|-- NaryOperator
+OperatorExpression <|-- AnonymousOperatorWithExpression
+OperatorExpression <|-- AnonymousOperatorWithDataDefinition
+
+@enduml

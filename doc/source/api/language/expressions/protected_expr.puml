@@ -1,0 +1,7 @@
+@startuml 
+' Protected Expression
+skinparam groupInheritance 2
+
+Expression <|-- ProtectedExpr
+
+@enduml

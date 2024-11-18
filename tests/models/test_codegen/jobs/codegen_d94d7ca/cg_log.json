@@ -1,0 +1,25 @@
+{
+"version" : "0.1",
+"log_entries": [
+{
+  "timestamp" : "2024-09-18T14:01:19Z",
+  "tool" : "SWAN-CG",
+  "severity" : "INFO",
+  "message_kind" : "cg_options",
+  "message" : {
+    "target" : "C",
+    "files" : [ "..\\..\\assets\\module0.swan", "..\\..\\assets\\module1.swan" ],
+    "roots" : [ "module0::oper_test_imp_node" ],
+    "target_dir" : "out",
+    "keep_asserts" : false,
+    "short_circuit" : false,
+    "wrap_c_ops" : false,
+    "significance_length" : 31,
+    "name_length" : 200,
+    "static_locals" : false,
+    "expansion" : [ "Expand", [ ] ],
+    "globals_prefix" : "",
+    "basic" : false
+  }
+}
+]}

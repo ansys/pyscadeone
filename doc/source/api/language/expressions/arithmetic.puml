@@ -1,0 +1,8 @@
+@startuml 
+' Arithmetic
+    Expression <|-- UnaryExpr
+    Expression <|-- BinaryExpr
+    Expression <|-- NumericCast
+    UnaryExpr -[hidden]d- NAryOperator
+    note right: See [[api/language/expressions/instance.html#ansys.scadeone.core.swan.OperatorExpression OperatorExpression]]
+@enduml

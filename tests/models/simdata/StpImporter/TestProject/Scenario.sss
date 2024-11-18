@@ -1,0 +1,51 @@
+##############################################################################
+#
+# Initialization Scenario Description
+#
+##############################################################################
+
+## inputs
+# Convert
+SSM::set Convert_In CONVERT_INIT
+SSM::check Convert_Out (P1::Defs::R,(0,0,0))
+
+
+# CMY
+SSM::set CMY_In C
+SSM::check CMY_Out C 
+# CMYArray
+SSM::set CMYArray_In (M,Y)
+SSM::check CMYArray_Out (M,Y)
+
+
+# String char^5
+SSM::set OP/Str_In {"B\x41\""}
+SSM::check OP/Str_Out {('B', 'A', '"', '\0', '\0')}
+
+## sensors
+# int32
+SSM::set IS -3
+# RGB 
+SSM::set _S P1::Defs::R
+
+
+SSM::set \
+   OP/Float_In \
+   +1.0
+
+
+SSM::cycle
+
+SSM::set CMYArray_In (C,Y)
+SSM::check CMYArray_Out (C,Y)
+
+SSM::cycle
+
+
+SSM::set OP/Float_In -10.0
+SSM::check OP/Float_Out -10.0 sustain=5
+SSM::cycle 5
+
+
+
+

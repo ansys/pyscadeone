@@ -1,0 +1,8 @@
+@startuml 
+' Selection
+skinparam groupInheritance 2
+
+Expression <|-- IfteExpr
+Expression <|-- CaseExpr
+
+@enduml

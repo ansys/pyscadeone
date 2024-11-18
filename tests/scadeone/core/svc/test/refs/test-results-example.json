@@ -1,0 +1,38 @@
+{
+  "$schema": "test-results-schema.json",
+  "version" : "1.0",
+  "test_cases" : [
+    { "harness" : "test1::harness1",
+      "start" : "2024-06-25T13:28:57.592",
+      "end" : "2024-06-25T13:28:57.593",
+      "status" : "failed",
+      "cycles_count" : 3,
+      "test_items" : [
+        { "kind" : "oracle", "model_path" : "oracle1/oStruct2", "passed_count" : 1,
+          "failures" : [
+            { "cycle" : 3, "actual" : "{f1:{1, 2}, f2:3.0}", "expected" : "{f1:{1, 2}, f2:43.0}",
+              "float32_atol": 1e-5, "float32_rtol": 0.01,
+              "float64_atol": 1e-9, "float64_rtol": 0.001,
+              "parts_error_paths" : [ ".f2" ]}
+          ]
+        },
+        { "kind" : "oracle", "model_path" : "oracle1/oStruct1Array23", "passed_count" : 2,
+          "failures" : [
+            { "cycle" : 3,
+              "actual" : "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:5, f2:6}, {f1:7, f2:8}], [{f1:9, f2:10}, {f1:11, f2:12}]]",
+              "expected" : "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:45, f2:46}, {f1:7, f2:8}], [{f1:49, f2:10}, {f1:11, f2:12}]]",
+              "float32_atol": 1e-5, "float32_rtol": 0.01,
+              "float64_atol": 1e-9, "float64_rtol": 0.001,
+              "parts_error_paths" : [ "[1][0]","[2][0].f1" ] }
+          ]
+        },
+        { "kind" : "assert", "model_path" : "test1::harness1/CHECK_O0_ROOT=", "passed_count" : 3 },
+        { "kind" : "assert", "model_path" : "test1::harness1/#inst1:CHECK_O0_IN_INSTANCE=", "passed_count" : 2,
+          "failures" : [
+            { "cycle" : 3 }
+          ]
+        }
+      ]
+    }
+  ]
+}

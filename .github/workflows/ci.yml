@@ -48,6 +48,7 @@ jobs:
       - uses: ansys/actions/doc-build@v8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          sphinxopts: -j auto -W -vv
 
   build-library:
     name: Build

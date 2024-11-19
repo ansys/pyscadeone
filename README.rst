@@ -14,7 +14,8 @@ PyScadeOne
    :alt: Black
 
 Overview
-________
+--------
+
 PyScadeOne is a Python library for the
 `Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_:superscript:`TM`
 model-based development environment.

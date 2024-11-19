@@ -173,8 +173,8 @@ class PPrinter(SwanVisitor):
 
         _decl = R.DBlock()
         _decl << pref
-            _decl << "@n"
-            _decl << R.doc_list(*[item << end for item in lst], sep="@n")
+        _decl << "@n"
+        _decl << R.doc_list(*[item << end for item in lst], sep="@n")
         return _decl
 
     def visit(self, swan_obj: S.Declaration):
@@ -1865,9 +1865,9 @@ class PPrinter(SwanVisitor):
             if _pgm:
                 _decl << R.doc_list(*_pgm, sep=" ") << " "
             _decl << R.text(swan_obj.value)
-        # Update property
-        PPrinter._update_property(owner, swan_property, _decl)
-            else:
+            # Update property
+            PPrinter._update_property(owner, swan_property, _decl)
+        else:
             owner.pprint_array[swan_property] = R.text(swan_obj.value)
 
     def visit_IfteExpr(
@@ -2316,7 +2316,7 @@ class PPrinter(SwanVisitor):
                     if _dc:
                         _decl << R.doc_list(*_dc, sep=R.DLineBreak(False))
                 else:
-                _dcl.append(swan_obj.pprint_array["declarations"])
+                    _dcl.append(swan_obj.pprint_array["declarations"])
             if _dcl:
                 _decl << R.doc_list(*_dcl, sep=R.DLineBreak(False))
                 _decl << R.DLineBreak(False)
@@ -2561,7 +2561,7 @@ class PPrinter(SwanVisitor):
             for item in swan_obj.path_id:
                 self._visit(item, swan_obj, "path_id")
                 if swan_obj.pprint_array["path_id"]:
-                _lst.append(swan_obj.pprint_array["path_id"])
+                    _lst.append(swan_obj.pprint_array["path_id"])
             (owner.pprint_array[swan_property] << R.doc_list(*_lst, sep="::"))
         elif self._is_builtin(swan_obj.path_id):
             self.visit_builtin(swan_obj.path_id1, swan_obj, "path_id")
@@ -3385,7 +3385,7 @@ class PPrinter(SwanVisitor):
             for item in swan_obj.type_vars:
                 self._visit(item, swan_obj, "type_vars")
                 _tv.append(swan_obj.pprint_array["type_vars"])
-                _decl << R.doc_list(*_tv, sep=", ")
+            _decl << R.doc_list(*_tv, sep=", ")
         elif SwanVisitor._is_builtin(swan_obj.type_vars):
             self.visit_builtin(swan_obj.type_vars, swan_obj, "type_vars")
             _decl << swan_obj.pprint_array["type_vars"]
@@ -3787,6 +3787,7 @@ class PPrinter(SwanVisitor):
             _decl << " _"
         else:
             _decl << " {}"
+
         # Update property
         PPrinter._update_property(owner, swan_property, _decl)
 

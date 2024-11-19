@@ -73,6 +73,9 @@ if not config["clock"]:
 # Make sure the target is unique for auto label
 # see: https://docs.readthedocs.io/en/stable/guides/cross-referencing-with-sphinx.html
 autosectionlabel_prefix_document = True
+suppress_warnings = [
+    'autosectionlabel.*',
+]
 
 # Intersphinx mapping
 intersphinx_mapping = {

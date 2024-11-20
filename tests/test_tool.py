@@ -1,7 +1,24 @@
-# This file should be used in an interactive Python interpreter
-# to play with the Scade One API.
-# It contains required code before calling API code
-# It can be used as a Notebook with VS
+# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from difflib import Differ
 
@@ -12,7 +29,7 @@ import re
 from typing import Union
 
 # %% Scade One imports
-log = Path.cwd() / 'pyscadeone.log'
+log = Path.cwd() / "pyscadeone.log"
 try:
     log.unlink(True)
 except:
@@ -26,11 +43,12 @@ from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as Swan
 
 # %% Helpers
-reWS = re.compile(r'[ \r\n\t\f]')
-reText = re.compile(r'^\s*(?:\{text%|%text\})', re.M)
+reWS = re.compile(r"[ \r\n\t\f]")
+reText = re.compile(r"^\s*(?:\{text%|%text\})", re.M)
+
 
 def check_string(reference: str, new: str) -> Union[str, None]:
-    """ Check if two strings from Swan source and API result are 'equal'
+    """Check if two strings from Swan source and API result are 'equal'
 
     Add version to new (to be enhanced)
 
@@ -46,14 +64,14 @@ def check_string(reference: str, new: str) -> Union[str, None]:
     Union[str, None]
         None if success, difference of text else
     """
-    smashed_ref = reWS.sub(' ', reference)
-    smashed_new = reWS.sub(' ', new)
+    smashed_ref = reWS.sub(" ", reference)
+    smashed_new = reWS.sub(" ", new)
     if smashed_new == smashed_ref:
         return None
     d = Differ()
     diff = d.compare(smashed_ref.split(), smashed_new.split())
     result = "\n".join(list(diff))
-    Path('test_tool.log').write_text(result)
+    Path("test_tool.log").write_text(result)
     return "Diff"
 
 
@@ -63,7 +81,7 @@ def check_module(module: Swan.Module):
     print(f"### {source}")
     source_str = source.read_text()
     # remove textual operator markups
-    source_str = reText.sub('', source_str)
+    source_str = reText.sub("", source_str)
 
     module_str = f"--version: {FormatVersions['swan']}\n"
     module_str += str(module)
@@ -94,9 +112,9 @@ def check_swan(swan: str) -> Union[None, str]:
 
     parser = SwanParser(LOGGER)
 
-    if swan_path.suffix == '.swan':
+    if swan_path.suffix == ".swan":
         rule = parser.module_body
-    elif swan_path.suffix == '.swani':
+    elif swan_path.suffix == ".swani":
         rule = parser.module_interface
     else:
         print(f"Unknown suffix: {swan_path.suffix}")
@@ -113,7 +131,7 @@ def check(project=None, swan=None):
         if project:
             project_path = Path(project)
             if project_path.is_dir():
-                project_path = project_path / (project_path.name + '.sproj')
+                project_path = project_path / (project_path.name + ".sproj")
             app = ScadeOne()
             project = app.load_project(project_path)
             if project:
@@ -136,6 +154,7 @@ def check(project=None, swan=None):
         return f"Exception:\n{e}"
 
     return None
+
 
 # %% Your test goes here
 

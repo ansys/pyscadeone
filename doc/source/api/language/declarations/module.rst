@@ -8,7 +8,7 @@ or a module interface. It also describes the class representing
 a *use* directive which is used to reference a module/interface
 in an other module/interface.
 
-.. figure:: _svg/module.svg
+.. figure:: module.svg
    
 
 See also :ref:`sec_op_decl` and :ref:`sec_global_decl`.

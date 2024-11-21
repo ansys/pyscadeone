@@ -10,7 +10,7 @@ Groups can be declared using the **group** :ref:`declaration <sec_group_decl>`.
 Groups are used either as a list of group items or as adaptation of an expression
 may for groups.
 
-.. figure:: _svg/group.svg
+.. figure:: group.svg
     
     Group class diagram
 

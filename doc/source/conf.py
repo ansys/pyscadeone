@@ -5,7 +5,6 @@
 from datetime import datetime
 import sys
 from pathlib import Path
-import subprocess
 
 src = Path(__file__).parents[2] / "src"
 if not src.exists():
@@ -176,38 +175,3 @@ jinja_contexts = {
 # - the script below generates the .svg files in the 'dir/_svg' folder
 # - the .rst file includes the .svg files as ".. figure:: _svg/file.svg"
 # - Project Makefile has a target 'clean_svg' to remove the _svg folders
-print("Generating PlantUML SVG in _svg folders")
-doc_sources = Path(__file__).parents[2] / "doc" / "source"
-svg_counter = 0
-svg_untouched = 0
-puml_counter = 0
-svg_errors = 0
-for puml in doc_sources.glob("**/*.puml"):
-    puml_counter += 1
-    out_dir = puml.parent / "_svg"
-    out_dir.mkdir(exist_ok=True)
-    svg = out_dir / (puml.stem + ".svg")
-    if svg.exists() and svg.stat().st_mtime > puml.stat().st_mtime:
-        svg_untouched += 1
-        continue
-    print(f"Processing {puml.relative_to(doc_sources)}", end=" ")
-    uml = puml.read_text()
-    proc = subprocess.run(
-        ["java", "-jar", plantumljar, "-tsvg", "-pipe"],
-        text=True,
-        input=uml,
-        capture_output=True,
-    )
-    if proc.returncode == 0:
-        svg.write_text(proc.stdout)
-        svg_counter += 1
-        print("done")
-    else:
-        svg_errors += 1
-        print(f"Error: {proc.stderr}")
-print(f"PlantUML files {puml_counter}")
-print(
-    f"SVG files: kept: {svg_untouched}, new: {svg_counter}, err: {svg_errors}, "
-    f"total: {svg_counter + svg_untouched}"
-)
-assert svg_errors == 0, "PlantUML to SVG conversion failed"

@@ -5,7 +5,7 @@ This section details the atoms of expressions: identifiers, literals, ...
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-.. figure:: _svg/atom.svg
+.. figure:: atom.svg
     
 
 Identifiers

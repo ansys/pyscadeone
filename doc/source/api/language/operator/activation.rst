@@ -10,7 +10,7 @@ Activate If
 The **activate if** operator uses a *tree* of conditional expressions. 
 The classes to represent the operator are organized as follows:
 
-.. figure:: _svg/activate_if.svg
+.. figure:: activate_if.svg
 
     Activate If class diagram   
 

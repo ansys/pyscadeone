@@ -8,7 +8,7 @@ The :py:mod:`ansys.scadeone.core` module must be referenced by scripts using PyS
 
 An instance of the :py:class:`ScadeOne` class gives access to project loading and model-related activities as shown in the next figure:
 
-.. figure:: _svg/scadeone.svg
+.. figure:: scadeone.svg
     
     ScadeOne class hierarchy
     

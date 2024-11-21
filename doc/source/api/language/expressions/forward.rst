@@ -5,12 +5,12 @@ Forward Expression
 
 A **forward** expression is stored as a :py:class:`Forward` class. The class hierarchy is given in the following pictures:
 
-.. figure:: _svg/forward.svg
+.. figure:: forward.svg
     
     Forward class diagram
 
 
-.. figure:: _svg/forward_return.svg
+.. figure:: forward_return.svg
     
     Forward return
 

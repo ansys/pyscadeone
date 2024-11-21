@@ -8,7 +8,7 @@ It contains the various blocks (see figure) and connections using
 :py:class:`Wire` instances.  
 
 
-.. figure:: _svg/diagram.svg
+.. figure:: diagram.svg
 
     Diagram class diagram
 

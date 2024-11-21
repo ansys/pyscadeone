@@ -17,6 +17,6 @@ Sequential
     * - **window** (Temporal window)
       - See :py:class:`Window`
 
-.. figure:: _svg/sequential.svg
+.. figure:: sequential.svg
   
 .. autoclass:: Window

@@ -5,7 +5,7 @@ Selection
 
 These expressions represent **if** and **case** expressions.
 
-.. figure:: _svg/selection.svg
+.. figure:: selection.svg
 
 
 if/then/else

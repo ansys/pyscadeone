@@ -126,8 +126,14 @@ class TestTestResults:
         assert len(test_item.failures) == 1
         failure = test_item.failures[0]
         assert failure.cycle == 3
-        assert failure.actual == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:5, f2:6}, {f1:7, f2:8}], [{f1:9, f2:10}, {f1:11, f2:12}]]"
-        assert failure.expected == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:45, f2:46}, {f1:7, f2:8}], [{f1:49, f2:10}, {f1:11, f2:12}]]"
+        assert (
+            failure.actual
+            == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:5, f2:6}, {f1:7, f2:8}], [{f1:9, f2:10}, {f1:11, f2:12}]]"
+        )
+        assert (
+            failure.expected
+            == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:45, f2:46}, {f1:7, f2:8}], [{f1:49, f2:10}, {f1:11, f2:12}]]"
+        )
         assert failure.float32_atol == 1e-5
         assert failure.float32_rtol == 0.01
         assert failure.float64_atol == 1e-9

@@ -1,0 +1,64 @@
+name: GitHub CI
+on:
+  pull_request:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+      - sync/*
+  workflow_dispatch:
+
+
+env:
+  MAIN_PYTHON_VERSION: '3.10'
+  PYTHON_VERSION: '3.10'
+  LIBRARY_NAME: 'ansys-scadeone-core'
+  DOCUMENTATION_CNAME: 'scadeone.docs.pyansys.com'
+  PACKAGE_NAMESPACE: 'ansys.cadeone.core'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  code-style:
+    name: Code style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/code-style@v8
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+  doc-style:
+    name: Doc style
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/doc-style@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  doc-build:
+    name: Doc building
+    #needs: [doc-style]
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: ansys/actions/doc-build@v8
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          sphinxopts: -j auto
+
+  build-library:
+    name: Build
+    if: ${{ !contains(github.event.pull_request.title, '[skip tests]') }}
+    needs: [code-style]
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - uses: ansys/actions/build-library@v8
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+

@@ -12,7 +12,7 @@ The name of the tool is **pyscadeone**. It has the following sub-commands and op
 Sub-commands:     
   - ``fmu``            generates an FMU. For more information, see :ref:`FMU Export`.
   - ``script``         executes given script or module. 
-  - ``simdata``        shows :ref:`ref_simdata` files (in combination with --show). 
+  - ``simdata``        shows :ref:`ref_simdata` files (in combination with --show).
 
 Use ``pyscadeone <command> --help`` for a specific *<command>* help.
 

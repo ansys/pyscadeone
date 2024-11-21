@@ -105,7 +105,7 @@ Unary operators are defined with the :py:class:`UnaryOp` enumeration.
 
 .. autoclass:: UnaryExpr
 
-.. _ref_bin_expr: 
+.. _ref_bin_expr:
 
 Binary Expressions
 ------------------
@@ -125,7 +125,7 @@ expression and a type.
 .. autoclass:: NumericCast
 
 
-.. _ref_n_ary_expr: 
+.. _ref_n_ary_expr:
 
 N-ary Expressions
 -----------------

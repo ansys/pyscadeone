@@ -32,7 +32,7 @@ This library allows:
 
       Learn how to install and run PyScadeOne.
       Check for supported versions.
- 
+
 
    .. grid-item-card:: :fa:`book` User guide
       :link: ref_user_guide
@@ -56,12 +56,12 @@ This library allows:
       :link-type: ref
 
       Explore examples that show how to use PyScadeOne. 
- 
+
 
    .. grid-item-card:: :fa:`users` Contribute
       :link: ref_contributing
       :link-type: ref
-
+  
       Learn how to contribute to the PyScadeOne codebase
       or documentation.
 

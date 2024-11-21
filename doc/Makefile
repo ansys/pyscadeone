@@ -20,7 +20,7 @@ help:
 
 # Customized clean due to examples gallery
 clean: 
-	rm -rf "$(BUILDDIR)""
+	rm -rf "$(BUILDDIR)"
 
 
 pdf:

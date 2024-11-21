@@ -5,34 +5,13 @@ User Guide
 ==========
 
 
-.. commented
+.. toctree::
+   :maxdepth: 2
 
-.. jinja:: guide_ctx
-
-   {% if full_guide %}
-
-   .. toctree::
-      :maxdepth: 2
-
-      overview
-      modeler
-      verifier
-      testing
-      coverage
-      toolbox
-      example
-      cli
-
-   {% else %}
-
-   .. toctree::
-      :maxdepth: 2
-
-      overview
-      modeler
-      example
-      cli
+..   overview
+..   modeler
+..   example
+..   cli
    
-   {% endif %}
 
    

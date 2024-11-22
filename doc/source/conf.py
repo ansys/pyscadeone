@@ -16,6 +16,7 @@ sys.path.append(str(src))
 linkcheck_ignore = [
     "https://scadeone.docs.pyansys.com/*",
     "https://github.com/ansys/pyscadeone/*",
+    "https://www.ansys.com/*",
 ]
 
 # Selection of documentation parts

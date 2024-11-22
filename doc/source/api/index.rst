@@ -17,9 +17,9 @@ to consult the API documentation.
 .. toctree::
    :maxdepth: 2
 
-   scadeone
-   project
-   model
-   language/index
-   svc/index
-   utils
+   .. scadeone
+   .. project
+   .. model
+   .. language/index
+   .. svc/index
+   .. utils

@@ -13,8 +13,9 @@ built up on the low-level data structures representing a Swan model, a project, 
    navigation/index
    generated_code
    simdata
-   stpimporter
-
+   test_results
+   
+.. stpimporter
 
 .. test_results
 .. fmu_export

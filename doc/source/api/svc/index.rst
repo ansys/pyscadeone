@@ -11,9 +11,8 @@ built up on the low-level data structures representing a Swan model, a project, 
    :maxdepth: 2
 
    navigation/index
-
-.. generated_code
-.. simdata
-.. stpimporter
-.. test_results
-.. fmu_export
+   generated_code
+   simdata
+   stpimporter
+   test_results
+   fmu_export

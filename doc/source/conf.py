@@ -11,19 +11,17 @@ if not src.exists():
     raise Exception(f"Cannot find sources: {src}")
 sys.path.append(str(src))
 
+# FIXME: to be removed when the documentation is published
+# For now, we ignore the following links when checking for broken links
+linkcheck_ignore = [
+    "https://scadeone.docs.pyansys.com/*",
+    "https://github.com/ansys/pyscadeone/*",
+]
 
 # Selection of documentation parts
 config = {}
-config["full_guide"] = False
-config["guide_exclude"] = [
-    "user_guide/coverage.rst",
-    "user_guide/testing.rst",
-    "user_guide/verifier.rst",
-    "user_guide/toolbox.rst",
-]
 config["clock"] = False
 config["clock_exclude"] = ["api/language/clock.rst"]
-
 
 from ansys.scadeone.core import version_info  # noqa
 from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
@@ -58,9 +56,71 @@ extensions = [
 ]
 
 
-exclude_patterns = []
-if not config["full_guide"]:
-    exclude_patterns.extend(config["guide_exclude"])
+exclude_patterns = [
+    #     "api/index.rst",
+    "api/language/clock.rst",
+    "api/language/declarations/common.rst",
+    "api/language/declarations/global.rst",
+    "api/language/declarations/index.rst",
+    "api/language/declarations/module.rst",
+    "api/language/declarations/type.rst",
+    "api/language/expressions/array.rst",
+    "api/language/expressions/atom.rst",
+    "api/language/expressions/basic_expr.rst",
+    "api/language/expressions/composite.rst",
+    "api/language/expressions/forward.rst",
+    "api/language/expressions/index.rst",
+    "api/language/expressions/instance.rst",
+    "api/language/expressions/selection.rst",
+    "api/language/expressions/sequential.rst",
+    "api/language/expressions/structure.rst",
+    "api/language/expressions/update.rst",
+    "api/language/expressions/variant.rst",
+    "api/language/group.rst",
+    "api/language/index.rst",
+    "api/language/operator/activation.rst",
+    "api/language/operator/automaton.rst",
+    "api/language/operator/diagram.rst",
+    "api/language/operator/equation.rst",
+    "api/language/operator/index.rst",
+    "api/language/operator/operator.rst",
+    "api/language/operator/other_sections.rst",
+    "api/language/operator/var.rst",
+    "api/model.rst",
+    "api/project.rst",
+    "api/scadeone.rst",
+    "api/svc/fmu_export.rst",
+    "api/svc/generated_code.rst",
+    "api/svc/index.rst",
+    "api/svc/navigation/diagram.rst",
+    "api/svc/navigation/index.rst",
+    "api/svc/navigation/namespace.rst",
+    "api/svc/navigation/visitor.rst",
+    "api/svc/simdata.rst",
+    "api/svc/stpimporter.rst",
+    "api/svc/test_results.rst",
+    "api/utils.rst",
+    #    "contrib.rst",
+    "examples/diagram/index.rst",
+    "examples/fmu_export/index.rst",
+    "examples/generated_code/index.rst",
+    #    "examples/index.rst",
+    "examples/namespace/index.rst",
+    "examples/quad_flight_control.rst",
+    "examples/visitor/index.rst",
+    #    "getting_started/index.rst",
+    #    "getting_started/versions.rst",
+    "user_guide/cli.rst",
+    "user_guide/coverage.rst",
+    "user_guide/example.rst",
+    #    "user_guide/index.rst",
+    "user_guide/modeler.rst",
+    "user_guide/overview.rst",
+    "user_guide/testing.rst",
+    "user_guide/toolbox.rst",
+    "user_guide/verifier.rst",
+]
+
 if not config["clock"]:
     exclude_patterns.extend(config["clock_exclude"])
 
@@ -134,8 +194,8 @@ html_theme_options = {
     ],
 }
 
-# static path
-html_static_path = ["_static"]
+# TODO: uncomment when we have static files
+# html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
@@ -152,73 +212,7 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# Jinja context for guide
+# Jinja context for documentation
 jinja_contexts = {
-    "guide_ctx": {"full_guide": config["full_guide"]},
     "clock_ctx": {"clock": config["clock"]},
 }
-
-exclude_patterns = [
-    #     "api/index.rst",
-    "api/language/clock.rst",
-    "api/language/declarations/common.rst",
-    "api/language/declarations/global.rst",
-    "api/language/declarations/index.rst",
-    "api/language/declarations/module.rst",
-    "api/language/declarations/type.rst",
-    "api/language/expressions/array.rst",
-    "api/language/expressions/atom.rst",
-    "api/language/expressions/basic_expr.rst",
-    "api/language/expressions/composite.rst",
-    "api/language/expressions/forward.rst",
-    "api/language/expressions/index.rst",
-    "api/language/expressions/instance.rst",
-    "api/language/expressions/selection.rst",
-    "api/language/expressions/sequential.rst",
-    "api/language/expressions/structure.rst",
-    "api/language/expressions/update.rst",
-    "api/language/expressions/variant.rst",
-    "api/language/group.rst",
-    "api/language/index.rst",
-    "api/language/operator/activation.rst",
-    "api/language/operator/automaton.rst",
-    "api/language/operator/diagram.rst",
-    "api/language/operator/equation.rst",
-    "api/language/operator/index.rst",
-    "api/language/operator/operator.rst",
-    "api/language/operator/other_sections.rst",
-    "api/language/operator/var.rst",
-    "api/model.rst",
-    "api/project.rst",
-    "api/scadeone.rst",
-    "api/svc/fmu_export.rst",
-    "api/svc/generated_code.rst",
-    "api/svc/index.rst",
-    "api/svc/navigation/diagram.rst",
-    "api/svc/navigation/index.rst",
-    "api/svc/navigation/namespace.rst",
-    "api/svc/navigation/visitor.rst",
-    "api/svc/simdata.rst",
-    "api/svc/stpimporter.rst",
-    "api/svc/test_results.rst",
-    "api/utils.rst",
-    #    "contrib.rst",
-    "examples/diagram/index.rst",
-    "examples/fmu_export/index.rst",
-    "examples/generated_code/index.rst",
-    #    "examples/index.rst",
-    "examples/namespace/index.rst",
-    "examples/quad_flight_control.rst",
-    "examples/visitor/index.rst",
-    #    "getting_started/index.rst",
-    #    "getting_started/versions.rst",
-    "user_guide/cli.rst",
-    "user_guide/coverage.rst",
-    "user_guide/example.rst",
-    #    "user_guide/index.rst",
-    "user_guide/modeler.rst",
-    "user_guide/overview.rst",
-    "user_guide/testing.rst",
-    "user_guide/toolbox.rst",
-    "user_guide/verifier.rst",
-]

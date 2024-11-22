@@ -15,7 +15,7 @@ env:
   PYTHON_VERSION: '3.10'
   LIBRARY_NAME: 'ansys-scadeone-core'
   DOCUMENTATION_CNAME: 'scadeone.docs.pyansys.com'
-  PACKAGE_NAMESPACE: 'ansys.cadeone.core'
+  PACKAGE_NAMESPACE: 'ansys.scadeone.core'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

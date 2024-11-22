@@ -2,10 +2,12 @@
 #
 
 # You can set these variables from the command line.
-#SPHINXOPTS    = -j auto -W -v
+SPHINXOPTS    = -j auto # -W -v
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
+PLANTUML      = java -jar ../plantuml.jar
+
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -25,3 +27,10 @@ clean:
 
 pdf:
 	@echo PDF not yet implemented
+	
+svg:
+	@echo "Generating SVG files from PlantUML files"
+	@$(PLANTUML) -version | head -1
+	@$(PLANTUML) -splash -tsvg  "$(SOURCEDIR)/**/*.puml"
+	@echo "Done"
+

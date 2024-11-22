@@ -59,7 +59,7 @@ extensions = [
 
 exclude_patterns = [
     #     "api/index.rst",
-    "api/language/clock.rst",
+    # "api/language/clock.rst",
     # "api/language/declarations/common.rst",
     # "api/language/declarations/global.rst",
     # "api/language/declarations/index.rst",
@@ -77,7 +77,7 @@ exclude_patterns = [
     # "api/language/expressions/structure.rst",
     # "api/language/expressions/update.rst",
     # "api/language/expressions/variant.rst",
-    "api/language/group.rst",
+    # "api/language/group.rst",
     # "api/language/index.rst",
     # "api/language/operator/activation.rst",
     # "api/language/operator/automaton.rst",

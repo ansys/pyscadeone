@@ -18,9 +18,9 @@ to consult the API documentation.
    :maxdepth: 2
 
    scadeone
+   project
+   model
 
-.. project
-.. model
 .. language/index
 .. svc/index
 .. utils

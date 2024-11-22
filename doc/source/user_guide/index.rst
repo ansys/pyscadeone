@@ -9,10 +9,11 @@ User Guide
    :maxdepth: 2
 
    overview
+   modeler
+   example
+   cli
 
-.. modeler
-.. example
-.. cli
+
    
 
    

@@ -111,10 +111,10 @@ exclude_patterns = [
     "examples/visitor/index.rst",
     #    "getting_started/index.rst",
     #    "getting_started/versions.rst",
-    "user_guide/cli.rst",
-    "user_guide/example.rst",
+    #     "user_guide/cli.rst",
+    #     "user_guide/example.rst",
     #    "user_guide/index.rst",
-    "user_guide/modeler.rst",
+    #     "user_guide/modeler.rst",
     #     "user_guide/overview.rst",
 ]
 

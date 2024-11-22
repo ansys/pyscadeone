@@ -97,7 +97,7 @@ exclude_patterns = [
     # "api/svc/navigation/index.rst",
     # "api/svc/navigation/namespace.rst",
     # "api/svc/navigation/visitor.rst",
-    "api/svc/simdata.rst",
+    # "api/svc/simdata.rst",
     "api/svc/stpimporter.rst",
     "api/svc/test_results.rst",
     "api/utils.rst",

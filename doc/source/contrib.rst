@@ -10,7 +10,7 @@ Contributing to PyScadeOne is welcomed and can be in the form of discussions, co
 
 
 Overall guidance on contributing to a PyAnsys library appears in the
-`Contributing <https://dev.docs.pyansys.com/overview/contributing.html>`_ topic
+`Contributing <https://dev.docs.pyansys.com/>`_ topic
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
 with it and all style guidelines before attempting to contribute to PyScadeOne.
  

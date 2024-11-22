@@ -29,9 +29,10 @@ Some class descriptions use the `Extended Backus-Naur <https://en.wikipedia.org/
       :maxdepth: 2
 
       declarations/index
-      operator/index
-      expressions/index
-      group
+
+   ..      operator/index
+   ..     expressions/index
+   ..      group
 
    {% endif %}
 

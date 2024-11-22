@@ -20,7 +20,7 @@ to consult the API documentation.
    scadeone
    project
    model
+   language/index
 
-.. language/index
 .. svc/index
 .. utils

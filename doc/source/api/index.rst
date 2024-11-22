@@ -21,6 +21,6 @@ to consult the API documentation.
    project
    model
    language/index
+   svc/index
 
-.. svc/index
 .. utils

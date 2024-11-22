@@ -8,10 +8,11 @@ User Guide
 .. toctree::
    :maxdepth: 2
 
-   .. overview
-   .. modeler
-   .. example
-   .. cli
+   overview
+
+.. modeler
+.. example
+.. cli
    
 
    

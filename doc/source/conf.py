@@ -112,14 +112,10 @@ exclude_patterns = [
     #    "getting_started/index.rst",
     #    "getting_started/versions.rst",
     "user_guide/cli.rst",
-    "user_guide/coverage.rst",
     "user_guide/example.rst",
     #    "user_guide/index.rst",
     "user_guide/modeler.rst",
-    "user_guide/overview.rst",
-    "user_guide/testing.rst",
-    "user_guide/toolbox.rst",
-    "user_guide/verifier.rst",
+    #     "user_guide/overview.rst",
 ]
 
 if not config["clock"]:

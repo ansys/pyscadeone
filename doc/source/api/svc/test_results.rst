@@ -12,8 +12,8 @@ to use the :py:meth:`load` method to load the test results file and return a :py
 
 .. currentmodule:: ansys.scadeone.core.svc.test.test_results
 
-Test Results Parser Class
--------------------------
+TestResultsParser Class
+-----------------------
 This section describes the main class for parsing the test results files.
 
-.. autoclass:: TestResultsParser
+.. .. autoclass:: TestResultsParser

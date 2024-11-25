@@ -12,7 +12,10 @@ built up on the low-level data structures representing a Swan model, a project, 
 
    navigation/index
    generated_code
-   test_results
+   simdata
+
+ 
+..   test_results
 
 ..   simdata
    

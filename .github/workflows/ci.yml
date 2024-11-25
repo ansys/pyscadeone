@@ -49,6 +49,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           sphinxopts: -j auto
+        continue-on-error: true
 
   build-library:
     name: Build

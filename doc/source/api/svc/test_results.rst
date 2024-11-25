@@ -9,3 +9,10 @@ to use the :py:meth:`load` method to load the test results file and return a :py
 
     from ansys.scadeone.core.svc.test.test_results import TestResultsParser
     test_results = TestResultsParser.load("testResults.json")
+.. currentmodule:: ansys.scadeone.core.svc.test.test_results
+
+TestResultsParser Class
+-----------------------
+This section describes the main class for parsing the test results files.
+
+.. autoclass:: TestResultsParser

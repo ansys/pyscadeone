@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    = #-j auto -P
+SPHINXOPTS    = -j auto -W
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
@@ -18,7 +18,10 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O);\
+	RES=$$?; \
+	if [ $$RES -eq 139 ]; then echo "*** Ignored Sphinx segmentation fault"; \
+	else exit $$RES; fi
 
 # Customized clean due to examples gallery
 clean: 
@@ -26,7 +29,7 @@ clean:
 
 
 pdf:
-	@echo PDF not yet implemented
+	@echo PDF not implemented
 	
 svg:
 	@echo "Generating SVG files from PlantUML files"

@@ -22,5 +22,4 @@ to consult the API documentation.
    model
    language/index
    svc/index
-
-.. utils
+   utils

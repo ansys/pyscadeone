@@ -16,4 +16,42 @@ TestResultsParser Class
 -----------------------
 This section describes the main class for parsing the test results files.
 
-.. .. autoclass:: TestResultsParser
+.. autoclass:: TestResultsParser
+
+TestResults Class
+-----------------
+:py:class:`TestResults` represents the test results.
+
+.. autoclass:: TestResults
+
+TestCase Class
+--------------
+:py:class:`TestCase` represents the test cases of the test results.
+
+.. autoclass:: TestCase
+
+TestItem Class
+--------------
+:py:class:`TestItem` represents the test items of the test results.
+
+.. autoclass:: TestItem
+
+Failure Class
+-------------
+:py:class:`Failure` represents the failures of the test items.
+
+.. autoclass:: Failure
+
+TestStatus Enum
+---------------
+:py:class:`TestStatus` represents the status of the test items.
+
+.. autoclass:: TestStatus
+
+TestItemKind Enum
+-----------------
+:py:class:`TestItemKind` represents the kind of the test items.
+
+.. autoclass:: TestItemKind
+
+

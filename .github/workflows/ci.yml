@@ -71,7 +71,7 @@ jobs:
       - uses: ansys/actions/tests-pytest@v8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-postargs: 'tests/smoketest.py'
+          pytest-postargs: 'tests/test_smoke.py'
           
   doc-deploy-dev:
     name: "Deploy development documentation"

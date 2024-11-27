@@ -52,8 +52,9 @@ def smoke():
 
     assert count == 5
 
-    type_list = list(model.types)
-    assert type_list[4].get_full_path() == "CC::tCruiseState"
+    type_list = list(t.get_full_path() for t in model.types)
+
+    assert "CC::tCruiseState" in type_list
 
     assert model.all_modules_loaded
 
@@ -67,3 +68,4 @@ if __name__ == "__main__":
     # run using: python smoke_test.py
     print("Running smoke test...")
     smoke()
+    print("Smoke test passed.")

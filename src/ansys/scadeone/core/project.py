@@ -114,12 +114,10 @@ class Project(IProject):
             return []
 
         def check_path(path: str):
-            s_path = self.app.subst_in_path(path)
-            p = Path(Path(s_path).as_posix())
-            print("check dependency path", p)
+            s_path = self.app.subst_in_path(path).replace("\\", "/")
+            p = Path(s_path)
             if not p.is_absolute():
                 p = self.directory / p
-                print("abs dependency path", p)
             if p.exists():
                 return p
             raise ScadeOneException(f"no such file: {path}")

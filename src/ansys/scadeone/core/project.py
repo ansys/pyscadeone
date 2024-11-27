@@ -57,7 +57,7 @@ class Project(IProject):
     def directory(self) -> Union[Path, None]:
         """Project directory: Path if storage is a file, else None."""
         if isinstance(self.storage, ProjectFile):
-            return self.storage.path.parent
+            return Path(self.storage.path.parent.as_posix())
         return None
 
     def _get_swan_sources(self) -> List[SwanFile]:
@@ -115,7 +115,7 @@ class Project(IProject):
 
         def check_path(path: str):
             s_path = self.app.subst_in_path(path)
-            p = Path(s_path)
+            p = Path(Path(s_path).as_posix())
             print("check dependency path", p)
             if not p.is_absolute():
                 p = self.directory / p

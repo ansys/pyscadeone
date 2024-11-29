@@ -22,6 +22,7 @@ help:
 	RES=$$?; \
 	if [ $$RES -eq 139 ]; then echo "*** Ignored Sphinx segmentation fault"; \
 	else exit $$RES; fi
+	pip freeze > "$(BUILDDIR)/html/requirements.txt"
 
 # Customized clean due to examples gallery
 clean: 

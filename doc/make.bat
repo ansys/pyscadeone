@@ -37,6 +37,10 @@ goto end
 
 :pdf
 echo.no PDF generation
+REM latex existence is checked by CI/CD
+if not exist "%BUILDDIR%\latex" (
+    mkdir "%BUILDDIR%\latex"
+)
 goto end
 
 :help

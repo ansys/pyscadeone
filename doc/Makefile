@@ -26,7 +26,7 @@ clean:
 
 
 pdf:
-	@echo PDF not implemented
+	@echo no PDF generation
 	
 svg:
 	@echo "Generating SVG files from PlantUML files"

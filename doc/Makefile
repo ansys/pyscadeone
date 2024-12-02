@@ -20,7 +20,7 @@ help:
 %: Makefile
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-# Customized clean due to examples gallery
+# Customized clean
 clean: 
 	rm -rf "$(BUILDDIR)"
 

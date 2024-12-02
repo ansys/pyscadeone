@@ -51,4 +51,4 @@ Swan Code
 .. rubric:: Footnotes
 
 
-.. [#] See *How to avoid bidirectional class and module dependencies*  `softwareengineering.stackexchange.com <https://softwareengineering.stackexchange.com/questions/369146/how-to-avoid-bidirectional-class-and-module-dependenciessoftwareengineering.stackexchange.com>`_ 
+.. [#] See *How to avoid bidirectional class and module dependencies*  `softwareengineering.stackexchange.com <https://softwareengineering.stackexchange.com/questions/369146/how-to-avoid-bidirectional-class-and-module-dependencies>`_ 

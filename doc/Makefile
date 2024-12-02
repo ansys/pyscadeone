@@ -6,6 +6,8 @@ SPHINXOPTS    = -j auto -W
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
+PLANTUML      = java -jar ../plantuml.jar
+
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -20,8 +22,15 @@ help:
 
 # Customized clean due to examples gallery
 clean: 
-	rm -rf $(BUILDDIR)/*
+	rm -rf "$(BUILDDIR)"
 
 
 pdf:
-	@echo PDF not yet implemented
+	@echo no PDF generation
+	
+svg:
+	@echo "Generating SVG files from PlantUML files"
+	@$(PLANTUML) -version | head -1
+	@$(PLANTUML) -splash -tsvg  "$(SOURCEDIR)/**/*.puml"
+	@echo "Done"
+

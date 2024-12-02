@@ -26,97 +26,44 @@ This library allows:
 
 .. grid:: 3
 
-   .. grid-item-card::
-            :img-top: _static/assets/index_getting_started.png
+   .. grid-item-card:: :fa:`terminal` Getting started
+      :link: ref_getting_started
+      :link-type: ref
 
-            Getting started
-            ^^^^^^^^^^^^^^^
+      Learn how to install and run PyScadeOne.
+      Check for supported versions.
 
-            Learn how to install and run PyScadeOne.
-            Check for supported versions.
 
-            +++
+   .. grid-item-card:: :fa:`book` User guide
+      :link: ref_user_guide
+      :link-type: ref
 
-            .. button-link:: getting_started/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
+      Understand key PyScadeOne concepts for projects and models.
 
-                  Getting started
+   .. grid-item-card:: :fa:`book-open-reader` Library reference
+      :link: ref_api
+      :link-type: ref
 
-   .. grid-item-card::
-            :img-top: _static/assets/index_user_guide.png
-
-            User guide
-            ^^^^^^^^^^
-
-            Understand key PyScadeOne concepts for projects and models.
-
-            +++
-            .. button-link:: user_guide/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  User guide
-
-   .. grid-item-card::
-            :img-top: _static/assets/index_api.png
-
-            Scade One API reference
-            ^^^^^^^^^^^^^^^^^^^^^^^
-
-            Understand PyScadeOne API, its capabilities,
-            and how to use it programmatically.
-
-            +++
-            .. button-link:: api/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  PyScadeOne API reference
+      Understand PyScadeOne library, its capabilities,
+      and how to use it programmatically.
 
 
 .. grid:: 2
 
 
-   .. grid-item-card::
-            :img-top: _static/assets/index_examples.png
+   .. grid-item-card:: :fa:`gears` Examples
+      :link: ref_examples
+      :link-type: ref
 
-            Examples
-            ^^^^^^^^
+      Explore examples that show how to use PyScadeOne. 
 
-            Explore examples that show how to use PyScadeOne. 
 
-            +++
-            .. button-link:: examples/index.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  Examples
-
-   .. grid-item-card::
-            :img-top: _static/assets/index_contribute.png
-
-            Contribute
-            ^^^^^^^^^^
-            Learn how to contribute to the PyScadeOne codebase
-            or documentation.
-
-            +++
-            .. button-link:: contrib.html
-               :color: secondary
-               :expand:
-               :outline:
-               :click-parent:
-
-                  Contribute
+   .. grid-item-card:: :fa:`users` Contribute
+      :link: ref_contributing
+      :link-type: ref
+  
+      Learn how to contribute to the PyScadeOne codebase
+      or documentation.
 
 
 .. toctree::
@@ -128,8 +75,3 @@ This library allows:
    api/index
    examples/index
    contrib
-
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`search`

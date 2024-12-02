@@ -11,19 +11,18 @@ if not src.exists():
     raise Exception(f"Cannot find sources: {src}")
 sys.path.append(str(src))
 
+# FIXME: to be removed when the documentation is published
+# For now, we ignore the following links when checking for broken links
+linkcheck_ignore = [
+    "https://scadeone.docs.pyansys.com/*",
+    "https://github.com/ansys/pyscadeone/*",
+    "https://www.ansys.com/*",
+]
 
 # Selection of documentation parts
 config = {}
-config["full_guide"] = False
-config["guide_exclude"] = [
-    "user_guide/coverage.rst",
-    "user_guide/testing.rst",
-    "user_guide/verifier.rst",
-    "user_guide/toolbox.rst",
-]
 config["clock"] = False
 config["clock_exclude"] = ["api/language/clock.rst"]
-
 
 from ansys.scadeone.core import version_info  # noqa
 from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
@@ -43,11 +42,6 @@ supported_versions.write_text(FormatVersions.get_versions())
 copybutton_prompt_text = r">>> ?|\.\.\. "
 copybutton_prompt_is_regexp = True
 
-# PlantUML configuration
-plantumljar = Path(__file__).parents[2] / "plantuml.jar"
-plantuml = f'java -jar "{plantumljar}"'
-plantuml_output_format = "svg"
-
 # Sphinx extensions
 
 extensions = [
@@ -64,8 +58,7 @@ extensions = [
 
 
 exclude_patterns = []
-if not config["full_guide"]:
-    exclude_patterns.extend(config["guide_exclude"])
+
 if not config["clock"]:
     exclude_patterns.extend(config["clock_exclude"])
 
@@ -131,7 +124,7 @@ html_short_title = html_title = "PyScadeOne"
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/pyansys/pyscadeone",
+    "github_url": "https://github.com/ansys/pyscadeone",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
@@ -139,39 +132,25 @@ html_theme_options = {
     ],
 }
 
-# static path
-html_static_path = ["_static"]
+# TODO: uncomment when we have static files
+# html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
-html_css_files = [
-    "custom.css",
-]
+html_css_files = []
 
 autodoc_default_options = {
     "members": True,
     "member-order": "groupwise",
     # 'undoc-members': True,
+    """_summary_
+    """
     "exclude-members": "__weakref__",
     "inherited-members": True,
     "show-inheritance": True,
 }
 
-# Jinja context for guide
+# Jinja context for documentation
 jinja_contexts = {
-    "guide_ctx": {"full_guide": config["full_guide"]},
     "clock_ctx": {"clock": config["clock"]},
 }
-
-# PlantUML activation
-# PlantUML sphinx extension is not working, as it generates
-# a random error when attempting to rename a file
-# https://github.com/sphinx-contrib/plantuml/issues/94
-# On the other hand, online use is not recommended.
-# We generate the PlantUML diagrams offline and include them as images.
-# How it works:
-# - given a folder 'dir' with .rst files:
-# - plantuml (.puml) files are in 'dir', with the .rst files
-# - the script below generates the .svg files in the 'dir/_svg' folder
-# - the .rst file includes the .svg files as ".. figure:: _svg/file.svg"
-# - Project Makefile has a target 'clean_svg' to remove the _svg folders

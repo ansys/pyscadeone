@@ -1,4 +1,4 @@
-.. _sec_test_results:
+.. _ref_test_results:
 
 Test Results
 ============
@@ -8,7 +8,7 @@ to use the :py:meth:`load` method to load the test results file and return a :py
 .. code:: python
 
     from ansys.scadeone.core.svc.test.test_results import TestResultsParser
-    test_results = TestResultsParser.load("test_results.json")
+    test_results = TestResultsParser.load("testResults.json")
 
 .. currentmodule:: ansys.scadeone.core.svc.test.test_results
 

@@ -1,4 +1,4 @@
-.. _sec_modeler:
+.. _ref_modeler:
 
 Modeler
 =======
@@ -136,7 +136,7 @@ For an operator or a signature, one can access to the input and output flows
 and to the body for operator. Then from the body, one can access to the content of diagrams, equations, etc.
 
 All Swan language constructs are represented by classes from the 
-:py:mod:`ansys.scadeone.core.swan` module. The section :ref:`sec_swan_api` describes
+:py:mod:`ansys.scadeone.core.swan` module. The section :ref:`ref_swan_api` describes
 the Swan classes, with respect to the structure of the language reference documentation in the product.
 
 Resuming with the previous code example, here is a usage sample of the Swan language API:

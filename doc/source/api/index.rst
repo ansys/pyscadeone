@@ -1,4 +1,4 @@
-.. _sec_api:
+.. _ref_api:
 
 =============
 API Reference

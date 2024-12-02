@@ -1,4 +1,4 @@
-.. _sec_sd_converter:
+.. _ref_sd_converter:
 
 ========================
 SCADE Suite STP Importer
@@ -12,7 +12,7 @@ It is used as a command line, installed along with **pyscadone**:
 
   $ stpimporter stpfile sprojfile
 
-See `Command Line <stp_importer_cli>`_ section for details.
+See `Command Line <stp_importer_cli_>`_ section for details.
 
 Inputs
 ------

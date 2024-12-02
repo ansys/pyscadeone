@@ -75,8 +75,3 @@ This library allows:
    api/index
    examples/index
    contrib
-
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`search`

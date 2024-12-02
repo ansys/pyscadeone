@@ -11,19 +11,18 @@ if not src.exists():
     raise Exception(f"Cannot find sources: {src}")
 sys.path.append(str(src))
 
+# FIXME: to be removed when the documentation is published
+# For now, we ignore the following links when checking for broken links
+linkcheck_ignore = [
+    "https://scadeone.docs.pyansys.com/*",
+    "https://github.com/ansys/pyscadeone/*",
+    "https://www.ansys.com/*",
+]
 
 # Selection of documentation parts
 config = {}
-config["full_guide"] = False
-config["guide_exclude"] = [
-    "user_guide/coverage.rst",
-    "user_guide/testing.rst",
-    "user_guide/verifier.rst",
-    "user_guide/toolbox.rst",
-]
 config["clock"] = False
 config["clock_exclude"] = ["api/language/clock.rst"]
-
 
 from ansys.scadeone.core import version_info  # noqa
 from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
@@ -49,7 +48,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.autosectionlabel",
-    "numpydoc",
+    #    "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx.ext.inheritance_diagram",
@@ -59,14 +58,16 @@ extensions = [
 
 
 exclude_patterns = []
-if not config["full_guide"]:
-    exclude_patterns.extend(config["guide_exclude"])
+
 if not config["clock"]:
     exclude_patterns.extend(config["clock_exclude"])
 
 # Make sure the target is unique for auto label
 # see: https://docs.readthedocs.io/en/stable/guides/cross-referencing-with-sphinx.html
 autosectionlabel_prefix_document = True
+suppress_warnings = [
+    "autosectionlabel.*",
+]
 
 # Intersphinx mapping
 intersphinx_mapping = {
@@ -80,27 +81,27 @@ intersphinx_mapping = {
     # "grpc": ("https://grpc.github.io/grpc/python/", None),
 }
 
-# numpydoc configuration
-numpydoc_show_class_members = False
-numpydoc_xref_param_type = True
-
-# Consider enabling numpydoc validation. See:
-# https://numpydoc.readthedocs.io/en/latest/validation.html#
-numpydoc_validate = True
-numpydoc_validation_checks = {
-    "GL06",  # Found unknown section
-    "GL07",  # Sections are in the wrong order.
-    "GL08",  # The object does not have a docstring
-    "GL09",  # Deprecation warning should precede extended summary
-    "GL10",  # reST directives {directives} must be followed by two colons
-    "SS01",  # No summary found
-    "SS02",  # Summary does not start with a capital letter
-    # "SS03", # Summary does not end with a period
-    "SS04",  # Summary contains heading whitespaces
-    # "SS05", # Summary must start with infinitive verb, not third person
-    "RT02",  # The first line of the Returns section should contain only the
-    # type, unless multiple values are being returned"
-}
+## numpydoc configuration
+# numpydoc_show_class_members = False
+# numpydoc_xref_param_type = True
+#
+## Consider enabling numpydoc validation. See:
+## https://numpydoc.readthedocs.io/en/latest/validation.html#
+# numpydoc_validate = True
+# numpydoc_validation_checks = {
+#    "GL06",  # Found unknown section
+#    "GL07",  # Sections are in the wrong order.
+#    "GL08",  # The object does not have a docstring
+#    "GL09",  # Deprecation warning should precede extended summary
+#    "GL10",  # reST directives {directives} must be followed by two colons
+#    "SS01",  # No summary found
+#    "SS02",  # Summary does not start with a capital letter
+#    # "SS03", # Summary does not end with a period
+#    "SS04",  # Summary contains heading whitespaces
+#    # "SS05", # Summary must start with infinitive verb, not third person
+#    "RT02",  # The first line of the Returns section should contain only the
+#    # type, unless multiple values are being returned"
+# }
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -131,8 +132,8 @@ html_theme_options = {
     ],
 }
 
-# static path
-html_static_path = ["_static"]
+# TODO: uncomment when we have static files
+# html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
@@ -149,8 +150,7 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# Jinja context for guide
+# Jinja context for documentation
 jinja_contexts = {
-    "guide_ctx": {"full_guide": config["full_guide"]},
     "clock_ctx": {"clock": config["clock"]},
 }

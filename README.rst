@@ -18,8 +18,8 @@ PyScadeOne
    :target: https://github.com/psf/black
    :alt: Black
 
-.. |CI-CD| image:: https://github.com/ansys/pyscadeone/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/ansys/pyscadeone/actions/workflows/ci_cd.yml
+.. |CI-CD| image:: https://github.com/ansys/pyscadeone/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/ansys/pyscadeone/actions/workflows/ci.yml
    :alt: CI-CD
 
 

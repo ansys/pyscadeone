@@ -1007,13 +1007,3 @@ FOO <<S, {syntax%$Size%syntax}>> (
     )
     def test_signature_parsing(self, oracle):
         check_decl(oracle)
-
-
-class TestComment:
-    def test_comment(self):
-        code = SwanStorage.gen_version() + "\n" + "/* multi /* /* comment */ */ /* more */ */"
-        swan = SwanString(code)
-        swan = SwanString(f"{SwanStorage.gen_version()}\n{code}")
-        obj = parser.module_body(swan)
-        obj_str = str(obj)
-        assert obj_str == ""

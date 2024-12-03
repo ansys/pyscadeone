@@ -1,5 +1,24 @@
-# Copyright (c) 2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 # This module contains the classes and functions that are necessary to
 # manipulate Scade One model elements retrieved from the mapping file.
@@ -301,7 +320,8 @@ class ModelVariableBase(ModelObject):
             if self._code_elem is None:
                 self._code_elem = self.get_code_elem(silent=True)
             if self._code_elem is None:
-                # no code associated to variable => it is the return of the cycle function or a polymorphic param
+                # no code associated to variable => it is the return of
+                # the cycle function or a polymorphic param
                 if self.parent.cycle_method is None:
                     self._code_type = {}
                 else:
@@ -634,7 +654,8 @@ class GeneratedCode(object):
                     self._generated_code_dir = self._mapping_path.parent / "code"
             except Exception:
                 raise ScadeOneException(
-                    f"Generated code: cannot open mapping file ({self._mapping_path.name}) for job {self._job_name}"
+                    "Generated code: cannot open mapping file"
+                    + f" ({self._mapping_path.name}) for job {self._job_name}"
                 )
 
     @property
@@ -688,7 +709,8 @@ class GeneratedCode(object):
         - For a union, it is a list of dictionaries, with name giving the variant field name,
           type giving the variant field type data (same format as this method)
           and enum_value giving optional integer value.
-        - For a typedef (imported type), it is the function names used to manipulate the imported type.
+        - For a typedef (imported type), it is the function names used to manipulate
+          the imported type.
         - For a predefined_type, it is None.
 
         """

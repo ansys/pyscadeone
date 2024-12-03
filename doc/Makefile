@@ -20,7 +20,7 @@ help:
 %: Makefile
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-# Customized clean due to examples gallery
+# Customized clean
 clean: 
 	rm -rf "$(BUILDDIR)"
 
@@ -33,4 +33,3 @@ svg:
 	@$(PLANTUML) -version | head -1
 	@$(PLANTUML) -splash -tsvg  "$(SOURCEDIR)/**/*.puml"
 	@echo "Done"
-

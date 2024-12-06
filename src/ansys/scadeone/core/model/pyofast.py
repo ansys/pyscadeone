@@ -28,6 +28,7 @@
 """
 The PyOfAst module transforms F# AST into Python ansys.scadeone.core.swan classes.
 """
+
 from typing import cast
 
 # pylint: disable-next=import-error
@@ -233,10 +234,10 @@ def patternOrRawOfAst(pattern):
         return S.CharPattern(pattern.Item)
 
     if pattern.IsPInt:
-        return S.IntPattern(pattern.Item2, pattern.Item1 == True)
+        return S.IntPattern(pattern.Item2, pattern.Item1)
 
     if pattern.IsPBool:
-        return S.BoolPattern(pattern.Item == True)
+        return S.BoolPattern(pattern.Item)
 
     if pattern.IsPUscore:
         return S.UnderscorePattern()

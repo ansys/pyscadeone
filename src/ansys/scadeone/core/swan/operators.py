@@ -4,6 +4,7 @@
 This module contains the classes for operator and signature (operator
 without body)
 """
+
 from typing import Callable, Generator, List, Optional, Union
 
 import ansys.scadeone.core.swan.common as common

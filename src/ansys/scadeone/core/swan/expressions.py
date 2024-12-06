@@ -23,6 +23,7 @@
 """
 This module contains the classes for expressions
 """
+
 from enum import Enum, auto
 from typing import List, Optional, Union
 

@@ -26,6 +26,7 @@ language-related modules.
 
 It contains base classes for various language constructs.
 """
+
 from abc import ABC
 from collections import namedtuple
 from collections.abc import Iterable as abcIterable
@@ -90,11 +91,11 @@ class SwanItem(ABC):
         raise ScadeOneException("owner property is None")
 
     @property
-    def model(self) -> "Model":  # type: ignore
+    def model(self) -> "Model":  # noqa: F821
         """Returns model containing the Swan item"""
         model = self.module.owner
         if model is None:
-            raise ScadeOneException(f"Module owner not found")
+            raise ScadeOneException("Module owner not found")
         return model
 
 
@@ -104,7 +105,7 @@ class ModuleBase(SwanItem):
     def __init__(self) -> None:
         super().__init__()
 
-    def get_use_directive(self, name: str) -> "UseDirective":  # type: ignore
+    def get_use_directive(self, name: str) -> "UseDirective":  # noqa: F821
         assert False
 
 
@@ -885,7 +886,7 @@ class ProtectedItem(SwanItem):
         return Markup.to_str(self.data, markup=self.markup)
 
 
-def to_str_comma_list(l: List[Any]) -> str:
+def to_str_comma_list(items: List[Any]) -> str:
     """Generates a string which is the join of a list item
        separated by a comma.
 
@@ -899,16 +900,16 @@ def to_str_comma_list(l: List[Any]) -> str:
     str
         resulting string
     """
-    return ", ".join([str(i) for i in l])
+    return ", ".join([str(i) for i in items])
 
 
-def to_str_semi_list(l: List[Any]) -> str:
+def to_str_semi_list(items: List[Any]) -> str:
     """Generates a string which is the join of a list items
        separated by a semicolon.
 
     Parameters
     ----------
-    l : List[Any]
+    items : List[Any]
         A list which items supports the str() function.
 
     Returns
@@ -916,4 +917,4 @@ def to_str_semi_list(l: List[Any]) -> str:
     str
         Resulting string.
     """
-    return "; ".join([str(i) for i in l])
+    return "; ".join([str(i) for i in items])

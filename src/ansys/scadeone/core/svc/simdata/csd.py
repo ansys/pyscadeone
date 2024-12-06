@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# cSpell: ignore vsize ndarray
+
 import abc
 from typing import Tuple, Optional, Any, List
 
@@ -195,7 +197,6 @@ class _SdFactory:
 
     @classmethod
     def load_sd_value(cls, csd_value: core.sd_value_t) -> defs.Value:
-
         value_class = dll_wrap.sdd_value_get_class(csd_value)
         if value_class is core.DataClass.NONE:
             return defs.NoneValue()
@@ -623,7 +624,6 @@ def open_file(file_path: str) -> defs.FileBase:
     ScadeOneException
         file could not be opened
     """
-    path = str(file_path)
     file_id = dll_wrap.sdf_open(file_path)
     if file_id == core.SD_ID_INVALID:
         raise ScadeOneException('cannot open file "{0}"'.format(file_path))

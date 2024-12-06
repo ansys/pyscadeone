@@ -550,7 +550,7 @@ class SDContext(SDContextBase):
             self._evaluated_cmd = str(cmd)
             try:
                 cmd.eval(self)
-            except Exception as e:
+            except Exception:
                 pass
         self.finish()
         self.reset_vars()

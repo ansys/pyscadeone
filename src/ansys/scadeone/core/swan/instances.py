@@ -23,6 +23,7 @@
 """
 This module implements operator instances.
 """
+
 from abc import ABC
 from enum import Enum, auto
 from typing import List, Optional, Union

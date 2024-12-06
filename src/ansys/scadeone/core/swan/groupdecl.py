@@ -24,6 +24,7 @@
 This module contains classes to manipulate group declarations
 and group expressions.
 """
+
 from typing import Generator, List
 
 import ansys.scadeone.core.swan.common as common

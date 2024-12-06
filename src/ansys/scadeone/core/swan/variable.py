@@ -25,6 +25,7 @@ This module contains the classes for variable declarations:
 - VarDecl
 - ProtectedVariable, for syntactically incorrect variable definition
 """
+
 from typing import Optional, Union
 
 import ansys.scadeone.core.swan.common as common

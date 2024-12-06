@@ -304,7 +304,7 @@ class SwanFile(FileStorage, SwanStorage):
         try:
             with self.path.open() as fd:
                 return self.extract_version(fd.readline())
-        except:
+        except:  # noqa: E722
             return None
 
 

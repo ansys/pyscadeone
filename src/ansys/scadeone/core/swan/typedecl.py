@@ -23,6 +23,7 @@
 """
 This module contains classes to manipulate types and types expressions.
 """
+
 from typing import List, Optional, Union
 
 import ansys.scadeone.core.swan.common as common

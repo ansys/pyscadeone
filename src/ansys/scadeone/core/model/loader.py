@@ -31,6 +31,7 @@ It relies on the `ansys.scadeone.core.model.dotnet` and `ansys.scadeone.model.py
 to interface with the dotnet DLLs and to transform F# data structure into the
 `ansys.scadeone.swan` python classes.
 """
+
 import logging
 from typing import Union
 

@@ -24,6 +24,7 @@
 This module contains the classes for global definitions:
 constants (const) and sensors.
 """
+
 from typing import Optional, Union
 
 import ansys.scadeone.core.swan.common as common

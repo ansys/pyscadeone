@@ -36,7 +36,6 @@ VersionFile = Path(__file__).parent / "versions.json"
 
 
 class VersionManager:
-
     VersionRE = re.compile(r"(?P<M>\d+)\.(?P<m>\d+)")
 
     def __init__(self):

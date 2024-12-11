@@ -1,4 +1,4 @@
-.. _Visitor Example:
+.. _ref_visitor_example:
 
 =======
 Visitor 
@@ -11,16 +11,16 @@ Visitor
 Setup
 -----
 
-We use the same ``QuadFlightControl`` example. To setup the example, see 
+The same ``QuadFlightControl`` example is used. To setup the example, see 
 :ref:`QuadFlightControl python setup`.
 
-For that example, we load all modules:
+All modules are loaded:
 
 .. code::
 
     model.load_all_modules()
 
-Visitor Definition
+Visitor definition
 ------------------
 
 The :py:class:`ReferenceVisitor` is derived from :py:class:`SwanVisitor` class. One needs:
@@ -32,30 +32,30 @@ The :py:class:`ReferenceVisitor` is derived from :py:class:`SwanVisitor` class. 
 .. literalinclude:: quad_flight_control.py
     :lines: 55-68
 
-Then we override:
+The following methods are implemented, overridden from the base class:
 
-- the :py:meth:`SwanVisitor.visit_Operator`: we want to keep track of the operator that is the caller, and calls
-  the default process to go-on.
+- the :py:meth:`SwanVisitor.visit_Operator`: it keeps track of the current operator that is the caller, 
+  and calls the default process to go-on.
 - and :py:meth:`SwanVisitor.visit_PathIdCall` which implements the name of a called operator, amongst the
   possible operator expressions. Here, we first assess that the call corresponds to an operator declaration.
-  Then we create the cross-references (see :ref:`visitor full code`).
+  Then we create the cross-references (see :ref:`ref_visitor_full_code`).
 
 .. literalinclude:: quad_flight_control.py
     :lines: 70-88
 
-We instantiate the visitor, and visit all modules in the model:
+The visitor is instantiated, and visits all modules in the model:
 
 .. literalinclude:: quad_flight_control.py
     :lines: 106-108
 
-Finally, we create the :py:func:`caller_stat` and :py:func:`called_stat` to
+Finally, the :py:func:`caller_stat` and :py:func:`called_stat` functions 
 print the results for a given operator. These functions use the 
 :py:meth:`ReferenceVisitor.get_caller` and :py:meth:`ReferenceVisitor.get_called`
-methods (see :ref:`visitor full code`).
+methods (see :ref:`ref_visitor_full_code`).
 
-.. _visitor full code:
+.. _ref_visitor_full_code:
 
-Complete Example
+Complete example
 ----------------
 
 This is the complete script for the visitor section. Some logging support is shown

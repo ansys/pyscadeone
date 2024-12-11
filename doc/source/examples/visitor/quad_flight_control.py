@@ -1,5 +1,5 @@
 """
-This example demonstrates the use of a visitor (see: :ref:`Swan Model Visitor`).
+This example demonstrates the use of a visitor (see: :ref:`ref_swan_model_visitor`).
 
 The :py:class:`ReferenceVisitor` visitor is used to explore the
 "QuadFlightControl" example. This visitor finds for each operator:

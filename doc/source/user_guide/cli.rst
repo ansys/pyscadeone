@@ -1,3 +1,4 @@
+.. _ref_cli:
 
 ======================
 Command line interface
@@ -10,7 +11,7 @@ this ``Scripts`` folder is in your PATH environment variable.
 The name of the tool is **pyscadeone**. It has the following sub-commands and options: 
 
 Sub-commands:     
-  - ``fmu``            generates an FMU. For more information, see :ref:`FMU Export`.
+  - ``fmu``            generates an FMU. For more information, see :ref:`ref_fmu_export`.
   - ``script``         executes given script or module. 
   - ``simdata``        shows :ref:`ref_sim_data` files (in combination with --show).
 

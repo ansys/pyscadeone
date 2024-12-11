@@ -1,8 +1,6 @@
 
-.. vale off
 PyScadeOne documentation  |version|
 ===================================
-.. vale on
 
 PyScadeOne is a Python library for the
 `Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_:superscript:`TM`  

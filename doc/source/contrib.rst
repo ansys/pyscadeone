@@ -4,9 +4,12 @@
 Contributing
 ============
 
-PyScadeOne is part of the `Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_ product, and is developed by its R&D team.
+PyScadeOne is part of the 
+`Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_ 
+product, and is developed by its R&D team.
 
-Contributing to PyScadeOne is welcomed and can be in the form of discussions, code, documentation or issue reports
+Contributing to PyScadeOne is welcomed and can be in the form of discussions, code, 
+documentation, or issue reports
 
 
 Overall guidance on contributing to a PyAnsys library appears in the
@@ -16,8 +19,8 @@ with it and all style guidelines before attempting to contribute to PyScadeOne.
  
 The following contribution information is specific to PyScadeOne.
 
-Viewing PyScadeOne Documentation
---------------------------------
+PyScadeOne documentation
+------------------------
 Documentation for the latest stable release of PyScadeOne is hosted at
 `PyScadeOne Documentation <https://scadeone.docs.pyansys.com>`_.
 
@@ -28,8 +31,8 @@ Posting Issues
 --------------
 
 Use the `PyScadeOne Issues <https://github.com/ansys/pyscadeone/issues>`_
-page to submit questions, report bugs, and request new features. When possible, we
-recommend that you use one of the existing templates
+page to submit questions, report bugs, and request new features. When possible, 
+use one of the existing templates
 
 
 To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
@@ -41,15 +44,15 @@ Use the `PyScadeOne Discussions <https://github.com/ansys/pyscadeone/discussions
 page to ask questions, share ideas, and connect with other users.
 
 
-Contributing Code
+Contributing code
 -----------------
 
 .. Note::
    As PyScadeOne is a component of the Scade One product, the development team
-   is responsible for the code. Any contribution will be analyzed and possibly
+   is responsible for the code. Any contribution is analyzed and possibly
    integrated by the development team.
 
-Getting the Source Code
+Getting the source code
 ^^^^^^^^^^^^^^^^^^^^^^^
 Run this code to clone and install the latest version of PyScadeOne in development mode:
 
@@ -60,7 +63,7 @@ Run this code to clone and install the latest version of PyScadeOne in developme
     pip install pip -U
     pip install -e .
 
-Code Style
+Code style
 ^^^^^^^^^^
 PyScadeOne follows PEP8 standard as outlined in the `PyAnsys Development Guide
 <https://dev.docs.pyansys.com>`_.

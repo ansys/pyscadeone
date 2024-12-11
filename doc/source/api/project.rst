@@ -1,4 +1,4 @@
-Project Management
+Project management
 ==================
 
 This section contains the classes related to Scade One projects.
@@ -11,10 +11,11 @@ This section contains the classes related to Scade One projects.
       project = app.load_project("project.sproj")
       ...
 
-Project API Documentation
--------------------------
+Project documentation
+---------------------
 
-This section gives the API of a project.
+This section gives the description of project class which
+is used to manage Scade One projects.
 
 .. currentmodule:: ansys.scadeone.core.project
 
@@ -28,13 +29,13 @@ the application. To deal with the cross-links, we use the :py:class:`IProject` i
 .. autoclass:: Project
 
 
-Project Items
+Project items
 -------------
 
 A project can manipulate different items saved using the **storage** module.
 The API handles projects and Swan sources (*.swan* and *.swani* files).
 
-Project File
+Project file
 ~~~~~~~~~~~~
 
 .. currentmodule:: ansys.scadeone.core.common.storage
@@ -42,7 +43,7 @@ Project File
 .. autoclass:: ProjectFile
    :inherited-members:
 
-Swan Code
+Swan code
 ~~~~~~~~~
 
 .. autoclass:: SwanFile

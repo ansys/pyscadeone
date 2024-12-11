@@ -1,10 +1,8 @@
-PyScadeOne Documentation  |version|
-===================================
-..
-   Just reuse the root readme to avoid duplicating the documentation.
-   Provide any documentation specific to your online documentation
-   here.
 
+.. vale off
+PyScadeOne documentation  |version|
+===================================
+.. vale on
 
 PyScadeOne is a Python library for the
 `Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_:superscript:`TM`  

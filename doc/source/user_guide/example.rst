@@ -1,4 +1,4 @@
-Complete Example
+Complete example
 ================
 
 Here is the complete script from the :ref:`ref_user_guide` chapter.

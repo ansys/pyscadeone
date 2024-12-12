@@ -1,13 +1,13 @@
 Common classes
 ==============
 
-ScadeOneException
------------------
+Exception
+---------
 
 .. automodule:: ansys.scadeone.core.common.exception
 
-Logger
-------
+Logging
+-------
 
 .. automodule:: ansys.scadeone.core.common.logger
     :no-inherited-members:

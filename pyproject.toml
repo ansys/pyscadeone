@@ -59,7 +59,7 @@ doc = [
     "pytest-sphinx==0.5.0",
     "sphinx-jinja>=2.0.0",
 ]
-checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1"]
+checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1", "pre-commit==4.0.1"]
 
 [project.urls]
 Source = "https://github.com/ansys/pyscadeone"
@@ -77,7 +77,7 @@ name = "ansys.scadeone.core"
 
 [tool.codespell]
 skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
-ignore-words = "code_spelling_ok.txt"
+ignore-words = "./doc/styles/config/vocabularies/ANSYS/accept.txt"
 quiet-level = 3
 
 # Test & Coverage

@@ -23,7 +23,7 @@ The example relies on a code generation job named `CodeGen`.
 A :py:class:`FMU_2_Export` object is created for this job:
 
 .. literalinclude:: quad_flight_control-fmu.py
-    :lines: 17-22
+    :lines: 39-44
 
 To generate and build the FMU, ensure to have the code generation job executed, 
 which produces the C code from the Swan model (execution is done from the Scade One IDE).
@@ -34,18 +34,18 @@ The script can then access the generated code data.
     From there, you can check if code is generated with the :py:attr:`GeneratedCode.is_code_generated` property.
 
     .. literalinclude:: quad_flight_control-fmu.py
-        :lines: 24-26
+        :lines: 46-48
 
 The FMI 2.0 files are generated using the :py:meth:`FMU_2_Export.generate` method:
 
 .. literalinclude:: quad_flight_control-fmu.py
-    :lines: 32
+    :lines: 54
 
 The FMU package is built from the FMI 2.0 and the Scade One generated files
 using the :py:meth:`FMU_2_Export.build` method:
 
 .. literalinclude:: quad_flight_control-fmu.py
-    :lines: 33
+    :lines: 55
 
 .. important::
     The FMU is built using the gcc compiler provided with Scade One, unless it is already in the PATH.
@@ -56,7 +56,7 @@ using the :py:meth:`FMU_2_Export.build` method:
     This is done using the *args* build argument, by setting the *swan_config_end* key to the proper #include directive:
 
     .. literalinclude:: quad_flight_control-fmu.py
-        :lines: 28-29
+        :lines: 50-51
 
 
 The FMU package is named *QuadFlightControl_QuadFlightControl.fmu* and is located under *QuadFlight_FMU_ME* sub directory.
@@ -66,7 +66,7 @@ The FMU package is named *QuadFlightControl_QuadFlightControl.fmu* and is locate
     set the *kind* parameter of the :py:meth:`FMU_2_Export.generate` method to "CS".
 
     .. literalinclude:: quad_flight_control-fmu.py
-        :lines: 39-40
+        :lines: 61-62
 
 .. _ref_fmu_command_line:
 

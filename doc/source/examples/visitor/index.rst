@@ -4,9 +4,7 @@
 Visitor 
 =======
 
-.. include:: quad_flight_control.py
-    :start-line: 1
-    :end-line: 25
+This example shows how to use a visitor to retrieve cross-references between operators.
 
 Setup
 -----
@@ -30,7 +28,7 @@ The :py:class:`ReferenceVisitor` is derived from :py:class:`SwanVisitor` class. 
 - some methods to retrieve the data
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 55-68
+    :lines: 78-92
 
 The following methods are implemented, overridden from the base class:
 
@@ -41,12 +39,12 @@ The following methods are implemented, overridden from the base class:
   Then we create the cross-references (see :ref:`ref_visitor_full_code`).
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 70-88
+    :lines: 93-111
 
 The visitor is instantiated, and visits all modules in the model:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 106-108
+    :lines: 129-131
 
 Finally, the :py:func:`caller_stat` and :py:func:`called_stat` functions 
 print the results for a given operator. These functions use the 

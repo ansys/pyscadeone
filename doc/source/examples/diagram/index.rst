@@ -11,14 +11,14 @@ We use the same ``QuadFlightControl`` example. To setup the example see
 Then we get the operator:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 18-26
+    :lines: 40-48
 
 Diagram Block
 -------------
 The operator's diagram block can be accessed with the :py:attr:`ansys.scadeone.core.swan.Operator.diagrams` property.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 28
+    :lines: 50
 
 
 Once we have the **MotorControl** diagram block, we can get the list of diagram objects (blocks, wires, ...) and the
@@ -33,7 +33,7 @@ To get the source and target objects, we need to get the diagram objects using t
 to get the blocks list.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 31
+    :lines: 53
 
 
 Sources and Targets
@@ -42,13 +42,13 @@ Using the **MotorControl** diagram block, we can get the operator's sources usin
 :py:attr:`ansys.scadeone.core.swan.DiagramObject.sources` property:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 33-39
+    :lines: 55-61
 
 We can also get the operator's targets using the
 :py:attr:`ansys.scadeone.core.swan.DiagramObject.targets` property:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 41-42
+    :lines: 63-64
 
 
 Navigate from Input to Output
@@ -62,7 +62,7 @@ until we arrive at the ending point, **rotorCmd**.
 First, we get the **attitudeCmd** input with its fields.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 83-92
+    :lines: 105-114
 
 
 Once we have the input, we can move to the next object diagram using
@@ -71,7 +71,7 @@ For each object diagram target, we can move to the
 next object, and so on until we arrive at the output. For each move, we can save the navigated object.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 95-108
+    :lines: 117-130
 
 Complete Example
 ________________

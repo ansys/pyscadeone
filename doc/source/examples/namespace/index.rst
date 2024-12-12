@@ -15,7 +15,7 @@ We use the same ``QuadFlightControl`` example. To setup the example see
 Then we get the proper module:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 17-24
+    :lines: 39-46
 
 Get Operator from Module
 ________________________
@@ -23,7 +23,7 @@ We can get the declaration of operators defined in a module (:py:class:`ModuleBo
 For instance, we can get the operator from a module using the :py:meth:`ModuleBody.get_declaration()` method:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 26-27
+    :lines: 48-49
 
 Get Global Declarations from Operator Scope
 ___________________________________________
@@ -31,13 +31,13 @@ We can also get global declarations like groups, constants, types, or other oper
 :py:meth:`Scope.get_declaration()` method:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 29-44
+    :lines: 51-66
 
 
 With the same method, we can access to the inputs or outputs of the operator:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 46-50
+    :lines: 68-72
 
 
 Get Local Declarations from Any Scope

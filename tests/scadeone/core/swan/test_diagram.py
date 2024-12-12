@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -39,7 +39,6 @@ def parser(unit_test_logger):
 
 
 class TestDiagNav:
-
     @pytest.fixture(scope="session")
     def model(self, cc_project):
         app = ScadeOne()
@@ -146,7 +145,6 @@ class TestDiagNav:
         TestDiagNav._check(blk.expr, "#15 + #16")
 
     def test_group(self, parser: SwanParser):
-
         code = SwanString(
             SwanString.gen_version()
             + "\n"

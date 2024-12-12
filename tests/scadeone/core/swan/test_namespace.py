@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -52,7 +52,6 @@ def gen_code(swan: str, module: str) -> SwanString:
 
 
 class TestModuleNamespace:
-
     def test_module_get_group_decl(self, parser: SwanParser):
         code = gen_code("group group0 = (int32, int32);", "test_group")
         body = parser.module_body(code)
@@ -107,7 +106,6 @@ class TestModuleNamespace:
 
 
 class TestScopeNamespace:
-
     @staticmethod
     def _create_model(modules: List[swan.Module]):
         model = Model()

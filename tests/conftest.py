@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -131,7 +131,6 @@ def make_type_var():
 @pytest.fixture
 def make_var_decl(make_identifier, make_boxed_int8, make_simple_type):
     def _make_var_decl(as_bool=True):
-
         return S.VarDecl(
             make_identifier(),
             type=S.TypeGroupTypeExpression(

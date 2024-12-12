@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -49,7 +49,6 @@ ScadeOne = "C:/Scade One"
 
 
 class TestStpImport:
-
     @pytest.mark.parametrize(
         "test_dir,stp,sproj,record,summary,expected_sd_number",
         [

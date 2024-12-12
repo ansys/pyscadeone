@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -27,7 +27,6 @@ from ansys.scadeone.core.common.storage import ProjectFile
 
 
 class TestModel:
-
     @pytest.mark.skip("JOB NYI")
     def test_jobs(self, cc_project):
         app = ScadeOne()

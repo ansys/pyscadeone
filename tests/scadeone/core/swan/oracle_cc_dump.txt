@@ -957,7 +957,7 @@ visiting class: ModuleBody
                  From: StateRef as property: Lunum.lunum
           visiting class: State
            From: StateMachine as property: State.items
-           Object name:: Interruped
+           Object name:: Interrupted
            visiting class: Pragma
            visiting class: Identifier
             From: State as property: Identifier.id

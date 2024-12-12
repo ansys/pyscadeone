@@ -1,7 +1,3 @@
-[aA]nsys
-[pP]yansys
-autoclass
-automodule
 byname
 bypos
 bysource
@@ -9,11 +5,10 @@ caplog
 capsys
 const
 coreclr
-currentmodule
+delt
 elems
 enduml
 foldi
-gcc
 genindex
 groupdecl
 Ifte*
@@ -33,6 +28,7 @@ mapi
 maxdepth
 Mult
 multigroup
+numpydoc
 pathid
 pathlib
 platformdirs
@@ -40,14 +36,6 @@ prio
 puml
 pyansys
 pyofast
-pyscadeone
-pythonnet
-renamings
-Scade
-SCADE
-Scade One
-scadeone
-ScadeOne
 scadeoneexception
 scopesections
 simdata

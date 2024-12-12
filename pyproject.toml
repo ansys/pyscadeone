@@ -76,8 +76,8 @@ name = "ansys.scadeone.core"
 
 
 [tool.codespell]
-skip = 'spelling_ok.txt,accept.txt,*.rst,*.pyc,*.yml,*.ipynb,./.git,'
-ignore-words = "spelling_ok.txt"
+skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
+ignore-words = "code_spelling_ok.txt"
 quiet-level = 3
 
 # Test & Coverage

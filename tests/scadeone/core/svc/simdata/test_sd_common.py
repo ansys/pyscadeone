@@ -20,14 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import ctypes
+
 import ansys.scadeone.core.svc.simdata as sd
-from test_common import *  # noqa.
+from test_common import (
+    Imported,
+    VSizeImported,
+    vsize_imported_get_bytes_size,
+    vsize_imported_to_bytes,
+)
 
 try:
     import numpy as np
 
     imported_numpy = True
-except:
+except Exception:
     imported_numpy = False
 
 

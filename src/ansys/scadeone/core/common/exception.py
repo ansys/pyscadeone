@@ -21,9 +21,6 @@
 # SOFTWARE.
 
 """
-Scade One Exception
--------------------
-
 The class :py:class:`ScadeOneException` is used to raise an exception.
 The message passed when raising the exception is passed to the
 Scade One logger :py:class:`ansys.scadeone.core.common.logger.ScadeOneLogger`.

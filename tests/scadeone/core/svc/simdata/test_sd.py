@@ -24,6 +24,7 @@ import argparse
 import traceback
 from test_common import *  # noqa
 from os import remove
+import sys
 
 import ansys.scadeone.core.svc.simdata as sd
 from test_sd_common import create_test_file

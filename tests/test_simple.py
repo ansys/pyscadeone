@@ -48,7 +48,7 @@ class TestApp:
     def test_app_with_exc(self):
         # check as container with exception
         with pytest.raises(KeyError) as exc_info:
-            with ScadeOne() as app:
+            with ScadeOne() as app:  # noqa: F841
                 d = {}
                 d["no_key"]
         assert str(exc_info.value) == "'no_key'"

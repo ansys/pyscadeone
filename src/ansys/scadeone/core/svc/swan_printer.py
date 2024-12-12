@@ -42,8 +42,10 @@ class PPrinter(SwanVisitor):
     normalize: bool
         Write each Swan declaration or all declarations per line
 
-    Methods (supported to use for a Swan project)
-    ---------------------------------------------
+    Methods
+    -------
+    Supported to use for a Swan project:
+
         - Use clauses declaration
         - Globals declaration:
             + Types declaration

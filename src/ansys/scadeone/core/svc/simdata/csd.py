@@ -352,7 +352,7 @@ class Element(defs.ElementBase):
         Returns
         -------
         ElementBase
-            created child element
+            Created child element
         """
         elem_id = dll_wrap.sde_create(
             self._elem_id, name, sd_type.type_id if sd_type else core.SDT_NONE, core.SdeKind(kind)
@@ -551,7 +551,7 @@ class File(defs.FileBase):
         Returns
         -------
         ElementBase
-            the new element that was added to file
+            The new element that was added to file
         """
 
         elem_id = dll_wrap.sde_create(
@@ -584,7 +584,7 @@ class File(defs.FileBase):
         Returns
         -------
         str
-            version number
+            Version number
         """
         return dll_wrap.sdf_get_version(self._file_id)
 
@@ -617,7 +617,7 @@ def open_file(file_path: str) -> defs.FileBase:
     Returns
     -------
     FileBase
-        the opened file
+        The opened file
 
     Raises
     ------
@@ -641,7 +641,7 @@ def create_file(file_path: str) -> defs.FileBase:
     Returns
     -------
     FileBase
-        the created file
+        The created file
 
     Raises
     ------
@@ -667,7 +667,7 @@ def create_struct_type(fields: List[Tuple], name: str = "") -> defs.StructType:
     Returns
     -------
     StructType
-        the created structure type
+        The created structure type
 
     Raises
     ------
@@ -731,7 +731,7 @@ def create_array_type(base_type: defs.Type, dims: List[int], name: str = "") -> 
     Returns
     -------
     ArrayType
-        created array type
+        Created array type
 
     Raises
     ------
@@ -767,7 +767,7 @@ def create_enum_type(values: List[str], name: str = "") -> defs.EnumType:
     Returns
     -------
     EnumType
-        created enumeration type
+        Created enumeration type
 
     Raises
     ------
@@ -806,7 +806,7 @@ def create_variant_type(constructors: List[Tuple], name: str = "") -> defs.Varia
     Returns
     -------
     VariantType
-        created variant type
+        Created variant type
 
     Raises
     ------
@@ -883,7 +883,7 @@ def create_imported_type(mem_size: int, name: str = "") -> defs.ImportedType:
     Returns
     -------
     ImportedType
-        created imported type
+        Created imported type
 
     Raises
     ------

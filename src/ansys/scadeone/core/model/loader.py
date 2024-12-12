@@ -21,8 +21,6 @@
 # SOFTWARE.
 
 """
-Parser
-------
 This module contains the :py:class:`Parser` which is a proxy to the Scade One F# parser.
 The _Parser_ class offers methods to parse a complete Swan code (interface or module),
 or a declaration, or an expression.
@@ -127,7 +125,7 @@ class SwanParser(Parser):
         Parameters
         ----------
         rule_fn : Callable
-            parser rule function
+            Parser rule function
         swan : SwanStorage
             Swan code to parse
 
@@ -170,7 +168,7 @@ class SwanParser(Parser):
         Returns
         -------
         ModuleBody
-            instance of ModuleBody.
+            Instance of ModuleBody.
         """
         source.check_swan_version()
         result = self._parse(Reader.parse_body, source)
@@ -191,7 +189,7 @@ class SwanParser(Parser):
         Returns
         -------
         ModuleInterface
-            instance of ModuleInterface.
+            Instance of ModuleInterface.
         """
         source.check_swan_version()
         result = self._parse(Reader.parse_interface, source)

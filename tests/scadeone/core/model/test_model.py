@@ -46,7 +46,7 @@ def parser(unit_test_logger):
 
 class TestModel:
     def test_model_creation(self, model: Model):
-        assert model.all_modules_loaded == False
+        assert not model.all_modules_loaded
 
     def test_type_count(self, model: Model):
         def filter(obj: S.GlobalDeclaration):
@@ -60,7 +60,7 @@ class TestModel:
         def filter(obj: S.GlobalDeclaration):
             if isinstance(obj, S.Operator):
                 name = obj.id
-                return str(obj.id) == "Regulation"
+                return str(name) == "Regulation"
             return False
 
         decl = model.find_declaration(filter)

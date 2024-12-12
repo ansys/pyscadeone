@@ -112,7 +112,7 @@ class TestTestResults:
                   ]
                 }
         """
-        with pytest.raises(ScadeOneException, match="Invalid test results file: \\.*") as e:
+        with pytest.raises(ScadeOneException, match="Invalid test results file: \\.*") as e:  # noqa: F841
             TestResultsParser.load(test_res_str)
 
     def test_valid_file(self):

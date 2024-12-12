@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# cSpell: ignore cfunction
+
 from pathlib import Path
 
 import pytest
@@ -47,8 +49,8 @@ class TestGeneratedCode:
             # check that the function name corresponds to the name found in content section of code elem
             assert name == code["content"]["name"]
             params = cfunc.parameters
-            # check on ret_type tbd
-            ret_type = cfunc.return_type
+            # FIXME check on ret_type tbd
+            _ = cfunc.return_type
             # find the function section in the mapping file dictionary
             for elem in op._gen_code.code:
                 if elem.get("interface_file", "") == intf:
@@ -130,7 +132,7 @@ class TestGeneratedCode:
     def test_operator_error(self, oper_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            op = gc.get_model_operator(oper_name)
+            gc.get_model_operator(oper_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no operator named {oper_name}"
 
@@ -189,7 +191,7 @@ class TestGeneratedCode:
     def test_mono_instance_error(self, mono_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            op = gc.get_model_monomorphic_instance(mono_name)
+            gc.get_model_monomorphic_instance(mono_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no monomorphic instance named {mono_name}"
 
@@ -240,7 +242,7 @@ class TestGeneratedCode:
     def test_sensor_error(self, sensor_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            sen = gc.get_model_sensor(sensor_name)
+            gc.get_model_sensor(sensor_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no sensor named {sensor_name}"
 

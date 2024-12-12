@@ -61,13 +61,13 @@ def cmp_string(orig, new, no_markup=False, diff=False):
         orig_strip = re.sub(r"(?s)\{(\w*)%(.*)%\1\}", r"\2", orig_strip)
     cmp = orig_strip == new_strip
     if not cmp:
-        with Path("test_pyast.txt").open("w") as fd:
+        with Path("test_pyofast.txt").open("w") as fd:
             fd.write("===== Original =====\n")
             fd.write(orig_strip)
             fd.write("\n=====   New  =====\n")
             fd.write(new_strip)
     else:
-        Path("test_pyast.txt").unlink(True)
+        Path("test_pyofast.txt").unlink(True)
     if not cmp and diff:
         d = Differ()
         # keep newlines this time

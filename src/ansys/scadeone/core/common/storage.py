@@ -21,8 +21,6 @@
 # SOFTWARE.
 
 """
-Storage Classes
----------------
 The **storage** module contains classes that abstract a storage container.
 Currently, containers can be a file or a string, or other data
 
@@ -195,12 +193,12 @@ class SwanStorage(ABC):
         Parameters
         ----------
         source : str
-            version information as a string.
+            Version information as a string.
 
         Returns
         -------
         Union[dict, None]
-            either the version information as a dict, or None if no version found.
+            Either the version information as a dict, or None if no version found.
         """
         m = re.match(r"^--\s*version\s+(?P<ver>.*)$", source, re.MULTILINE)
         if m:

@@ -21,9 +21,6 @@
 # SOFTWARE.
 
 """
-Versioning
-==========
-
 The versioning module contains the version manager for the Scade One formats.
 """
 
@@ -36,6 +33,11 @@ VersionFile = Path(__file__).parent / "versions.json"
 
 
 class VersionManager:
+    """Class managing the versions for the Scade One tools formats.
+
+    The version manager is used through the singleton `FormatVersions` instance.
+    """
+
     VersionRE = re.compile(r"(?P<M>\d+)\.(?P<m>\d+)")
 
     def __init__(self):
@@ -43,7 +45,8 @@ class VersionManager:
         self._formats = None
 
     @property
-    def formats(self):
+    def formats(self) -> set:
+        """Get the formats as a set of strings."""
         if self._formats is None:
             self._formats = set(self._format_versions.keys())
         return self._formats
@@ -54,7 +57,7 @@ class VersionManager:
         Returns
         -------
         str
-            string containing the versions
+            String containing the versions
         """
         buffer = "The versions for the supported format/code are:\n\n"
         for k in sorted(self.formats):

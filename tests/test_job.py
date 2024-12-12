@@ -33,7 +33,7 @@ class TestModel:
         asset = ProjectFile(cc_project)
         project = app.load_project(asset)
         jobs = project.jobs()
-        assert True
+        assert jobs
 
     @pytest.mark.skip("JOB NYI")
     def test_code_gen(self, cc_project):

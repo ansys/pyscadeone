@@ -10,7 +10,7 @@ Setup
 -----
 
 The same ``QuadFlightControl`` example is used. To setup the example, see 
-:ref:`QuadFlightControl python setup`.
+:ref:`ref_QuadFlightControl_python_setup`.
 
 All modules are loaded:
 

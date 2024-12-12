@@ -1,7 +1,7 @@
 .. _ref_swan_api:
 
 *************
-Swan Language
+Swan language
 *************
 
 .. :py:module:: ansys.scadeone.core.swan

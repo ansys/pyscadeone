@@ -9,7 +9,7 @@ This section describes how to access generated code data from model elements usi
 a Code Generation job (see :ref:`ref_generated_code`).
 
 The same ``QuadFlightControl`` example is used. To setup the example see 
-:ref:`QuadFlightControl python setup`.
+:ref:`ref_QuadFlightControl_python_setup`.
 
 The generated code related package is required:
 

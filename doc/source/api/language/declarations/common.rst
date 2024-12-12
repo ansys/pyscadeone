@@ -1,4 +1,4 @@
-Common Classes
+Common classes
 ==============
 
 This section contains the description of classes that are
@@ -6,7 +6,7 @@ commonly used by other classes.
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-SwanItem Class
+SwanItem class
 --------------
 
 The :class:`SwanItem` is the top level class for all constructs.
@@ -14,7 +14,7 @@ The :class:`SwanItem` is the top level class for all constructs.
 .. autoclass:: SwanItem
     :no-show-inheritance: 
 
-Identifier Classes
+Identifier classes
 ------------------
 
 Swan identifiers are represented by the following classes with a simple identifier or 
@@ -29,14 +29,14 @@ of operators, or parts of automata.
 
 .. autoclass:: Luid
 
-Pragma
-------
+Pragma class
+------------
 
 The :py:class:`Pragma` stores a pragma information given in the code.
 
 .. autoclass:: Pragma
 
-Protection Class
+Protection class
 ----------------
 
 User code may be syntactically incorrect in a model, but must be

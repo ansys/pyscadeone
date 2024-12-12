@@ -1,6 +1,6 @@
 .. _ref_op_decl:
 
-Operator Declaration
+Operator declaration
 ====================
 
 .. currentmodule:: ansys.scadeone.core.swan

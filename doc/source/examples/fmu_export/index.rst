@@ -11,7 +11,7 @@ This can also be done through the command line, see how
 :ref:`at the end of the section <fmu_export_cli>`.
 
 The  ``QuadFlightControl`` example is used. To set up the example see 
-:ref:`QuadFlightControl python setup`.
+:ref:`ref_QuadFlightControl_python_setup`.
 
 The following package must be used:
 

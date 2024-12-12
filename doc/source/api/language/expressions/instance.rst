@@ -1,4 +1,4 @@
-Operator Instance
+Operator instance
 =================
 
 .. currentmodule:: ansys.scadeone.core.swan
@@ -23,20 +23,20 @@ represented by instances of the :py:class:`OperatorExpression` class.
 
 .. autoclass:: OperatorBase
 
-Operator Instance Application
+Operator instance application
 -----------------------------
 
 
 .. autoclass:: OperatorInstance
 
 
-Named Operator Instance
+Named operator instance
 -----------------------
 
 .. autoclass:: PathIdOpCall
 
 
-Anonymous Operator Instance
+Anonymous operator instance
 ---------------------------
 
 .. autoclass:: AnonymousOperatorWithExpression
@@ -44,7 +44,7 @@ Anonymous Operator Instance
 .. autoclass:: AnonymousOperatorWithDataDefinition
 
 
-Higher-Order Operator Instance
+Higher-order operator instance
 ------------------------------
 
 .. list-table:: Higher-order operators 
@@ -54,9 +54,9 @@ Higher-Order Operator Instance
       - Application
     * - **map**, **fold**, **mapfold**, **mapi** **foldi**, **mapfoldi**
       - array iterators
-    * - **activate** ... **every**
+    * - **activate** *operator expression* **every**
       - conditional activation
-    * - **restart** ... **every**  
+    * - **restart** *operator expression* **every**  
       - conditional restart
       
 
@@ -78,7 +78,7 @@ Restart
 .. autoclass:: Restart
 
 
-Partial Operator Instance
+Partial operator instance
 -------------------------
 
 .. autoclass:: Partial
@@ -86,7 +86,7 @@ Partial Operator Instance
 .. autoclass:: OptGroupItem
 
 
-N-Ary Operator Instance
+N-ary operator instance
 -----------------------
 
 N-ary operator instances are implemented as specific expressions. See :ref:`ref_n_ary_expr` section.

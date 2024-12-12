@@ -8,13 +8,13 @@ These expressions represent **if** and **case** expressions.
 .. figure:: selection.svg
 
 
-if/then/else
-------------
+Conditional expression
+----------------------
 
 .. autoclass:: IfteExpr
 
-case
-----
+Case expression
+---------------
 
 .. autoclass:: CaseExpr
 

@@ -14,7 +14,7 @@ from .scopes import Scope
 from .typedecl import VariableTypeExpression
 
 
-class TypeConstraint(common.SwanItem):
+class TypeConstraint(common.SwanItem):  # numpydoc ignore=PR01
     """Type constraint for operator. A constraint is:
 
     *where_decl* ::= **where** *typevar* {{ , *typevar* }} *numeric_kind*
@@ -61,7 +61,7 @@ class TypeConstraint(common.SwanItem):
         return f"where {type_vars} {common.NumericKind.to_str(self.kind)}"
 
 
-class Signature(common.Declaration, common.ModuleItem):
+class Signature(common.Declaration, common.ModuleItem):  # numpydoc ignore=PR01
     """Operator signature, without a body.
 
     Used in interfaces."""
@@ -186,7 +186,7 @@ class Signature(common.Declaration, common.ModuleItem):
         return f"{self.to_str()};"
 
 
-class Operator(Signature):
+class Operator(Signature):  # numpydoc ignore=PR01
     """Operator definition, with a body.
 
     Used in modules. The body may not bet yet defined."""

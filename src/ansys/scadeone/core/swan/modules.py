@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from .namespace import ModuleNamespace  # noqa
 
 
-class GlobalDeclaration(common.ModuleItem):
+class GlobalDeclaration(common.ModuleItem):  # numpydoc ignore=PR01
     """Abstract class for global declarations:
 
     - type declaration list
@@ -63,7 +63,7 @@ class GlobalDeclaration(common.ModuleItem):
         return f"{kind} {decls}"
 
 
-class TypeDeclarations(GlobalDeclaration):
+class TypeDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Type declarations: **type** {{ *type_decl* ; }}."""
 
     def __init__(self, types: List[TypeDecl]) -> None:
@@ -80,7 +80,7 @@ class TypeDeclarations(GlobalDeclaration):
         return self.to_str("type", self.types)
 
 
-class ConstDeclarations(GlobalDeclaration):
+class ConstDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Constant declarations: **constant** {{ *constant_decl* ; }}."""
 
     def __init__(self, constants: List[ConstDecl]) -> None:
@@ -97,7 +97,7 @@ class ConstDeclarations(GlobalDeclaration):
         return self.to_str("const", self.constants)
 
 
-class SensorDeclarations(GlobalDeclaration):
+class SensorDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Sensor declarations: **sensor** {{ *sensor_decl* ; }}."""
 
     def __init__(self, sensors: List[SensorDecl]) -> None:
@@ -114,7 +114,7 @@ class SensorDeclarations(GlobalDeclaration):
         return self.to_str("sensor", self.sensors)
 
 
-class GroupDeclarations(GlobalDeclaration):
+class GroupDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Group declarations: **group** {{ *group_decl* ; }}."""
 
     def __init__(self, groups: List[GroupDecl]) -> None:
@@ -131,7 +131,7 @@ class GroupDeclarations(GlobalDeclaration):
         return self.to_str("group", self.groups)
 
 
-class UseDirective(common.ModuleItem):
+class UseDirective(common.ModuleItem):  # numpydoc ignore=PR01
     """Class for **use** directive."""
 
     def __init__(
@@ -158,7 +158,7 @@ class UseDirective(common.ModuleItem):
         return f"{use};"
 
 
-class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):
+class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore=PR01
     """Protected declaration."""
 
     def __init__(self, markup: str, data: str):
@@ -198,7 +198,7 @@ class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):
         return f"{self.owner.get_full_path()}::<protected>"
 
 
-class Module(common.ModuleBase):
+class Module(common.ModuleBase):  # numpydoc ignore=PR01
     """Module base class
 
     Parameters
@@ -357,7 +357,7 @@ class Module(common.ModuleBase):
         return "\n\n".join(decls)
 
 
-class ModuleInterface(Module):
+class ModuleInterface(Module):  # numpydoc ignore=PR01
     """Module interface definition."""
 
     def __init__(
@@ -384,7 +384,7 @@ class ModuleInterface(Module):
         return self.model.get_module_body(self.name.as_string)
 
 
-class ModuleBody(Module):
+class ModuleBody(Module):  # numpydoc ignore=PR01
     """Module body definition."""
 
     def __init__(

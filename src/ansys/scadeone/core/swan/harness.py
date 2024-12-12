@@ -35,7 +35,7 @@ from ansys.scadeone.core.swan.scopes import Scope
 import ansys.scadeone.core.swan.common as common
 
 
-class Source(common.SwanItem):
+class Source(common.SwanItem):  # numpydoc ignore=PR01
     """Class representing a source in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -48,7 +48,7 @@ class Source(common.SwanItem):
         return self._id
 
 
-class Oracle(common.SwanItem):
+class Oracle(common.SwanItem):  # numpydoc ignore=PR01
     """Class representing an oracle in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -61,7 +61,7 @@ class Oracle(common.SwanItem):
         return self._id
 
 
-class SetSensorEquation(common.Equation):
+class SetSensorEquation(common.Equation):  # numpydoc ignore=PR01
     """Class representing a set sensor equation in the harness."""
 
     def __init__(self, sensor: common.PathIdentifier, value: common.Expression) -> None:
@@ -80,7 +80,7 @@ class SetSensorEquation(common.Equation):
         return self._value
 
 
-class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):
+class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):  # numpydoc ignore=PR01
     """Test harness definition."""
 
     def __init__(
@@ -109,7 +109,7 @@ class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):
         return buffer
 
 
-class TestModule(ModuleBody):
+class TestModule(ModuleBody):  # numpydoc ignore=PR01
     """Test module definition."""
 
     def __init__(

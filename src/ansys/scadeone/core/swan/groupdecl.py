@@ -30,7 +30,7 @@ from typing import Generator, List
 import ansys.scadeone.core.swan.common as common
 
 
-class TypeGroupTypeExpression(common.GroupTypeExpression):
+class TypeGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """Group type expression: *group_type_expr* ::= *type_expr*."""
 
     def __init__(self, type: common.TypeExpression) -> None:
@@ -46,7 +46,7 @@ class TypeGroupTypeExpression(common.GroupTypeExpression):
         return str(self.type)
 
 
-class NamedGroupTypeExpression(common.GroupTypeExpression):
+class NamedGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """A named group type expression, used in GroupTypeExpressionList as id : *group_type_expr*."""
 
     def __init__(self, label: common.Identifier, type: common.GroupTypeExpression) -> None:
@@ -68,7 +68,7 @@ class NamedGroupTypeExpression(common.GroupTypeExpression):
         return f"{self.label}: {self.type}"
 
 
-class GroupTypeExpressionList(common.GroupTypeExpression):
+class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """Group list made of positional items followed by named items.
     Each item is a group type expression.
 
@@ -107,7 +107,7 @@ class GroupTypeExpressionList(common.GroupTypeExpression):
         return f"({items_str})"
 
 
-class GroupDecl(common.Declaration):
+class GroupDecl(common.Declaration):  # numpydoc ignore=PR01
     """Group declaration with an id and a type."""
 
     def __init__(self, id: common.Identifier, type: common.GroupTypeExpression) -> None:

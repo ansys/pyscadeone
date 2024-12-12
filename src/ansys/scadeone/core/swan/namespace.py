@@ -41,6 +41,7 @@ from .scopesections import VarSection
 from .variable import VarDecl
 
 
+# FIXME:
 class ModuleNamespace:
     """Class to handle named objects defined in a module."""
 

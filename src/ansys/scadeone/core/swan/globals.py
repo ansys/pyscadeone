@@ -30,7 +30,7 @@ from typing import Optional, Union
 import ansys.scadeone.core.swan.common as common
 
 
-class ConstDecl(common.Declaration):
+class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
     """Constant declaration, with an id, a type, and an optional expression."""
 
     def __init__(
@@ -60,7 +60,7 @@ class ConstDecl(common.Declaration):
         return f"{decl}{type}{init}"
 
 
-class SensorDecl(common.Declaration):
+class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
     """Sensor declaration with an id and a type."""
 
     def __init__(self, id: common.Identifier, type: common.TypeExpression) -> None:

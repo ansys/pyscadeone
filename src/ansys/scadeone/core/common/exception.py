@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,13 +21,11 @@
 # SOFTWARE.
 
 """
-Scade One Exception
--------------------
-
 The class :py:class:`ScadeOneException` is used to raise an exception.
 The message passed when raising the exception is passed to the
 Scade One logger :py:class:`ansys.scadeone.core.common.logger.ScadeOneLogger`.
 """
+
 from ansys.scadeone.core.common.logger import LOGGER
 
 

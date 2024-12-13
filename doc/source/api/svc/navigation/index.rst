@@ -1,4 +1,4 @@
-Model Navigation
+Model navigation
 ================
 
 This section describes the API to navigate through model elements. 

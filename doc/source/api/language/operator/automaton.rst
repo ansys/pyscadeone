@@ -1,9 +1,9 @@
-State Machines
+State machines
 ==============
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-The Swan language has two syntaxes to express state machines:
+The Swan language has two syntax to express state machines:
 
 - a state machine is a collection of states, each state having strong and weak transitions;
 - a state machine is a collection of:
@@ -62,14 +62,14 @@ Forks are transitions which split into several branches.
 
 .. .. autoclass:: Fork
 
-State with Transitions
+State with transitions
 ~~~~~~~~~~~~~~~~~~~~~~
 
 A fork a succession of *if then else* with :py:class:`Arrow`.
 
 .. autoclass:: ForkTree
 
-Separate Transitions
+Separate transitions
 ~~~~~~~~~~~~~~~~~~~~
 
 Fork is a list of *if* and one *else* arrows with priorities.

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from test_common import *  # noqa
+import ctypes
+from test_common import VSizeImported, vsize_imported_get_bytes_size, vsize_imported_to_bytes
 import pytest
 from os import remove
 
@@ -31,7 +32,7 @@ try:
     import numpy as np
 
     imported_numpy = True
-except:
+except Exception:
     imported_numpy = False
 
 
@@ -330,27 +331,29 @@ def test_all_functions():
 
     # create elements
     sStruct_id = dll_wrap.sde_create(file_id, "M::Sensor1", struct_type_id, core.SdeKind.SENSOR)
-    rootop_id = dll_wrap.sde_create(file_id, "R::Root", core.SDT_NONE, core.SdeKind.OPERATOR)
-    assert rootop_id != core.SD_ID_INVALID
-    iStruct_id = dll_wrap.sde_create(rootop_id, "iStruct", struct_type_id, core.SdeKind.INPUT)
-    iArray_id = dll_wrap.sde_create(rootop_id, "iArray", array_type_id, core.SdeKind.INPUT)
-    iEnum_id = dll_wrap.sde_create(rootop_id, "iEnum", enum_type_id, core.SdeKind.INPUT)
+    root_op_id = dll_wrap.sde_create(file_id, "R::Root", core.SDT_NONE, core.SdeKind.OPERATOR)
+    assert root_op_id != core.SD_ID_INVALID
+    iStruct_id = dll_wrap.sde_create(root_op_id, "iStruct", struct_type_id, core.SdeKind.INPUT)
+    iArray_id = dll_wrap.sde_create(root_op_id, "iArray", array_type_id, core.SdeKind.INPUT)
+    iEnum_id = dll_wrap.sde_create(root_op_id, "iEnum", enum_type_id, core.SdeKind.INPUT)
     iFloat32_id = dll_wrap.sde_create(
-        rootop_id, "iFloat32", core.PredefinedType.FLOAT32.value, core.SdeKind.INPUT
+        root_op_id, "iFloat32", core.PredefinedType.FLOAT32.value, core.SdeKind.INPUT
     )
-    iVariant_id = dll_wrap.sde_create(rootop_id, "iVariant", variant_type_2_id, core.SdeKind.INPUT)
-    iImported_id = dll_wrap.sde_create(rootop_id, "iImported", imported_type_id, core.SdeKind.INPUT)
+    iVariant_id = dll_wrap.sde_create(root_op_id, "iVariant", variant_type_2_id, core.SdeKind.INPUT)
+    iImported_id = dll_wrap.sde_create(
+        root_op_id, "iImported", imported_type_id, core.SdeKind.INPUT
+    )
     iVSizeImported_id = dll_wrap.sde_create(
-        rootop_id, "iVSizeImported", vsize_imported_type_id, core.SdeKind.INPUT
+        root_op_id, "iVSizeImported", vsize_imported_type_id, core.SdeKind.INPUT
     )
-    iGroup_id = dll_wrap.sde_create(rootop_id, "iGroup", core.SDT_NONE, core.SdeKind.INPUT)
+    iGroup_id = dll_wrap.sde_create(root_op_id, "iGroup", core.SDT_NONE, core.SdeKind.INPUT)
     iGroupItem1Float32_id = dll_wrap.sde_create(
         iGroup_id, ".(.1)", core.PredefinedType.FLOAT32.value, core.SdeKind.GROUP_ITEM
     )
     iGroupItem2Enum_id = dll_wrap.sde_create(
         iGroup_id, ".(.name.1)", enum_type_id, core.SdeKind.GROUP_ITEM
     )
-    inst_id = dll_wrap.sde_create(rootop_id, "(OpInst#1)", core.SDT_NONE, core.SdeKind.INSTANCE)
+    inst_id = dll_wrap.sde_create(root_op_id, "(OpInst#1)", core.SDT_NONE, core.SdeKind.INSTANCE)
     pChar_id = dll_wrap.sde_create(
         inst_id, "Probe1", core.PredefinedType.CHAR.value, core.SdeKind.PROBE
     )
@@ -373,8 +376,8 @@ def test_all_functions():
         vIStruct.eI16 = 2 * i
         vIStruct.eBool = not vSStruct.eBool
         if imported_numpy:
-            for j, k, l in np.ndindex(2, 3, 4):
-                vIArray_2_3_4[j][k][l] = i + j + k + l
+            for j, k, n in np.ndindex(2, 3, 4):
+                vIArray_2_3_4[j][k][n] = i + j + k + n
             vIArray_2_3_4_all.append(vIArray_2_3_4.tolist())
         mod = i % 3
         if mod == 0:
@@ -482,17 +485,17 @@ def test_all_functions():
 
     # find elements
     assert dll_wrap.sde_get_n_children(file_id) == 2
-    rootop_id = dll_wrap.sde_get_child(file_id, 1)
-    assert dll_wrap.sde_get_name(rootop_id) == "R::Root"
-    assert dll_wrap.sde_get_n_children(rootop_id) == 9
-    assert dll_wrap.sde_get_type(rootop_id) == core.SDT_NONE
-    iStruct_id = dll_wrap.sde_get_child(rootop_id, 0)
+    root_op_id = dll_wrap.sde_get_child(file_id, 1)
+    assert dll_wrap.sde_get_name(root_op_id) == "R::Root"
+    assert dll_wrap.sde_get_n_children(root_op_id) == 9
+    assert dll_wrap.sde_get_type(root_op_id) == core.SDT_NONE
+    iStruct_id = dll_wrap.sde_get_child(root_op_id, 0)
     assert dll_wrap.sde_get_name(iStruct_id) == "iStruct"
     assert dll_wrap.sde_get_type(iStruct_id) == struct_type_id
-    iArray_id = dll_wrap.sde_get_child(rootop_id, 1)
+    iArray_id = dll_wrap.sde_get_child(root_op_id, 1)
     assert dll_wrap.sde_get_name(iArray_id) == "iArray"
     assert dll_wrap.sde_get_kind(iArray_id) == core.SdeKind.INPUT
-    iFloat32_id = dll_wrap.sde_get_child(rootop_id, 3)
+    iFloat32_id = dll_wrap.sde_get_child(root_op_id, 3)
     assert dll_wrap.sde_get_name(iFloat32_id) == "iFloat32"
 
     assert dll_wrap.sde_find(file_id, "R::Root/iStruct") == iStruct_id

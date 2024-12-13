@@ -4,14 +4,14 @@ Modeler
 =======
 
 
-In this section, we use the **QuadFlightControl** example provided with Scade One.
+This section uses the **QuadFlightControl** example provided with Scade One.
 The example is located in the ``examples/QuadFlightControl/QuadFlightControl`` folder in the Scade One
 installation directory.
 
 .. literalinclude:: quad_flight_control.py
     :lines: 7-12
 
-ScadeOne Instance
+ScadeOne instance
 -----------------
 
 A *ScadeOne* instance is created with the following code:
@@ -23,7 +23,7 @@ where :py:attr:`install_dir` is the location of Scade One installation and it co
 a :py:class:`pathlib.Path` object as value. The *app* object is then used to access to projects.
 
 
-Swan Projects
+Swan projects
 -------------
 
 A Swan project is opened with :py:meth:`ansys.scadeone.core.ScadeOne.load_project`.
@@ -56,7 +56,7 @@ the :py:meth:`ansys.scadeone.core.project.Project.dependencies` method.
     :lines: 17-21
 
 
-Swan Module Bodies and Interfaces Files
+Swan module bodies and interfaces files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Swan module bodies (*.swan* files) and Swan module interfaces (*.swani* files)
@@ -67,7 +67,7 @@ method.
     :lines: 23-27
 
 
-Swan Model
+Swan model
 ----------
 
 A :py:class:`ansys.scadeone.core.model.Model` object represents a Swan model or program.
@@ -107,7 +107,7 @@ Here are some examples:
     PyScadeOne tries to be lazy to handle large projects. For instance,
     looking for all sensors requires to load all sources.
 
-    Looking for a specific item will load the sources until the required
+    Looking for a specific item, the sources are loaded until the required
     item is found.
 
 In the following example, the :py:meth:`ansys.scadeone.core.model.Model.find_declaration`
@@ -126,7 +126,7 @@ Here an example to filter declarations to get specific operator:
     :lines: 39-47
 
 
-Swan Language
+Swan language
 -------------
 
 The model content represents the structure of the Swan program, starting with

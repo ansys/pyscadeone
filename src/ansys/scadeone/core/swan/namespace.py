@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -152,12 +152,12 @@ class ScopeNamespace:
         if isinstance(item, Operator):
             for input in item.inputs:
                 if not isinstance(input, VarDecl):
-                    raise ScadeOneException(f"Input is not a variable.")
+                    raise ScadeOneException("Input is not a variable.")
                 if input.id.value == name:
                     return input
             for output in item.outputs:
                 if not isinstance(output, VarDecl):
-                    raise ScadeOneException(f"Output is not a variable.")
+                    raise ScadeOneException("Output is not a variable.")
                 if output.id.value == name:
                     return output
         if isinstance(item, Scope):

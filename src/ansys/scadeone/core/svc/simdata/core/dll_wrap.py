@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -55,7 +55,7 @@ def arch_64_error(*args):
 
 
 def wrap_function(lib, func_name, argtypes, restype):
-    """wrapping ctypes functions"""
+    """Wrapping ctypes functions"""
 
     if not IS_ARCH_64:
         return arch_64_error

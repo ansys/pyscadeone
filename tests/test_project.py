@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -97,3 +97,4 @@ class TestProject:
         app = ScadeOne()
         asset = ProjectFile(cc_project)
         project = app.load_project(asset)
+        assert project

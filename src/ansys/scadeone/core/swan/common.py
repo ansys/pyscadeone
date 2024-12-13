@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,6 +26,7 @@ language-related modules.
 
 It contains base classes for various language constructs.
 """
+
 from abc import ABC
 from collections import namedtuple
 from collections.abc import Iterable as abcIterable
@@ -38,7 +39,7 @@ from typing_extensions import Self
 from ansys.scadeone.core.common.exception import ScadeOneException
 
 
-class SwanItem(ABC):
+class SwanItem(ABC):  # numpydoc ignore=PR01  # numpydoc ignore=PR01  # numpydoc ignore=PR01
     """Base class for Scade objects."""
 
     def __init__(self) -> None:
@@ -51,13 +52,21 @@ class SwanItem(ABC):
         return self._owner
 
     @owner.setter
-    def owner(self, owner: Self):
-        """Sets the owner of the Swan construct."""
+    def owner(self, owner: Self):  # numpydoc ignore=PR01
+        """Set the owner of the Swan construct."""
         self._owner = owner
 
     @staticmethod
     def set_owner(owner: Self, children: Union[Self, Iterable[Self]]):
-        """Helper to set *owner* as the owner of each item in the Iterable *items*."""
+        """Helper to set *owner* as the owner of each item in the Iterable *items*.
+
+        Parameters
+        ----------
+        owner : SwanItem
+            Owner of the items.
+        children : Union[SwanItem, Iterable[SwanItem]]
+            Items to set owner.
+        """
         if isinstance(children, abcIterable):
             for item in children:
                 item.owner = owner
@@ -71,7 +80,7 @@ class SwanItem(ABC):
 
     @property
     def is_protected(self) -> bool:
-        """Tells if a construct item is syntactically protected with some markup
+        """Tell if a construct item is syntactically protected with some markup
         and is stored as a string (without the markup)."""
         return False
 
@@ -90,21 +99,21 @@ class SwanItem(ABC):
         raise ScadeOneException("owner property is None")
 
     @property
-    def model(self) -> "Model":  # type: ignore
-        """Returns model containing the Swan item"""
+    def model(self) -> "Model":  # noqa: F821
+        """Return model containing the Swan item"""
         model = self.module.owner
         if model is None:
-            raise ScadeOneException(f"Module owner not found")
+            raise ScadeOneException("Module owner not found")
         return model
 
 
-class ModuleBase(SwanItem):
+class ModuleBase(SwanItem):  # numpydoc ignore=PR01
     """Base class for modules"""
 
     def __init__(self) -> None:
         super().__init__()
 
-    def get_use_directive(self, name: str) -> "UseDirective":  # type: ignore
+    def get_use_directive(self, name: str) -> "UseDirective":  # noqa: F821
         assert False
 
 
@@ -121,7 +130,7 @@ IntegerTuple = namedtuple(
 FloatTuple = namedtuple("FloatTuple", ["value", "mantissa", "exp", "size"])
 
 
-class SwanRE:
+class SwanRE:  # numpydoc ignore=PR01
     """Container of compiled regular expressions. These expressions can be matched with
     some strings. Some regular expressions use groups to extract parts.
 
@@ -165,7 +174,7 @@ class SwanRE:
 
     @classmethod
     def parse_integer(cls, string: str, minus: bool = False) -> Union[IntegerTuple, None]:
-        """Matches a string representing an integer and returns
+        """Match a string representing an integer and returns
         a description of that integer as an IntegerTuple.
 
         Parameters
@@ -235,7 +244,7 @@ class SwanRE:
 
     @classmethod
     def parse_float(cls, string: str, minus: bool = False) -> Union[FloatTuple, None]:
-        """Matches a string representing a float and returns
+        """Match a string representing a float and returns
         a description of that float as a FloatTuple.
 
         Parameters
@@ -271,7 +280,7 @@ class SwanRE:
 
     @classmethod
     def is_float(cls, string: str) -> bool:
-        """Checks whether a string is a Swan integer.
+        """Check whether a string is a Swan integer.
 
         Parameters
         ----------
@@ -340,7 +349,7 @@ class SwanRE:
         return cls.BoolRe.match(string) is not None
 
 
-class Markup:
+class Markup:  # numpydoc ignore=PR01
     """Class defining the markups used by the Swan serialization."""
 
     def __init__(self) -> None:
@@ -379,7 +388,22 @@ class Markup:
 
     @staticmethod
     def to_str(text: str, is_protected: bool = True, markup: str = None) -> str:
-        """Returns {markup%text%markup}."""
+        """Return a protected string {markup%text%markup} is required.
+
+        Parameters
+        ----------
+        text : str
+            Text to protect
+        is_protected : bool, optional
+            True when text shall be protected, by default True
+        markup : str, optional
+            Markup to use, by default None, resulting in using Markup.Syntax
+
+        Returns
+        -------
+        str
+            Protected string *{markup%text%markup}* if is_protected is True, else *text*.
+        """
         if not is_protected:
             return text
         if markup is None:
@@ -387,7 +411,7 @@ class Markup:
         return f"{{{markup}%{text}%{markup}}}"
 
 
-class NumericKind(Enum):
+class NumericKind(Enum):  # numpydoc ignore=PR01
     """Numeric kinds for generic type constraints."""
 
     # pylint: disable=invalid-name
@@ -407,7 +431,7 @@ class NumericKind(Enum):
         return value.name.lower()
 
 
-class Pragma:
+class Pragma:  # numpydoc ignore=PR01
     """Stores a pragma."""
 
     PragmaRE = re.compile(r"#pragma\s+(?P<key>\w+)\s(?P<val>.*)#end", re.DOTALL)
@@ -427,7 +451,7 @@ class Pragma:
         return self._pragma
 
     def extract(self) -> Union[dict, None]:
-        """Extracts pragma information as a tuple
+        """Extract pragma information as a tuple
         if pragma is valid, namely: #pragma key value#end.
 
         Returns
@@ -442,7 +466,7 @@ class Pragma:
 
     @staticmethod
     def filter(pragmas: List["Pragma"], key: str, with_key: bool = True) -> List["Pragma"]:
-        """Filters a list of pragmas with/without a given key.
+        """Filter a list of pragmas with/without a given key.
 
         Parameters
         ----------
@@ -450,6 +474,8 @@ class Pragma:
             List of pragmas
         key : str
             Key to filter
+        with_key : bool, optional
+            True when pragmas with the key are selected, False when without the key, by default True
 
         Returns
         -------
@@ -467,7 +493,7 @@ class Pragma:
         return self._pragma
 
 
-class PragmaBase:
+class PragmaBase:  # numpydoc ignore=PR01
     """Base class for objects with pragmas."""
 
     def __init__(self, pragmas: Optional[List[Pragma]] = None) -> None:
@@ -479,7 +505,7 @@ class PragmaBase:
         return self._pragmas
 
     def pragma_str(self) -> str:
-        """Returns a string with all pragmas."""
+        """Return a string with all pragmas."""
         pragmas = " ".join(str(p) for p in self.pragmas)
         return pragmas
 
@@ -488,7 +514,7 @@ class PragmaBase:
 # Common Constructs, used by other constructs
 
 
-class Identifier(SwanItem, PragmaBase):
+class Identifier(SwanItem, PragmaBase):  # numpydoc ignore=PR01
     """Class for identifier.
 
     An Identifier can be invalid if it was protected while saving it
@@ -528,12 +554,12 @@ class Identifier(SwanItem, PragmaBase):
 
     @property
     def is_valid(self) -> bool:
-        """Returns true when Identifier is valid."""
+        """Return true when Identifier is valid."""
         return self._is_valid
 
     @property
     def is_protected(self) -> bool:
-        """Returns true when Identifier is protected."""
+        """Return true when Identifier is protected."""
         return not self.is_valid
 
     @property
@@ -543,12 +569,12 @@ class Identifier(SwanItem, PragmaBase):
 
     @property
     def is_name(self) -> bool:
-        """Returns true when Identifier is a name."""
+        """Return true when Identifier is a name."""
         return self._is_name
 
     @property
     def comment(self) -> str:
-        """Comment string."""
+        """Comment part string."""
         return self._comment
 
     def __str__(self) -> str:
@@ -559,7 +585,7 @@ class Identifier(SwanItem, PragmaBase):
         return f"{pragmas}{self.value}"
 
 
-class PathIdentifier(SwanItem):
+class PathIdentifier(SwanItem):  # numpydoc ignore=PR01
     """Class for path identifiers, i.e: P1::Id.
 
     The class manipulates the PathIdentifier as separate items.
@@ -580,7 +606,7 @@ class PathIdentifier(SwanItem):
 
     @staticmethod
     def from_string(path: str) -> "PathIdentifier":
-        """Creates a PathIdentifier from a string.
+        """Create a PathIdentifier from a string.
 
         Parameters
         ----------
@@ -596,7 +622,7 @@ class PathIdentifier(SwanItem):
 
     @staticmethod
     def split(path: str) -> Tuple[str, str]:
-        """Splits a path into **path**::**name**.
+        """Split a path into **path**::**name**.
 
         Parameters
         ----------
@@ -623,7 +649,7 @@ class PathIdentifier(SwanItem):
 
     @classmethod
     def is_valid_path(cls, path: str) -> bool:
-        """Checks if *path* is a valid path identifier, i.e.
+        """Check if *path* is a valid path identifier, i.e.
         *id {:: id}*, with possible spaces around '::'.
 
         Parameters
@@ -648,7 +674,7 @@ class PathIdentifier(SwanItem):
 
     @classmethod
     def is_valid_file_path(cls, path: str) -> bool:
-        """Checks if *path* is a valid file path identifier, i.e.
+        """Check if *path* is a valid file path identifier, i.e.
         *id {- id}*, with no possible spaces around '-'.
 
         The path string is the basename of a module or an instance file.
@@ -682,12 +708,12 @@ class PathIdentifier(SwanItem):
 
     @property
     def as_string(self) -> str:
-        """Computes name by joining name parts with '::'."""
+        """Compute name by joining name parts with '::'."""
         return self.path_id if self.is_protected else "::".join([p.value for p in self.path_id])
 
     @property
     def pragmas(self) -> List[Pragma]:
-        """Pragmas associated with the path_id."""
+        """List of Pragma associated with the path_id."""
         return [] if self.is_protected else self._path_id[0].pragmas
 
     def __str__(self) -> str:
@@ -700,14 +726,14 @@ class PathIdentifier(SwanItem):
         return f"{pragmas}{self.as_string}"
 
 
-class ModuleItem(SwanItem):
+class ModuleItem(SwanItem):  # numpydoc ignore=PR01
     """Base class for module body item or module interface item"""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class Declaration(SwanItem):
+class Declaration(SwanItem):  # numpydoc ignore=PR01
     """Base class for declarations."""
 
     def __init__(self, id: Identifier) -> None:
@@ -728,14 +754,14 @@ class Declaration(SwanItem):
         return f"{path}::{id_str}"
 
 
-class Expression(SwanItem):
+class Expression(SwanItem):  # numpydoc ignore=PR01
     """Base class for expressions."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class TypeExpression(SwanItem):
+class TypeExpression(SwanItem):  # numpydoc ignore=PR01
     """Base class for type expressions."""
 
     def __init__(self) -> None:
@@ -747,14 +773,14 @@ class TypeExpression(SwanItem):
         return False
 
 
-class GroupTypeExpression(SwanItem):
+class GroupTypeExpression(SwanItem):  # numpydoc ignore=PR01
     """Base class for group type expressions."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class Luid(SwanItem):
+class Luid(SwanItem):  # numpydoc ignore=PR01
     """Class for LUID support.
     The '$' prefix is not saved (potentially removed at creation)."""
 
@@ -774,7 +800,7 @@ class Luid(SwanItem):
         return f"${self.value}"
 
     @staticmethod
-    def is_valid(luid: str) -> bool:
+    def is_valid(luid: str) -> bool:  # numpydoc ignore=PR01
         """True when a luid is a valid LUID."""
         return Luid.LuidRE.match(luid) is not None
 
@@ -782,7 +808,7 @@ class Luid(SwanItem):
         return self.as_luid()
 
 
-class Lunum(SwanItem):
+class Lunum(SwanItem):  # numpydoc ignore=PR01
     """Class for LUNUM support: '#' is part of the LUNUM."""
 
     LunumRE = re.compile(r"^\#\d+$", re.ASCII)
@@ -797,7 +823,7 @@ class Lunum(SwanItem):
         return self._luid
 
     @staticmethod
-    def is_valid(lunum: str) -> bool:
+    def is_valid(lunum: str) -> bool:  # numpydoc ignore=PR01
         """True when a lunum is a valid LUNUM."""
         return Lunum.LunumRE.match(lunum) is not None
 
@@ -805,14 +831,14 @@ class Lunum(SwanItem):
         return self.value
 
 
-class Variable(SwanItem):
+class Variable(SwanItem):  # numpydoc ignore=PR01
     """Base class for Variable and ProtectedVariable."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class Equation(SwanItem):
+class Equation(SwanItem):  # numpydoc ignore=PR01
     """Base class for equations."""
 
     def __init__(self) -> None:
@@ -824,7 +850,7 @@ class Equation(SwanItem):
 # =============================================
 
 
-class ProtectedItem(SwanItem):
+class ProtectedItem(SwanItem):  # numpydoc ignore=PR01
     """Base class for protected data. A protected data
     is a piece of Swan code enclosed between markups, mostly to store
     syntactically incorrect code. A protected data is enclosed within the pair
@@ -841,11 +867,11 @@ class ProtectedItem(SwanItem):
 
     @property
     def is_protected(self):
-        """Tells if item is syntactically protected and provided as a string."""
+        """Tell if item is syntactically protected and provided as a string."""
         return True
 
     def has_markup(self, markup: str) -> bool:
-        """Checks if protected data has the specified *markup*.
+        """Check if protected data has the specified *markup*.
 
         Parameters
         ----------
@@ -885,30 +911,29 @@ class ProtectedItem(SwanItem):
         return Markup.to_str(self.data, markup=self.markup)
 
 
-def to_str_comma_list(l: List[Any]) -> str:
-    """Generates a string which is the join of a list item
-       separated by a comma.
+def to_str_comma_list(items: List[Any]) -> str:
+    """Return a string which is the join of a list items separated by a comma.
 
     Parameters
     ----------
-    l : List[Any]
-        A list which items supports the str() function.
+    items : List[Any]
+        Items to join.
 
     Returns
     -------
     str
-        resulting string
+        Resulting string.
     """
-    return ", ".join([str(i) for i in l])
+    return ", ".join([str(i) for i in items])
 
 
-def to_str_semi_list(l: List[Any]) -> str:
-    """Generates a string which is the join of a list items
+def to_str_semi_list(items: List[Any]) -> str:
+    """Generate a string which is the join of a list items
        separated by a semicolon.
 
     Parameters
     ----------
-    l : List[Any]
+    items : List[Any]
         A list which items supports the str() function.
 
     Returns
@@ -916,4 +941,4 @@ def to_str_semi_list(l: List[Any]) -> str:
     str
         Resulting string.
     """
-    return "; ".join([str(i) for i in l])
+    return "; ".join([str(i) for i in items])

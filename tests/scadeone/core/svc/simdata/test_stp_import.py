@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -49,7 +49,6 @@ ScadeOne = "C:/Scade One"
 
 
 class TestStpImport:
-
     @pytest.mark.parametrize(
         "test_dir,stp,sproj,record,summary,expected_sd_number",
         [
@@ -91,7 +90,7 @@ class TestStpImport:
         with capsys.disabled():
             if DisableGC:
                 gc.disable()
-            status = converter.cmd_parse()
+            status = converter.cmd_parse()  # noqa: F841
             if DisableGC:
                 gc.enable()
         (out_dir / "stpimporter.log").write_text(caplog.text)
@@ -101,10 +100,10 @@ class TestStpImport:
         generated_sd = list(out_dir.glob("**/*.sd"))
         assert expected_sd_number == len(generated_sd)
 
-        for sd in generated_sd:
-            ref_file = TestDir / test_dir / "sd_refs" / sd.relative_to(out_dir)
+        for sd_path in generated_sd:
+            ref_file = TestDir / test_dir / "sd_refs" / sd_path.relative_to(out_dir)
             assert ref_file.exists()
-            cmp = compare_sd_files(ref_file, sd, out_dir)
+            cmp = compare_sd_files(ref_file, sd_path, out_dir)
             assert cmp
 
         shutil.rmtree(out_dir, ignore_errors=True)

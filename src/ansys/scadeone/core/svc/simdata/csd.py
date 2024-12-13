@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# cSpell: ignore vsize ndarray
 
 import abc
 from typing import Tuple, Optional, Any, List
@@ -195,7 +197,6 @@ class _SdFactory:
 
     @classmethod
     def load_sd_value(cls, csd_value: core.sd_value_t) -> defs.Value:
-
         value_class = dll_wrap.sdd_value_get_class(csd_value)
         if value_class is core.DataClass.NONE:
             return defs.NoneValue()
@@ -351,7 +352,7 @@ class Element(defs.ElementBase):
         Returns
         -------
         ElementBase
-            created child element
+            Created child element
         """
         elem_id = dll_wrap.sde_create(
             self._elem_id, name, sd_type.type_id if sd_type else core.SDT_NONE, core.SdeKind(kind)
@@ -550,7 +551,7 @@ class File(defs.FileBase):
         Returns
         -------
         ElementBase
-            the new element that was added to file
+            The new element that was added to file
         """
 
         elem_id = dll_wrap.sde_create(
@@ -583,7 +584,7 @@ class File(defs.FileBase):
         Returns
         -------
         str
-            version number
+            Version number
         """
         return dll_wrap.sdf_get_version(self._file_id)
 
@@ -616,14 +617,13 @@ def open_file(file_path: str) -> defs.FileBase:
     Returns
     -------
     FileBase
-        the opened file
+        The opened file
 
     Raises
     ------
     ScadeOneException
         file could not be opened
     """
-    path = str(file_path)
     file_id = dll_wrap.sdf_open(file_path)
     if file_id == core.SD_ID_INVALID:
         raise ScadeOneException('cannot open file "{0}"'.format(file_path))
@@ -641,7 +641,7 @@ def create_file(file_path: str) -> defs.FileBase:
     Returns
     -------
     FileBase
-        the created file
+        The created file
 
     Raises
     ------
@@ -667,7 +667,7 @@ def create_struct_type(fields: List[Tuple], name: str = "") -> defs.StructType:
     Returns
     -------
     StructType
-        the created structure type
+        The created structure type
 
     Raises
     ------
@@ -731,7 +731,7 @@ def create_array_type(base_type: defs.Type, dims: List[int], name: str = "") -> 
     Returns
     -------
     ArrayType
-        created array type
+        Created array type
 
     Raises
     ------
@@ -767,7 +767,7 @@ def create_enum_type(values: List[str], name: str = "") -> defs.EnumType:
     Returns
     -------
     EnumType
-        created enumeration type
+        Created enumeration type
 
     Raises
     ------
@@ -806,7 +806,7 @@ def create_variant_type(constructors: List[Tuple], name: str = "") -> defs.Varia
     Returns
     -------
     VariantType
-        created variant type
+        Created variant type
 
     Raises
     ------
@@ -883,7 +883,7 @@ def create_imported_type(mem_size: int, name: str = "") -> defs.ImportedType:
     Returns
     -------
     ImportedType
-        created imported type
+        Created imported type
 
     Raises
     ------

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -82,7 +82,7 @@ class SSSParser:
         try:
             try:
                 output_string = file.read_text(encoding="utf-8")
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError:
                 output_string = file.read_text()
             lined_string = self.merge_multiline(output_string)
             self._defs.parse_string(lined_string, parse_all=True)

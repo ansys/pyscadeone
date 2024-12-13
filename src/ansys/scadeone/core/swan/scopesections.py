@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -38,7 +38,7 @@ import ansys.scadeone.core.swan.scopes as scopes
 from .variable import VarDecl
 
 
-class LetSection(scopes.ScopeSection):
+class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements:
 
     **let** {{*equation* ;}} section.
@@ -59,7 +59,7 @@ class LetSection(scopes.ScopeSection):
         return common.Markup.to_str(content, self.is_text, common.Markup.Text)
 
 
-class VarSection(scopes.ScopeSection):
+class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements:
 
     **var** {{*var_decl* ;}} section."""
@@ -78,7 +78,7 @@ class VarSection(scopes.ScopeSection):
         return self.to_str("var", self.var_decls)
 
 
-class EmissionBody(common.SwanItem):
+class EmissionBody(common.SwanItem):  # numpydoc ignore=PR01
     """Implements an emission:
 
     | *emission_body* ::= *flow_names* [[ **if** *expr* ]]
@@ -118,7 +118,7 @@ class EmissionBody(common.SwanItem):
         return emission
 
 
-class EmitSection(scopes.ScopeSection):
+class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements an Emit section:
 
     **emit** {{*emission_body* ;}}"""
@@ -137,7 +137,7 @@ class EmitSection(scopes.ScopeSection):
         return self.to_str("emit", self.emissions)
 
 
-class FormalProperty(common.SwanItem):
+class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
     """Assume or Guarantee expression."""
 
     def __init__(self, luid: common.Luid, expr: common.Expression) -> None:
@@ -159,7 +159,7 @@ class FormalProperty(common.SwanItem):
         return f"{self.luid}: {self.expr}"
 
 
-class AssertSection(scopes.ScopeSection):
+class AssertSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Assert section:
 
     **assert** {{LUID: *expr* ;}}"""
@@ -178,7 +178,7 @@ class AssertSection(scopes.ScopeSection):
         return self.to_str("assert", self.assertions)
 
 
-class AssumeSection(scopes.ScopeSection):
+class AssumeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Assume section:
 
     **assume** {{LUID: *expr* ;}}"""
@@ -197,7 +197,7 @@ class AssumeSection(scopes.ScopeSection):
         return self.to_str("assume", self.hypotheses)
 
 
-class GuaranteeSection(scopes.ScopeSection):
+class GuaranteeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Guarantee section:
 
     **guarantee** {{LUID: *expr* ;}}"""
@@ -216,7 +216,7 @@ class GuaranteeSection(scopes.ScopeSection):
         return self.to_str("guarantee", self.guarantees)
 
 
-class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):
+class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected section, meaning a syntactically incorrect section construct."""
 
     def __init__(self, data: str) -> None:

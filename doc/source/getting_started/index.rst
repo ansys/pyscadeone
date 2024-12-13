@@ -1,7 +1,7 @@
 .. _ref_getting_started:
 
 ===============
-Getting Started
+Getting started
 ===============
 
 Installation
@@ -42,12 +42,12 @@ PyScadeOne uses the following .NET libraries:
 
 The required DLLs are delivered with PyScadeOne.
 
-Supported Versions
+Supported versions
 ------------------
 
 .. include:: versions.rst
 
-Quick Start
+Quick start
 -----------
 
 Here is a small script showing how to load a Scade One project 

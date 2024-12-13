@@ -1,3 +1,25 @@
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 Tests of pyofast.py, with transforms F# Ast into language.* classes
 """
@@ -12,7 +34,6 @@ import pytest
 from ansys.scadeone.core.common.storage import SwanStorage, SwanString
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as S
-from ansys.scadeone.core.common.storage import SwanStorage, SwanString
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -40,13 +61,13 @@ def cmp_string(orig, new, no_markup=False, diff=False):
         orig_strip = re.sub(r"(?s)\{(\w*)%(.*)%\1\}", r"\2", orig_strip)
     cmp = orig_strip == new_strip
     if not cmp:
-        with Path("test_pyast.txt").open("w") as fd:
+        with Path("test_pyofast.txt").open("w") as fd:
             fd.write("===== Original =====\n")
             fd.write(orig_strip)
             fd.write("\n=====   New  =====\n")
             fd.write(new_strip)
     else:
-        Path("test_pyast.txt").unlink(True)
+        Path("test_pyofast.txt").unlink(True)
     if not cmp and diff:
         d = Differ()
         # keep newlines this time
@@ -757,7 +778,6 @@ let
 
 
 class TestDiagram:
-
     def check(self, object, no_markup=False):
         swan = SwanString(f"diagram {object}")
         check_section(swan, no_markup=no_markup)
@@ -849,7 +869,6 @@ class TestDiagram:
 
 
 class TestModuleAndSignature:
-
     @pytest.mark.parametrize(
         "code",
         [

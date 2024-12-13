@@ -1,8 +1,8 @@
-.. _FMU Export:
+.. _ref_fmu_export:
 
 .. currentmodule:: ansys.scadeone.core.svc.fmu
 
-FMU Export
+FMU export
 ==========
 
 .. _FMU/FMI: https://fmi-standard.org/
@@ -42,9 +42,9 @@ For more information about the FMI standard, consult `FMU/FMI`_.
 
    This version only supports gcc compiler on 64 bits Windows platform.
 
-.. _FMU Export Command Line:
+.. _fmu_export_cli:
 
-FMU Export Command Line
+FMU export command line
 -----------------------
 
 The FMU Export can also be performed using the pyscadeone command line, by selecting the fmu command.
@@ -99,12 +99,12 @@ All expected arguments can be passed through this command. Complete list is give
                             swan_config_end: data to insert at the end of
                             swan_config.h.
 
-FMU Export API Documentation
-----------------------------
+FMU export documentation
+------------------------
 
 This section gives the API for the FMU Export.
 
-*Note that the FMU export relies on the* :ref:`Generated Code` *API.*
+*Note that the FMU export relies on the* :ref:`ref_generated_code` *API.*
 
 .. autoclass:: FMU_2_Export
     :members: generate build

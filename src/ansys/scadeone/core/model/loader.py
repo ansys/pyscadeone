@@ -1,4 +1,4 @@
-# Copyright (c) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,8 +21,6 @@
 # SOFTWARE.
 
 """
-Parser
-------
 This module contains the :py:class:`Parser` which is a proxy to the Scade One F# parser.
 The _Parser_ class offers methods to parse a complete Swan code (interface or module),
 or a declaration, or an expression.
@@ -31,6 +29,7 @@ It relies on the `ansys.scadeone.core.model.dotnet` and `ansys.scadeone.model.py
 to interface with the dotnet DLLs and to transform F# data structure into the
 `ansys.scadeone.swan` python classes.
 """
+
 import logging
 from typing import Union
 
@@ -126,7 +125,7 @@ class SwanParser(Parser):
         Parameters
         ----------
         rule_fn : Callable
-            parser rule function
+            Parser rule function
         swan : SwanStorage
             Swan code to parse
 
@@ -169,7 +168,7 @@ class SwanParser(Parser):
         Returns
         -------
         ModuleBody
-            instance of ModuleBody.
+            Instance of ModuleBody.
         """
         source.check_swan_version()
         result = self._parse(Reader.parse_body, source)
@@ -190,7 +189,7 @@ class SwanParser(Parser):
         Returns
         -------
         ModuleInterface
-            instance of ModuleInterface.
+            Instance of ModuleInterface.
         """
         source.check_swan_version()
         result = self._parse(Reader.parse_interface, source)

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,9 +21,6 @@
 # SOFTWARE.
 
 """
-Logging
--------
-
 The :py:class:`ScadeOneLogger` class is a subclass of the `logging.Logger` class.
 As a singleton, the `ScadeOneLogger` class is initialized once and used
 throughout the application using the `logger.LOGGER` object or the `logger`
@@ -38,7 +35,7 @@ as in the following example:
 .. code:: python
 
     LOGGER.logger = logging.getLogger("MyLogger")
-"""
+"""  # numpydoc ignore
 
 # cSpell:ignore levelname
 

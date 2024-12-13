@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,10 +22,8 @@
 
 # cspell: ignore startuml enduml unmark
 # pylint: disable=W0621
-"""
-Document Creation and Rendering
-===============================
 
+"""
 This module defines a *Document* concept and render a document.
 A Document is composed of DElt instances which consist in:
 
@@ -129,8 +127,8 @@ can be conceptually represented as:
     @enduml
 
 
-Document Creation
------------------
+Methods
+-------
 
 The :py:class:`Document` defines the main object. A
 document is rendered by a :py:class:`Render`object.
@@ -213,16 +211,15 @@ the argument as next element and return it (different from
 >>> d == w
 True
 
-Document Rendering
------------------
+Document rendering:
 
 >>> import sys
 >>> r = Renderer(sys.stdout)
 >>> r.render(doc)
 Hello world
 
-Complete Example
-----------------
+Examples
+--------
 
 Creation of a document. We use "@m" and "@M" to mark
 specific indentation after '('. The "@s" separator is
@@ -262,7 +259,7 @@ node Op(/* in */1;
 The :py:class:`Renderer` uses a stream as parameter,
 which can be a stream buffer, of file, ... It can
 be also derived to implement other kind of rendering.
-"""
+"""  # numpydoc ignore
 
 from enum import Enum, auto
 import re

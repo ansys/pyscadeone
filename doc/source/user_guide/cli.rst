@@ -1,6 +1,7 @@
+.. _ref_cli:
 
 ======================
-Command Line Interface
+Command line interface
 ======================
 
 The PyScadeOne library has a command line tool, which is automatically installed
@@ -10,9 +11,9 @@ this ``Scripts`` folder is in your PATH environment variable.
 The name of the tool is **pyscadeone**. It has the following sub-commands and options: 
 
 Sub-commands:     
-  - ``fmu``            generates an FMU. For more information, see :ref:`FMU Export`.
+  - ``fmu``            generates an FMU. For more information, see :ref:`ref_fmu_export`.
   - ``script``         executes given script or module. 
-  - ``simdata``        shows :ref:`ref_simdata` files (in combination with --show).
+  - ``simdata``        shows :ref:`ref_sim_data` files (in combination with --show).
 
 Use ``pyscadeone <command> --help`` for a specific *<command>* help.
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -60,7 +60,7 @@ class ScadeOne(IScadeOne):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
-        if exc_type and exc_type != ScadeOneException and exc_type != SystemExit:
+        if exc_type and not isinstance(exc_type, Union[ScadeOneException, SystemExit]):
             msg = f"Exiting on exception {exc_type}"
             if exc_value:
                 msg += f" with value {exc_value}"

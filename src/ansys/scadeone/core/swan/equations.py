@@ -1,4 +1,4 @@
-# Copyright (c) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,7 +32,7 @@ import ansys.scadeone.core.swan.scopes as scopes
 from .expressions import Literal, Pattern
 
 
-class LHSItem(common.SwanItem):
+class LHSItem(common.SwanItem):  # numpydoc ignore=PR01
     """Defines an item on the left-hand side of an equation, an ID, or underscore '_'.
 
     Parameters
@@ -59,7 +59,7 @@ class LHSItem(common.SwanItem):
         return str(self.id) if self.id else "_"
 
 
-class EquationLHS(common.SwanItem):
+class EquationLHS(common.SwanItem):  # numpydoc ignore=PR01
     """Equation left-hand side part:
 
     *lhs* ::= ( ) | *lhs_item* {{ , *lhs_item* }} [[ , .. ]]
@@ -91,7 +91,7 @@ class EquationLHS(common.SwanItem):
         return items
 
 
-class ExprEquation(common.Equation):
+class ExprEquation(common.Equation):  # numpydoc ignore=PR01
     """Flows definition using an expression:
 
     *equation* ::= *lhs* [luid] = *expr*"""
@@ -127,7 +127,7 @@ class ExprEquation(common.Equation):
 
 # Definition by cases: state machines and activate if/when
 # ========================================================
-class DefByCase(common.Equation, ABC):
+class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
     """Base class for state machine and active if/when equations."""
 
     def __init__(
@@ -166,14 +166,14 @@ class DefByCase(common.Equation, ABC):
 # ============================================================
 
 
-class StateMachineItem(common.SwanItem, ABC):
+class StateMachineItem(common.SwanItem, ABC):  # numpydoc ignore=PR01
     """Base class for state machine items (states and transitions)."""
 
     def __init__(self) -> None:
         common.SwanItem().__init__()
 
 
-class StateRef(common.SwanItem):
+class StateRef(common.SwanItem):  # numpydoc ignore=PR01
     """State identification:
 
     *state_ref* ::= ID | LUNUM
@@ -205,14 +205,14 @@ class StateRef(common.SwanItem):
         return str(self.id)
 
 
-class Fork(common.SwanItem):
+class Fork(common.SwanItem):  # numpydoc ignore=PR01
     """Base class for fork-related classes."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class Target(common.SwanItem):
+class Target(common.SwanItem):  # numpydoc ignore=PR01
     """Arrow target as a state reference and kind."""
 
     def __init__(self, target: StateRef, is_resume: Optional[bool] = False) -> None:
@@ -240,7 +240,7 @@ class Target(common.SwanItem):
         return f"{kind} {self.target}"
 
 
-class Arrow(common.SwanItem):
+class Arrow(common.SwanItem):  # numpydoc ignore=PR01
     """Encodes an arrow, with or without guard:
 
     | *guarded_arrow* ::= ( *expr* ) *arrow*
@@ -298,7 +298,7 @@ class Arrow(common.SwanItem):
         return " ".join(arrow)
 
 
-class ForkTree(Fork):
+class ForkTree(Fork):  # numpydoc ignore=PR01
     """Fork as a tree of arrows:
 
     | *fork* ::= **if** *guarded_arrow*
@@ -343,7 +343,7 @@ class ForkTree(Fork):
         return f"{fork} end"
 
 
-class ForkWithPriority(common.SwanItem):
+class ForkWithPriority(common.SwanItem):  # numpydoc ignore=PR01
     """Fork as a priority fork declaration:
 
     | *fork_priority* ::= *priority* **if** *guarded_arrow*
@@ -387,7 +387,7 @@ class ForkWithPriority(common.SwanItem):
         return f":{priority}: {kind} {self.arrow}"
 
 
-class ForkPriorityList(Fork):
+class ForkPriorityList(Fork):  # numpydoc ignore=PR01
     """List of :py:class:`ForkWithPriority`.
 
     *fork* ::=  {{ *fork_priority* }} **end**
@@ -407,7 +407,7 @@ class ForkPriorityList(Fork):
         return f"{forks} end" if forks else "end"
 
 
-class Transition(common.SwanItem, common.PragmaBase):
+class Transition(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
     """State machine transition:
 
     | *transition* ::= **if** *guarded_arrow* ;
@@ -439,7 +439,7 @@ class Transition(common.SwanItem, common.PragmaBase):
         return f"{self.arrow}{pragmas};"
 
 
-class TransitionDecl(StateMachineItem):
+class TransitionDecl(StateMachineItem):  # numpydoc ignore=PR01
     """Declaration of state machine transition:
 
     | *transition_decl* ::= *priority* [[ *state_ref* ]]
@@ -488,7 +488,7 @@ class TransitionDecl(StateMachineItem):
         return f":{priority}: {ref} {kind} {self.transition}"
 
 
-class State(StateMachineItem, common.PragmaBase):
+class State(StateMachineItem, common.PragmaBase):  # numpydoc ignore=PR01
     """State definition."""
 
     def __init__(
@@ -577,7 +577,7 @@ class State(StateMachineItem, common.PragmaBase):
         return state
 
 
-class StateMachine(DefByCase):
+class StateMachine(DefByCase):  # numpydoc ignore=PR01
     """State machine definition."""
 
     def __init__(
@@ -616,7 +616,7 @@ class StateMachine(DefByCase):
 # ------------------------------------------------------------
 
 
-class IfteBranch(common.SwanItem):
+class IfteBranch(common.SwanItem):  # numpydoc ignore=PR01
     """
     Base class for :py:class:`IfteDataDef` and :py:class:`IfteIfActivation` classes.
 
@@ -628,7 +628,7 @@ class IfteBranch(common.SwanItem):
         super().__init__()
 
 
-class IfActivationBranch(common.SwanItem):
+class IfActivationBranch(common.SwanItem):  # numpydoc ignore=PR01
     """Stores a branch of an *if_activation*.
 
     A branch is:
@@ -662,7 +662,7 @@ class IfActivationBranch(common.SwanItem):
         return f"else {self.branch}"
 
 
-class IfActivation(common.SwanItem):
+class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
     """
     List of *if_activation* branches as a list of :py:class:`IfActivationBranch`.
 
@@ -702,7 +702,7 @@ class IfActivation(common.SwanItem):
         return "\n".join(branches)
 
 
-class IfteDataDef(IfteBranch):
+class IfteDataDef(IfteBranch):  # numpydoc ignore=PR01
     """
     *ifte_branch* of an **activate if** as a data definition. See :py:class:`ActivateIf`.
 
@@ -721,7 +721,7 @@ class IfteDataDef(IfteBranch):
         return str(self.data_def)
 
 
-class IfteIfActivation(IfteBranch):
+class IfteIfActivation(IfteBranch):  # numpydoc ignore=PR01
     """
     *ifte_branch* of an **activate if** as an *if_activation*. See :py:class:`ActivateIf`.
 
@@ -741,7 +741,7 @@ class IfteIfActivation(IfteBranch):
         return str(self.if_activation)
 
 
-class ActivateIf(DefByCase):
+class ActivateIf(DefByCase):  # numpydoc ignore=PR01
     """Activate if operator definition:
 
     | *select_activation* ::= **activate** [[ LUID ]] *if_activation*
@@ -778,7 +778,7 @@ class ActivateIf(DefByCase):
 
 # Activate When
 # ------------------------------------------------------------
-class ActivateWhenBranch(common.SwanItem):
+class ActivateWhenBranch(common.SwanItem):  # numpydoc ignore=PR01
     """Stores a branch of a *match_activation*.
 
     A branch is:
@@ -805,7 +805,7 @@ class ActivateWhenBranch(common.SwanItem):
         return f"| {self.pattern} : {self.data_def}"
 
 
-class ActivateWhen(DefByCase):
+class ActivateWhen(DefByCase):  # numpydoc ignore=PR01
     """Activate when operator definition.
 
     There must be at least one branch.

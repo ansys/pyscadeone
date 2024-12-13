@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# cSpell: ignore vsize
 
 import abc
 from typing import List, Optional, Any, Iterator
@@ -64,7 +66,7 @@ class PredefinedType(Type):
     def __init__(self, type_id: int):
         try:
             self._kind = PredefinedTypeKind(type_id)
-        except:
+        except:  # noqa: E722
             raise ScadeOneException("cannot create predefined type with id {0}".format(type_id))
         super().__init__(type_id, self.__str__())
         PredefinedType._instances[type_id] = self

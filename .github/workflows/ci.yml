@@ -33,7 +33,6 @@ jobs:
 
   doc-style:
     name: Doc style
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: ansys/actions/doc-style@v8
@@ -42,7 +41,7 @@ jobs:
 
   doc-build:
     name: Doc building
-    #needs: [doc-style]
+    needs: [doc-style]
     runs-on: [windows-latest]
     steps:
       - uses: ansys/actions/doc-build@v8
@@ -51,10 +50,20 @@ jobs:
           sphinxopts: -j auto -W
           add-pdf-html-docs-as-assets: false
 
+  smoke-test:
+    name: Smoke test
+    needs: code-style
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: ansys/actions/tests-pytest@v8
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          pytest-postargs: 'tests/test_smoke.py'
+ 
   build-library:
     name: Build
     if: ${{ !contains(github.event.pull_request.title, '[skip tests]') }}
-    needs: [code-style]
+    needs: [smoke-test, doc-build]
     runs-on: [ubuntu-latest]
 
     steps:
@@ -62,22 +71,12 @@ jobs:
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-  smoke-test:
-    name: Smoke test
-    needs: [code-style, doc-build]
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: ansys/actions/tests-pytest@v8
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-postargs: 'tests/test_smoke.py'
-          
+           
   doc-deploy-dev:
     name: "Deploy development documentation"
     # Deploy development only when merging or pushing to the 'main' branch
     runs-on: ubuntu-latest
-    needs: [build-library, smoke-test]
+    needs: [build-library]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@v8

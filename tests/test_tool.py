@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,15 +32,15 @@ from typing import Union
 log = Path.cwd() / "pyscadeone.log"
 try:
     log.unlink(True)
-except:
+except Exception:
     pass
 
-from ansys.scadeone.core import ScadeOne, ScadeOneException
-from ansys.scadeone.core.common.logger import LOGGER
-from ansys.scadeone.core.common.storage import SwanFile
-from ansys.scadeone.core.common.versioning import FormatVersions
-from ansys.scadeone.core.model.loader import SwanParser
-import ansys.scadeone.core.swan as Swan
+from ansys.scadeone.core import ScadeOne, ScadeOneException  # noqa: E402
+from ansys.scadeone.core.common.logger import LOGGER  # noqa: E402
+from ansys.scadeone.core.common.storage import SwanFile  # noqa: E402
+from ansys.scadeone.core.common.versioning import FormatVersions  # noqa: E402
+from ansys.scadeone.core.model.loader import SwanParser  # noqa: E402
+import ansys.scadeone.core.swan as Swan  # noqa: E402
 
 # %% Helpers
 reWS = re.compile(r"[ \r\n\t\f]")

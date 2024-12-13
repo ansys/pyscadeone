@@ -1,7 +1,7 @@
-Identifiers and Atoms
+Identifiers and atoms
 =====================
 
-This section details the atoms of expressions: identifiers, literals, ...
+This section details the atoms of expressions: identifiers, literals, etc.
 
 .. currentmodule:: ansys.scadeone.core.swan
 
@@ -31,7 +31,7 @@ Patterns
 --------
 
 Patterns are used by :py:class:`CaseExpr` and :py:class:`ActivateWhen` classes
-for the **case ... of** and **activate when** constructs.
+for the **case pattern of** and **activate when** constructs.
 
 .. autoclass:: Pattern
 

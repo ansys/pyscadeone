@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -550,7 +550,7 @@ class SDContext(SDContextBase):
             self._evaluated_cmd = str(cmd)
             try:
                 cmd.eval(self)
-            except Exception as e:
+            except Exception:
                 pass
         self.finish()
         self.reset_vars()

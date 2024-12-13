@@ -1,4 +1,4 @@
-# Copyright (c) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -25,13 +25,14 @@ This module contains the classes for variable declarations:
 - VarDecl
 - ProtectedVariable, for syntactically incorrect variable definition
 """
+
 from typing import Optional, Union
 
 import ansys.scadeone.core.swan.common as common
 from ansys.scadeone.core.swan.expressions import ClockExpr
 
 
-class VarDecl(common.Declaration, common.Variable):
+class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
     """Class for variable declaration."""
 
     def __init__(
@@ -129,7 +130,7 @@ class VarDecl(common.Declaration, common.Variable):
         return f"var {self};\n"
 
 
-class ProtectedVariable(common.Variable, common.ProtectedItem):
+class ProtectedVariable(common.Variable, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected variable definition as a string."""
 
     def __init__(self, data: str) -> None:

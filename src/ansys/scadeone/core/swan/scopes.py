@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from .namespace import ScopeNamespace  # noqa: F401
 
 
-class Scope(SwanItem, PragmaBase):
+class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
     """Scope definition:
 
     | *data_def* ::= *scope*
@@ -61,7 +61,7 @@ class Scope(SwanItem, PragmaBase):
         return f"{{\n{sections}\n}}"
 
 
-class ScopeSection(SwanItem):
+class ScopeSection(SwanItem):  # numpydoc ignore=PR01
     """Base class for scopes."""
 
     def __init__(self) -> None:

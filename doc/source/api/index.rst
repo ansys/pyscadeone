@@ -1,7 +1,7 @@
 .. _ref_api:
 
 =============
-API Reference
+API reference
 =============
 
 This section describes PyScadeOne core classes, methods, and functions

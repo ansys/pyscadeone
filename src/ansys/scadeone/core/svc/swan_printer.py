@@ -1,4 +1,4 @@
-# Copyright (c) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,8 +22,7 @@
 
 # pylint: disable=too-many-lines, pointless-statement
 
-from io import IOBase
-from pathlib import Path  # noqa
+from io import IOBase, StringIO
 from typing import Any, List, Optional, Union
 
 import ansys.scadeone.core.svc.common.renderer as R
@@ -43,8 +42,10 @@ class PPrinter(SwanVisitor):
     normalize: bool
         Write each Swan declaration or all declarations per line
 
-    Methods (supported to use for a Swan project)
-    ---------------------------------------------
+    Methods
+    -------
+    Supported to use for a Swan project:
+
         - Use clauses declaration
         - Globals declaration:
             + Types declaration
@@ -4134,11 +4135,6 @@ class PPrinter(SwanVisitor):
         PPrinter._update_property(owner, swan_property, _decl)
         # Visit base class(es)
         self.visit_DiagramObject(swan_obj, owner, swan_property)
-
-
-from io import StringIO
-
-import ansys.scadeone.core.swan as S
 
 
 def swan_to_str(swan_obj: S.SwanItem, normalize: bool = False) -> str:

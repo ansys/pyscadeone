@@ -1,4 +1,4 @@
-# Copyright (c) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -566,7 +566,6 @@ typedef struct {
         define_state_vector = "#define STATE_VECTOR_SIZE 0"
 
         if init_function is not None or reset_function is not None:
-
             if init_function is not None:
                 call_params = []
                 for param in init_function.parameters:

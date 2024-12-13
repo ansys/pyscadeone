@@ -1,4 +1,4 @@
-# Copyright (c) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -37,7 +37,7 @@ from .expressions import GroupAdaptation, PortExpr
 from .instances import OperatorBase, OperatorExpression
 
 
-class DiagramObject(common.SwanItem, common.PragmaBase):
+class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
     """Base class for diagram objects.
 
     *object* ::= ( [[ *lunum* ]] [[ *luid* ]] *description* [[ *local_objects* ]] )
@@ -87,7 +87,8 @@ class DiagramObject(common.SwanItem, common.PragmaBase):
     def sources(
         self,
     ) -> List[tuple["DiagramObject", GroupAdaptation, Union[List[GroupAdaptation], None]]]:
-        """Returns a list of all diagram objects that are sources of current diagram object.
+        """Return a list of all diagram objects that are sources of current diagram object.
+
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
@@ -98,7 +99,8 @@ class DiagramObject(common.SwanItem, common.PragmaBase):
     def targets(
         self,
     ) -> List[tuple["DiagramObject", GroupAdaptation, GroupAdaptation]]:
-        """Returns a list of all diagram objects that are targets of current diagram object.
+        """Return a list of all diagram objects that are targets of current diagram object.
+
         A list item is a tuple of target object and the source and target adaptations used
         for connection if any.
         """
@@ -121,7 +123,7 @@ class DiagramObject(common.SwanItem, common.PragmaBase):
         return f"({lunum}{luid}{self.to_str()}{locals_}{pragmas})"
 
 
-class Diagram(scopes.ScopeSection):
+class Diagram(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Class for a **diagram** construct."""
 
     def __init__(self, objects: List[DiagramObject]) -> None:
@@ -142,7 +144,8 @@ class Diagram(scopes.ScopeSection):
     def get_block_sources(
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, Optional[GroupAdaptation], Optional[GroupAdaptation]]]:
-        """Returns a list of all diagram objects that are sources of current diagram.
+        """Return a list of all diagram objects that are sources of current diagram.
+
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
@@ -153,7 +156,8 @@ class Diagram(scopes.ScopeSection):
     def get_block_targets(
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, Optional[GroupAdaptation], Optional[GroupAdaptation]]]:
-        """Returns a list of all diagram objects that are targets of current diagram.
+        """Return a list of all diagram objects that are targets of current diagram.
+
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
@@ -171,7 +175,7 @@ class Diagram(scopes.ScopeSection):
 # ------------------------------------------------------------
 
 
-class ExprBlock(DiagramObject):
+class ExprBlock(DiagramObject):  # numpydoc ignore=PR01
     """Expression block:
 
     - *object* ::= ( [[ *lunum* ]] [[ *luid* ]] *description* [[ *local_objects* ]] )
@@ -199,7 +203,7 @@ class ExprBlock(DiagramObject):
         return f"expr {self.expr}"
 
 
-class DefBlock(DiagramObject):
+class DefBlock(DiagramObject):  # numpydoc ignore=PR01
     """Definition block:
 
     - *object* ::= ( [[ *lunum* ]]  [[ *luid* ]] *description* [[ *local_objects* ]] )
@@ -237,7 +241,7 @@ class DefBlock(DiagramObject):
         return f"def {self.lhs}"
 
 
-class Block(DiagramObject):
+class Block(DiagramObject):  # numpydoc ignore=PR01
     """Generic block:
 
     - *object* ::= ( [[ *lunum* ]] [[ *luid* ]] *description* [[ *local_objects* ]] )
@@ -277,7 +281,7 @@ class Block(DiagramObject):
         return f"block {self.instance}"
 
 
-class Connection(common.SwanItem):
+class Connection(common.SwanItem):  # numpydoc ignore=PR01
     """Wire connection for a source or for targets:
 
     - *connection* ::= *port* [[ *group_adaptation* ]] | ()
@@ -325,7 +329,7 @@ class Connection(common.SwanItem):
         return conn
 
 
-class Wire(DiagramObject):
+class Wire(DiagramObject):  # numpydoc ignore=PR01
     """Wire definition:
 
     - *object* ::= ( [[ *lunum* ]] *description* [[ *local_objects* ]] )
@@ -372,7 +376,7 @@ class Wire(DiagramObject):
         return f"wire {self.source} => {targets}"
 
 
-class GroupOperation(Enum):
+class GroupOperation(Enum):  # numpydoc ignore=PR01
     """Operation on groups."""
 
     # pylint: disable=invalid-name
@@ -399,7 +403,7 @@ class GroupOperation(Enum):
         return value.name.lower()
 
 
-class Bar(DiagramObject):
+class Bar(DiagramObject):  # numpydoc ignore=PR01
     """Bar (group/ungroup constructor block):
 
     - *object* ::= ( [[ *lunum* ]] *description* [[ *local_objects* ]] )
@@ -427,7 +431,7 @@ class Bar(DiagramObject):
         return f"group {GroupOperation.to_str(self.operation)}"
 
 
-class SectionBlock(DiagramObject):
+class SectionBlock(DiagramObject):  # numpydoc ignore=PR01
     """Section block definition:
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
@@ -465,7 +469,7 @@ class SectionBlock(DiagramObject):
         return str(self.section)
 
 
-class DefByCaseBlockBase(DiagramObject):
+class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
     """Def-by-case graphical definition (automaton or activate if/when):
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
@@ -510,7 +514,7 @@ class DefByCaseBlockBase(DiagramObject):
         return str(self._def_by_case)
 
 
-class StateMachineBlock(DefByCaseBlockBase):
+class StateMachineBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     """State machine block definition:
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
@@ -534,7 +538,7 @@ class StateMachineBlock(DefByCaseBlockBase):
         return self.def_by_case
 
 
-class ActivateIfBlock(DefByCaseBlockBase):
+class ActivateIfBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     """Activate-if block definition:
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
@@ -559,7 +563,7 @@ class ActivateIfBlock(DefByCaseBlockBase):
         return self.def_by_case
 
 
-class ActivateWhenBlock(DefByCaseBlockBase):
+class ActivateWhenBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     """Activate-when block definition:
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
@@ -589,7 +593,13 @@ class ActivateWhenBlock(DefByCaseBlockBase):
 
 
 class DiagramNavigation:
-    """Class handling navigation through Diagram objects."""
+    """Class handling navigation through Diagram objects.
+
+    Parameters
+    ----------
+    diagram: Diagram
+        Diagram object to navigate.
+    """
 
     def __init__(self, diagram: Diagram) -> None:
         self._block_table = {}

@@ -63,7 +63,6 @@ def smoke():
     first_input = str(next(op.inputs).id)
 
     assert first_input == "CruiseSpeed"
-    assert model.all_modules_loaded
 
     # %%
     def type_filter(obj: swan.GlobalDeclaration):

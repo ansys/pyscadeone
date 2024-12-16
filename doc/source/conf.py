@@ -2,31 +2,23 @@
 
 # cSpell:disable
 
+import os
 from datetime import datetime
 import sys
 from pathlib import Path
+
+from ansys_sphinx_theme import (
+    ansys_favicon,
+    # get_version_match,
+)
 
 src = Path(__file__).parents[2] / "src"
 if not src.exists():
     raise Exception(f"Cannot find sources: {src}")
 sys.path.append(str(src))
 
-# FIXME: to be removed when the documentation is published
-# For now, we ignore the following links when checking for broken links
-linkcheck_ignore = [
-    "https://scadeone.docs.pyansys.com/*",
-    "https://github.com/ansys/pyscadeone/*",
-    "https://www.ansys.com/*",
-]
-
-# Selection of documentation parts
-config = {}
-config["clock"] = False
-config["clock_exclude"] = ["api/language/clock.rst"]
-
 from ansys.scadeone.core import version_info  # noqa
 from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
-from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black  # noqa
 
 # Project information
 project = "PyScadeOne"
@@ -34,8 +26,15 @@ copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = f"{version_info.major}.{version_info.minor}"
 
+# Selection of documentation parts
+config = {}
+config["clock"] = False
+config["clock_exclude"] = ["api/language/clock.rst"]
+
+# PyScadeOne service versions
 supported_versions = Path(__file__).parent / "getting_started/versions.rst"
 supported_versions.write_text(FormatVersions.get_versions())
+
 
 # Copy button customization ---------------------------------------------------
 # exclude traditional Python prompts from the copied code
@@ -101,10 +100,13 @@ inherited_members = True
 toc_object_entries = False
 
 # use the default pyansys logo
-html_logo = pyansys_logo_black
 html_favicon = ansys_favicon
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyScadeOne"
+
+# multi-version documentation
+cname = os.getenv("DOCUMENTATION_CNAME", "scadeone.docs.pyansys.com")
+"""The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
 html_theme_options = {
@@ -114,6 +116,17 @@ html_theme_options = {
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
     ],
+    # FIXME: to be uncommented when the documentation is public
+    # "switcher": {
+    #     "json_url": f"https://{cname}/versions.json",
+    #     "version_match": get_version_match(version),
+    # },
+    "logo": "pyansys",
+    "ansys_sphinx_theme_autoapi": {
+        "project": project,
+        "own_page_level": "function",
+        "class_content": "both",  # documentation in https://sphinxdocs.ansys.com/version/stable/user-guide/autoapi.html
+    },
 }
 
 # TODO: uncomment when we have static files
@@ -138,3 +151,11 @@ autodoc_default_options = {
 jinja_contexts = {
     "clock_ctx": {"clock": config["clock"]},
 }
+
+# FIXME: to be removed when the documentation is published
+# For now, we ignore the following links when checking for broken links
+linkcheck_ignore = [
+    "https://scadeone.docs.pyansys.com/*",
+    "https://github.com/ansys/pyscadeone/*",
+    "https://www.ansys.com/*",
+]

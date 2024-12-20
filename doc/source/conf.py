@@ -9,7 +9,7 @@ from pathlib import Path
 
 from ansys_sphinx_theme import (
     ansys_favicon,
-    # get_version_match,
+    get_version_match,
 )
 
 src = Path(__file__).parents[2] / "src"
@@ -116,11 +116,10 @@ html_theme_options = {
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
     ],
-    # FIXME: to be uncommented when the documentation is public
-    # "switcher": {
-    #     "json_url": f"https://{cname}/versions.json",
-    #     "version_match": get_version_match(version),
-    # },
+    "switcher": {
+        "json_url": f"https://{cname}/versions.json",
+        "version_match": get_version_match(version),
+    },
     "logo": "pyansys",
     "ansys_sphinx_theme_autoapi": {
         "project": project,

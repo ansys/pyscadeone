@@ -120,6 +120,8 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(version),
     },
+    # TODO: remove this check when the lbirary gets public
+    "check_switcher": False,
     "logo": "pyansys",
     "ansys_sphinx_theme_autoapi": {
         "project": project,

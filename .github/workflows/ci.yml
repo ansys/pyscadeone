@@ -97,9 +97,8 @@ jobs:
       - name: "Release to public PyPI"
         uses: ansys/actions/release-pypi-public@v8
         with:
-          library-name: ${{ env.LIBRARY_NAME }}
-          twine-username: "__token__"
-          twine-token: ${{ secrets.PYPI_TOKEN }}
+          library-name: ${{ env.PACKAGE_NAME }}
+          use-trusted-publisher: true
 
       - name: "Release to GitHub"
         uses: ansys/actions/release-github@v8

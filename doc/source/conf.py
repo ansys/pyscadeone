@@ -8,8 +8,7 @@ import sys
 from pathlib import Path
 
 from ansys_sphinx_theme import (
-    ansys_favicon,
-    # get_version_match, # FIXME: to be removed when the documentation is published
+    ansys_favicon, get_version_match,
 )
 
 src = Path(__file__).parents[2] / "src"
@@ -105,7 +104,7 @@ html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyScadeOne"
 
 # multi-version documentation
-cname = os.getenv("DOCUMENTATION_CNAME", "scadeone.docs.pyansys.com")
+cname = os.getenv("DOCUMENTATION_CNAME", default="scadeone.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
@@ -116,10 +115,10 @@ html_theme_options = {
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
     ],
-    # "switcher": {
-    #     "json_url": f"https://{cname}/versions.json",
-    #     "version_match": get_version_match(version),
-    # },
+    "switcher": {
+        "json_url": f"https://{cname}/versions.json",
+        "version_match": get_version_match(version),
+    },
     "logo": "pyansys",
     "ansys_sphinx_theme_autoapi": {
         "project": project,

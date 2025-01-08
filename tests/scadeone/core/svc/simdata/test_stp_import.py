@@ -1,6 +1,24 @@
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
 #
-# Copyright (c) 2024-2025 ANSYS, Inc. Unauthorized use, distribution, or duplication is prohibited.
 #
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from difflib import ndiff
 import sys
@@ -31,7 +49,6 @@ ScadeOne = "C:/Scade One"
 
 
 class TestStpImport:
-
     @pytest.mark.parametrize(
         "test_dir,stp,sproj,record,summary,expected_sd_number",
         [
@@ -73,7 +90,7 @@ class TestStpImport:
         with capsys.disabled():
             if DisableGC:
                 gc.disable()
-            status = converter.cmd_parse()
+            status = converter.cmd_parse()  # noqa: F841
             if DisableGC:
                 gc.enable()
         (out_dir / "stpimporter.log").write_text(caplog.text)
@@ -83,10 +100,10 @@ class TestStpImport:
         generated_sd = list(out_dir.glob("**/*.sd"))
         assert expected_sd_number == len(generated_sd)
 
-        for sd in generated_sd:
-            ref_file = TestDir / test_dir / "sd_refs" / sd.relative_to(out_dir)
+        for sd_path in generated_sd:
+            ref_file = TestDir / test_dir / "sd_refs" / sd_path.relative_to(out_dir)
             assert ref_file.exists()
-            cmp = compare_sd_files(ref_file, sd, out_dir)
+            cmp = compare_sd_files(ref_file, sd_path, out_dir)
             assert cmp
 
         shutil.rmtree(out_dir, ignore_errors=True)

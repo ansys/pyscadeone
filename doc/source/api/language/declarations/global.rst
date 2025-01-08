@@ -1,6 +1,6 @@
 .. _ref_global_decl:
 
-Global Declarations
+Global declarations
 ===================
 
 This section describes the classes that represent the 
@@ -72,7 +72,7 @@ A :py:class:`GroupTypeExpression` can be:
 
 .. autoclass:: GroupDeclarations
 
-Protected Declarations
+Protected declarations
 ----------------------
 
 .. autoclass:: ProtectedDecl

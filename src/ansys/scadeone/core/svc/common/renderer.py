@@ -1,11 +1,29 @@
-# Copyright (c) 2024-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 # cspell: ignore startuml enduml unmark
 # pylint: disable=W0621
-"""
-Document Creation and Rendering
-===============================
 
+"""
 This module defines a *Document* concept and render a document.
 A Document is composed of DElt instances which consist in:
 
@@ -109,8 +127,8 @@ can be conceptually represented as:
     @enduml
 
 
-Document Creation
------------------
+Methods
+-------
 
 The :py:class:`Document` defines the main object. A
 document is rendered by a :py:class:`Render`object.
@@ -193,16 +211,15 @@ the argument as next element and return it (different from
 >>> d == w
 True
 
-Document Rendering
------------------
+Document rendering:
 
 >>> import sys
 >>> r = Renderer(sys.stdout)
 >>> r.render(doc)
 Hello world
 
-Complete Example
-----------------
+Examples
+--------
 
 Creation of a document. We use "@m" and "@M" to mark
 specific indentation after '('. The "@s" separator is
@@ -242,7 +259,7 @@ node Op(/* in */1;
 The :py:class:`Renderer` uses a stream as parameter,
 which can be a stream buffer, of file, ... It can
 be also derived to implement other kind of rendering.
-"""
+"""  # numpydoc ignore
 
 from enum import Enum, auto
 import re

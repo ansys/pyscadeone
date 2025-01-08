@@ -1,4 +1,4 @@
-Variable Declarations
+Variable declarations
 =====================
 
 .. currentmodule:: ansys.scadeone.core.swan

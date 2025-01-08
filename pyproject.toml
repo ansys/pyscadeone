@@ -1,3 +1,4 @@
+# cSpell:disable
 [build-system]
 requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
@@ -48,18 +49,18 @@ dependencies = [
 [project.optional-dependencies]
 tests = ["pytest>=7.1.0", "pytest-cov>=3.0.0", "click>=8.1.7", "fmpy>=0.3.21"]
 doc = [
-    "ansys-sphinx-theme==1.0.8",
-    "numpydoc==1.8.0",
+    "ansys-sphinx-theme==1.2.4",
     "pillow>=10.1",
-    "sphinx==8.0.2",
+    "sphinx==8.1.3",
     "sphinx-copybutton==0.5.2",
-    "sphinx-autobuild==2024.9.3",
-    "sphinx-autodoc-typehints==1.25.2",
+    "sphinx-autobuild==2024.10.3",
+    "sphinx-autodoc-typehints==2.5.0",
     "sphinx-design==0.6.1",
     "pytest-sphinx==0.5.0",
     "sphinx-jinja>=2.0.0",
+    "numpydoc==1.8.0",
 ]
-checks = ["codespell==2.2.6", "flake8==6.1.0"]
+checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1", "pre-commit==4.0.1"]
 
 [project.urls]
 Source = "https://github.com/ansys/pyscadeone"
@@ -74,20 +75,10 @@ stpimporter = "ansys.scadeone.core.svc.simdata.stpimporter:cmd_parse"
 [tool.flit.module]
 name = "ansys.scadeone.core"
 
-# Formatting
-[tool.black]
-line-length = 100
-
-[tool.isort]
-profile = "black"
-force_sort_within_sections = true
-line_length = 100
-default_section = "THIRDPARTY"
-src_paths = ["doc", "src", "tests"]
 
 [tool.codespell]
-skip = '*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ipynb,flycheck*,./.git/*,*.yml,doc/_build/*,doc/images/*,dist/*'
-ignore-words = "spelling_ok.txt"
+skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
+ignore-words = "./doc/styles/config/vocabularies/ANSYS/accept.txt"
 quiet-level = 3
 
 # Test & Coverage
@@ -101,3 +92,74 @@ show_missing = true
 pythonpath = ["src"]
 testpaths = ["tests"]
 log_file = "logs/pytest-logs.txt"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E4", "E7", "E9", "F", "W"]
+ignore = ["F403"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.numpydoc_validation]
+checks = [
+    #"all",   # report on all checks, except the below
+    # "GL01", # "Docstring text (summary) should start in the line immediately "
+    # "after the opening quotes (not in the same line, or leaving a "
+    # "blank line in between)",
+    # "GL02", # "Closing quotes should be placed in the line after the last text "
+    # "in the docstring (do not close the quotes in the same line as "
+    # "the text, or leave a blank line between the last text and the "
+    # "quotes)",
+    # "GL03", # "Double line break found; please use only one blank line to "
+    # "separate sections or paragraphs, and do not leave blank lines "
+    # "at the end of docstrings",
+    "GL05", # 'Tabs found at the start of line "{line_with_tabs}", please use '
+    # "whitespace only",
+    "GL06", # 'Found unknown section "{section}". Allowed sections are: '
+    # "{allowed_sections}",
+    #  "GL07", # "Sections are in the wrong order. Correct order is: {correct_sections}",
+    # "GL08", # "The object does not have a docstring",
+    "GL09", # "Deprecation warning should precede extended summary",
+    "GL10", # "reST directives {directives} must be followed by two colons",
+    # "SS01", # "No summary found (a short summary in a single line should be "
+    # "present at the beginning of the docstring)",
+    "SS02", # "Summary does not start with a capital letter",
+    # "SS03", # "Summary does not end with a period",
+    "SS04", # "Summary contains heading whitespaces",
+    # "SS05", # FIXME "Summary must start with infinitive verb, not third person "
+    # '(e.g. use "Generate" instead of "Generates")',
+    # "SS06", # "Summary should fit in a single line",
+    # "ES01", # "No extended summary found",
+    # "PR01", # FIXME "Parameters {missing_params} not documented",
+    # "PR02", # "Unknown parameters {unknown_params}",
+    "PR03", # "Wrong parameters order. Actual: {actual_params}. "
+    # "Documented: {documented_params}",
+    # "PR04", # 'Parameter "{param_name}" has no type',
+    "PR05", # 'Parameter "{param_name}" type should not finish with "."',
+    "PR06", # 'Parameter "{param_name}" type should use "{right_type}" instead '
+    # 'of "{wrong_type}"',
+    # "PR07", # FIXME 'Parameter "{param_name}" has no description',
+    # "PR08", # FIXME 'Parameter "{param_name}" description should start with a '
+    # "capital letter",
+    # "PR09", # 'Parameter "{param_name}" description should finish with "."',
+    # "PR10", # 'Parameter "{param_name}" requires a space before the colon '
+    # "separating the parameter name and type",
+    # "RT01", # "No Returns section found",
+    # "RT02", # "The first line of the Returns section should contain only the "
+    # "type, unless multiple values are being returned",
+    # "RT03", # "Return value has no description",
+    "RT04", # "Return value description should start with a capital letter",
+    # "RT05", # 'Return value description should finish with "."',
+    # "YD01", # "No Yields section found",
+    # "SA01", # "See Also section not found",
+    "SA02", # "Missing period at end of description for See Also "
+    # '"{reference_name}" reference',
+    "SA03", # "Description should be capitalized for See Also "
+    # '"{reference_name}" reference',
+    "SA04", # 'Missing description for See Also "{reference_name}" reference',
+    # "EX01", # "No examples section found",    
+]
+exclude = ['\.__repr__$', '\.__str__$', '\.__init__$']

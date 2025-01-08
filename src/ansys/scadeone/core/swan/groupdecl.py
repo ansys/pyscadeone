@@ -1,16 +1,36 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """
 This module contains classes to manipulate group declarations
 and group expressions.
 """
+
 from typing import Generator, List
 
 import ansys.scadeone.core.swan.common as common
 
 
-class TypeGroupTypeExpression(common.GroupTypeExpression):
+class TypeGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """Group type expression: *group_type_expr* ::= *type_expr*."""
 
     def __init__(self, type: common.TypeExpression) -> None:
@@ -26,7 +46,7 @@ class TypeGroupTypeExpression(common.GroupTypeExpression):
         return str(self.type)
 
 
-class NamedGroupTypeExpression(common.GroupTypeExpression):
+class NamedGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """A named group type expression, used in GroupTypeExpressionList as id : *group_type_expr*."""
 
     def __init__(self, label: common.Identifier, type: common.GroupTypeExpression) -> None:
@@ -48,7 +68,7 @@ class NamedGroupTypeExpression(common.GroupTypeExpression):
         return f"{self.label}: {self.type}"
 
 
-class GroupTypeExpressionList(common.GroupTypeExpression):
+class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR01
     """Group list made of positional items followed by named items.
     Each item is a group type expression.
 
@@ -87,7 +107,7 @@ class GroupTypeExpressionList(common.GroupTypeExpression):
         return f"({items_str})"
 
 
-class GroupDecl(common.Declaration):
+class GroupDecl(common.Declaration):  # numpydoc ignore=PR01
     """Group declaration with an id and a type."""
 
     def __init__(self, id: common.Identifier, type: common.GroupTypeExpression) -> None:

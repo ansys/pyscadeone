@@ -1,5 +1,25 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 This module contains the classes for:
 
@@ -18,7 +38,7 @@ import ansys.scadeone.core.swan.scopes as scopes
 from .variable import VarDecl
 
 
-class LetSection(scopes.ScopeSection):
+class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements:
 
     **let** {{*equation* ;}} section.
@@ -39,7 +59,7 @@ class LetSection(scopes.ScopeSection):
         return common.Markup.to_str(content, self.is_text, common.Markup.Text)
 
 
-class VarSection(scopes.ScopeSection):
+class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements:
 
     **var** {{*var_decl* ;}} section."""
@@ -58,7 +78,7 @@ class VarSection(scopes.ScopeSection):
         return self.to_str("var", self.var_decls)
 
 
-class EmissionBody(common.SwanItem):
+class EmissionBody(common.SwanItem):  # numpydoc ignore=PR01
     """Implements an emission:
 
     | *emission_body* ::= *flow_names* [[ **if** *expr* ]]
@@ -98,7 +118,7 @@ class EmissionBody(common.SwanItem):
         return emission
 
 
-class EmitSection(scopes.ScopeSection):
+class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements an Emit section:
 
     **emit** {{*emission_body* ;}}"""
@@ -117,7 +137,7 @@ class EmitSection(scopes.ScopeSection):
         return self.to_str("emit", self.emissions)
 
 
-class FormalProperty(common.SwanItem):
+class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
     """Assume or Guarantee expression."""
 
     def __init__(self, luid: common.Luid, expr: common.Expression) -> None:
@@ -139,7 +159,7 @@ class FormalProperty(common.SwanItem):
         return f"{self.luid}: {self.expr}"
 
 
-class AssertSection(scopes.ScopeSection):
+class AssertSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Assert section:
 
     **assert** {{LUID: *expr* ;}}"""
@@ -158,7 +178,7 @@ class AssertSection(scopes.ScopeSection):
         return self.to_str("assert", self.assertions)
 
 
-class AssumeSection(scopes.ScopeSection):
+class AssumeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Assume section:
 
     **assume** {{LUID: *expr* ;}}"""
@@ -177,7 +197,7 @@ class AssumeSection(scopes.ScopeSection):
         return self.to_str("assume", self.hypotheses)
 
 
-class GuaranteeSection(scopes.ScopeSection):
+class GuaranteeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Guarantee section:
 
     **guarantee** {{LUID: *expr* ;}}"""
@@ -196,7 +216,7 @@ class GuaranteeSection(scopes.ScopeSection):
         return self.to_str("guarantee", self.guarantees)
 
 
-class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):
+class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected section, meaning a syntactically incorrect section construct."""
 
     def __init__(self, data: str) -> None:

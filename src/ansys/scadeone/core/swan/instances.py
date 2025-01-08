@@ -1,8 +1,29 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 This module implements operator instances.
 """
+
 from abc import ABC
 from enum import Enum, auto
 from typing import List, Optional, Union
@@ -16,7 +37,7 @@ from .expressions import ClockExpr, Group, GroupItem
 from .variable import VarDecl
 
 
-class OperatorBase(common.SwanItem, ABC):
+class OperatorBase(common.SwanItem, ABC):  # numpydoc ignore=PR01  # numpydoc ignore=PR01
     """Base class for: operator ::= prefix_op [[sizes]]."""
 
     def __init__(self, sizes: List[common.Expression]) -> None:
@@ -37,7 +58,7 @@ class OperatorBase(common.SwanItem, ABC):
         return buffer
 
 
-class PathIdOpCall(OperatorBase, common.PragmaBase):
+class PathIdOpCall(OperatorBase, common.PragmaBase):  # numpydoc ignore=PR01
     """Call to user-defined operator: operator ::= path_id [[sizes]]."""
 
     def __init__(
@@ -78,7 +99,7 @@ class PrefixPrimitiveKind(Enum):
         return value.name.lower()
 
 
-class PrefixPrimitive(OperatorBase):
+class PrefixPrimitive(OperatorBase):  # numpydoc ignore=PR01
     """
     Call to primitive operator: operator ::= *prefix_primitive* [[sizes]]
     with *prefix_primitive*:
@@ -100,7 +121,7 @@ class PrefixPrimitive(OperatorBase):
         return self.to_str(PrefixPrimitiveKind.to_str(self.kind))
 
 
-class Transpose(PrefixPrimitive):
+class Transpose(PrefixPrimitive):  # numpydoc ignore=PR01
     """Transpose operator.
 
     Parameters are a list of integer, but could be a
@@ -127,14 +148,14 @@ class Transpose(PrefixPrimitive):
         return self.to_str(buffer)
 
 
-class OperatorExpression(common.SwanItem, ABC):
+class OperatorExpression(common.SwanItem, ABC):  # numpydoc ignore=PR01
     """Base class for *op_expr*."""
 
     def __init__(self) -> None:
         common.SwanItem().__init__()
 
 
-class PrefixOperatorExpression(OperatorBase):
+class PrefixOperatorExpression(OperatorBase):  # numpydoc ignore=PR01
     """Call to *op_expr*: operator ::= (*op_expr*) [[sizes]]."""
 
     def __init__(self, op_expr: OperatorExpression, sizes: List[common.Expression]) -> None:
@@ -186,7 +207,7 @@ class IteratorKind(Enum):
             return "mapfoldi"
 
 
-class Iterator(OperatorExpression):
+class Iterator(OperatorExpression):  # numpydoc ignore=PR01
     """Iterators: map, fold, mapfold, mapi, foldi, mapfoldi."""
 
     def __init__(self, kind: IteratorKind, operator: OperatorBase) -> None:
@@ -208,7 +229,7 @@ class Iterator(OperatorExpression):
         return f"{IteratorKind.to_str(self.kind)} {self.operator}"
 
 
-class ActivateClock(OperatorExpression):
+class ActivateClock(OperatorExpression):  # numpydoc ignore=PR01
     """**activate** *operator* **every** *clock_expr*"""
 
     def __init__(self, operator: OperatorBase, clock: ClockExpr) -> None:
@@ -230,7 +251,7 @@ class ActivateClock(OperatorExpression):
         return f"activate {self.operator} every {self.clock}"
 
 
-class ActivateEvery(OperatorExpression):
+class ActivateEvery(OperatorExpression):  # numpydoc ignore=PR01
     """Higher-order activate expression: **activate** *operator*
     **every** *expr* (( **last**| **default** )) *expr*."""
 
@@ -275,7 +296,7 @@ class ActivateEvery(OperatorExpression):
         return f"activate {o} every {c} {k} {d}"
 
 
-class Restart(OperatorExpression):
+class Restart(OperatorExpression):  # numpydoc ignore=PR01
     """Higher-order restart expression: **restart** *operator* **every** *expr*."""
 
     def __init__(self, operator: OperatorBase, condition: common.Expression) -> None:
@@ -297,7 +318,7 @@ class Restart(OperatorExpression):
         return f"restart {self.operator} every {self.condition}"
 
 
-class OptGroupItem(common.SwanItem):
+class OptGroupItem(common.SwanItem):  # numpydoc ignore=PR01
     """Optional group item: *opt_group_item* ::= _ | *group_item*."""
 
     def __init__(self, item: Optional[GroupItem] = None) -> None:
@@ -318,7 +339,7 @@ class OptGroupItem(common.SwanItem):
         return "_" if self.is_underscore else str(self.item)
 
 
-class Partial(OperatorExpression):
+class Partial(OperatorExpression):  # numpydoc ignore=PR01
     r"Partial operator expression: *operator* \ *partial_group*."
 
     def __init__(self, operator: OperatorBase, partial_group: List[OptGroupItem]) -> None:
@@ -382,7 +403,7 @@ class NaryOp(Enum):
             return "@"
 
 
-class NAryOperator(OperatorExpression):
+class NAryOperator(OperatorExpression):  # numpydoc ignore=PR01
     """N-ary operators: '+' | '*' | '@' | **and** | **or** | **xor** | **land** | **lor**."""
 
     def __init__(self, operator: NaryOp) -> None:
@@ -398,7 +419,7 @@ class NAryOperator(OperatorExpression):
         return NaryOp.to_str(self.operator)
 
 
-class AnonymousOperatorWithExpression(OperatorExpression):
+class AnonymousOperatorWithExpression(OperatorExpression):  # numpydoc ignore=PR01
     """Anonymous operator expression:
     ((**node|function**)) id {{ , id }} *scope_sections* => *expr*."""
 
@@ -445,7 +466,7 @@ class AnonymousOperatorWithExpression(OperatorExpression):
         return f"{kind} {params}{sections} => {expression}"
 
 
-class AnonymousOperatorWithDataDefinition(OperatorExpression):
+class AnonymousOperatorWithDataDefinition(OperatorExpression):  # numpydoc ignore=PR01
     """Anonymous operator expression:
     ((**node|function**)) *params* **returns** *params* *data_def*."""
 
@@ -490,7 +511,7 @@ class AnonymousOperatorWithDataDefinition(OperatorExpression):
         return f"{kind} ({inputs}) returns ({outputs}) {data_def}"
 
 
-class OperatorInstance(common.Expression):
+class OperatorInstance(common.Expression):  # numpydoc ignore=PR01
     """Operator instance call:
 
     *expr* := *operator_instance* ( *group* )
@@ -531,7 +552,7 @@ class OperatorInstance(common.Expression):
 # =============================================
 
 
-class ProtectedOpExpr(OperatorExpression, common.ProtectedItem):
+class ProtectedOpExpr(OperatorExpression, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected operator expression,
     i.e., saved as string if syntactically incorrect."""
 

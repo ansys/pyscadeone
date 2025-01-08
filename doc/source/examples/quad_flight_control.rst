@@ -1,18 +1,17 @@
-.. _QuadFlightControl python setup: 
+.. _ref_QuadFlightControl_python_setup: 
 
-===============================
-QuadFlightControl Example Setup
-===============================
+====================================
+QuadFlightControl example setup code
+====================================
 
-We use the **QuadFlightControl** example provided with Scade One. 
-This example is located in the ``examples/QuadFlightControl``
+The **QuadFlightControl** example provided with Scade One is used by the various code examples
+provided in. :ref:`ref_examples`. 
+The **QuadFlightControl** example is located in the ``examples/QuadFlightControl``
 folder of the Scade One installation directory. 
 
-As the setup is almost the same for each example using the *QuadFlightControl*,
-we present here the proper setting for other scripts.
+As the setup is almost the same for each example using the **QuadFlightControl** example,
+the proper initial code is:
 
-Note that the ``ScadeOne`` instance is created with the ``install_dir`` parameter
-set. 
 
 .. code:: python
 
@@ -31,6 +30,10 @@ set.
 
     app = ScadeOne(install_dir=s_one_install)
     model = app.load_project(quad_flight_project).model
+
+
+Note that the ``ScadeOne`` instance is created with the ``install_dir`` parameter
+set. 
 
 .. note::
     The import of the ``cast`` operation is sometimes used to indicate

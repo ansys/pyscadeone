@@ -1,25 +1,25 @@
 .. _ref_sd_converter:
 
-========================
-SCADE Suite STP Importer
-========================
+===================================
+SCADE Suite test procedure importer
+===================================
 
 The **stpimporter** command allows to turn sets of SSS scenarios defined 
 in a SCADE Test STP test procedure into simulation data files.
-It is used as a command line, installed along with **pyscadone**:
+It is used as a command line, installed along with **pyscadeone**:
 
 .. code:: bash
 
-  $ stpimporter stpfile sprojfile
+  $ stpimporter stp_file sproj_file
 
-See `Command Line <stp_importer_cli>`_ section for details.
+See `Command Line <stp_importer_cli_>`_ section for details.
 
 Inputs
 ------
 
 To start a conversion, the user shall provide:
 
-- A procedure file (.STP) that has at least one record of the defined SSS file(s).
+- A procedure file (.STP) that has at least one record of the defined SSS files.
 - A record name (only if not all the records should be converted).
 - The associated Scade One project (.SPROJ).
 
@@ -56,7 +56,7 @@ Supported features
   * enums
   * structures
   * arrays
-  * combination of the above
+  * combination of the preceding
 
 * The **SSM::check** command with optional *sustain* parameter
 
@@ -82,7 +82,7 @@ Limitations
 -----------
 
 Multiple features offered by SSS files are not supported in Simulation Data.
-Those will be ignored and reported in the logs:
+Those are ignored and reported in the logs:
 
 * Any SSM commands that are not supported are ignored.
 * The *operator* attribute **must** be defined in STP file and be the same as the operator 
@@ -104,8 +104,8 @@ Those will be ignored and reported in the logs:
 
   * Tolerance (SSM::tolerance or *real* argument of SSM::check)
   * Probes are not taken into account (SSM::check)
-  * Check of parts of a complex type (SSM::check with paths, indexes, occurrences, ...)
-  * Complex checks (ranges, *lambda* expressions, ...)
+  * Check of parts of a complex type (SSM::check with paths, indexes, occurrences, etc.)
+  * Complex checks (ranges, *lambda* expressions, etc.)
   * Images checks (SSM::check image).
 
 * CSV files - only SSS files are converted.
@@ -121,7 +121,7 @@ The **stpimporter** command is installed in the ``Scripts`` folder of the Python
 where the *pyscadeone* library is installed. The command line is as follows:
 
 positional arguments:
-  - ``stp_path``              STP file path
+  - ``stp_path``              STP path
   - ``sproj_path``            Associated Swan project path
 
 options:
@@ -141,6 +141,6 @@ options:
 The *--renamings* option specifies the path to the renaming log file 
 from the SCADE Suite importer, usually named *renamings.log*. This file contains the renamings
 performed by the SCADE Suite importer in case of packages within packages and declarations at top-level
-out ouf any packages. This file is **mandatory** for **stpimporter** command in these cases
+out of any packages. This file is **mandatory** for **stpimporter** command in these cases
 to correctly convert the SSS files with the proper names.
 

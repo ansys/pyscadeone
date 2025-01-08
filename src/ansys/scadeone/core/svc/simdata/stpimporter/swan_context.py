@@ -1,6 +1,24 @@
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
 #
-# Copyright (c) 2024-2024 ANSYS, Inc. Unauthorized use, distribution, or duplication is prohibited.
 #
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from collections import OrderedDict
 import functools
@@ -130,7 +148,6 @@ class SwanContext:
     def get_sd_type_of_type_expr(
         self, type_expr: swan.TypeExpression, module: swan.Module, name: Optional[str] = None
     ):
-
         if isinstance(type_expr, swan.ArrayTypeExpression):
             res = self.get_array_type(type_expr, module)
             if res is None:
@@ -166,7 +183,6 @@ class SwanContext:
 
     @functools.cache
     def get_sd_type_of_type_decl(self, decl: swan.TypeDecl, module: swan.Module):
-
         name = decl.get_full_path()
         type_def = decl.definition
 

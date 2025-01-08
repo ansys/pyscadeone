@@ -1,9 +1,9 @@
-Assume/Guarantee - Emission
+Assume/guarantee - emission
 ===========================
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-Assume Guarantee Sections
+Assume guarantee sections
 -------------------------
 
 .. autoclass:: FormalProperty

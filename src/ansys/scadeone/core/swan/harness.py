@@ -1,5 +1,25 @@
-# Copyright (c) 2024-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 
 # THIS MODULE CONTAINS THE CLASSES FOR TEST HARNESS AND TEST MODULE
 # THIS IS NOT YET FULLY IMPLEMENTED
@@ -15,7 +35,7 @@ from ansys.scadeone.core.swan.scopes import Scope
 import ansys.scadeone.core.swan.common as common
 
 
-class Source(common.SwanItem):
+class Source(common.SwanItem):  # numpydoc ignore=PR01
     """Class representing a source in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -28,7 +48,7 @@ class Source(common.SwanItem):
         return self._id
 
 
-class Oracle(common.SwanItem):
+class Oracle(common.SwanItem):  # numpydoc ignore=PR01
     """Class representing an oracle in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -41,7 +61,7 @@ class Oracle(common.SwanItem):
         return self._id
 
 
-class SetSensorEquation(common.Equation):
+class SetSensorEquation(common.Equation):  # numpydoc ignore=PR01
     """Class representing a set sensor equation in the harness."""
 
     def __init__(self, sensor: common.PathIdentifier, value: common.Expression) -> None:
@@ -60,7 +80,7 @@ class SetSensorEquation(common.Equation):
         return self._value
 
 
-class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):
+class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):  # numpydoc ignore=PR01
     """Test harness definition."""
 
     def __init__(
@@ -89,7 +109,7 @@ class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):
         return buffer
 
 
-class TestModule(ModuleBody):
+class TestModule(ModuleBody):  # numpydoc ignore=PR01
     """Test module definition."""
 
     def __init__(

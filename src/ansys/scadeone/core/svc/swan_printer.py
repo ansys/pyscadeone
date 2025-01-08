@@ -1,10 +1,28 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 # pylint: disable=too-many-lines, pointless-statement
 
-from io import IOBase
-from pathlib import Path  # noqa
+from io import IOBase, StringIO
 from typing import Any, List, Optional, Union
 
 import ansys.scadeone.core.svc.common.renderer as R
@@ -24,8 +42,10 @@ class PPrinter(SwanVisitor):
     normalize: bool
         Write each Swan declaration or all declarations per line
 
-    Methods (supported to use for a Swan project)
-    ---------------------------------------------
+    Methods
+    -------
+    Supported to use for a Swan project:
+
         - Use clauses declaration
         - Globals declaration:
             + Types declaration
@@ -173,8 +193,8 @@ class PPrinter(SwanVisitor):
 
         _decl = R.DBlock()
         _decl << pref
-            _decl << "@n"
-            _decl << R.doc_list(*[item << end for item in lst], sep="@n")
+        _decl << "@n"
+        _decl << R.doc_list(*[item << end for item in lst], sep="@n")
         return _decl
 
     def visit(self, swan_obj: S.Declaration):
@@ -1865,9 +1885,9 @@ class PPrinter(SwanVisitor):
             if _pgm:
                 _decl << R.doc_list(*_pgm, sep=" ") << " "
             _decl << R.text(swan_obj.value)
-        # Update property
-        PPrinter._update_property(owner, swan_property, _decl)
-            else:
+            # Update property
+            PPrinter._update_property(owner, swan_property, _decl)
+        else:
             owner.pprint_array[swan_property] = R.text(swan_obj.value)
 
     def visit_IfteExpr(
@@ -2316,7 +2336,7 @@ class PPrinter(SwanVisitor):
                     if _dc:
                         _decl << R.doc_list(*_dc, sep=R.DLineBreak(False))
                 else:
-                _dcl.append(swan_obj.pprint_array["declarations"])
+                    _dcl.append(swan_obj.pprint_array["declarations"])
             if _dcl:
                 _decl << R.doc_list(*_dcl, sep=R.DLineBreak(False))
                 _decl << R.DLineBreak(False)
@@ -2561,7 +2581,7 @@ class PPrinter(SwanVisitor):
             for item in swan_obj.path_id:
                 self._visit(item, swan_obj, "path_id")
                 if swan_obj.pprint_array["path_id"]:
-                _lst.append(swan_obj.pprint_array["path_id"])
+                    _lst.append(swan_obj.pprint_array["path_id"])
             (owner.pprint_array[swan_property] << R.doc_list(*_lst, sep="::"))
         elif self._is_builtin(swan_obj.path_id):
             self.visit_builtin(swan_obj.path_id1, swan_obj, "path_id")
@@ -3385,7 +3405,7 @@ class PPrinter(SwanVisitor):
             for item in swan_obj.type_vars:
                 self._visit(item, swan_obj, "type_vars")
                 _tv.append(swan_obj.pprint_array["type_vars"])
-                _decl << R.doc_list(*_tv, sep=", ")
+            _decl << R.doc_list(*_tv, sep=", ")
         elif SwanVisitor._is_builtin(swan_obj.type_vars):
             self.visit_builtin(swan_obj.type_vars, swan_obj, "type_vars")
             _decl << swan_obj.pprint_array["type_vars"]
@@ -3787,6 +3807,7 @@ class PPrinter(SwanVisitor):
             _decl << " _"
         else:
             _decl << " {}"
+
         # Update property
         PPrinter._update_property(owner, swan_property, _decl)
 
@@ -4114,11 +4135,6 @@ class PPrinter(SwanVisitor):
         PPrinter._update_property(owner, swan_property, _decl)
         # Visit base class(es)
         self.visit_DiagramObject(swan_obj, owner, swan_property)
-
-
-from io import StringIO
-
-import ansys.scadeone.core.swan as S
 
 
 def swan_to_str(swan_obj: S.SwanItem, normalize: bool = False) -> str:

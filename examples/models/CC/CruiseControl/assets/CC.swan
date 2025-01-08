@@ -105,7 +105,7 @@ node CruiseControl (On: bool;
                   restart #35
                   #pragma diagram {"tp":"h-20400;v-1335|#37 h-5058 h-5059 h40587;v-1335|#35"} #end;
                   #pragma diagram {"xy":"h0;v-12338","wh":"147150;38225"} #end)
-            state #40 Interruped
+            state #40 Interrupted
             #pragma diagram {"xy":"h90525;v4276","wh":"38400;11200"} #end :
               diagram
                 (let CruiseState = INT;

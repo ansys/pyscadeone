@@ -15,8 +15,8 @@ project instance.
 
 
 
-Model API Documentation
------------------------
+Model documentation
+-------------------
 
 .. currentmodule:: ansys.scadeone.core.model
 

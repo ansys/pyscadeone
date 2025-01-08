@@ -1,6 +1,26 @@
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
 #
-# Copyright (c) 2022-2024 ANSYS, Inc. Unauthorized use, distribution, or duplication is prohibited.
 #
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# cSpell: ignore vsize
 
 import abc
 from typing import List, Optional, Any, Iterator
@@ -46,7 +66,7 @@ class PredefinedType(Type):
     def __init__(self, type_id: int):
         try:
             self._kind = PredefinedTypeKind(type_id)
-        except:
+        except:  # noqa: E722
             raise ScadeOneException("cannot create predefined type with id {0}".format(type_id))
         super().__init__(type_id, self.__str__())
         PredefinedType._instances[type_id] = self

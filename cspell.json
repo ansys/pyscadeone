@@ -1,0 +1,35 @@
+{
+    "dictionaryDefinitions": [
+        {
+            "name": "project_code",
+            "path": "./code_spelling_ok.txt"
+        },
+        {
+            "name": "project_doc",
+            "path": "./doc/styles/config/vocabularies/ANSYS/accept.txt"
+        }
+    ],
+    "dictionaries": [
+        "project_code",
+        "project_doc"
+    ],
+    "languageSettings": [
+        {
+            "languageId": "python",
+            "dictionaries": [
+                "project_code",
+                "project_doc"
+            ]
+        }
+    ],
+    "ignorePaths": [
+        ".git",
+        "**/*.pyc",
+        "*.yml",
+        "*.yaml",
+        "*.txt",
+        "*.rst",
+        "*.swan",
+        "*.etp"
+    ]
+}

@@ -1,6 +1,6 @@
 .. _ref_test_results:
 
-Test Results
+Test results
 ============
 The PyScadeOne services allow to load the test results file in Python objects. :py:class:`TestResultsParser` allows
 to use the :py:meth:`load` method to load the test results file and return a :py:class:`TestResults` object.
@@ -12,44 +12,44 @@ to use the :py:meth:`load` method to load the test results file and return a :py
 
 .. currentmodule:: ansys.scadeone.core.svc.test.test_results
 
-TestResultsParser Class
------------------------
+Test results parsing
+--------------------
 This section describes the main class for parsing the test results files.
 
 .. autoclass:: TestResultsParser
 
-TestResults Class
------------------
+Handling test results
+----------------------
 :py:class:`TestResults` represents the test results.
 
 .. autoclass:: TestResults
 
-TestCase Class
---------------
+Handling test cases
+--------------------
 :py:class:`TestCase` represents the test cases of the test results.
 
 .. autoclass:: TestCase
 
-TestItem Class
---------------
+Handling test items
+-------------------
 :py:class:`TestItem` represents the test items of the test results.
 
 .. autoclass:: TestItem
 
-Failure Class
+Failure class
 -------------
 :py:class:`Failure` represents the failures of the test items.
 
 .. autoclass:: Failure
 
-TestStatus Enum
----------------
+Test status enum
+-----------------
 :py:class:`TestStatus` represents the status of the test items.
 
 .. autoclass:: TestStatus
 
-TestItemKind Enum
------------------
+Test item kind enum
+-------------------
 :py:class:`TestItemKind` represents the kind of the test items.
 
 .. autoclass:: TestItemKind

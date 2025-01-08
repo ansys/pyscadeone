@@ -1,3 +1,27 @@
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# cSpell: ignore cfunction
+
 from pathlib import Path
 
 import pytest
@@ -11,7 +35,6 @@ s_one_install = Path(r"C:\Scade One")
 
 
 class TestGeneratedCode:
-
     def _get_gen_code(self, job_name) -> GeneratedCode:
         app = ScadeOne()
         prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
@@ -26,8 +49,8 @@ class TestGeneratedCode:
             # check that the function name corresponds to the name found in content section of code elem
             assert name == code["content"]["name"]
             params = cfunc.parameters
-            # check on ret_type tbd
-            ret_type = cfunc.return_type
+            # FIXME check on ret_type tbd
+            _ = cfunc.return_type
             # find the function section in the mapping file dictionary
             for elem in op._gen_code.code:
                 if elem.get("interface_file", "") == intf:
@@ -109,7 +132,7 @@ class TestGeneratedCode:
     def test_operator_error(self, oper_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            op = gc.get_model_operator(oper_name)
+            gc.get_model_operator(oper_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no operator named {oper_name}"
 
@@ -168,7 +191,7 @@ class TestGeneratedCode:
     def test_mono_instance_error(self, mono_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            op = gc.get_model_monomorphic_instance(mono_name)
+            gc.get_model_monomorphic_instance(mono_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no monomorphic instance named {mono_name}"
 
@@ -219,7 +242,7 @@ class TestGeneratedCode:
     def test_sensor_error(self, sensor_name):
         gc = self._get_gen_code("CodeGen1")
         try:
-            sen = gc.get_model_sensor(sensor_name)
+            gc.get_model_sensor(sensor_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no sensor named {sensor_name}"
 

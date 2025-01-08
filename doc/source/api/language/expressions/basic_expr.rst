@@ -1,4 +1,4 @@
-Bitwise, Boolean, Arithmetic, Relational
+Bitwise, boolean, arithmetic, relational
 ========================================
 
 .. currentmodule:: ansys.scadeone.core.swan
@@ -93,7 +93,7 @@ N-ary expressions correspond to specific operator instance calls which use the :
       - binary
 
 
-Unary Expressions
+Unary expressions
 -----------------
 
 A unary expression is composed of a unary operator and an expression. 
@@ -105,9 +105,9 @@ Unary operators are defined with the :py:class:`UnaryOp` enumeration.
 
 .. autoclass:: UnaryExpr
 
-.. _ref_bin_expr: 
+.. _ref_bin_expr:
 
-Binary Expressions
+Binary expressions
 ------------------
 
 A binary expression is composed of a binary operator and two expressions. 
@@ -117,17 +117,18 @@ Binary operators are defined with the :py:class:`BinaryOp` enumeration.
 
 .. autoclass:: BinaryExpr
 
-Cast Operators
-------------------
+Cast operators
+--------------
+
 A cast operator ( :> )  is a specific binary expression as it takes an
 expression and a type.
 
 .. autoclass:: NumericCast
 
 
-.. _ref_n_ary_expr: 
+.. _ref_n_ary_expr:
 
-N-ary Expressions
+N-ary expressions
 -----------------
 
 N-ary operators are a special case of operator calls. The n-ary operations

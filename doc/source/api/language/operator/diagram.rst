@@ -17,7 +17,7 @@ It contains the various blocks (see figure) and connections using
 
 .. autoclass:: DiagramObject
 
-Diagram Objects
+Diagram objects
 ---------------
 
 This section describes the **expr**, **def** and **block** 
@@ -30,7 +30,7 @@ related classes.
 .. autoclass:: Block
 
 
-Group/Ungroup block (*bar*)
+Group/ungroup block (*bar*)
 ---------------------------
 
 The *bar* block is used to group/ungroup wires.
@@ -39,14 +39,14 @@ The *bar* block is used to group/ungroup wires.
 
 .. autoclass:: GroupOperation
 
-Wire and Connections
+Wire and connections
 --------------------
 
 .. autoclass:: Wire
 
 .. autoclass:: Connection
 
-Def-by-case Blocks
+Def-by-case blocks
 ------------------
 
 The **def-by-case** blocks gather the graphical version of then state machine and

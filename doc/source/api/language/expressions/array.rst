@@ -37,7 +37,7 @@ the syntax given in the Scade One documentation.
 .. figure:: array_operations.svg
   
 
-Array Operations
+Array operations
 ----------------
 
 .. autoclass:: ArrayRepetition
@@ -50,7 +50,7 @@ Array Operations
 
 .. autoclass:: ProjectionWithDefault
 
-Other Array Operations
+Other array operations
 ----------------------
 
 Arrays support the **flatten**, **reverse**, **pack**, and **transpose** operations.

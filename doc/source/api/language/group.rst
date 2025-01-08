@@ -15,7 +15,7 @@ may for groups.
     Group class diagram
 
 
-Group Construction
+Group construction
 ------------------
 
 Group constructor is : **(** *group* **)**. A *group* is itself a list of *group items*.
@@ -27,13 +27,13 @@ Group constructor is : **(** *group* **)**. A *group* is itself a list of *group
 
 .. autoclass:: GroupItem
 
-Group Projection and Renamings
--------------------------------
+Group projection and renaming
+-----------------------------
 
 A group projection accesses to fields in a group and returns a group
-of the matching fields, using renamings.
+of the matching fields, using renaming.
 
-The syntax is: *expr* **.(** *group_renamings* **)** where **.(** *group_renamings* **)** 
+The syntax is: *expr* **.(** *group_renaming* **)** where **.(** *group_renaming* **)** 
 is a group adaptation, also used for :py:class:`Connection` in diagrams.
 
 .. autoclass:: GroupProjection

@@ -1,10 +1,6 @@
-PyScadeOne Documentation  |version|
-===================================
-..
-   Just reuse the root readme to avoid duplicating the documentation.
-   Provide any documentation specific to your online documentation
-   here.
 
+PyScadeOne documentation  |version|
+===================================
 
 PyScadeOne is a Python library for the
 `Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_:superscript:`TM`  
@@ -32,7 +28,7 @@ This library allows:
 
       Learn how to install and run PyScadeOne.
       Check for supported versions.
- 
+
 
    .. grid-item-card:: :fa:`book` User guide
       :link: ref_user_guide
@@ -56,12 +52,12 @@ This library allows:
       :link-type: ref
 
       Explore examples that show how to use PyScadeOne. 
- 
+
 
    .. grid-item-card:: :fa:`users` Contribute
       :link: ref_contributing
       :link-type: ref
-
+  
       Learn how to contribute to the PyScadeOne codebase
       or documentation.
 
@@ -75,8 +71,3 @@ This library allows:
    api/index
    examples/index
    contrib
-
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`search`

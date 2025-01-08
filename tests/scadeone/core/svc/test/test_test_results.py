@@ -1,3 +1,25 @@
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from pathlib import Path
 
 import pytest
@@ -14,7 +36,6 @@ TEST_RESULTS_FILE = Path(__file__).parents[1] / "test/refs/test-results-example.
 
 
 class TestTestResults:
-
     def test_valid_str(self):
         test_res_str = """
         {
@@ -91,7 +112,7 @@ class TestTestResults:
                   ]
                 }
         """
-        with pytest.raises(ScadeOneException, match="Invalid test results file: \\.*") as e:
+        with pytest.raises(ScadeOneException, match="Invalid test results file: \\.*") as e:  # noqa: F841
             TestResultsParser.load(test_res_str)
 
     def test_valid_file(self):
@@ -126,8 +147,14 @@ class TestTestResults:
         assert len(test_item.failures) == 1
         failure = test_item.failures[0]
         assert failure.cycle == 3
-        assert failure.actual == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:5, f2:6}, {f1:7, f2:8}], [{f1:9, f2:10}, {f1:11, f2:12}]]"
-        assert failure.expected == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:45, f2:46}, {f1:7, f2:8}], [{f1:49, f2:10}, {f1:11, f2:12}]]"
+        assert (
+            failure.actual
+            == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:5, f2:6}, {f1:7, f2:8}], [{f1:9, f2:10}, {f1:11, f2:12}]]"
+        )
+        assert (
+            failure.expected
+            == "[[{f1:1, f2:2}, {f1:3, f2:4}], [{f1:45, f2:46}, {f1:7, f2:8}], [{f1:49, f2:10}, {f1:11, f2:12}]]"
+        )
         assert failure.float32_atol == 1e-5
         assert failure.float32_rtol == 0.01
         assert failure.float64_atol == 1e-9

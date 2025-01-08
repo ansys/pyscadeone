@@ -1,4 +1,4 @@
-Functional Update
+Functional update
 =================
 
 .. currentmodule:: ansys.scadeone.core.swan

@@ -1,11 +1,11 @@
 
-Type Declarations
+Type declarations
 =================
 
 .. currentmodule:: ansys.scadeone.core.swan
 
 A type declaration is a type name and its optional definition.
-Type definitions are type expressions, enumerations, variants and structures.
+Type definitions are type expressions, enumerations, variants, and structures.
 
 .. autoclass:: TypeDecl
 
@@ -71,7 +71,7 @@ base class for the type expressions given by the following figure:
 
 .. autoclass:: TypeExpression 
 
-Predefined Types
+Predefined types
 ~~~~~~~~~~~~~~~~
 
 :py:class:`PredefinedType` class is the base class for the classes:
@@ -91,15 +91,16 @@ Other types
 
 .. autoclass:: PredefinedType
 
-Sized Types
+Sized types
 ~~~~~~~~~~~
 
 Definition of types like ``T = signed<<42>>`` or ``T = unsigned<<42>>``.
 
 .. autoclass:: SizedTypeExpression
 
-Reference to Other Types and Generic Types
+Reference to other types and generic types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. autoclass:: TypeReferenceExpression
 
 .. autoclass:: VariableTypeExpression

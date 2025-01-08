@@ -1,6 +1,6 @@
-.. _Swan Model Visitor:
+.. _ref_swan_model_visitor:
 
-Swan Model Visitor
+Swan model visitor
 ==================
 
 .. currentmodule:: ansys.scadeone.core.svc.swan_visitor
@@ -18,7 +18,7 @@ The Swan visitor works a little differently. The visitor knows about the Swan ob
 and is responsible for the tree traversal. There is no ``accept`` method for the Swan classes.
 The advantage is that the traversal can be controlled by a derived visitor class.
 
-For a complete code example, see :ref:`Visitor Example`.
+For a complete code example, see :ref:`ref_visitor_example`.
 
 Overview
 --------

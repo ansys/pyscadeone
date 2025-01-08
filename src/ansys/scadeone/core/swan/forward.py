@@ -1,5 +1,25 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 This module contains the classes for forward expression
 
@@ -17,7 +37,7 @@ import ansys.scadeone.core.swan.scopes as scopes
 
 # Forward Expression
 # ======================================================================
-class ForwardLHS(common.SwanItem):
+class ForwardLHS(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct:
 
     *current_lhs* ::= *id* | [ *current_lhs* ]"""
@@ -43,7 +63,7 @@ class ForwardLHS(common.SwanItem):
             return f"[{self.lhs}]"
 
 
-class ForwardElement(common.SwanItem):
+class ForwardElement(common.SwanItem):  # numpydoc ignore=PR01
     """Forward current element:
 
     *current_elt* ::= *current_lhs* = *expr* ;"""
@@ -67,7 +87,7 @@ class ForwardElement(common.SwanItem):
         return f"{self.lhs} = {self.expr};"
 
 
-class ForwardDim(common.SwanItem):
+class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct dimension:
 
     *dim* ::= << *expr* >> [[ **with** (( << *id* >> | *current_elt* )) {{ *current_elt* }} ]]
@@ -167,7 +187,7 @@ class ForwardDim(common.SwanItem):
         return dim
 
 
-class ForwardLastDefault(common.SwanItem):
+class ForwardLastDefault(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct: *last_default*.
 
     *last_default* ::= **last** = *expr*
@@ -234,7 +254,7 @@ class ForwardLastDefault(common.SwanItem):
         return f"{last}{sep}{default}"
 
 
-class ForwardItemClause(common.SwanItem):
+class ForwardItemClause(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct:
 
     *item_clause* ::= *id* [[ : *last_default* ]]"""
@@ -263,7 +283,7 @@ class ForwardItemClause(common.SwanItem):
         return item_clause
 
 
-class ForwardArrayClause(common.SwanItem):
+class ForwardArrayClause(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct:
 
     *returns_clause* ::= (( *item_clause* | *array_clause* ))
@@ -283,14 +303,14 @@ class ForwardArrayClause(common.SwanItem):
         return f"[{self.return_clause}]"
 
 
-class ForwardReturnItem(common.SwanItem):
+class ForwardReturnItem(common.SwanItem):  # numpydoc ignore=PR01
     """Base class for *returns_item*."""
 
     def __init__(self) -> None:
         super().__init__()
 
 
-class ForwardReturnItemClause(ForwardReturnItem):
+class ForwardReturnItemClause(ForwardReturnItem):  # numpydoc ignore=PR01
     """**forward** construct: *returns_item* ::= *item_clause*."""
 
     def __init__(self, item_clause: ForwardItemClause) -> None:
@@ -306,7 +326,7 @@ class ForwardReturnItemClause(ForwardReturnItem):
         return str(self.item_clause)
 
 
-class ForwardReturnArrayClause(ForwardReturnItem):
+class ForwardReturnArrayClause(ForwardReturnItem):  # numpydoc ignore=PR01
     """**forward** construct:
 
     *returns_item* ::= [[ *id* = ]] *array_clause*"""
@@ -333,14 +353,14 @@ class ForwardReturnArrayClause(ForwardReturnItem):
         return f"{id}{self.array_clause}"
 
 
-class ProtectedForwardReturnItem(common.ProtectedItem, ForwardReturnItem):
+class ProtectedForwardReturnItem(common.ProtectedItem, ForwardReturnItem):  # numpydoc ignore=PR01
     """**forward** construct: protected *returns_item* with {syntax% ... %syntax} markup."""
 
     def __init__(self, data: str) -> None:
         super().__init__(data)
 
 
-class ForwardState(Enum):
+class ForwardState(Enum):  # numpydoc ignore=PR01  # numpydoc ignore=PR01
     """Forward state enumeration."""
 
     # pylint: disable=invalid-name
@@ -355,7 +375,7 @@ class ForwardState(Enum):
         return value.name.lower()
 
 
-class ForwardBody(common.SwanItem):
+class ForwardBody(common.SwanItem):  # numpydoc ignore=PR01
     """
     **forward** construct:
 
@@ -393,7 +413,7 @@ class ForwardBody(common.SwanItem):
         return f"{unless}{body}{until}"
 
 
-class Forward(common.Expression):
+class Forward(common.Expression):  # numpydoc ignore=PR01
     """Forward expression:
 
     | *fwd_expr* ::= **forward** [[ *luid*]] [[ (( **restart** | **resume** )) ]] {{ *dim* }}+

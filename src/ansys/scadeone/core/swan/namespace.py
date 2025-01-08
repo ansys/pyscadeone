@@ -1,5 +1,24 @@
-# Copyright (c) 2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from typing import Generator, Union, Optional, cast
 
@@ -133,12 +152,12 @@ class ScopeNamespace:
         if isinstance(item, Operator):
             for input in item.inputs:
                 if not isinstance(input, VarDecl):
-                    raise ScadeOneException(f"Input is not a variable.")
+                    raise ScadeOneException("Input is not a variable.")
                 if input.id.value == name:
                     return input
             for output in item.outputs:
                 if not isinstance(output, VarDecl):
-                    raise ScadeOneException(f"Output is not a variable.")
+                    raise ScadeOneException("Output is not a variable.")
                 if output.id.value == name:
                     return output
         if isinstance(item, Scope):

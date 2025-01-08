@@ -1,9 +1,31 @@
-# Copyright (c) 2022-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-FileCopyrightText: 2022 - 2024 ANSYS, Inc.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
 This module contains the classes for operator and signature (operator
 without body)
 """
+
 from typing import Callable, Generator, List, Optional, Union
 
 import ansys.scadeone.core.swan.common as common
@@ -13,7 +35,7 @@ from .scopes import Scope
 from .typedecl import VariableTypeExpression
 
 
-class TypeConstraint(common.SwanItem):
+class TypeConstraint(common.SwanItem):  # numpydoc ignore=PR01
     """Type constraint for operator. A constraint is:
 
     *where_decl* ::= **where** *typevar* {{ , *typevar* }} *numeric_kind*
@@ -60,7 +82,7 @@ class TypeConstraint(common.SwanItem):
         return f"where {type_vars} {common.NumericKind.to_str(self.kind)}"
 
 
-class Signature(common.Declaration, common.ModuleItem):
+class Signature(common.Declaration, common.ModuleItem):  # numpydoc ignore=PR01
     """Operator signature, without a body.
 
     Used in interfaces."""
@@ -185,7 +207,7 @@ class Signature(common.Declaration, common.ModuleItem):
         return f"{self.to_str()};"
 
 
-class Operator(Signature):
+class Operator(Signature):  # numpydoc ignore=PR01
     """Operator definition, with a body.
 
     Used in modules. The body may not bet yet defined."""

@@ -1,7 +1,7 @@
-.. _ref_simdata:
+.. _ref_sim_data:
 
 ===============
-Simulation Data
+Simulation data
 ===============
 
 Simulation data files are used to represent sequences of values:
@@ -22,19 +22,19 @@ Covered features
 * Support of all Swan types, imported types (stored as a byte array) and combinations of them (native support of Variants & Groups).
 
   * Data support: structure, table (when the table size is a static constant), enum, string.
-  * Limitations: partial data are not supported. All values of a complex type must be given.
+  * Limitations: partial data is not supported. All values of a complex type must be given.
 
 * The variables are organized as a tree of <scope>/<scope>/…/<variable>, each scope and variable has an optional Swan kind: sensors, inputs, outputs, probes, assume, guarantee and so on.
 * Possibility to specify a *repetition* of a signal or part of it. 
 * Possibility to open an existing file for modification: elements, types and values.
 
-Design Principles
+Design principles
 -----------------
 
 - A file of binary format does not allow a value conversion to or from string. 
 - The values are stored as their binary representation in memory: no structured representation of composite values.
 - The values sequences are compressed using the zlib data-compression library.
-- The file size has no limit (more than 4GB): use of 64 bits positions and C APIs for seek in file.
+- The file size has no limit (more than 4 GB): use of 64 bits positions and C APIs for seek in file.
 - The entire file content is not loaded in memory when opening: the data is read in file only on demand. 
 - The file content is not entirely rewritten on disk when closing: incremental read and write operations. 
 
@@ -63,10 +63,10 @@ Example using API simulation data
 
     f.close() # closes the file
 
-Simulation Data File Preview Command Line
+Simulation data file preview command line
 -----------------------------------------
 
-The **pyscadeone** command line is used, in combination with the *simdata* and *-show* arguments, to preview 
+The **pyscadeone** :ref:`ref_cli` is used, in combination with the *simdata* and *-show* arguments, to preview 
 the content of a data file with .SD extension in a text editor, without opening the Scade One tool or Signal Editor.
 
 .. code:: bash
@@ -82,7 +82,7 @@ High-level API
 .. automodule:: ansys.scadeone.core.svc.simdata.csd
     :member-order: bysource
 
-Type Definitions
+Type definitions
 ----------------
 
 Predefined swan types that shall be used for creation of

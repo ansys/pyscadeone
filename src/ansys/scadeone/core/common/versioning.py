@@ -1,10 +1,26 @@
-# Copyright (c) 2023-2024 ANSYS, Inc.
-# Unauthorized use, distribution, or duplication is prohibited.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """
-Versioning
-==========
-
 The versioning module contains the version manager for the Scade One formats.
 """
 
@@ -17,6 +33,10 @@ VersionFile = Path(__file__).parent / "versions.json"
 
 
 class VersionManager:
+    """Class managing the versions for the Scade One tools formats.
+
+    The version manager is used through the singleton `FormatVersions` instance.
+    """
 
     VersionRE = re.compile(r"(?P<M>\d+)\.(?P<m>\d+)")
 
@@ -25,7 +45,8 @@ class VersionManager:
         self._formats = None
 
     @property
-    def formats(self):
+    def formats(self) -> set:
+        """Get the formats as a set of strings."""
         if self._formats is None:
             self._formats = set(self._format_versions.keys())
         return self._formats
@@ -36,7 +57,7 @@ class VersionManager:
         Returns
         -------
         str
-            string containing the versions
+            String containing the versions
         """
         buffer = "The versions for the supported format/code are:\n\n"
         for k in sorted(self.formats):

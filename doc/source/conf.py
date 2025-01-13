@@ -17,7 +17,7 @@ if not src.exists():
     raise Exception(f"Cannot find sources: {src}")
 sys.path.append(str(src))
 
-from ansys.scadeone.core import version_info  # noqa
+from ansys.scadeone.core import __version__, version_info  # noqa
 from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
 
 # Project information
@@ -118,7 +118,7 @@ html_theme_options = {
     ],
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
-        "version_match": get_version_match(version),
+        "version_match": get_version_match(__version__),
     },
     # TODO: remove this check when the lbirary gets public
     "check_switcher": False,

@@ -545,7 +545,7 @@ class FMU_2_Export(FMU_Export):
         for param in cycle_function.parameters:
             ctx_params.append(f"{param.type_name} {param.name};")
         if return_type is not None:
-            ctx_params.append(f'{return_type["name"]} {CYCLE_FUNCTION_RETURN};')
+            ctx_params.append(f"{return_type['name']} {CYCLE_FUNCTION_RETURN};")
 
         # add sensors as global variables if any
         if len(self.sensors):
@@ -694,7 +694,7 @@ typedef struct {
 
         # copy include files in the source directory
         LOGGER.debug(
-            f'  copy FMU export includes from {Path(script_dir) / "includes"} to {self._source_dir}'
+            f"  copy FMU export includes from {Path(script_dir) / 'includes'} to {self._source_dir}"
         )
         shutil.copytree(
             Path(script_dir) / "includes" / "FMI", self._source_dir / "FMI", dirs_exist_ok=True

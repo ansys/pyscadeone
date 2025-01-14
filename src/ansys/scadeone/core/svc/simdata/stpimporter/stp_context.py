@@ -173,9 +173,7 @@ class STPRecord:
         )
 
     def __str__(self):
-        return (
-            f"inits {self._inits}" f"\npreambles {self._preambles}" f"\nscenarios {self._scenarios}"
-        )
+        return f"inits {self._inits}\npreambles {self._preambles}\nscenarios {self._scenarios}"
 
 
 class STPContext:

@@ -160,3 +160,4 @@ linkcheck_ignore = [
     "https://github.com/ansys/pyscadeone/*",
     "https://www.ansys.com/*",
 ]
+linkcheck_exclude_documents = ["changelog.rst"]

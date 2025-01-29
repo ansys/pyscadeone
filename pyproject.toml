@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "ansys-scadeone-core"
 dynamic = ["version"]
-description = "Pythonic Ansys Scade One"
+description = "Python interface for Ansys Scade One"
 readme = "README.rst"
 requires-python = ">=3.7,<4"
 license = { file = "LICENSE" }
@@ -63,10 +63,10 @@ doc = [
 checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1", "pre-commit==4.0.1"]
 
 [project.urls]
-Source = "https://github.com/ansys/pyscadeone"
-Issues = "https://github.com/ansys/pyscadeone/issues"
-Documentation = "https://scadeone.docs.pyansys.com"
-Tracker = "https://github.com/ansys/pyscadeone/issues"
+source = "https://github.com/ansys/pyscadeone"
+issues = "https://github.com/ansys/pyscadeone/issues"
+documentation = "https://scadeone.docs.pyansys.com"
+tracker = "https://github.com/ansys/pyscadeone/issues"
 
 [project.scripts]
 pyscadeone = "ansys.scadeone.core.cli:main"
@@ -163,3 +163,56 @@ checks = [
     # "EX01", # "No examples section found",    
 ]
 exclude = ['\.__repr__$', '\.__str__$', '\.__init__$']
+
+[tool.towncrier]
+directory = "doc/changelog"
+filename = "doc/source/changelog.rst"
+template = "doc/changelog/template"
+start_string = ".. towncrier release notes start\n"
+title_format = "`{version} <https://github.com/ansys/pyscadeone/releases/tag/v{version}>`_ - {project_date}"
+issue_format = "`#{issue} <https://github.com/ansys/pyscadeone/pull/{issue}>`_"
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "miscellaneous"
+name = "Miscellaneous"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Test"
+showcontent = true

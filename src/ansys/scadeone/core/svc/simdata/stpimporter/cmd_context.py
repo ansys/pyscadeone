@@ -151,7 +151,7 @@ class Atom:
             ctx.failed_cmd(f"Invalid value from: {value}")
         # other types: int, float, bool
         if isinstance(sd_type, sd.EnumType) and isinstance(value, int):
-            ctx.failed_cmd("Integer value not supported for enum\n" f"{ctx.evaluated_cmd}")
+            ctx.failed_cmd(f"Integer value not supported for enum\n{ctx.evaluated_cmd}")
         return value
 
     def _check_value(self, value, ctx: SDContextBase, sd_type: sd.Type) -> Any:

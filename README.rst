@@ -1,10 +1,11 @@
 PyScadeOne
-==========
+##########
 
-|pyansys| |doc| |license| |black| |CI-CD|
+|pyansys| |doc| |license| |ruff| |CI-CD|
 
-.. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
+.. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?labelColor=black&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
    :target: https://docs.pyansys.com/
+   :alt: PyAnsys
 
 .. |doc| image:: https://img.shields.io/badge/docs-pyscadeone-green.svg?style=flat
    :target: https://scadeone.docs.pyansys.com/
@@ -14,128 +15,93 @@ PyScadeOne
    :target: https://opensource.org/licenses/MIT
    :alt: MIT License
 
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=flat
-   :target: https://github.com/psf/black
-   :alt: Black
+.. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
 
 .. |CI-CD| image:: https://github.com/ansys/pyscadeone/actions/workflows/ci.yml/badge.svg
    :target: https://github.com/ansys/pyscadeone/actions/workflows/ci.yml
    :alt: CI-CD
 
 
-Overview
---------
+About
+=====
 
-PyScadeOne is a Python library for the
-`Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_
-model-based development environment.
+PyScadeOne is a Python library for the `Ansys Scade One`_ model-based
+development environment.
 
 This library allows:
 
-- data access
+- Data access
 
-  - reading projects and navigating in models
-  - reading and editing simulation data files
-  - reading test results
-  - reading information about the generated code
+  - Reading projects and navigating in models
+  - Reading and editing simulation data files
+  - Reading test results
+  - Reading information about the generated code
 
-- ecosystem integration
+- Ecosystem integration
 
-  - importing `SCADE Test <https://www.ansys.com/products/embedded-software/ansys-scade-test>`_ tests procedures
-  - exporting `FMI 2.0 <https://fmi-standard.org/>`_ components
+  - Importing `SCADE Test`_ tests procedures
+  - Exporting `FMI 2.0`_ components
 
+Prerequisites
+=============
 
-Documentation and issues
-------------------------
-Documentation for the latest stable release of PyScadeOne is hosted at
-`PyScadeOne documentation <https://scadeone.docs.pyansys.com/>`_.
-
-In the upper right corner of the documentation's title bar, there is an option
-for switching from viewing the documentation for the latest stable release to
-viewing the documentation for the development version or previously released
-versions.
-
-
-On the
-`PyScadeOne Issues <https://github.com/ansys/pyscadeone/issues>`_
-page, you can create issues to report bugs and request new features.
-On the
-`PyScadeOne Discussions <https://github.com/ansys/pyscadeone/discussions>`_
-page, you can post questions, share ideas, and get community feedback.
-
-To reach the project support team, email
-`pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
-
+PyScadeOne requires `.NET runtime 8.0`_.
 
 Installation
-------------
-The  ``ansys-scadeone-core`` package supports Python 3.7 through Python 3.12 on Windows and Linux.
+============
 
-Install the latest release from `PyPI <https://pypi.org/project/ansys-scadeone-core/>`_ with:
+Refer to the `official installation guidelines`_.
 
-.. code:: console
+Documentation
+=============
 
-    pip install ansys-scadeone-core
+The documentation of PyScadeOne contains the following chapters:
 
-Dependencies
-------------
+- `Getting started`_. This section provides a brief overview and instructions
+  on how to get started with the project. It typically includes information on
+  how to install the project, set up any necessary dependencies, and run a
+  basic example or test to ensure everything is functioning correctly.
+ 
+- `User guide`_. The user guide section offers detailed documentation and
+  instructions on how to use the project. It provides comprehensive
+  explanations of the project's features, functionalities, and configuration
+  options. The user guide aims to help users understand the project's concepts,
+  best practices, and recommended workflows.
+ 
+- `API reference`_. The API reference section provides detailed documentation
+  for the project's application programming interface (API). It includes
+  information about classes, functions, methods, and their parameters, return
+  values, and usage examples. This reference helps developers understand the
+  available API endpoints, their functionalities, and how to interact with them
+  programmatically.
+ 
+- `Examples`_. The examples section showcases practical code examples that
+  demonstrate how to use the project in real-world scenarios. It provides
+  sample code snippets or complete scripts that illustrate different use cases
+  or demonstrate specific features of the project. Examples serve as practical
+  references for developers, helping them understand how to apply the project
+  to their own applications.
 
-PyScadeOne requires
-`.NET runtime 8.0 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>`_.
+License
+=======
 
-
-For developers
---------------
-If you plan on doing local *development* of PyScadeOne with Git, install
-the latest release with:
-
-.. code:: console
-
-   git clone https://github.com/ansys/pyscadeone.git
-   cd pyscadeone
-   pip install pip -U
-   pip install -e .
-
-
-
-Getting started
----------------
-
-To use the PyScadeOne library, create a ``ScadeOne`` object:
-
-.. code:: python
-
-    from ansys.scadeone.core import ScadeOne
-
-    my_project = "some_project.sproj"
-
-    with ScadeOne() as app:
-        # load a project
-        project = app.load_project(my_project)
-        # explore project resources: dependencies, files, ...
-        swan_model = app.model
-        # explore the Swan model, read data, ...
-
-If your model uses the libraries provided with the Scade One installation,
-you must create the ``ScadeOne`` object with the path to the Scade One installation:
-
-.. code:: python
-
-    scadeone_path = "C:/Program Files/Ansys/v251/ScadeOne"
-
-    with ScadeOne(install=scadeone_path) as app:
-        ...
-
-For examples on how to use PyScadeOne, see the
-`Examples <https://scadeone.docs.pyansys.com/version/stable/examples/index.html>`_
-in the PyScadeOne documentation.
-
-License and acknowledgments
----------------------------
-
-PyScadeOne is licensed under the MIT license.
+The license of the PyScadeOne project is MIT. Read the full text of the license
+in the `LICENSE`_ file.
 
 
-For more information about Ansys Scade One, see the
-`Ansys Scade One <https://www.ansys.com/products/embedded-software/ansys-scade-one>`_
-page on the Ansys website.
+.. References and links
+
+.. _ansys scade one: https://www.ansys.com/products/embedded-software/ansys-scade-one
+
+.. _SCADE Test: https://www.ansys.com/products/embedded-software/ansys-scade-test
+.. _FMI 2.0: https://fmi-standard.org/
+
+.. _.Net runtime 8.0: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+.. _official installation guidelines: https://scadeone.docs.pyansys.com/version/dev/getting_started/index.html
+
+.. _getting started: https://scadeone.docs.pyansys.com/version/dev/getting_started/index.html
+.. _user guide: https://scadeone.docs.pyansys.com/version/dev/user_guide/index.html
+.. _api reference: https://scadeone.docs.pyansys.com/version/dev/api/index.html
+.. _examples: https://scadeone.docs.pyansys.com/version/dev/examples/index.html

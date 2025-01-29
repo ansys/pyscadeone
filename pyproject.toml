@@ -42,7 +42,7 @@ dependencies = [
     "jsonschema==4.23.0",
     "platformdirs==4.3.2",
     "pyparsing==3.1.4",
-    "pythonnet==3.0.4",
+    "pythonnet==3.0.5",
     "typing_extensions==4.12.2",
 ]
 

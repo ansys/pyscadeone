@@ -42,7 +42,6 @@ parser = SwanParser(logging.getLogger("pyofast"))
 
 # Helpers
 def cmp_string(orig, new, no_markup=False, diff=False):
-    (
         """Compare two string, after replacing spaces
 
     Parameters
@@ -56,8 +55,7 @@ def cmp_string(orig, new, no_markup=False, diff=False):
     diff : bool, optional
         Call diff.Differ() on strings, by default False
     """
-        """"""
-    )
+
     orig_strip = re.sub(r"\s+", " ", orig).strip()
     new_strip = re.sub(r"\s+", " ", new).strip()
     if no_markup:

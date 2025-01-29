@@ -60,7 +60,7 @@ doc = [
     "sphinx-jinja>=2.0.0",
     "numpydoc==1.8.0",
 ]
-checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1", "pre-commit==4.0.1"]
+checks = ["codespell==2.2.6", "ruff==0.9.3", "vale==3.9.1", "pre-commit==4.0.1"]
 
 [project.urls]
 source = "https://github.com/ansys/pyscadeone"

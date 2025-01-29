@@ -38,7 +38,7 @@ dependencies = [
     "referencing==0.35.1",
     "rpds-py==0.20.0",
     # Direct dependencies,
-    "Jinja2==3.1.4",
+    "Jinja2==3.1.5",
     "jsonschema==4.23.0",
     "platformdirs==4.3.2",
     "pyparsing==3.1.4",

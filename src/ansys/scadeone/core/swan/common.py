@@ -388,7 +388,7 @@ class Markup:  # numpydoc ignore=PR01
 
     @staticmethod
     def to_str(text: str, is_protected: bool = True, markup: str = None) -> str:
-        """Return a protected string. {markup%text%markup} is required.
+        """Return *text* as the protected string {markup%text%markup} if required.
 
         Parameters
         ----------

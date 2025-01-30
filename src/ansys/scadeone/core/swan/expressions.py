@@ -260,32 +260,32 @@ class Literal(common.Expression):  # numpydoc ignore=PR01
 
     @property
     def is_bool(self) -> bool:
-        """Returns true when LiteralExpr is a Boolean."""
+        """Return true when LiteralExpr is a Boolean."""
         return self._kind == LiteralKind.Bool
 
     @property
     def is_true(self) -> bool:
-        """Returns true when LiteralExpr is true."""
+        """Return true when LiteralExpr is true."""
         return self._kind == LiteralKind.Bool and self._value == "true"
 
     @property
     def is_char(self) -> bool:
-        """Returns true when LiteralExpr is a char."""
+        """Return true when LiteralExpr is a char."""
         return self._kind == LiteralKind.Char
 
     @property
     def is_numeric(self) -> bool:
-        """Returns true when LiteralExpr is a numeric."""
+        """Return true when LiteralExpr is a numeric."""
         return self._kind == LiteralKind.Numeric
 
     @property
     def is_integer(self):
-        """Returns true when LiteralExpr is an integer."""
+        """Return true when LiteralExpr is an integer."""
         return self._kind == LiteralKind.Numeric and common.SwanRE.is_integer(self.value)
 
     @property
     def is_float(self):
-        """Returns true when LiteralExpr is a float."""
+        """Return true when LiteralExpr is a float."""
         return self._kind == LiteralKind.Numeric and common.SwanRE.is_float(self.value)
 
     def __str__(self) -> str:
@@ -800,7 +800,7 @@ class LabelOrIndex(common.Expression):  # numpydoc ignore=PR01
 
     @property
     def value(self) -> Union[common.Identifier, common.Expression]:
-        """Returns the index (expression or label)."""
+        """Return the index (expression or label)."""
         return self._value
 
     def __str__(self) -> str:
@@ -1172,17 +1172,17 @@ class IntPattern(Pattern):  # numpydoc ignore=PR01
 
     @property
     def value(self) -> str:
-        """Returns value as a string, without sign."""
+        """Return value as a string, without sign."""
         return self._value
 
     @property
     def is_minus(self) -> bool:
-        """Returns True when has sign minus."""
+        """Return True when has sign minus."""
         return self._is_minus
 
     @property
     def as_int(self) -> int:
-        """Returns value as an integer."""
+        """Return value as an integer."""
         description = common.SwanRE.parse_integer(self.value, self.is_minus)
         return description.value
 
@@ -1199,12 +1199,12 @@ class BoolPattern(Pattern):  # numpydoc ignore=PR01
 
     @property
     def value(self) -> bool:
-        """Returns value as a bool value"""
+        """Return value as a bool value"""
         return self._value
 
     @property
     def is_true(self) -> bool:
-        """Returns True when pattern is **true**, else False."""
+        """Return True when pattern is **true**, else False."""
         return self._value
 
     def __str__(self) -> str:

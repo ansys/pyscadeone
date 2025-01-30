@@ -115,7 +115,7 @@ class StringStorage(Storage):
         self._text = text
 
     def exists(self) -> bool:
-        """Always returns True."""
+        """Always return True."""
         return True
 
     def content(self) -> str:
@@ -198,7 +198,7 @@ class SwanStorage(ABC):
         Returns
         -------
         Union[dict, None]
-            Either the version information as a dict, or None if no version found.
+            Either the version information as a dictionary, or None if no version found.
         """
         m = re.match(r"^--\s*version\s+(?P<ver>.*)$", source, re.MULTILINE)
         if m:

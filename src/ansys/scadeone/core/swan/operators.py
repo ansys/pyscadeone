@@ -129,30 +129,30 @@ class Signature(common.Declaration, common.ModuleItem):  # numpydoc ignore=PR01
 
     @property
     def outputs(self) -> Generator[common.Variable, None, None]:
-        """Returns outputs as a generator."""
+        """Return outputs as a generator."""
         for output in self._outputs:
             yield output
 
     @property
     def sizes(self) -> Generator[common.Identifier, None, None]:
-        """Returns sizes as a generator."""
+        """Return sizes as a generator."""
         for size in self._sizes:
             yield size
 
     @property
     def constraints(self) -> Generator[TypeConstraint, None, None]:
-        """Returns constraints as a generator."""
+        """Return constraints as a generator."""
         for constraint in self._constraints:
             yield constraint
 
     @property
     def specialization(self) -> Union[common.PathIdentifier, None]:
-        """Returns specialization path_id or None."""
+        """Return specialization path_id or None."""
         return self._specialization
 
     @property
     def pragmas(self) -> Generator[common.Pragma, None, None]:
-        """Returns pragmas as a generator."""
+        """Return pragmas as a generator."""
         for pragma in self._pragmas:
             yield pragma
 
@@ -261,7 +261,7 @@ class Operator(Signature):  # numpydoc ignore=PR01
 
     @property
     def signature(self) -> Signature:
-        """Returns operator signature"""
+        """Return operator signature."""
         return Signature(
             self.id,
             self.has_inline,
@@ -276,7 +276,7 @@ class Operator(Signature):  # numpydoc ignore=PR01
 
     @property
     def diagrams(self) -> Generator[Diagram, None, None]:
-        """Returns a generator on diagram declarations."""
+        """Return a generator on diagram declarations."""
         if not self.has_body or self.is_equation_body:
             return []
         for decl in filter(lambda x: isinstance(x, Diagram), self.body.sections):

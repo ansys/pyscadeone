@@ -19,7 +19,7 @@ A *ScadeOne* instance is created with the following code:
 .. literalinclude:: quad_flight_control.py
     :lines: 14
 
-where :py:attr:`install_dir` is the location of Scade One installation and it could take a string or a
+where :py:attr:`install_dir` is the location of Scade One installation and it could take a string or
 a :py:class:`pathlib.Path` object as value. The *app* object is then used to access to projects.
 
 
@@ -111,7 +111,7 @@ Here are some examples:
     item is found.
 
 In the following example, the :py:meth:`ansys.scadeone.core.model.Model.find_declaration`
-is used to filter a specific operator. In that case, the search stops (and the load)
+is used to filter a specific operator. In that case, the search (and the load) stops
 when the requested operator is found. As we will use Swan constructs, we need to import
 their definitions:
 
@@ -120,7 +120,7 @@ their definitions:
     # Module defining all Swan-related classes, see below
     import ansys.scadeone.core.swan as swan
 
-Here an example to filter declarations to get specific operator:
+Here is an example to filter declarations to get specific operator:
 
 .. literalinclude:: quad_flight_control.py
     :lines: 39-47
@@ -133,7 +133,7 @@ The model content represents the structure of the Swan program, starting with
 the declarations: types, constants, groups, sensors, operators, and signatures.
 
 For an operator or a signature, one can access to the input and output flows
-and to the body for operator. Then from the body, one can access to the content of diagrams, equations, etc.
+and to the body for operator. Then, from the body, one can access to the content of diagrams, equations, etc.
 
 All Swan language constructs are represented by classes from the 
 :py:mod:`ansys.scadeone.core.swan` module. The section :ref:`ref_swan_api` describes

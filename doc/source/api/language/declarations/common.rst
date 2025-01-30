@@ -9,7 +9,7 @@ commonly used by other classes.
 SwanItem class
 --------------
 
-The :class:`SwanItem` is the top level class for all constructs.
+The :class:`SwanItem` is the top-level class for all constructs.
 
 .. autoclass:: SwanItem
     :no-show-inheritance: 

@@ -32,7 +32,7 @@ dependencies = [
     "attrs==24.2.0",
     "cffi==1.17.1",
     "clr-loader==0.2.6",
-    "jsonschema-specifications==2023.12.1",
+    "jsonschema-specifications==2024.10.1",
     "MarkupSafe==2.1.5",
     "pycparser==2.22",
     "referencing==0.35.1",

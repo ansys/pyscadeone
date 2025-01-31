@@ -262,38 +262,38 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
 
     @property
     def extension(self) -> str:
-        """Returns module extension, with . included."""
+        """Return module extension, with . included."""
         return ""
 
     @property
     def file_name(self) -> str:
-        """Returns a file name based on module name and namespaces."""
+        """Return a file name based on module name and namespaces."""
         return self.get_full_path().replace("::", "-") + self.extension
 
     @property
     def types(self) -> Generator[TypeDecl, None, None]:
-        """Returns a generator on type declarations."""
+        """Return a generator on type declarations."""
         for decl in self.filter_declarations(lambda x: isinstance(x, TypeDeclarations)):
             for typ in decl.types:
                 yield typ
 
     @property
     def sensors(self) -> Generator[SensorDecl, None, None]:
-        """Returns a generator on sensor declarations."""
+        """Return a generator on sensor declarations."""
         for decl in self.filter_declarations(lambda x: isinstance(x, SensorDeclarations)):
             for sensor in decl.sensors:
                 yield sensor
 
     @property
     def constants(self) -> Generator[ConstDecl, None, None]:
-        """Returns a generator on constant declarations."""
+        """Return a generator on constant declarations."""
         for decl in self.filter_declarations(lambda x: isinstance(x, ConstDeclarations)):
             for constant in decl.constants:
                 yield constant
 
     @property
     def groups(self) -> Generator[GroupDecl, None, None]:
-        """Returns a generator on group declarations."""
+        """Return a generator on group declarations."""
         for decl in self.filter_declarations(lambda x: isinstance(x, GroupDeclarations)):
             for grp in decl.groups:
                 yield grp
@@ -303,14 +303,14 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         return self.name.as_string
 
     def get_declaration(self, name: str) -> GlobalDeclaration:
-        """Returns the type, global, or operator declaration searching by namespace."""
+        """Return the type, global, or operator declaration searching by namespace."""
         from .namespace import ModuleNamespace
 
         m_ns = ModuleNamespace(self)
         return m_ns.get_declaration(name)
 
     def filter_declarations(self, filter_fn) -> Generator[GlobalDeclaration, None, None]:
-        """Returns declarations matched by a filter.
+        """Return declarations matched by a filter.
 
         Parameters
         ----------
@@ -325,7 +325,7 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         return filter(filter_fn, self.declarations)
 
     def get_use_directive(self, name: str) -> UseDirective:
-        """Returns a dictionary of use directives by their name or given alias.
+        """Return a dictionary of use directives by their name or given alias.
         The name is the last part of the path ID.
 
         Returns
@@ -343,11 +343,11 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         return None
 
     def interface(self) -> "ModuleInterface":
-        """Returns the module interface for a module body if it exists."""
+        """Return the module interface for a module body if it exists."""
         return None
 
     def body(self) -> "ModuleBody":
-        """Returns the module body for a module interface if it exists."""
+        """Return the module body for a module interface if it exists."""
         return None
 
     def __str__(self) -> str:
@@ -370,17 +370,17 @@ class ModuleInterface(Module):  # numpydoc ignore=PR01
 
     @property
     def extension(self) -> str:
-        """Returns module extension, with . included."""
+        """Return module extension, with . included."""
         return ".swani"
 
     @property
     def signatures(self) -> Generator[Signature, None, None]:
-        """Returns a generator on signatures."""
+        """Return a generator on signatures."""
         for decl in self.filter_declarations(lambda x: isinstance(x, Signature)):
             yield decl
 
     def body(self) -> "ModuleBody":
-        """Returns the module body for a module interface if it exists."""
+        """Return the module body for a module interface if it exists."""
         return self.model.get_module_body(self.name.as_string)
 
 
@@ -397,15 +397,15 @@ class ModuleBody(Module):  # numpydoc ignore=PR01
 
     @property
     def extension(self) -> str:
-        """Returns module extension, with '.' included."""
+        """Return module extension, with '.' included."""
         return ".swan"
 
     @property
     def operators(self) -> Generator[Operator, None, None]:
-        """Returns a generator on operators."""
+        """Return a generator on operators."""
         for decl in self.filter_declarations(lambda x: isinstance(x, Operator)):
             yield decl
 
     def interface(self) -> "ModuleInterface":
-        """Returns the module interface for a module body if it exists."""
+        """Return the module interface for a module body if it exists."""
         return self.model.get_module_interface(self.name.as_string)

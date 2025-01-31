@@ -112,7 +112,7 @@ class ScadeOne(IScadeOne):
         return self._projects
 
     def subst_in_path(self, path: str) -> str:
-        """Substitutes $(SCADE_ONE_LIBRARIES_DIR) in path.
+        """Substitute $(SCADE_ONE_LIBRARIES_DIR) in path.
 
         if :py:attr:`ScadeOne.install_dir` is None, no change is made.
         """

@@ -86,7 +86,7 @@ class SwanItem(ABC):  # numpydoc ignore=PR01  # numpydoc ignore=PR01  # numpydoc
 
     @property
     def module(self) -> "ModuleBase":
-        """Module containing the item
+        """Module containing the item.
 
         Returns:
             ModuleBase: module container, see :py:class:`ModuleBody`
@@ -100,7 +100,7 @@ class SwanItem(ABC):  # numpydoc ignore=PR01  # numpydoc ignore=PR01  # numpydoc
 
     @property
     def model(self) -> "Model":  # noqa: F821
-        """Return model containing the Swan item"""
+        """Return model containing the Swan item."""
         model = self.module.owner
         if model is None:
             raise ScadeOneException("Module owner not found")
@@ -108,7 +108,7 @@ class SwanItem(ABC):  # numpydoc ignore=PR01  # numpydoc ignore=PR01  # numpydoc
 
 
 class ModuleBase(SwanItem):  # numpydoc ignore=PR01
-    """Base class for modules"""
+    """Base class for modules."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -244,7 +244,7 @@ class SwanRE:  # numpydoc ignore=PR01
 
     @classmethod
     def parse_float(cls, string: str, minus: bool = False) -> Union[FloatTuple, None]:
-        """Match a string representing a float and returns
+        """Match a string representing a float and return
         a description of that float as a FloatTuple.
 
         Parameters
@@ -297,8 +297,8 @@ class SwanRE:  # numpydoc ignore=PR01
 
     @classmethod
     def is_numeric(cls, string: str) -> bool:
-        """Check whether a string a Swan numeric value,
-        that is an integer of float value
+        """Check whether a string is a Swan numeric value,
+        that is, an integer of float value.
 
         Parameters
         ----------
@@ -308,7 +308,7 @@ class SwanRE:  # numpydoc ignore=PR01
         Returns
         -------
         bool
-            True if if string is a Swan numeric value.
+            True if string is a Swan numeric value.
         """
         return cls.is_integer(string) or cls.is_float(string)
 
@@ -316,7 +316,7 @@ class SwanRE:  # numpydoc ignore=PR01
 
     @classmethod
     def is_char(cls, string: str) -> bool:
-        """Check whether a string a Swan char value.
+        """Check whether a string is a Swan char value.
 
         Parameters
         ----------
@@ -326,7 +326,7 @@ class SwanRE:  # numpydoc ignore=PR01
         Returns
         -------
         bool
-            True if if string is a Swan char value.
+            True if string is a Swan char value.
         """
         return cls.CharRe.match(string) is not None
 
@@ -334,7 +334,7 @@ class SwanRE:  # numpydoc ignore=PR01
 
     @classmethod
     def is_bool(cls, string: str) -> bool:
-        """Check whether a string a Swan boolean value.
+        """Check whether a string is a Swan boolean value.
 
         Parameters
         ----------
@@ -344,7 +344,7 @@ class SwanRE:  # numpydoc ignore=PR01
         Returns
         -------
         bool
-            True if if string is a Swan char value
+            True if string is a Swan char value
         """
         return cls.BoolRe.match(string) is not None
 
@@ -388,7 +388,7 @@ class Markup:  # numpydoc ignore=PR01
 
     @staticmethod
     def to_str(text: str, is_protected: bool = True, markup: str = None) -> str:
-        """Return a protected string {markup%text%markup} is required.
+        """Return *text* as the protected string {markup%text%markup} if required.
 
         Parameters
         ----------
@@ -727,7 +727,7 @@ class PathIdentifier(SwanItem):  # numpydoc ignore=PR01
 
 
 class ModuleItem(SwanItem):  # numpydoc ignore=PR01
-    """Base class for module body item or module interface item"""
+    """Base class for module body item or module interface item."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -769,7 +769,7 @@ class TypeExpression(SwanItem):  # numpydoc ignore=PR01
 
     @property
     def is_defined(self) -> bool:
-        """True if type expression is a predefined type"""
+        """True if type expression is a predefined type."""
         return False
 
 
@@ -934,7 +934,7 @@ def to_str_semi_list(items: List[Any]) -> str:
     Parameters
     ----------
     items : List[Any]
-        A list which items supports the str() function.
+        A list of which items support the str() function.
 
     Returns
     -------

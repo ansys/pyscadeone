@@ -78,7 +78,7 @@ class EquationLHS(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def lhs_items(self) -> List[LHSItem]:
-        """Returns left-hand side list."""
+        """Return left-hand side list."""
         return self._lhs_items
 
     def __str__(self) -> str:
@@ -148,7 +148,7 @@ class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
 
     @property
     def name(self) -> Union[common.Luid, None]:
-        """Returns name or None if no name."""
+        """Return name or None if no name."""
         return self._name
 
     @property
@@ -241,7 +241,7 @@ class Target(common.SwanItem):  # numpydoc ignore=PR01
 
 
 class Arrow(common.SwanItem):  # numpydoc ignore=PR01
-    """Encodes an arrow, with or without guard:
+    """Encode an arrow, with or without guard:
 
     | *guarded_arrow* ::= ( *expr* ) *arrow*
     | *arrow* ::= [[ *scope* ]] (( *target* | *fork* ))
@@ -375,7 +375,7 @@ class ForkWithPriority(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def is_valid(self) -> bool:
-        """Check if fork is either an **if** with a *guarded_arrow* or
+        """Check if fork is either an **if** with a *guarded_arrow*, or
         an **else** with an *arrow*."""
         if self.is_if_arrow:
             return self.arrow.guard is not None
@@ -474,7 +474,7 @@ class TransitionDecl(StateMachineItem):  # numpydoc ignore=PR01
 
     @property
     def is_strong(self) -> bool:
-        """True when strong transition , else weak transition."""
+        """True when strong transition, else weak transition."""
         return self._is_strong
 
     @property
@@ -677,7 +677,7 @@ class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def branches(self) -> List[IfActivationBranch]:
-        """Returns branches of *if_activation*.
+        """Return branches of *if_activation*.
         There must be at least two branches, the **if** and the **else** branches."""
         return self._branches
 

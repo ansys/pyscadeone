@@ -1,4 +1,4 @@
-Forward Expression
+Forward expression
 ==================
  
 .. currentmodule:: ansys.scadeone.core.swan

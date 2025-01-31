@@ -43,7 +43,7 @@ class Model:
         self._parser = None
 
     def configure(self, project: "project.IProject"):
-        """Configures model with project as owner. The configuration
+        """Configure model with project as owner. The configuration
         associate the project and the model and prepare internal data to
         store module bodies and interfaces.
 
@@ -95,7 +95,7 @@ class Model:
 
     @property
     def all_modules_loaded(self) -> True:
-        """Returns True when all Swan modules have been loaded."""
+        """Return True when all Swan modules have been loaded."""
         return all(self._modules.values())
 
     @property
@@ -104,7 +104,7 @@ class Model:
         return (module for module in self._modules.values() if module)
 
     def _get_module(self, name: str, search_module_body: bool) -> Union[S.Module, None]:
-        """Returns module body of name 'name'"""
+        """Return module body of name 'name'"""
         for swan_code, swan_object in self._modules.items():
             if swan_object is None:
                 swan_object = self._load_source(swan_code)
@@ -116,23 +116,23 @@ class Model:
         return None
 
     def get_module_body(self, name: str) -> Union[S.ModuleBody, None]:
-        """Returns module body of name 'name'"""
+        """Return module body of name 'name'"""
         if body := self._get_module(name, True):
             return cast(S.ModuleBody, body)
         return None
 
     def get_module_interface(self, name: str) -> Union[S.ModuleInterface, None]:
-        """Returns module interface of name 'name'"""
+        """Return module interface of name 'name'"""
         if interface := self._get_module(name, False):
             return cast(S.ModuleInterface, interface)
         return None
 
     def get_module_from_pathid(self, pathid: str, module: S.Module) -> Union[S.Module, None]:
-        """Return the :py:class:`Module` instance for a given *pathid*
+        """Return the :py:class:`Module` instance for a given *pathid*.
         A *path* is of the form *[ID ::]+ ID*, where the last ID is the object
         name, and the "ID::ID...::" is the module path.
 
-        If the *pathid* has no path part (reduced to ID), return *module*
+        If the *pathid* has no path part (reduced to ID), return *module*.
 
         Parameters
         ----------
@@ -179,48 +179,48 @@ class Model:
 
     @property
     def types(self) -> Generator[S.TypeDecl, None, None]:
-        """Returns a generator on type declarations."""
+        """Return a generator on type declarations."""
         for decls in self.filter_declarations(lambda x: isinstance(x, S.TypeDeclarations)):
             for decl in cast(S.TypeDeclarations, decls).types:
                 yield decl
 
     @property
     def sensors(self) -> Generator[S.SensorDecl, None, None]:
-        """Returns a generator on sensor declarations."""
+        """Return a generator on sensor declarations."""
         for decls in self.filter_declarations(lambda x: isinstance(x, S.SensorDeclarations)):
             for decl in cast(S.SensorDeclarations, decls).sensors:
                 yield decl
 
     @property
     def constants(self) -> Generator[S.ConstDecl, None, None]:
-        """Returns a generator on constant declarations."""
+        """Return a generator on constant declarations."""
         for decls in self.filter_declarations(lambda x: isinstance(x, S.ConstDeclarations)):
             for decl in cast(S.ConstDeclarations, decls).constants:
                 yield decl
 
     @property
     def groups(self) -> Generator[S.GroupDecl, None, None]:
-        """Returns a generator on group declarations."""
+        """Return a generator on group declarations."""
         for decls in self.filter_declarations(lambda x: isinstance(x, S.GroupDeclarations)):
             for decl in cast(S.GroupDeclarations, decls).groups:
                 yield decl
 
     @property
     def operators(self) -> Generator[S.Operator, None, None]:
-        """Returns a generator on operator declarations."""
+        """Return a generator on operator declarations."""
         for decl in self.filter_declarations(lambda x: isinstance(x, S.Operator)):
             yield decl
 
     @property
     def signatures(self) -> Generator[S.Signature, None, None]:
-        """Returns a generator on operator signature declarations."""
+        """Return a generator on operator signature declarations."""
         for decl in self.filter_declarations(
             lambda x: isinstance(x, S.Signature) and not isinstance(x, S.Operator)
         ):
             yield decl
 
     def load_module(self, name: str):
-        """Loads module by name
+        """Load module by name
 
         Parameters
         ----------
@@ -238,7 +238,7 @@ class Model:
                 self._load_source(swan)
 
     def load_all_modules(self):
-        """Loads systematically all modules."""
+        """Load systematically all modules."""
         for swan in self._modules.keys():
             self._load_source(swan)
 
@@ -257,7 +257,7 @@ class Model:
                 yield decl
 
     def filter_declarations(self, filter_fn) -> Generator[S.GlobalDeclaration, None, None]:
-        """Returns declarations matched by a filter.
+        """Return declarations matched by a filter.
 
         Parameters
         ----------
@@ -272,7 +272,7 @@ class Model:
         return filter(filter_fn, self.declarations)
 
     def find_declaration(self, predicate_fn) -> Union[S.GlobalDeclaration, None]:
-        """Finds a declaration for which predicate_fn returns True.
+        """Find a declaration for which predicate_fn returns True.
 
         Parameters
         ----------

@@ -25,7 +25,7 @@ from collections import namedtuple
 from platformdirs import PlatformDirs
 
 # Version must be directly defined for flit. No computation, else flit will fails
-__version__ = "0.6.dev1"
+__version__ = "0.6.1"
 
 Version = namedtuple("Version", ["major", "minor", "patch", "build"])
 (M, m, p) = __version__.split(".")

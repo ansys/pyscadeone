@@ -77,19 +77,19 @@ class ModelVar:
 
     @property
     def direction(self) -> str:
-        """Returns the direction ('input' or 'output') of the variable"""
+        """Return the direction ('input' or 'output') of the variable"""
         if self._direction is None:
             self._direction = "output" if self._var_kind == "output" else "input"
         return self._direction
 
     @property
     def type_name(self) -> str:
-        """Returns the generated type name of the variable"""
+        """Return the generated type name of the variable"""
         return self._type_elem["name"]
 
     @property
     def type_kind(self) -> str:
-        """Returns the name of the FMU type corresponding to generated type of a given variable."""
+        """Return the name of the FMU type corresponding to generated type of a given variable."""
 
         def fmu_ty_of_scade_ty(ty: dict) -> str:
             type_name = ty["name"]
@@ -138,12 +138,12 @@ class ModelVar:
 
     @property
     def oper_path(self) -> str:
-        """Returns the Scade One path for the exported operator owning the variable."""
+        """Return the Scade One path for the exported operator owning the variable."""
         return self._fmu.oper_path + "/"
 
     @property
     def xml_description(self) -> str:
-        """Returns the description of the variable used by the FMI model description"""
+        """Return the description of the variable used by the FMI model description"""
         if self._xml_description is None:
             if self._var_kind == "sensor":
                 self._xml_description = self._sc_path
@@ -153,7 +153,7 @@ class ModelVar:
 
     @property
     def xml_name(self) -> str:
-        """Returns the name of the variable used by the FMI model description"""
+        """Return the name of the variable used by the FMI model description"""
 
         def _replace_brackets(match):
             # Find all digits in the match and join them with commas
@@ -171,7 +171,7 @@ class ModelVar:
 
     def get_default_value(self, xml=True) -> str:
         """
-        Returns the default value corresponding to FMU type of a given variable.
+        Return the default value corresponding to FMU type of a given variable.
         Expected types are 'Real', 'Integer' and 'Boolean'.
         """
         if self.type_kind == "Real":
@@ -186,7 +186,7 @@ class ModelVar:
     @staticmethod
     def paths_of_param(sc_path: str, c_path: str, code_type: dict) -> List[Tuple[str, str, dict]]:
         """
-        Returns the list of paths of scalar variables corresponding
+        Return the list of paths of scalar variables corresponding
         to the variable named `name` of type `ty` (of type `mapping.C.Type`).
         """
         var_list = []
@@ -222,7 +222,7 @@ class ModelVar:
         fmu: "FMU_Export", v: Union[GC.ModelVariable, GC.ModelSensor], var_kind: str
     ) -> List["ModelVar"]:
         """
-        Returns the list of variables corresponding
+        Return the list of variables corresponding
         to the given model variable (input or output) or sensor.
         """
         if isinstance(v, GC.ModelVariable):
@@ -835,7 +835,7 @@ typedef struct {
 
     def generate(self, kind: str, outdir: Union[str, os.PathLike], period: float = 0.02) -> None:
         """
-        Generates the FMI 2.0 XML and C file according to SCADE generated code.
+        Generate the FMI 2.0 XML and C file according to SCADE generated code.
 
         - kind: FMI kind ('ME' for Model Exchange, 'CS' for Co-Simulation).
         - outdir: directory where the files are generated.

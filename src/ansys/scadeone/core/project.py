@@ -81,7 +81,7 @@ class Project(IProject):
         return None
 
     def _get_swan_sources(self) -> List[SwanFile]:
-        """Returns Swan files of project.
+        """Return Swan files of project.
 
         Returns
         -------
@@ -99,9 +99,9 @@ class Project(IProject):
         return sources
 
     def swan_sources(self, all=False) -> List[SwanFile]:
-        """Returns all Swan sources from project.
+        """Return all Swan sources from project.
 
-        If all is True, includes also sources from project dependencies.
+        If all is True, include also sources from project dependencies.
 
         Returns
         -------
@@ -149,7 +149,7 @@ class Project(IProject):
     def dependencies(self, all=False) -> List[Self]:
         """Project dependencies as list of Projects.
 
-        If all is True, includes recursively dependencies of dependencies.
+        If all is True, include recursively dependencies of dependencies.
 
         A dependency occurs only once.
         """

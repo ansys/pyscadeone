@@ -1,5 +1,5 @@
 
-PyScadeOne documentation  |version|
+PyScadeOne documentation  |release|
 ===================================
 
 PyScadeOne is a Python library for the

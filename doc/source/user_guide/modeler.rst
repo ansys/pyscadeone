@@ -20,7 +20,7 @@ A *ScadeOne* instance is created with the following code:
     :lines: 14
 
 where :py:attr:`install_dir` is the location of Scade One installation and it could take a string or
-a :py:class:`pathlib.Path` object as value. The *app* object is then used to access to projects.
+a :py:class:`pathlib.Path` object as value. The *app* object is then used to access projects.
 
 
 Swan projects
@@ -42,7 +42,7 @@ They can be accessed using the `app.projects` property.
 
 .. note::
     
-    From the :py:attr:`ansys.pyscadeone.core.project.Project.app`, one has access to the
+    From the :py:attr:`ansys.pyscadeone.core.project.Project.app`, one can access the
     Scade One app containing the project.
 
 Dependencies
@@ -83,13 +83,13 @@ The project's model can be accessed with the
 
 .. note::
 
-    From a model, one can access to the Scade One instance, 
+    From a model, one can access the Scade One instance, 
     with the model's *project* property as in `my_app = model.project.app`
 
 A model contains all modules (body or interface) from the Swan sources. For each module,
-one has access to the declarations it contains. 
+one has access the declarations it contains. 
 
-From a :py:class:`ansys.scadeone.core.model.Model` object, one can therefore access to:
+From a :py:class:`ansys.scadeone.core.model.Model` object, one can therefore access:
 
 - the modules,
 - all declarations,
@@ -132,8 +132,8 @@ Swan language
 The model content represents the structure of the Swan program, starting with
 the declarations: types, constants, groups, sensors, operators, and signatures.
 
-For an operator or a signature, one can access to the input and output flows
-and to the body for operator. Then, from the body, one can access to the content of diagrams, equations, etc.
+For an operator or a signature, one can access the input and output flows
+and to the body for operator. Then, from the body, one can access the content of diagrams, equations, etc.
 
 All Swan language constructs are represented by classes from the 
 :py:mod:`ansys.scadeone.core.swan` module. The section :ref:`ref_swan_api` describes

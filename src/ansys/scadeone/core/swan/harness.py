@@ -30,7 +30,7 @@ from pathlib import Path
 from ansys.scadeone.core.common.storage import SwanFile
 from ansys.scadeone.core.swan.variable import VarDecl
 from ansys.scadeone.core.swan.typedecl import Uint64Type, BoolType
-from ansys.scadeone.core.swan.modules import ModuleBody, UseDirective, GlobalDeclaration
+from ansys.scadeone.core.swan.modules import Module, UseDirective, GlobalDeclaration
 from ansys.scadeone.core.swan.scopes import Scope
 import ansys.scadeone.core.swan.common as common
 
@@ -104,12 +104,8 @@ class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):  # 
             self.set_owner(self, self._body)
         return self._body
 
-    def __str__(self) -> str:
-        buffer = f"_harness {self.id}\n{self.body}\n"
-        return buffer
 
-
-class TestModule(ModuleBody):  # numpydoc ignore=PR01
+class TestModule(Module):  # numpydoc ignore=PR01
     """Test module definition."""
 
     def __init__(
@@ -134,7 +130,7 @@ def load_test_module(module: Path):
 
     test = SwanFile(module)
     if not test.is_test:
-        raise ScadeOneException("Model.load_source: unexpected file kind {swan.path}.")
+        raise ScadeOneException(f"Model.load_source: unexpected file kind {test.path}.")
     ast = SwanParser(LOGGER).module_body(test)
     ast.source = str(test.path)
     return ast

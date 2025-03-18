@@ -1,5 +1,7 @@
-@startuml 
+@startuml
 ' ScadeOne overview
+
+
 
 ScadeOne "1" *-- "*" Project
 
@@ -7,19 +9,25 @@ note left of ScadeOne
 Scade One instance
 end note
 
-note left of Project
-Loaded project(s) see [[/api/project.html Project]]
+note top of Project
+Loaded/created [[/api/project.html Project]]'s
+The Model is the owner
+of the Projects
 end note
 Project --> "*" Project
 note right on link
 Project dependencies
 end note
 
-Project *-- Model
-note right of Model
-A [[/api/model.html Model]] object contains the Swan modules of
-the project.
+ScadeOne *-- Model
+note left of Model
+The [[/api/model.html Model]] object
+contains the Swan
+modules of the 
+projects
 end note
+
+Project -left- Model
 
 Model "1" *-- "*" ModuleBody
 Model "1" *-- "*" ModuleInterface
@@ -31,5 +39,4 @@ end note
 
 ModuleBody .. ModuleNote
 ModuleInterface .. ModuleNote
-
 @enduml

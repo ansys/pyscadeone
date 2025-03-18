@@ -263,8 +263,7 @@ be also derived to implement other kind of rendering.
 
 from enum import Enum, auto
 import re
-from typing import Any, Optional, Union, IO
-from typing_extensions import Self
+from typing import Any, List, Optional, Union, IO, Callable
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 
@@ -273,22 +272,22 @@ class DElt:
     """Document base class."""
 
     def __init__(self) -> None:
-        self._next: Optional[Self] = None
+        self._next: Optional["DElt"] = None
 
-    def cons(self, doc: Self) -> Self:
+    def cons(self, doc: "DElt") -> "DElt":
         """Add next element and return it."""
         self._next = doc
         return doc
 
     @property
-    def next(self) -> Union[Self, None]:
+    def next(self) -> Union["DElt", None]:
         """Return the next element."""
         if self._next == self:
             raise ScadeOneException(f"Document connected to itself: {repr(self)}")
         return self._next
 
-    def __lshift__(self, doc) -> Self:
-        """Add doc as next element and return it."""
+    def __lshift__(self, doc) -> "DElt":
+        """<< operator: Add doc as next element and return it."""
         doc = to_doc(doc)
         return self.cons(doc)
 
@@ -298,6 +297,8 @@ class DText(DElt):
 
     def __init__(self, string: str) -> None:
         super().__init__()
+        if not isinstance(string, str):
+            raise ScadeOneException("DText(): string expected")
         self._string = string
 
     @property
@@ -305,13 +306,16 @@ class DText(DElt):
         """Return the text string."""
         return self._string
 
+    def __repr__(self) -> str:
+        return super().__repr__() + f'("{self._string}")'
+
 
 class DBlock(DElt):
     """Class to store a block of documents (sequence of documents)."""
 
     def __init__(self, doc: Optional[DElt] = None) -> None:
         super().__init__()
-        self._first = doc if doc else DElt()
+        self._first = doc if doc else None
         self._end = self._first
 
     @property
@@ -319,10 +323,14 @@ class DBlock(DElt):
         """Return the first document of the block."""
         return self._first
 
-    def __lshift__(self, doc) -> Self:
-        """Add doc to the end of the block and return the block."""
+    def __lshift__(self, doc) -> "DBlock":
+        """<< operator: Add doc to the end of the block and return the block."""
         doc = to_doc(doc)
-        self._end = self._end.cons(doc)
+        if not self._end:
+            self._first = doc
+            self._end = doc
+        else:
+            self._end = self._end.cons(doc)
         return self
 
 
@@ -337,6 +345,9 @@ class DLineBreak(DElt):
     def with_indent(self) -> bool:
         """Return True if indentation is added after the line break."""
         return self._with_indent
+
+    def __repr__(self) -> str:
+        return super().__repr__() + f"({self._with_indent})"
 
 
 class EIndentation(Enum):
@@ -364,6 +375,9 @@ class DIndent(DElt):
         """Return the kind of indentation."""
         return self._indent
 
+    def __repr__(self) -> str:
+        return super().__repr__() + f"({self._indent})"
+
 
 # Document creation functions
 CmdRe = re.compile("^(?P<c>@[a-zA-Z]+)(?P<a>(?::[^:])*)")
@@ -388,7 +402,7 @@ def fix_arg(arg):
     return arg
 
 
-def cmd(arg):
+def cmd(arg: str) -> Union[DElt, None]:
     """Check if arg is a document manipulation string command
     and returns its result if it is the case, else None."""
     if not isinstance(arg, str):
@@ -405,7 +419,7 @@ def cmd(arg):
     return func(*args)
 
 
-def to_doc(arg) -> DElt:
+def to_doc(arg: Union[DElt, str]) -> DElt:
     """Create a DElt:
     - If arg is already a DElt, return it
     - If arg is a shortcut, returns command
@@ -418,8 +432,15 @@ def to_doc(arg) -> DElt:
     return text(arg if arg else "")
 
 
-def text(txt: str) -> DElt:
-    """Create a DText from txt. No command processing"""
+def text(txt: str, with_indent: bool = True) -> DElt:
+    """Create a DElt from txt.
+    If text contains newlines, they are replaced by line breaks,
+    with indentation if with_indent is True."""
+    if txt.find("\n") != -1:
+        doc = DBlock()
+        for line in txt.split("\n"):
+            doc << text(line) << nl(with_indent)
+        return doc
     return DText(txt)
 
 
@@ -466,33 +487,37 @@ def block(first: DElt, *args) -> DElt:
 
 
 def doc_list(
-    doc,
-    *args,
-    sep: Optional[Any] = None,
-    start: Optional[Any] = None,
-    last: Optional[Any] = None,
+    *docs: List[Union[DElt, str]],
+    sep: Optional[Union[DElt, str]] = None,
+    start: Optional[Union[DElt, str]] = None,
+    last: Optional[Union[DElt, str]] = None,
 ) -> DElt:
     """Build a list of documents.
 
-    Args:
-        doc (Any): first document, followed by any number of documents
-        sep (Optional[Any], optional): separator. Defaults to None.
-        start (Optional[Any], optional): document at beginning of list.
+    Parameters
+    ----------
+        docs (List[Union[DElt, str]]): any number of documents
+        sep (Optional[Union[DElt, str]], optional): separator. Defaults to None.
+        start (Optional[Union[DElt, str]], optional): document at beginning of list.
         Defaults to None.
-        last (Optional[Any], optional): document at end of list.
+        last (Optional[AUnion[DElt, str]ny], optional): document at end of list.
         Defaults to None.
 
-    Returns:
+    Returns
+    -------
         Document: _description_
     """
-    _current_doc = to_doc(doc)
+    if not docs:
+        return DBlock()
+    _init, *_rest = docs
+    _current_doc = to_doc(_init)
     if start:
         _first = to_doc(start)
         _first.cons(_current_doc)
     else:
         _first = _current_doc
     _sep = to_doc(sep)
-    for _arg in args:
+    for _arg in _rest:
         _doc = to_doc(_arg)
         if sep:
             _current_doc = _current_doc.cons(DBlock(_sep))
@@ -524,7 +549,7 @@ class Document(DBlock):
     *a_doc* << *d_elt* => add *d_elt* and returns *a_doc*."""
 
     def __init__(self) -> None:
-        super().__init__(DElt())
+        super().__init__()
 
     @property
     def start_doc(self):
@@ -551,9 +576,10 @@ class Renderer:
         stream: Optional[IO] = None,
         indent: Optional[int] = 2,
         initial_indent: Optional[int] = 0,
-    ):
+    ) -> None:
         """
-        Args:
+        Parameters
+        ----------
             stream (io.IO): Output stream
             indent (int, optional): default indentation. Defaults to 2.
             initial_indent (int, optional): initial indentation. Defaults to 0.
@@ -586,13 +612,16 @@ class Renderer:
             return self._indent_stack[-1]
         raise ScadeOneException("Render.indent: empty stack")
 
-    def render(self, doc: Document):
+    def render(self, doc: Document, error_ok: bool = False):
         """Render a document on the stream.
 
         Parameters
         ----------
         doc : Document
             Document to render
+
+        error_ok : bool, optional
+            If True, do not raise an exception if an error occurs and returns. Defaults to False.
 
         Raises
         ------
@@ -606,12 +635,14 @@ class Renderer:
         try:
             self._render(doc.start_doc)
         except Exception as e:
-            raise ScadeOneException("Error during rendering") from e
+            if not error_ok:
+                raise ScadeOneException(f"Error during rendering: ({e})") from e
 
     def _write(self, obj: Any):
         """Write obj on stream. str(obj) shall be a string without newlines"""
         text = str(obj)
-        assert text.find("\n") == -1
+        if text.find("\n") != -1:
+            raise ScadeOneException(f"Renderer: text '{text}' shall not contain newlines")
         self._col += len(text)
         self._stream.write(text)  # type: ignore # (stream is IO)
 
@@ -636,29 +667,34 @@ class Renderer:
         self._indent_stack.append(self._col)
 
     def _render(self, doc: DElt):
-        class_name = doc.__class__.__name__
-        func = getattr(self, f"_render_{class_name}", self._render_NoFunc)
-        func(doc)
+        def _get_render_fn(doc) -> Callable[["Renderer", DElt], None]:
+            "Auxiliary function to get the render function, which is a method of the Renderer class"
+            class_name = doc.__class__.__name__
+            func = getattr(self, f"_render_{class_name}", self._render_NoFunc)
+            return func
+
+        _current_doc = doc
+        while _current_doc:
+            func = _get_render_fn(_current_doc)
+            func(_current_doc)
+            _current_doc = _current_doc.next
 
     def _render_NoFunc(self, doc):  # pylint: disable=C0103
         class_name = doc.__class__.__name__
         raise ScadeOneException(f"Render._render_{class_name}() does not exist")
 
-    def _render_DElt(self, doc: DElt):  # pylint: disable=C0103
-        if doc.next:
-            self._render(doc.next)
+    def _render_DElt(self, _: DElt):  # pylint: disable=C0103
+        # Default render: do nothing
+        pass
 
     def _render_DText(self, doc: DText):  # pylint: disable=C0103
         self._write(doc.string)
-        self._render_DElt(doc)
 
     def _render_DBlock(self, doc: DBlock):  # pylint: disable=C0103
         self._render(doc.doc)
-        self._render_DElt(doc)
 
     def _render_DLineBreak(self, doc: DLineBreak):  # pylint: disable=C0103
         self._nl(doc.with_indent)
-        self._render_DElt(doc)
 
     def _render_DIndent(self, doc: DIndent):  # pylint: disable=C0103
         if doc.indent is EIndentation.INDENT:
@@ -667,7 +703,6 @@ class Renderer:
             self._pop_indent()
         elif doc.indent is EIndentation.MARK:
             self._push_mark()
-        self._render_DElt(doc)
 
 
 if __name__ == "__main__":

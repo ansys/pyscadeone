@@ -19,14 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+from pathlib import Path
 from typing import List
 
 import pytest
 
 from ansys.scadeone.core import ScadeOne
+from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.common.storage import SwanString
-from ansys.scadeone.core.model import Model
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as swan
 
@@ -39,16 +39,14 @@ def parser(unit_test_logger):
 @pytest.fixture
 def cc_module(cc_project):
     app = ScadeOne()
-    app.load_project(cc_project)
-    project = app.projects[0]
+    project = app.load_project(cc_project)
     model = project.model
     model.load_all_modules()
-    modules = list(model.modules)
-    return modules[1]
+    return model.modules[0]
 
 
 def gen_code(swan: str, module: str) -> SwanString:
-    return SwanString(SwanString.gen_version() + "\n" + swan, module)
+    return SwanString(gen_swan_version() + "\n" + swan, module)
 
 
 class TestModuleNamespace:
@@ -108,11 +106,15 @@ class TestModuleNamespace:
 class TestScopeNamespace:
     @staticmethod
     def _create_model(modules: List[swan.Module]):
-        model = Model()
+        app = ScadeOne()
+        project = app.new_project("test.sproj")
         for module in modules:
-            model._modules[module.name] = module
-            module.owner = model
-        return model
+            if isinstance(module, swan.ModuleBody):
+                project.model.add_body(Path(module.file_name), module)
+            elif isinstance(module, swan.ModuleInterface):
+                project.model.add_interface(Path(module.file_name), module)
+            module.owner = project
+        return project.model
 
     def test_get_group(self, parser: SwanParser):
         code = gen_code(
@@ -136,7 +138,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         group0 = scope.get_declaration("group0")
@@ -173,7 +175,7 @@ class TestScopeNamespace:
         module0_interface = parser.module_interface(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_interface, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         group0 = scope.get_declaration("groups::group0")
@@ -197,7 +199,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         type0 = scope.get_declaration("type0")
@@ -220,7 +222,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         type_str = scope.get_declaration("typeStruct")
@@ -243,7 +245,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         type_str = scope.get_declaration("typeEnum")
@@ -266,7 +268,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         type_str = scope.get_declaration("typeVariant")
@@ -290,7 +292,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         const0 = scope.get_declaration("const0")
@@ -314,7 +316,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         sensor0 = scope.get_declaration("sensor0")
@@ -347,7 +349,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op1 = body.declaration_list[1]
+        op1 = body.declarations[1]
         assert isinstance(op1, swan.Operator)
         scope = op1.body
         op0 = scope.get_declaration("operator0")
@@ -369,7 +371,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         i0 = scope.get_declaration("i0")
@@ -391,7 +393,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         o0 = scope.get_declaration("o0")
@@ -415,7 +417,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         x0 = scope.get_declaration("x0")
@@ -439,7 +441,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         x0 = scope.get_declaration("x0")
@@ -480,7 +482,7 @@ class TestScopeNamespace:
         module0_body = parser.module_body(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_body, module1_body])
-        op1 = module1_body.declaration_list[0]
+        op1 = module1_body.declarations[0]
         assert isinstance(op1, swan.Operator)
         scope = op1.body
         op0 = scope.get_declaration("module0::operator0")
@@ -513,7 +515,7 @@ class TestScopeNamespace:
         module0_interface = parser.module_interface(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_interface, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope = op0.body
         type0 = scope.get_declaration("types::type0")
@@ -543,7 +545,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0].objects[0].state_machine.items[0].sections[0]
         i0 = scope_section.get_declaration("i0")
@@ -573,7 +575,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[1]
+        op0 = body.declarations[1]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0].objects[0].state_machine.items[0].sections[0]
         const0 = scope_section.get_declaration("const0")
@@ -594,7 +596,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[1]
         x0 = scope_section.get_declaration("x0")
@@ -615,7 +617,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0].objects[1].section
         b = scope_section.get_declaration("b")
@@ -636,7 +638,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0].objects[0].section
         i0 = scope_section.get_declaration("i0")
@@ -660,7 +662,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.declaration_list[0]
+        op0 = body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0].objects[0].section
         i0 = scope_section.get_declaration("i0")
@@ -691,7 +693,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op1 = body.declaration_list[1]
+        op1 = body.declarations[1]
         assert isinstance(op1, swan.Operator)
         scope_section = op1.body.sections[0].equations[0].expr.body.body[0]
         op0 = scope_section.get_declaration("operator0")
@@ -723,7 +725,7 @@ class TestScopeNamespace:
         module0_body = parser.module_body(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_body, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("module0::const0")
@@ -756,7 +758,7 @@ class TestScopeNamespace:
         module0_body = parser.module_body(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_body, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("module0::module00::const0")
@@ -789,7 +791,7 @@ class TestScopeNamespace:
         module0_body = parser.module_body(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_body, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("m::const0")
@@ -822,7 +824,7 @@ class TestScopeNamespace:
         module0_body = parser.module_body(module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_body, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("module0::module00::const0")
@@ -830,7 +832,7 @@ class TestScopeNamespace:
         assert c0.id.value == "const0"
         assert c0.module.name.as_string == "module0::module00"
 
-    def test_get__const_from_interface(self, parser: SwanParser):
+    def test_get_const_from_interface(self, parser: SwanParser):
         module0_int = gen_code(
             """
             const const0: int32 = 0;
@@ -853,7 +855,7 @@ class TestScopeNamespace:
         module0_interface = parser.module_interface(module0_int)
         module0_body = parser.module_body(module0)
         TestScopeNamespace._create_model([module0_interface, module0_body])
-        op0 = module0_body.declaration_list[0]
+        op0 = module0_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("const0")
@@ -888,7 +890,7 @@ class TestScopeNamespace:
             "module0",
         )
         body = parser.module_body(code)
-        op1 = body.declaration_list[1]
+        op1 = body.declarations[1]
         assert isinstance(op1, swan.Operator)
         scope_section = op1.body.sections[0]
         op0 = scope_section.get_declaration("operator0")
@@ -926,7 +928,7 @@ class TestScopeNamespace:
         module0_interface = parser.module_interface(i_module0)
         module1_body = parser.module_body(module1)
         TestScopeNamespace._create_model([module0_interface, module0_body, module1_body])
-        op0 = module1_body.declaration_list[0]
+        op0 = module1_body.declarations[0]
         assert isinstance(op0, swan.Operator)
         scope_section = op0.body.sections[0]
         c0 = scope_section.get_declaration("module0::const0")
@@ -945,7 +947,7 @@ class TestScopeNamespace:
         )
 
         module0_interface = parser.module_interface(i_module0)
-        op0 = module0_interface.declaration_list[1]
+        op0 = module0_interface.declarations[1]
         assert isinstance(op0, swan.Signature)
         module = op0.module
         assert isinstance(module, swan.ModuleInterface)
@@ -955,7 +957,7 @@ class TestScopeNamespace:
         assert c0.module.name.as_string == "module0"
 
     def test_get_regulation_from_state(self, cc_module):
-        automaton0 = cc_module.declaration_list[2].body.sections[0].objects[0].state_machine
+        automaton0 = cc_module.declarations[2].body.sections[0].objects[0].state_machine
         automaton1 = automaton0.items[1].sections[0].objects[13].state_machine
         automaton2 = automaton1.items[0].sections[0].objects[10].state_machine
         scope_section = automaton2.items[0].sections[0]
@@ -964,7 +966,7 @@ class TestScopeNamespace:
         assert op.id.value == "Regulation"
 
     def test_get_limiter_from_cruise_speed_mng_op(self, cc_module):
-        cruise_speed_mng_op = cc_module.declaration_list[3]
+        cruise_speed_mng_op = cc_module.declarations[3]
         scope_section = cruise_speed_mng_op.body.sections[0]
         op = scope_section.get_declaration("Utils::Limiter")
         assert isinstance(op, swan.Operator)

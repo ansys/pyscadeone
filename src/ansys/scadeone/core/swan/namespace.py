@@ -44,7 +44,7 @@ from .variable import VarDecl
 class ModuleNamespace:
     """Class to handle named objects defined in a module."""
 
-    def __init__(self, module: Module):
+    def __init__(self, module: Module) -> None:
         self._module = module
 
     def get_declaration(self, name: str) -> SwanItem:
@@ -70,13 +70,15 @@ class ModuleNamespace:
                 found_decl = None
                 if isinstance(decl, GroupDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.groups)
-                if isinstance(decl, TypeDeclarations):
+                elif isinstance(decl, TypeDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.types)
-                if isinstance(decl, ConstDeclarations):
+                elif isinstance(decl, ConstDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.constants)
-                if isinstance(decl, SensorDeclarations):
+                elif isinstance(decl, SensorDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.sensors)
-                if isinstance(decl, Signature) and str(decl.id) == name:
+                elif (
+                    (isinstance(decl, Signature) or isinstance(decl, Operator)) and decl.id.value
+                ) == name:
                     found_decl = decl
                 if found_decl is not None:
                     return found_decl
@@ -111,7 +113,7 @@ class ScopeNamespace:
     to its enclosing scope.
     """
 
-    def __init__(self, scope: Union[Scope, ScopeSection]):
+    def __init__(self, scope: Union[Scope, ScopeSection]) -> None:
         self._scope = scope
 
     def get_declaration(self, name: str) -> SwanItem:

@@ -17,8 +17,8 @@ The proper module is retrieved:
 .. literalinclude:: quad_flight_control.py
     :lines: 39-46
 
-Getting an  operator from the module
-------------------------------------
+Getting an operator from the module
+-----------------------------------
 
 Operator declarations can be found from a module (:py:class:`ModuleBody` or :py:class:`ModuleInterface`).
 This code shows how to get the operator from a module using the :py:meth:`ModuleBody.get_declaration()` method:
@@ -36,7 +36,7 @@ Global declarations like groups, constants, types, or other operators from the o
     :lines: 51-66
 
 
-With the same method can be used to access to the inputs or outputs of the operator:
+The same method can be used to access the inputs or outputs of the operator:
 
 .. literalinclude:: quad_flight_control.py
     :lines: 68-72

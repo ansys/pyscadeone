@@ -21,9 +21,9 @@
 # SOFTWARE.
 
 
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from .common import SwanItem, PragmaBase, Pragma
+from .common import Pragma, PragmaBase, SwanItem
 
 if TYPE_CHECKING:
     from .namespace import ScopeNamespace  # noqa: F401
@@ -36,12 +36,14 @@ class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
     | *scope* ::= { {{*scope_section*}} }"""
 
     def __init__(
-        self, sections: List["ScopeSection"], pragmas: Optional[List[Pragma]] = None
+        self,
+        sections: Optional[List["ScopeSection"]] = None,
+        pragmas: Optional[List[Pragma]] = None,
     ) -> None:
         SwanItem.__init__(self)
         PragmaBase.__init__(self, pragmas)
-        self._sections = sections
-        self._pragmas = pragmas
+        self._sections = sections or []
+        self._pragmas = pragmas or []
         self.set_owner(self, self._sections)
 
     @property
@@ -56,16 +58,14 @@ class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
         ns = ScopeNamespace(self)
         return ns.get_declaration(name)
 
-    def __str__(self) -> str:
-        sections = "\n".join([str(section) for section in self.sections])
-        return f"{{\n{sections}\n}}"
-
 
 class ScopeSection(SwanItem):  # numpydoc ignore=PR01
     """Base class for scopes."""
 
     def __init__(self) -> None:
-        super().__init__()
+        # Cannot use super() because of multiple inheritance from ProtectedSection
+        # which leads to a conflict with the MRO (Method Resolution Order)
+        SwanItem.__init__(self)
         self._is_text = False
 
     @property
@@ -82,10 +82,3 @@ class ScopeSection(SwanItem):  # numpydoc ignore=PR01
 
         ns = ScopeNamespace(self)
         return ns.get_declaration(name)
-
-    @classmethod
-    def to_str(cls, section: str, items: List[Any], end: Optional[str] = ";") -> str:
-        """Print *section* name with its list of *items*, one per line,
-        ended with *sep* string."""
-        item_str = "\n".join([f"    {item}{end}" for item in items])
-        return f"{section}\n{item_str}"

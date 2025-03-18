@@ -64,7 +64,7 @@ class Atom:
     a char or a list of these types. A string between simple-quote denotes a
     character."""
 
-    def __init__(self, tokens: list):
+    def __init__(self, tokens: list) -> None:
         # token is a list of list
         self._tokens = tokens
 

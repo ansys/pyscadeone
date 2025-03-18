@@ -7,16 +7,17 @@ Swan model visitor
 
 .. _visitor: https://en.wikipedia.org/wiki/Visitor_pattern
 
-The `visitor`_ pattern is a design pattern allowing to separate algorithm and object structure.
+The `visitor`_ pattern allows for a traversal of a data structure without changing the data structure itself.
+Thus, several algorithms can be applied to the same data structure. 
 
-Data structure objects have an ``accept`` method, which has the visitor object as argument.
-In turn, the visitor object does some process onto the calling object. By deriving the 
-visitor class, different algorithms can be implemented. In that scheme, the data structure 
-is responsible for the traversal. 
+The Swan visitor implements that pattern with a class which methods to visit each Swan object. T
+he visitor is therefore responsible for the traversal. The visitor by itself does nothing 
+but traversing the tree. To implement an algorithm, one needs to derive the visitor class and override all 
+or some of the methods.
 
-The Swan visitor works a little differently. The visitor knows about the Swan objects tree
-and is responsible for the tree traversal. There is no ``accept`` method for the Swan classes.
-The advantage is that the traversal can be controlled by a derived visitor class.
+The advantage of that visitor is that the traversal can be controlled by a derived visitor class,
+instead of the ``accept`` method as in the `visitor`_ pattern.
+
 
 For a complete code example, see :ref:`ref_visitor_example`.
 
@@ -32,10 +33,11 @@ The :py:class:`SwanVisitor` implements the base visitor. It provides:
   proper *SwanVisitor.visit_<class_name>* method. Arguments of *SwanVisitor.visit_<class_name>* are:
 
   * *swan_obj*: the visited object.
-  * *owner*: when an object is visited, the default visitor traverses the objects referenced by the properties
-    set by the constructor. The *owner* is the owner of the property. The *owner* is **None** for the root 
-    visited object.
-  * *property*: when visiting a property, its name is given to that parameter to know about the visit context.
+  * *owner*: owner of the *swan_object*. When an object is visited, it becomes the *owner* for its own properties which
+    are visited. Note that there is a property for each *owner* constructor argument. 
+    The *owner* is **None** for the root visited object.
+  * *owner_property*: the name of the property in the *owner* which corresponds to the visited *swan_obj*.
+    It is **None** for the root visited object.
 
 For instance, if one visits an :py:class:`ArrayRepetition` object, there are two properties with the same
 :py:class:`Expression` type. The corresponding default visitor method is:
@@ -45,8 +47,8 @@ For instance, if one visits an :py:class:`ArrayRepetition` object, there are two
     def visit_ArrayRepetition(
         self,
         swan_obj: swan.ArrayRepetition,
-        owner: Union[Any, None],
-        property: Union[str, None]
+        owner: Owner,
+        owner_property: OwnerProperty
     ) -> None:
         """ArrayRepetition visitor function. Should be overridden."""
         # Visit base class(es)
@@ -55,10 +57,11 @@ For instance, if one visits an :py:class:`ArrayRepetition` object, there are two
         self._visit(swan_obj.expr, swan_obj, 'expr')
         self._visit(swan_obj.size, swan_obj,  'size')
 
-Visiting the ``expr`` and the ``size`` may lead to the call of the same visitor method. Therefore,
-the property argument discriminates the context together with the ``owner``.
-
-Note that the base class :py:class:`Expression` is visited first.
+The base class :py:class:`Expression` is visited first. Then the properties ``expr`` and ``size`` are visited.
+For each property, the *owner* is obviously the currently visited *swan_obj*. Here one can see that
+the *owner* notion is not enough to discriminate the context, as one visits the same type of object (an expression).
+The corresponding property names ``expr`` and  ``size`` help to discriminated the context. In UML terminology, they would
+correspond to a *role*.
 
 Usage
 -----
@@ -69,7 +72,7 @@ a visitor with some meaningful operation.
 .. code:: python
 
     from typing import Any, Union
-    from ansys.scadeone.core.svc.swan_visitor import SwanVisitor
+    from ansys.scadeone.core.svc.swan_visitor import SwanVisitor, Owner, OwnerProperty
 
     class MyVisitor(SwanVisitor):
 
@@ -84,8 +87,8 @@ action while visiting an item, override the :py:meth:`SwanVisitor._visit` method
 
     def _visit(
         self, swan_obj: Any,
-        owner: Union[Any,None],
-        property: Union[str,None]
+        owner: Owner,
+        owner_property: OwnerProperty
     ) -> None:
         # Add some pre-processing here
         super()._visit(swan_obj, owner, property)
@@ -98,8 +101,8 @@ Override any method for which an action is required. Example for a sensor:
     def visit_SensorDecl(
         self,
         swan_obj: swan.SensorDecl,
-        owner: Union[Any, None],
-        property: Union[str, None]
+        owner: Owner,
+        owner_property: OwnerProperty
     ) -> None:
         # do some pre-processing
         super().visit_SensorDecl(swan_obj, owner, property)
@@ -112,27 +115,41 @@ Or one can take the default code and write specific processing. Example for an o
     def visit_Operator(
         self,
         swan_obj: swan.Operator,
-        owner: Union[Any, None],
-        property: Union[str, None]
+        owner: Owner,
+        owner_property: OwnerProperty
     ) -> None:
         # do specific processing.
         # for instance, do not explore inputs/outputs, body, ...
         # which stops the traversal.
 
-.. note::
 
-    The visitor defines also some specific functions that have no specific behavior:
+SwanVisitor class
+-----------------
 
-    - :py:meth:`SwanVisitor.visit_builtin`: this method is called for an object of type ``str``, ``bool``, ``int``, ``float``.
-    - :py:meth:`SwanVisitor.visit_SwanItem`: this method is called when visiting a SwanItem, which is the base class of
-      most of the Swan classes. If it has an action, it will be done for all instances derived from a SwanItem.
+This section describes the methods of the :py:class:`SwanVisitor`.
 
 
-Visitor API
------------
+.. py:class:: SwanVisitor
+    :canonical: ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor
 
-This section describes all the methods of the :py:class:`SwanVisitor`.
+    .. automethod:: visit
 
-.. automodule:: ansys.scadeone.core.svc.swan_visitor
-    :private-members:
+    .. automethod:: visit_builtin
 
+    .. automethod:: visit_SwanItem
+
+
+    A method is provided for each Swan class. The method name is *visit_<SwanClass>*.
+    For instance, for the :py:class:`Operator` class, the method is *visit_Operator*.
+    The method provides the traversal of the object and its properties. It should be overridden
+    for a specific processing. Look at source in `ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor.py`.
+
+
+    .. py:method:: visit_<SwanClass>(swan_obj: object, owner: object, property: str) -> None
+
+        Visit a Swan object of type <SwanClass>. This method should be overridden.
+
+        :param swan_obj: the visited object.
+        :param owner: owner of the *swan_object*. The *owner* is **None** for the root visited object.
+        :param owner_property: the name of the property in the *owner* which corresponds to the visited *swan_obj*.
+            It is **None** for the root visited object.

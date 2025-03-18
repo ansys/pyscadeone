@@ -25,6 +25,7 @@ from typing import cast
 
 from ansys.scadeone.core.scadeone import ScadeOne
 import ansys.scadeone.core.swan as swan
+from ansys.scadeone.core.svc.swan_printer import swan_to_str
 
 # Update according to your installation
 s_one_install = Path(r"C:\Scade One")
@@ -34,9 +35,12 @@ quad_flight_project = (
 )
 
 app = ScadeOne(install_dir=s_one_install)
-model = app.load_project(quad_flight_project).model
+project = app.load_project(quad_flight_project)
+model = project.model
 
 
+# Step 1
+# Get operator
 def quad_fight_control_op_filter(obj: swan.GlobalDeclaration):
     if isinstance(obj, swan.Operator):
         return str(obj.id) == "QuadFlightControl"
@@ -44,14 +48,16 @@ def quad_fight_control_op_filter(obj: swan.GlobalDeclaration):
 
 
 # Get the 'QuadFightControl' operator from model
-quad_fight_control_op = cast(swan.Operator, model.find_declaration(quad_fight_control_op_filter))
+quad_flight_control_op = cast(swan.Operator, model.find_declaration(quad_fight_control_op_filter))
 
-# Get the diagram of the 'QuadFightControl' operator
-diag = next(quad_fight_control_op.diagrams, None)
+# Step 2: Get the diagram of the 'QuadFightControl' operator
+diag = quad_flight_control_op.diagrams[0]
 
-# Get the diagram blocks ('MotorControl', 'FlightControl')
+
+# Step 3: Get the diagram blocks ('MotorControl', 'FlightControl')
 blocks = list(filter(lambda obj: isinstance(obj, swan.Block), diag.objects))
 
+# Step 4
 # Get the 'MotorControl' block
 motor_control_block = next(
     filter(lambda block: block.instance.path_id.as_string == "MotorControl", blocks)
@@ -60,6 +66,7 @@ motor_control_block = next(
 # Get the 'MotorControl' sources ('FlightControl', 'motorStates')
 sources = motor_control_block.sources
 
+# Step 5
 # Get the 'MotorControl' targets ('motorHealthState', 'rotorCmd',  'byname' group)
 targets = motor_control_block.targets
 
@@ -68,12 +75,14 @@ print("The object diagram sources of 'MotorControl' operator are:")
 print("-----------------------------------")
 message = "Operator name: {block}, Adaptation: {src} => {dst}"
 for block, from_adapt, to_adapt_list in sources:
-    src = str(from_adapt)
-    dst = ", ".join(str(adapt) for adapt in to_adapt_list)
+    src = swan_to_str(from_adapt)
+    dst = ", ".join(swan_to_str(adapt) for adapt in to_adapt_list)
     if isinstance(block, swan.ExprBlock):
-        print(message.format(block=str(block.expr), src=src, dst=dst))
+        print(message.format(block=swan_to_str(block.expr), src=src, dst=dst))
     elif isinstance(block, swan.Block):
-        print(message.format(block=str(block.instance.path_id), src=str(from_adapt), dst=dst))
+        print(
+            message.format(block=str(block.instance.path_id), src=swan_to_str(from_adapt), dst=dst)
+        )
 
 print("-----------------------------------")
 print("")
@@ -81,10 +90,20 @@ print("The object diagram targets of 'MotorControl' operator are:")
 print("-----------------------------------")
 for block, from_adapt, to_adapt in targets:
     if isinstance(block, swan.DefBlock):
-        print(message.format(block=str(block.lhs), src=str(from_adapt), dst=str(to_adapt)))
+        print(
+            message.format(
+                block=swan_to_str(block.lhs),
+                src=swan_to_str(from_adapt),
+                dst=swan_to_str(to_adapt),
+            )
+        )
     elif isinstance(block, swan.Bar):
         print(
-            message.format(block=str(block.operation.name), src=str(from_adapt), dst=str(to_adapt))
+            message.format(
+                block=swan_to_str(block.operation),
+                src=swan_to_str(from_adapt),
+                dst=swan_to_str(to_adapt),
+            )
         )
 print("-----------------------------------")
 
@@ -99,7 +118,7 @@ def motor_control_op_filter(obj: swan.GlobalDeclaration):
 motor_control_op = cast(swan.Operator, model.find_declaration(motor_control_op_filter))
 
 # Get the diagram of the 'MotorControl' operator
-diag = next(motor_control_op.diagrams, None)
+diag = motor_control_op.diagrams[0]
 
 
 def input_filter(obj: swan.DiagramObject):
@@ -107,7 +126,7 @@ def input_filter(obj: swan.DiagramObject):
         return False
     if not isinstance(obj.expr, swan.StructProjection):
         return False
-    return str(obj.expr.expr) == "attitudeCmd"
+    return swan_to_str(obj.expr.expr) == "attitudeCmd"
 
 
 # Get the 'attitudeCmd' fields from the diagram (expression blocks)

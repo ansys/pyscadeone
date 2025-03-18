@@ -31,13 +31,13 @@ Source is used for error messages.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Union
-from pathlib import Path
 import json
+from pathlib import Path
 import re
+from typing import Optional, Union
 
-from ansys.scadeone.core.common.versioning import FormatVersions
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.versioning import FormatVersions
 
 
 class Storage(ABC):
@@ -59,6 +59,11 @@ class Storage(ABC):
     def source(self) -> str:
         """Source origin: file name, string, etc."""
         return self._source
+
+    @source.setter
+    def source(self, source: str) -> None:
+        """Change the source"""
+        self._source = source
 
     @abstractmethod
     def exists(self) -> bool:
@@ -165,6 +170,10 @@ class JSONStorage(object):
         self._asset.set_content(data)
         return self
 
+    def exists(self) -> bool:
+        """True when a source exists."""
+        pass
+
 
 # Swan related storage
 # ====================
@@ -242,34 +251,12 @@ class SwanStorage(ABC):
         FormatVersions.check("swant", version["swant"])
         return version
 
-    @staticmethod
-    def gen_version(is_harness=False):
-        """Generate the version for a Swan file.
-
-        Parameters
-        ----------
-        is_harness : bool
-            True if the harness version is needed
-
-        Returns
-        -------
-        str
-            Version
-        """
-        version = "-- version"
-        version += f" swan:{FormatVersions.version('swan')}"
-        version += f" graph:{FormatVersions.version('graph')}"
-        if is_harness:
-            version += f" swant:{FormatVersions.version('swant')}"
-        return version
-
 
 class SwanFile(FileStorage, SwanStorage):
     """Swan code within a file.
 
     Parameters
     ----------
-
     file : Path
         File containing the Swan source."""
 
@@ -282,18 +269,18 @@ class SwanFile(FileStorage, SwanStorage):
         return self.path.stem
 
     @property
-    def is_module(self):
+    def is_module(self) -> bool:
         """True when file is a module code."""
         return self.path.suffix == ".swan"
 
     @property
-    def is_interface(self):
+    def is_interface(self) -> bool:
         """True when file is an interface code."""
         return self.path.suffix == ".swani"
 
     @property
-    def is_test(self):
-        """True when file is an test code."""
+    def is_test(self) -> bool:
+        """True when file is a test code."""
         return self.path.suffix == ".swant"
 
     @property
@@ -311,7 +298,6 @@ class SwanString(StringStorage, SwanStorage):
 
     Parameters
     ----------
-
     swan_code : str
         String containing the Swan source.
 
@@ -368,7 +354,7 @@ class JobStorage(JSONStorage):
         super().__init__(asset=self, **kwargs)
 
 
-class JobFile(FileStorage, ProjectStorage):
+class JobFile(FileStorage, JobStorage):
     """Job asset as a file."""
 
     def __init__(self, file: Union[str, Path]) -> None:

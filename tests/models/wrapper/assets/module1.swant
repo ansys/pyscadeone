@@ -1,0 +1,25 @@
+-- version swan: 2025.0 graph: 2.0 swant: 1.1
+use module0;
+
+_harness harness0
+{
+  diagram
+    (#0 block module0::function0
+              #pragma diagram {"xy":"H-45250;V-6475","wh":"20000;14000"} #end)
+    (#1 def _stop_condition
+    #pragma diagram {"xy":"H-29750;V-31375","wh":"20000;3200"} #end)
+    (#2 expr _current_cycle = 10
+    #pragma diagram {"xy":"H-66450;V-31375","wh":"22000;3200"} #end)
+    (#3 expr 1
+    #pragma diagram {"xy":"H-83400;V-13325"} #end)
+    (#4 expr 2
+    #pragma diagram {"xy":"H-83000;V-2925"} #end)
+    (#8 #pragma swt under_test #end block module0::node0
+                                          #pragma diagram {"xy":"H-44225;V13525","wh":"20000;14000"} #end)
+    
+    (#5 wire #2 => #1)
+    (#6 wire #3 => #0 .(i0), #8 .(i0)
+    #pragma diagram {"wp":"#3 h13775 v5200[#0, v21650 #8]"} #end)
+    (#7 wire #4 => #0 .(i1), #8 .(i1)
+    #pragma diagram {"wp":"#4 h6792[#0, v20450 #8]"} #end)
+}

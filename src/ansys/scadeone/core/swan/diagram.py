@@ -26,13 +26,12 @@ from collections import defaultdict
 from enum import Enum, auto
 from typing import List, Optional, Union, cast
 
-from typing_extensions import Self
-
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.svc.swan_creator.diagram_creator import DiagramCreator
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
 
-from .equations import EquationLHS, DefByCase, StateMachine, ActivateIf, ActivateWhen
+from .equations import ActivateIf, ActivateWhen, DefByCase, EquationLHS, StateMachine
 from .expressions import GroupAdaptation, PortExpr
 from .instances import OperatorBase, OperatorExpression
 
@@ -59,7 +58,7 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         self,
         lunum: Optional[common.Lunum] = None,
         luid: Optional[common.Luid] = None,
-        locals: Optional[List[Self]] = None,
+        locals: Optional[List["DiagramObject"]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
         common.SwanItem.__init__(self)
@@ -67,6 +66,7 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         self._lunum = lunum
         self._luid = luid
         self._locals = locals if locals else []
+        common.SwanItem.set_owner(self, self._locals)
 
     @property
     def lunum(self) -> Union[common.Lunum, None]:
@@ -79,7 +79,7 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         return self._luid
 
     @property
-    def locals(self) -> List[Self]:
+    def locals(self) -> List["DiagramObject"]:
         """Local objects of object."""
         return self._locals
 
@@ -88,11 +88,10 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         self,
     ) -> List[tuple["DiagramObject", GroupAdaptation, Union[List[GroupAdaptation], None]]]:
         """Return a list of all diagram objects that are sources of current diagram object.
-
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
-        diagram = cast(Diagram, self.owner)
+        diagram = self._get_diagram(self.owner)
         return diagram.get_block_sources(self)
 
     @property
@@ -100,35 +99,28 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         self,
     ) -> List[tuple["DiagramObject", GroupAdaptation, GroupAdaptation]]:
         """Return a list of all diagram objects that are targets of current diagram object.
-
         A list item is a tuple of target object and the source and target adaptations used
         for connection if any.
         """
-        diagram = cast(Diagram, self.owner)
+        diagram = self._get_diagram(self.owner)
         return diagram.get_block_targets(self)
 
-    def to_str(self) -> str:
-        """String representation. Must be overridden by subclasses."""
-        raise ScadeOneException("DiagramObject.to_str() call")
-
-    def __str__(self):
-        luid = f"{self.luid} " if self.luid else ""
-        lunum = f"{self.lunum} " if self.lunum else ""
-        locals_ = "\n".join([str(obj) for obj in self.locals])
-        if locals_:
-            locals_ = f"\nwhere\n{locals_}"
-        pragmas = self.pragma_str()
-        if pragmas:
-            pragmas = f" {pragmas}"
-        return f"({lunum}{luid}{self.to_str()}{locals_}{pragmas})"
+    def _get_diagram(self, diag_obj: "DiagramObject") -> "Diagram":
+        """Get the diagram from a diagram object."""
+        if isinstance(diag_obj, Diagram):
+            return diag_obj
+        return self._get_diagram(diag_obj.owner)
 
 
-class Diagram(scopes.ScopeSection):  # numpydoc ignore=PR01
+class Diagram(scopes.ScopeSection, DiagramCreator):  # numpydoc ignore=PR01
     """Class for a **diagram** construct."""
 
-    def __init__(self, objects: List[DiagramObject]) -> None:
+    def __init__(self, objects: List[DiagramObject] = None) -> None:
         super().__init__()
-        self._objects = objects
+        if objects is None:
+            self._objects = []
+        else:
+            self._objects = objects
         self._diag_nav = None
         common.SwanItem.set_owner(self, objects)
 
@@ -137,15 +129,10 @@ class Diagram(scopes.ScopeSection):  # numpydoc ignore=PR01
         """Diagram objects."""
         return self._objects
 
-    def __str__(self):
-        objects = "\n".join([str(obj) for obj in self.objects])
-        return f"diagram\n{objects}" if objects else "diagram"
-
     def get_block_sources(
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, Optional[GroupAdaptation], Optional[GroupAdaptation]]]:
         """Return a list of all diagram objects that are sources of current diagram.
-
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
@@ -157,7 +144,6 @@ class Diagram(scopes.ScopeSection):  # numpydoc ignore=PR01
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, Optional[GroupAdaptation], Optional[GroupAdaptation]]]:
         """Return a list of all diagram objects that are targets of current diagram.
-
         A list item is a tuple of source object and the source and target adaptations used
         for connection if any.
         """
@@ -187,7 +173,7 @@ class ExprBlock(DiagramObject):  # numpydoc ignore=PR01
         expr: common.Expression,
         lunum: Optional[common.Lunum] = None,
         luid: Optional[common.Luid] = None,
-        locals: Optional[List[Self]] = None,
+        locals: Optional[List["DiagramObject"]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
@@ -197,10 +183,6 @@ class ExprBlock(DiagramObject):  # numpydoc ignore=PR01
     def expr(self) -> common.Expression:
         """Block expression."""
         return self._expr
-
-    def to_str(self) -> str:
-        """Expr to string."""
-        return f"expr {self.expr}"
 
 
 class DefBlock(DiagramObject):  # numpydoc ignore=PR01
@@ -232,13 +214,9 @@ class DefBlock(DiagramObject):  # numpydoc ignore=PR01
         return self._lhs
 
     @property
-    def is_protected(self):
+    def is_protected(self) -> bool:
         """True when definition is syntactically incorrect and protected."""
         return self._is_protected
-
-    def to_str(self) -> str:
-        """Def to string."""
-        return f"def {self.lhs}"
 
 
 class Block(DiagramObject):  # numpydoc ignore=PR01
@@ -269,16 +247,9 @@ class Block(DiagramObject):  # numpydoc ignore=PR01
         return self._instance
 
     @property
-    def is_protected(self):
+    def is_protected(self) -> bool:
         """True when called operator is defined as a string."""
         return isinstance(self.instance, common.ProtectedItem)
-
-    def to_str(self) -> str:
-        """Block to string."""
-        if self.is_protected:
-            return f"block {self.instance}"
-
-        return f"block {self.instance}"
 
 
 class Connection(common.SwanItem):  # numpydoc ignore=PR01
@@ -293,7 +264,9 @@ class Connection(common.SwanItem):  # numpydoc ignore=PR01
     """
 
     def __init__(
-        self, port: Optional[PortExpr] = None, adaptation: Optional[GroupAdaptation] = None
+        self,
+        port: Optional[PortExpr] = None,
+        adaptation: Optional[GroupAdaptation] = None,
     ) -> None:
         super().__init__()
         self._port = port
@@ -301,12 +274,12 @@ class Connection(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def port(self) -> Union[PortExpr, None]:
-        """Returns the port of the connection."""
+        """Return the port of the connection."""
         return self._port
 
     @property
     def adaptation(self) -> Union[GroupAdaptation, None]:
-        """Returns the adaptation of the port of the connection."""
+        """Return the adaptation of the port of the connection."""
         return self._adaptation
 
     @property
@@ -318,15 +291,6 @@ class Connection(common.SwanItem):  # numpydoc ignore=PR01
     def is_connected(self) -> bool:
         """True when connected to some port."""
         return self.is_valid and (self.port is not None)
-
-    def __str__(self) -> str:
-        if self.is_connected:
-            conn = str(self.port)
-            if self.adaptation:
-                conn += f" {self.adaptation}"
-        else:
-            conn = "()"
-        return conn
 
 
 class Wire(DiagramObject):  # numpydoc ignore=PR01
@@ -368,12 +332,7 @@ class Wire(DiagramObject):  # numpydoc ignore=PR01
     @property
     def sources(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
         """This method must not be called for a Wire"""
-        raise ScadeOneException("Wire.sources call")
-
-    def to_str(self) -> str:
-        """Wire to string."""
-        targets = ", ".join([str(conn) for conn in self.targets])
-        return f"wire {self.source} => {targets}"
+        raise ScadeOneException("Wire.sources() call")
 
 
 class GroupOperation(Enum):  # numpydoc ignore=PR01
@@ -394,7 +353,7 @@ class GroupOperation(Enum):  # numpydoc ignore=PR01
     Normalize = auto()
 
     @staticmethod
-    def to_str(value: Self):
+    def to_str(value: "GroupOperation"):
         """Group Enum to string."""
         if value == GroupOperation.NoOp:
             return ""
@@ -425,10 +384,6 @@ class Bar(DiagramObject):  # numpydoc ignore=PR01
     def operation(self) -> GroupOperation:
         """Group operation."""
         return self._operation
-
-    def to_str(self) -> str:
-        """Group to string."""
-        return f"group {GroupOperation.to_str(self.operation)}"
 
 
 class SectionBlock(DiagramObject):  # numpydoc ignore=PR01
@@ -464,10 +419,6 @@ class SectionBlock(DiagramObject):  # numpydoc ignore=PR01
         """This method must not be called for a SectionBlock"""
         raise ScadeOneException("SectionBlock.targets() call")
 
-    def to_str(self) -> str:
-        """Section to string."""
-        return str(self.section)
-
 
 class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
     """Def-by-case graphical definition (automaton or activate if/when):
@@ -502,16 +453,12 @@ class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
     @property
     def sources(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
         """This method must not be called for a *def-by-case* block."""
-        raise ScadeOneException("SectionBlock.sources() call")
+        raise ScadeOneException("DefByCaseBlockBase.sources() call")
 
     @property
     def targets(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
         """This method must not be called for a *def-by-case* block."""
-        raise ScadeOneException("SectionBlock.targets() call")
-
-    def to_str(self) -> str:
-        """Section to string."""
-        return str(self._def_by_case)
+        raise ScadeOneException("DefByCaseBlockBase.targets() call")
 
 
 class StateMachineBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
@@ -621,14 +568,19 @@ class DiagramNavigation:
 
     def get_wire_source(
         self, wire: Wire
-    ) -> tuple[DiagramObject, GroupAdaptation, Union[List[GroupAdaptation], None]]:
-        """Getting source block and adaptations of a wire."""
-        block = self.get_block(wire.source.port.lunum)
+    ) -> tuple[
+        DiagramObject,
+        GroupAdaptation,
+        Union[List[tuple[DiagramObject, GroupAdaptation]], None],
+    ]:
+        """Get source block and adaptations of a wire. Also get the list of target blocks and adaptations."""
+        from_block = self.get_block(wire.source.port.lunum)
         from_block_adaptation = wire.source.adaptation
-        to_block_adaptations = list(map(lambda target: target.adaptation, wire.targets))
-        if len(to_block_adaptations) == 1 and to_block_adaptations[0] is None:
-            to_block_adaptations = None
-        return block, from_block_adaptation, to_block_adaptations
+        to_blocks = []
+        for target in wire.targets:
+            to_block = self.get_block(target.port.lunum)
+            to_blocks.append((to_block, target.adaptation))
+        return from_block, from_block_adaptation, to_blocks if to_blocks else None
 
     def get_wire_targets(
         self, wire: Wire
@@ -645,31 +597,92 @@ class DiagramNavigation:
     def get_block_sources(
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, GroupAdaptation, Union[List[GroupAdaptation], None]]]:
-        """A list of block sources of a Diagram Object."""
+        """A block sources list of a Diagram Object."""
         if len(obj.locals) != 0:
             locals = [local.lunum for local in obj.locals]
-            targets = []
+            target_wires = []
             for lunum in locals:
-                targets.extend(self.with_target(lunum))
+                target_wires.extend(self.with_target(lunum))
         else:
-            targets = self.with_target(obj.lunum)
-        sources = [self.get_wire_source(wire) for wire in targets]
-        return sources
+            target_wires = self.with_target(obj.lunum)
+        sources = [self.get_wire_source(wire) for wire in target_wires]
+        return self._filter_sources(obj, sources)
+
+    def _filter_sources(
+        self,
+        obj: DiagramObject,
+        sources: List[
+            tuple[
+                DiagramObject,
+                GroupAdaptation,
+                Optional[tuple[DiagramObject, GroupAdaptation]],
+            ]
+        ],
+    ) -> List[tuple[DiagramObject, GroupAdaptation, Union[List[GroupAdaptation], None]]]:
+        """Filter sources (object, adaptation) of a given diagram object."""
+        sources_dict = {}
+        for source in sources:
+            target_obj_adps = self._filter_target_blocks(source[2], obj)
+            for target_obj_adp in target_obj_adps:
+                # Stock a source (object, adaptation) and the corresponding target adaptations
+                source_obj_adp = (source[0], source[1])
+                if not sources_dict.get(source_obj_adp):
+                    sources_dict[source_obj_adp] = {}
+                    if target_obj_adp[1]:
+                        sources_dict[source_obj_adp] = {target_obj_adp[1]}
+                elif target_obj_adp[1]:
+                    sources_dict[source_obj_adp].add(target_obj_adp[1])
+        obj_sources = []
+        # Convert the (source, target adaptations) dictionary
+        # to a list of tuples: (source_block, source_adaptation, targets)
+        for source_obj_adp, target_adps in sources_dict.items():
+            obj_sources.append(
+                (
+                    source_obj_adp[0],
+                    source_obj_adp[1],
+                    list(target_adps) if target_adps else None,
+                )
+            )
+        return obj_sources
+
+    @staticmethod
+    def _filter_target_blocks(
+        target_obj_adps: Optional[List[tuple[DiagramObject, GroupAdaptation]]], obj
+    ) -> List[tuple[DiagramObject, GroupAdaptation]]:
+        """Filter target objects and adaptations of a given diagram object."""
+        if not target_obj_adps:
+            return []
+        filtered_target_obj_adps = []
+        for target_obj_adp in target_obj_adps:
+            if target_obj_adp[0].locals:
+                for local in target_obj_adp[0].locals:
+                    if local.lunum == obj.lunum:
+                        filtered_target_obj_adps.append((local, None))
+            if target_obj_adp[0].lunum == obj.lunum:
+                filtered_target_obj_adps.append(target_obj_adp)
+        return filtered_target_obj_adps
 
     def get_block_targets(
         self, obj: DiagramObject
     ) -> List[tuple[DiagramObject, GroupAdaptation, GroupAdaptation]]:
         """A list of targets block of a Diagram Object."""
+        lunum = obj.lunum
+        if not isinstance(obj.owner, Diagram):
+            lunum = obj.owner.lunum
+        if not lunum:
+            raise ScadeOneException(
+                "Cannot get targets of a block without a locally unique number (LUNUM)"
+            )
         targets = []
-        for wire in self.with_source(obj.lunum):
+        for wire in self.with_source(lunum):
             targets.extend(self.get_wire_targets(wire))
         return targets
 
     def consolidate(self):
-        """Retrieves wire sources, wire targets and blocks from the Diagram Object."""
+        """Retrieve wire sources, wire targets and blocks from the Diagram Object."""
 
         def explore_object(obj: DiagramObject):
-            if isinstance(obj, SectionBlock) or isinstance(obj, DefByCaseBlockBase):
+            if isinstance(obj, (SectionBlock, DefByCaseBlockBase)):
                 return
             if isinstance(obj, Wire):
                 # process targets

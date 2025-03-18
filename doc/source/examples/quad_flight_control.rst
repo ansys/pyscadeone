@@ -5,7 +5,7 @@ QuadFlightControl example setup code
 ====================================
 
 The **QuadFlightControl** example provided with Scade One is used by the various code examples
-provided in. :ref:`ref_examples`. 
+provided in :ref:`ref_examples`. 
 The **QuadFlightControl** example is located in the ``examples/QuadFlightControl``
 folder of the Scade One installation directory. 
 

@@ -187,7 +187,7 @@ def read_values(file_id: int, start: int, n_values: int, elem_path: str, expecte
 def test_all_functions():
     file_path = "trace.sd"
     # create empty file
-    file_id = dll_wrap.sdf_create(file_path)
+    file_id = dll_wrap.sdf_open(file_path, core.FileOpenMode.CREATE)
     assert file_id != core.SD_ID_INVALID
 
     # create struct type
@@ -418,7 +418,7 @@ def test_all_functions():
     assert dll_wrap.sdf_close(file_id) == 0
 
     # reopen for read and dump
-    file_id = dll_wrap.sdf_open(file_path)
+    file_id = dll_wrap.sdf_open(file_path, core.FileOpenMode.READ)
     assert file_id != core.SD_ID_INVALID
     assert dll_wrap.sdf_get_version(file_id)
     assert dll_wrap.sdf_dump(file_id) == 0

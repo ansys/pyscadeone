@@ -24,6 +24,7 @@
 # manipulate Scade One model elements retrieved from the mapping file.
 
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 import functools
 
 # cSpell: ignore oper, elems, ename
@@ -33,6 +34,7 @@ from typing import Generator, List, Optional, Tuple, Union
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.project import Project
+from ansys.scadeone.core.common.exception import LOGGER
 
 MapElem = List[Union[str, dict]]
 CodeElem = Tuple[str, dict, int]
@@ -80,7 +82,9 @@ class CDeclaration(MappingObject):
     def get_implementation_file(self) -> str:
         """Returns the name of the enclosed implementation C file."""
         try:
-            return self._gen_code.code[self._code_container_index]["implementation_file"]
+            return self._gen_code.code[self._code_container_index][
+                "implementation_file"
+            ]
         except Exception:
             raise ScadeOneException(
                 f"Generated code: no implementation_file for CodeContainer at index #{self._code_container_index}"  # noqa
@@ -148,7 +152,9 @@ class CFunction(CDeclaration):
     - code_container_index: position in the list of code container elements
     """
 
-    def __init__(self, gen_code: "GeneratedCode", function_elem: dict, code_container_index: int):
+    def __init__(
+        self, gen_code: "GeneratedCode", function_elem: dict, code_container_index: int
+    ) -> None:
         super().__init__(gen_code, function_elem, code_container_index)
         self._name = None
         self._parameters = None
@@ -166,7 +172,8 @@ class CFunction(CDeclaration):
         """Returns the function parameters as a list of CParameter objects."""
         if self._parameters is None:
             self._parameters = [
-                CParameter(self._gen_code, x) for x in self._mapping_elem.get("parameters", [])
+                CParameter(self._gen_code, x)
+                for x in self._mapping_elem.get("parameters", [])
             ]
         return self._parameters
 
@@ -320,8 +327,8 @@ class ModelVariableBase(ModelObject):
             if self._code_elem is None:
                 self._code_elem = self.get_code_elem(silent=True)
             if self._code_elem is None:
-                # no code associated to variable => it is the return of
-                # the cycle function or a polymorphic param
+                # no code associated to variable => it is the return
+                # of the cycle function or a polymorphic param
                 if self.parent.cycle_method is None:
                     self._code_type = {}
                 else:
@@ -346,7 +353,9 @@ class ModelVariable(ModelVariableBase):
     - parent: *ModelOperator* object of the parent operator
     """
 
-    def __init__(self, gen_code: "GeneratedCode", var_elem: dict, parent: "ModelOperator") -> None:
+    def __init__(
+        self, gen_code: "GeneratedCode", var_elem: dict, parent: "ModelOperator"
+    ) -> None:
         super().__init__(gen_code, var_elem)
         self._parent = parent
         self._name = var_elem["name"]
@@ -373,8 +382,12 @@ class ModelVariable(ModelVariableBase):
         (main separator between the operator variable name and group item(s) name can be changed,
         default is '_')
         """
-        group_suffix = "_".join("_" + str(i) if isinstance(i, int) else i for i in self.group_items)
-        return self.name + (separator if len(self.group_items) > 0 else "") + group_suffix
+        group_suffix = "_".join(
+            "_" + str(i) if isinstance(i, int) else i for i in self.group_items
+        )
+        return (
+            self.name + (separator if len(self.group_items) > 0 else "") + group_suffix
+        )
 
 
 class ModelVariableMonomorphic(ModelVariableBase):
@@ -387,7 +400,10 @@ class ModelVariableMonomorphic(ModelVariableBase):
     """
 
     def __init__(
-        self, gen_code: "GeneratedCode", var_elem: dict, parent: "ModelMonomorphicInstance"
+        self,
+        gen_code: "GeneratedCode",
+        var_elem: dict,
+        parent: "ModelMonomorphicInstance",
     ) -> None:
         super().__init__(gen_code, var_elem)
         self._parent = parent
@@ -531,7 +547,8 @@ class ModelOperator(ModelOperatorBase):
         """Returns the list of inputs for the operator (as ModelVariable objects)."""
         if self._inputs is None:
             self._inputs = [
-                ModelVariable(self._gen_code, x, self) for x in self._mapping_elem.get("inputs", [])
+                ModelVariable(self._gen_code, x, self)
+                for x in self._mapping_elem.get("inputs", [])
             ]
         return self._inputs
 
@@ -567,7 +584,9 @@ class ModelMonomorphicInstance(ModelOperatorBase):
             id = self._mapping_elem.get("src", 0)
             try:
                 _, op_elem = next(
-                    i for i in self._gen_code.get_model_elements("operator") if i[1]["id"] == id
+                    i
+                    for i in self._gen_code.get_model_elements("operator")
+                    if i[1]["id"] == id
                 )
                 self._source = ModelOperator(self._gen_code, op_elem)
             except StopIteration:
@@ -595,6 +614,57 @@ class ModelMonomorphicInstance(ModelOperatorBase):
                 for x in self._mapping_elem.get("outputs", [])
             ]
         return self._outputs
+
+
+class ModelKeyword(Enum):
+    Array = auto()
+    Enum = auto()
+    EnumValue = auto()
+    Field = auto()
+    Function = auto()
+    Global = auto()
+    Inputs = auto()
+    Operator = auto()
+    Outputs = auto()
+    PredefinedType = auto()
+    Sensor = auto()
+    Struct = auto()
+
+    @staticmethod
+    def to_str(value: "ModelKeyword") -> str:
+        if value == ModelKeyword.PredefinedType:
+            return "predefined_type"
+        elif value == ModelKeyword.EnumValue:
+            return "enum_value"
+        else:
+            return value.name.lower()
+
+
+class TypeObject(ABC):
+    def __init__(self, c_name: str = "", m_name: str = "", path: str = ""):
+        self.c_name: str = c_name
+        self.m_name: str = m_name
+        self.path: str = path
+
+
+class TypeBase(TypeObject):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def scalar(self) -> bool:
+        return isinstance(self, Scalar)
+
+
+class Scalar(TypeBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class Structure(TypeBase):
+    def __init__(self, *args, **kwargs):
+        # TODO
+        super().__init__(*args, **kwargs)
 
 
 class GeneratedCode(object):
@@ -658,6 +728,38 @@ class GeneratedCode(object):
                     + f" ({self._mapping_path.name}) for job {self._job_name}"
                 )
 
+    def _get_links(self) -> dict:
+        _rtn = {}
+        for m in self._mapping.get("mapping", []):
+            role = m.get("role", None)
+            key = (m["code_id"], role) if role else m["code_id"]
+            _rtn[key] = m["model_id"]
+        return _rtn
+
+    @staticmethod
+    def _capitalize_string(inp: str) -> str:
+        # Capitalize the first character of string
+        if "_" in inp:
+            return "".join([_elm.title() for _elm in inp.split("_")])
+        else:
+            return inp.title()
+
+    def _get_links(self) -> dict:
+        _rtn = {}
+        for m in self._mapping.get("mapping", []):
+            role = m.get("role", None)
+            key = (m["code_id"], role) if role else m["code_id"]
+            _rtn[key] = m["model_id"]
+        return _rtn
+
+    @staticmethod
+    def _capitalize_string(inp: str) -> str:
+        # Capitalize the first character of string
+        if "_" in inp:
+            return "".join([_elm.title() for _elm in inp.split("_")])
+        else:
+            return inp.title()
+
     @property
     def job_path(self) -> Path:
         # Returns job path.
@@ -717,7 +819,9 @@ class GeneratedCode(object):
         category = ctype.get("category", "")
         content = ctype.get("content", {})
         if category == "array":
-            type_elem = self.decompose_code_type(self.get_code_elem(content.get("base_type", -1)))
+            type_elem = self.decompose_code_type(
+                self.get_code_elem(content.get("base_type", -1))
+            )
             type_content = {"base_type": type_elem, "size": content.get("size", 0)}
         elif category == "struct":
             type_content = []
@@ -754,7 +858,11 @@ class GeneratedCode(object):
         else:
             type_content = content
 
-        return {"name": content.get("name", ""), "category": category, "elements": type_content}
+        return {
+            "name": content.get("name", ""),
+            "category": category,
+            "elements": type_content,
+        }
 
     def get_code_elem(self, code_id: int) -> dict:
         """
@@ -809,6 +917,27 @@ class GeneratedCode(object):
                     return sub
         return {}
 
+    def get_field_value(self, dta: dict, field: str) -> Union[str, List[str]]:
+        """
+        Get value(s) of the field from a dict with its given name
+
+        Parameters
+        ----------
+        dta : dict
+            The input data
+        field : str
+            Name of field
+
+        Returns
+        -------
+        Union[str, List[str]]
+            Return value(s) of the field
+        """
+        if field in dta["content"]:
+            return dta["content"][field]
+        else:
+            return ""
+
     def get_code_id(self, model_id: int, role: str = "", silent: bool = False) -> int:
         """
         Returns the code identifier associated to a given model identifier for a given *role*.
@@ -850,6 +979,234 @@ class GeneratedCode(object):
         """
         return (y for y in self.mapping["model"] if filter == "" or filter == y[0])
 
+    def get_model_id_mapping(self) -> dict:
+        """
+        Get model mapping
+
+        Returns
+        -------
+        dict
+            Return a dict with key is ID and values are a tuple of data type and parameters
+        """
+        _mapping = {}
+        for _dcl in self._mapping["model"]:
+            _cls, _params = _dcl
+            _cvt = GeneratedCode._capitalize_string(_cls)
+            if _cvt in ModelKeyword.__members__:
+                _key = ModelKeyword[_cvt]
+                if _key == ModelKeyword.Enum:
+                    _mapping[_params["id"]] = [_key, _params]
+                    for v in _params.get("values", []):
+                        _mapping[v["id"]] = [
+                            ModelKeyword.to_str(ModelKeyword.EnumValue),
+                            v,
+                        ]
+                elif _key == ModelKeyword.Struct:
+                    _mapping[_params["id"]] = [_key, _params]
+                    for f in _params.get("fields", []):
+                        _mapping[f["id"]] = [ModelKeyword.to_str(ModelKeyword.Field), f]
+                elif _key == ModelKeyword.Operator:
+                    _mapping[_params["id"]] = [_key, _params]
+                    for io in _params.get("inputs", []):
+                        _mapping[io["id"]] = [
+                            ModelKeyword.to_str(ModelKeyword.Inputs),
+                            io,
+                        ]
+                    for io in _params.get("outputs", []):
+                        _mapping[io["id"]] = [
+                            ModelKeyword.to_str(ModelKeyword.Outputs),
+                            io,
+                        ]
+                else:
+                    _mapping[_params["id"]] = [_key, _params]
+        return _mapping
+
+    def get_method_data(self, id_model: int, method_name: str) -> dict:
+        """
+        Get data of a method with its name given
+
+        Parameters
+        ----------
+        id_model : int
+            ID of model
+        method_name : str
+            Name of model
+
+        Returns
+        -------
+        dict
+            Return a dict of method data
+        """
+        _rtn = {}
+        _id_method = self.get_code_id(id_model, method_name, True)
+
+        if _id_method != -1:
+            _rtn = self.get_code_elem(_id_method)
+        return _rtn
+
+    def get_operator_name(self, id_model: int) -> str:
+        """
+        Get an operator name
+
+        Parameters
+        ----------
+        id_model : int
+            ID of model
+
+        Returns
+        -------
+        str
+            Name of operator if it's found in the model
+        """
+        _rtn = ""
+        if self.get_code_elem(id_model):
+            _rtn = self.get_code_elem(id_model)["content"]["name"]
+        return _rtn
+
+    def get_role_type(self, id_model: int, id_code: int) -> str:
+        """
+        Get the role of a type with its ID given
+
+        Parameters
+        ----------
+        id_model : int
+            ID of model
+        id_code : int
+            ID of type given
+
+        Returns
+        -------
+        str
+            Returns a role name
+        """
+        _rtn = ""
+        for _elm in self.mapping["mapping"]:
+            if _elm["model_id"] == id_model and _elm["code_id"] == id_code:
+                if "role" in _elm:
+                    _rtn = _elm["role"]
+                break
+        return _rtn
+
+    def get_function_ios(self, id_model: int, role: str) -> tuple[List[str], str]:
+        """
+        Get inputs/outputs of a function
+
+        Parameters
+        ----------
+        id_model : int
+            ID of model
+
+        Returns
+        -------
+        tuple[List[str], List[str]]
+            Return a tuple including list of inputs and list of outputs
+        """
+        _in = []
+        _ctx = ""
+        for _elm in self.get_code_elem(id_model)["content"]["parameters"]:
+            _rol = self.get_role_type(id_model, _elm["type"])
+            if _rol and _rol == role:
+                _ctx = _elm["name"]
+            else:
+                _in.append(_elm["name"])
+        return _in, _ctx
+
+    def get_type(self, dat: List, id_type: int) -> TypeBase:
+        """
+        Get type data with its ID given
+
+        Parameters
+        ----------
+        dat : List
+            A list of data
+        id_type : int
+            Type data ID
+
+        Returns
+        -------
+        TypeBase
+            An instance of TypeBase
+        """
+        _rtn = None
+        c_ek, c_atts = dat
+        _mapping = self.get_model_id_mapping()
+        _link = self._get_links()
+        m_type_decl = _mapping.get(id_type)
+        if not m_type_decl:
+            m_type_decl = _mapping.get(_link.get(id_type))
+        if c_ek == "predefined_type":
+            _cvt = "PredefinedType"
+        elif c_ek == "enum_value":
+            _cvt = "EnumValue"
+        else:
+            _cvt = GeneratedCode._capitalize_string(c_ek)
+        _key = ModelKeyword[_cvt] if _cvt in ModelKeyword.__members__ else _cvt
+        assert not m_type_decl or m_type_decl[0] == _key
+        m_atts = m_type_decl[1] if m_type_decl else {}
+
+        if _key == ModelKeyword.PredefinedType:
+            _rtn = Scalar(
+                ModelKeyword.to_str(_key), m_atts.get("name", ""), c_atts["name"]
+            )
+        elif _key == ModelKeyword.Enum:
+            _rtn = Scalar(
+                m_name=m_atts.get("name", "int32"),
+                c_name="swan_int32",
+                path=m_atts.get("path"),
+            )
+        else:
+            # TODO: support others
+            LOGGER.error(f"{ModelKeyword.to_str(_key)} not yet supported")
+        return _rtn
+
+    def get_type_id_mapping(self) -> dict:
+        """
+        Get type mapping
+
+        Returns
+        -------
+        dict
+            Return a dict with key is ID and values are a tuple of data type and parameters
+        """
+        _mapping = {}
+        for file in self._mapping["code"]:
+            for decl in file["declarations"]:
+                _cls, atts = decl
+                _cvt = GeneratedCode._capitalize_string(_cls)
+                if _cvt in ModelKeyword.__members__:
+                    _key = ModelKeyword[_cvt]
+                    if _key in {
+                        ModelKeyword.PredefinedType,
+                        ModelKeyword.Array,
+                        ModelKeyword.Enum,
+                        ModelKeyword.Struct,
+                        ModelKeyword.Global,
+                    }:
+                        _mapping[atts["id"]] = [ModelKeyword.to_str(_key), atts]
+        return _mapping
+
+    def get_interface_file(self, id_model: int) -> dict:
+        """
+        Returns (as a dictionary) the interface file data corresponding to given model identifier.
+
+        Parameters
+        ----------
+        id_model : int
+            ID of model
+
+        Returns
+        -------
+        dict
+            Returns the interface file data
+        """
+        _rtn = {}
+        for _elm in self.code:
+            for _dct in _elm.get("declarations", []):
+                if _dct[1]["id"] == id_model:
+                    _rtn = _elm
+                    break
+        return _rtn
+
     @functools.cache
     def get_model_monomorphic_instance(self, name: str) -> ModelMonomorphicInstance:
         """Returns the *ModelMonomorphicInstance* object corresponding
@@ -860,7 +1217,9 @@ class GeneratedCode(object):
             )
             return ModelMonomorphicInstance(self, op_elem)
         except StopIteration:
-            raise ScadeOneException(f"Generated code: no monomorphic instance named {name}")
+            raise ScadeOneException(
+                f"Generated code: no monomorphic instance named {name}"
+            )
 
     @functools.cache
     def get_model_monomorphic_instances(self) -> List[ModelMonomorphicInstance]:

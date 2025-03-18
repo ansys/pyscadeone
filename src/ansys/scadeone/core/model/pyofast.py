@@ -37,6 +37,7 @@ from ANSYS.SONE.Infrastructure.Services.Serialization.BNF.Parsing import Ast, Ra
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.storage import SwanString
 import ansys.scadeone.core.swan as S
+from ansys.scadeone.core.swan.pragmas import PragmaParser
 
 from .parser import Parser
 
@@ -261,7 +262,6 @@ def renamingOfAst(ast):
         is_shortcut = ast.Item2
         if renaming := getValueOf(ast.Item3):
             renaming = identifierOfAst(renaming)
-            is_shortcut = index.value == renaming.value
         return S.GroupRenaming(index, renaming, is_shortcut)
 
     if ast.IsRenamingRaw:  # of SourcePosition.t
@@ -314,7 +314,7 @@ def forwardDimOfAst(ast):
         return S.ForwardDim(expr, id, elems)
 
     # FRaw of Raw.t
-    data = getProtectedString(ast.Item1)
+    data = getProtectedString(ast.Item)
     return S.ForwardDim(protected=data)
 
 
@@ -506,7 +506,7 @@ def operatorPrefixOfAst(ast, sizes, pragmas):
         # Transpose
         index = prefix.Item
         if index.IsTSList:
-            params = [int(index) for index in index.Item1]
+            params = [index for index in index.Item1]
         else:
             params = getProtectedString(index.Item)
         return S.Transpose(params, sizes)
@@ -519,6 +519,7 @@ def operatorPrefixOfAst(ast, sizes, pragmas):
             origin = Parser.get_source().name
             swan = SwanString(f"{source}", origin)
             op_block = Parser.get_current_parser().operator_block(swan)
+            op_block.is_text = True
             return op_block
 
         if markup == "op_expr":
@@ -526,6 +527,7 @@ def operatorPrefixOfAst(ast, sizes, pragmas):
             origin = Parser.get_source().name
             swan = SwanString(f"{source}", origin)
             op_expr = Parser.get_current_parser().op_expr(swan)
+            op_expr.is_op_expr = True
             return S.PrefixOperatorExpression(op_expr, sizes)
 
         return S.ProtectedOpExpr(source, markup)
@@ -571,7 +573,9 @@ def expressionOfAst(ast):
 
     elif ast.IsEBinaryOp:  #  of BinaryOp * ExprOrRaw * ExprOrRaw
         return S.BinaryExpr(
-            binaryOpOfAst(ast.Item1), exprOrRawOfAst(ast.Item2), exprOrRawOfAst(ast.Item3)
+            binaryOpOfAst(ast.Item1),
+            exprOrRawOfAst(ast.Item2),
+            exprOrRawOfAst(ast.Item3),
         )
 
     elif ast.IsEWhenClock:  #  of ExprOrRaw * ClockExpr
@@ -883,7 +887,7 @@ def constraintOfAst(ast) -> S.TypeConstraint:
 
 
 def isProbePragma(p: S.Pragma):
-    d = p.extract()
+    d = PragmaParser.extract(p.pragma)
     return d == ("cg", "probe")
 
 
@@ -923,17 +927,35 @@ def signatureElementsOfAst(ast):
     if specialization := getValueOf(ast.OpSpecialization):
         specialization = pathIdentifierOrRawOfAst(specialization)
     pragmas = getPragmas(ast.OpPragmas)
-    return (inline, kind, name, inputs, outputs, sizes, constraints, specialization, pragmas)
+    return (
+        inline,
+        kind,
+        name,
+        inputs,
+        outputs,
+        sizes,
+        constraints,
+        specialization,
+        pragmas,
+    )
 
 
 def signatureOfAst(ast):
-    (inline, kind, name, inputs, outputs, sizes, constraints, specialization, pragmas) = (
-        signatureElementsOfAst(ast)
-    )
+    (
+        inline,
+        kind,
+        name,
+        inputs,
+        outputs,
+        sizes,
+        constraints,
+        specialization,
+        pragmas,
+    ) = signatureElementsOfAst(ast)
 
     return S.Signature(
         id=name,
-        has_inline=inline,
+        is_inlined=inline,
         is_node=kind,
         inputs=inputs,
         outputs=outputs,
@@ -1133,7 +1155,11 @@ def arrowSpecOfAst(ast):
     # For Fork with priority: priority if guarded_arrow | priority else arrow
     is_if = ast.AIf
 
-    return {"arrow": S.Arrow(guard, action, arrow_target, arrow_fork), "is_if": is_if, "prio": prio}
+    return {
+        "arrow": S.Arrow(guard, action, arrow_target, arrow_fork),
+        "is_if": is_if,
+        "prio": prio,
+    }
 
 
 def forkWithPrioFromAst(ast):
@@ -1210,7 +1236,7 @@ def diagramObjectOfAst(ast):
         section = scopeSectionOfAst(description.Item)
         return S.SectionBlock(section, locals, pragmas)
 
-    # TODO BSensorLhs, BSensorLhs
+    # TODO test BSensorLhs, ...
 
 
 def connectionOfAst(ast):
@@ -1310,9 +1336,17 @@ def scopeOfAst(ast):
 
 
 def operatorOfAst(ast):
-    (inline, kind, name, inputs, outputs, sizes, constraints, specialization, pragmas) = (
-        signatureElementsOfAst(ast)
-    )
+    (
+        inline,
+        kind,
+        name,
+        inputs,
+        outputs,
+        sizes,
+        constraints,
+        specialization,
+        pragmas,
+    ) = signatureElementsOfAst(ast)
 
     def delayed_body(owner: S.SwanItem):
         if body := scopeOfAst(ast.OpBody):
@@ -1322,7 +1356,7 @@ def operatorOfAst(ast):
 
     return S.Operator(
         id=name,
-        has_inline=inline,
+        is_inlined=inline,
         is_node=kind,
         inputs=inputs,
         outputs=outputs,
@@ -1345,7 +1379,7 @@ def harnessOfAst(ast):
 
     pragmas = getPragmas(ast.HPragmas)
     return S.TestHarness(
-        id=name,
+        id=name,  # path_id
         body=delayed_body,
         pragmas=pragmas,
     )
@@ -1384,24 +1418,12 @@ def declarationOfAst(ast):
     if ast.IsDOperator:
         return operatorOfAst(ast.Item)
 
-    if ast.IsDRaw:
-        markup = getMarkup(ast.Item)
-        content = getProtectedString(ast.Item)
-        if markup == "text":
-            origin = Parser.get_source().name
-            swan = SwanString(f"{content}", origin)
-            op = Parser.get_current_parser().operator(swan)
-            op.is_text = True
-            return op
-        # other protected: const, type, group, sensor
-        return S.ProtectedDecl(markup, content)
+    if ast.IsDSignature:
+        return signatureOfAst(ast.Item)
 
     if ast.IsDSensor:
         decls = [sensorDecl(item) for item in ast.Item1]
         return S.SensorDeclarations(decls)
-
-    if ast.IsDSignature:
-        return signatureOfAst(ast.Item)
 
     if ast.IsDType:
         decls = [typeDecl(item) for item in ast.Item1]
@@ -1409,6 +1431,27 @@ def declarationOfAst(ast):
 
     if ast.IsDUse:
         return useDecl(ast.Item1)
+
+    if ast.IsDRaw:
+        markup = getMarkup(ast.Item)
+        content = getProtectedString(ast.Item)
+        if markup in ("text", "signature"):
+            # - text denotes a *textual* operator declaration
+            # (full operator or interface) in a module body.
+            # It must be syntactically correct (else syntax_text apply)
+            # - signature denotes a *textual* signature declaration in an interface:
+            # It can either syntactically correct or not
+            origin = Parser.get_source().name
+            swan = SwanString(content, origin)
+            if decl := Parser.get_current_parser().operator_decl(swan):
+                decl.is_text = True
+                return decl
+            if markup == "text":
+                raise ScadeOneException(f"invalid text operator declaration: {content}")
+            # syntactically incorrect signature, default behavior
+
+        # other protected: const, type, group, sensor, signature
+        return S.ProtectedDecl(markup, content)
 
     if ast.IsDTestHarness:
         return harnessOfAst(ast.Item)

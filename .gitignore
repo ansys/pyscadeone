@@ -176,6 +176,7 @@ pyscadeone.log
 TODOes.md
 
 bugs/
+features/
 assets/style.css
 doc/source/getting_started/versions.rst
 plantuml.jar
@@ -192,7 +193,15 @@ get_libs_out/
 
 # Generated simulation data files
 imported_simdata/
+
 # Scade importers logs
 !renamings.log
 !pragmas.log
 !scade_import.log
+
+# System build
+tests/out/
+
+# Executed job tests from Example
+examples/models/CC/CruiseControl/jobs/codegen_4fd9ebc/cg_log.json
+examples/models/CC/CruiseControl/jobs/codegen_4fd9ebc/config.json

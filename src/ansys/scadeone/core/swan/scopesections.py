@@ -54,10 +54,6 @@ class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
         """List of equation in **let**."""
         return self._equations
 
-    def __str__(self) -> str:
-        content = self.to_str("let", self.equations, end="")
-        return common.Markup.to_str(content, self.is_text, common.Markup.Text)
-
 
 class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements:
@@ -73,9 +69,6 @@ class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def var_decls(self) -> List[VarDecl]:
         """Declared variables."""
         return self._var_decls
-
-    def __str__(self) -> str:
-        return self.to_str("var", self.var_decls)
 
 
 class EmissionBody(common.SwanItem):  # numpydoc ignore=PR01
@@ -111,12 +104,6 @@ class EmissionBody(common.SwanItem):  # numpydoc ignore=PR01
         """Emission identifier if exists, else None."""
         return self._luid
 
-    def __str__(self) -> str:
-        emission = ", ".join([str(flow) for flow in self.flows])
-        if self.condition:
-            emission += f" if {self.condition}"
-        return emission
-
 
 class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements an Emit section:
@@ -132,9 +119,6 @@ class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def emissions(self) -> List[EmissionBody]:
         """List of emissions."""
         return self._emissions
-
-    def __str__(self) -> str:
-        return self.to_str("emit", self.emissions)
 
 
 class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
@@ -155,9 +139,6 @@ class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
         """Property expression."""
         return self._expr
 
-    def __str__(self) -> str:
-        return f"{self.luid}: {self.expr}"
-
 
 class AssertSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Assert section:
@@ -173,9 +154,6 @@ class AssertSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def assertions(self) -> List[FormalProperty]:
         """Hypotheses of Assert."""
         return self._assertions
-
-    def __str__(self) -> str:
-        return self.to_str("assert", self.assertions)
 
 
 class AssumeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
@@ -193,9 +171,6 @@ class AssumeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
         """Hypotheses of Assume."""
         return self._hypotheses
 
-    def __str__(self) -> str:
-        return self.to_str("assume", self.hypotheses)
-
 
 class GuaranteeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     """Implements Guarantee section:
@@ -212,14 +187,12 @@ class GuaranteeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
         """Guarantees of Guarantee."""
         return self._guarantees
 
-    def __str__(self) -> str:
-        return self.to_str("guarantee", self.guarantees)
-
 
 class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected section, meaning a syntactically incorrect section construct."""
 
     def __init__(self, data: str) -> None:
+        scopes.ScopeSection.__init__(self)
         common.ProtectedItem.__init__(self, data)
 
 

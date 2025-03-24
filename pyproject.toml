@@ -41,7 +41,7 @@ dependencies = [
     "Jinja2==3.1.4",
     "jsonschema==4.23.0",
     "platformdirs==4.3.2",
-    "pyparsing==3.1.4",
+    "pyparsing==3.2.2",
     "pythonnet==3.0.4",
     "typing_extensions==4.12.2",
 ]

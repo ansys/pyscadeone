@@ -68,7 +68,7 @@ jobs:
     needs: [doc-style]
     runs-on: [windows-latest]
     steps:
-      - uses: ansys/actions/doc-build@main
+      - uses: ansys/actions/doc-build@chore/update-pytest-inputs
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           sphinxopts: -j auto -W

@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@v8
+        uses: ansys/actions/check-pr-title@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,7 +51,7 @@ jobs:
     name: Code style
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@v8
+      - uses: ansys/actions/code-style@main
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -59,7 +59,7 @@ jobs:
     name: Doc style
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@v8
+      - uses: ansys/actions/doc-style@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -68,7 +68,7 @@ jobs:
     needs: [doc-style]
     runs-on: [windows-latest]
     steps:
-      - uses: ansys/actions/doc-build@v8
+      - uses: ansys/actions/doc-build@main
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           sphinxopts: -j auto -W
@@ -79,7 +79,7 @@ jobs:
     needs: code-style
     runs-on: [ubuntu-latest]
     steps:
-      - uses: ansys/actions/tests-pytest@v8
+      - uses: ansys/actions/tests-pytest@main
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-postargs: 'tests/test_smoke.py'
@@ -91,7 +91,7 @@ jobs:
     runs-on: [ubuntu-latest]
 
     steps:
-      - uses: ansys/actions/build-library@v8
+      - uses: ansys/actions/build-library@main
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}

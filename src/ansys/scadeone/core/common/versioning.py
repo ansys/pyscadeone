@@ -40,7 +40,7 @@ class VersionManager:
 
     VersionRE = re.compile(r"(?P<M>\d+)\.(?P<m>\d+)")
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._format_versions = {}
         self._formats = None
 
@@ -83,7 +83,7 @@ class VersionManager:
         except Exception as e:
             raise ScadeOneException(f"Unable to load versions: {e}")
         if not isinstance(self._format_versions, dict):
-            raise ScadeOneException(f"{version_file}: invalid versions file versions.json")
+            raise ScadeOneException(f"Invalid versions file: {version_file}")
         for k, v in self._format_versions.items():
             if not (isinstance(v, dict) and "version" in v and "description" in v):
                 raise ScadeOneException(f"{version_file}: Invalid version for {k}")
@@ -159,3 +159,24 @@ class VersionManager:
 
 FormatVersions = VersionManager()
 FormatVersions.load_versions(VersionFile)
+
+
+def gen_swan_version(is_harness=False):
+    """Generate the version for a Swan file.
+
+    Parameters
+    ----------
+    is_harness : bool
+        True if the harness version is needed
+
+    Returns
+    -------
+    str
+        Version
+    """
+    version = "-- version"
+    version += f" swan: {FormatVersions.version('swan')}"
+    version += f" graph: {FormatVersions.version('graph')}"
+    if is_harness:
+        version += f" swant: {FormatVersions.version('swant')}"
+    return version

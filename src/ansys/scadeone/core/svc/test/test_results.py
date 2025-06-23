@@ -136,8 +136,6 @@ class TestResultsParser(BaseTestResults):
             return TestStatus.Failed
         elif status == "error":
             return TestStatus.Error
-        else:
-            return None
 
     @staticmethod
     def _create_test_items(test_case) -> List["TestItem"]:
@@ -160,8 +158,6 @@ class TestResultsParser(BaseTestResults):
             return TestItemKind.Assert
         elif kind == "oracle":
             return TestItemKind.Oracle
-        else:
-            return None
 
     @staticmethod
     def _create_failures(test_item) -> List["Failure"]:
@@ -186,7 +182,7 @@ class TestResultsParser(BaseTestResults):
 class TestResults(BaseTestResults):
     """Test results object."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._version = None
         self._test_cases = []
 
@@ -215,7 +211,7 @@ class TestResults(BaseTestResults):
 class TestCase(BaseTestResults):
     """Test case object."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._harness = None
         self._start = None
         self._end = None
@@ -268,7 +264,7 @@ class TestStatus(BaseTestResults, Enum):
 class TestItem(BaseTestResults):
     """Test item object."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._kind = None
         self._model_path = None
         self._passed_count = None
@@ -307,7 +303,7 @@ class TestItemKind(BaseTestResults, Enum):
 class Failure:
     """Failure object."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._cycle = None
         self._actual = None
         self._expected = None

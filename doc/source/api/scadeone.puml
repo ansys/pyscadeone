@@ -1,6 +1,7 @@
 @startuml
 ScadeOne *-- "*" Project
+ScadeOne *-- Model
 
 Project *-- "*" Project: dependencies
-Project *-- Model
+Project --> Model: owner
 @enduml

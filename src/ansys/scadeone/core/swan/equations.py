@@ -55,9 +55,6 @@ class LHSItem(common.SwanItem):  # numpydoc ignore=PR01
         """True when LHSItem is '_'."""
         return self._id is None
 
-    def __str__(self) -> str:
-        return str(self.id) if self.id else "_"
-
 
 class EquationLHS(common.SwanItem):  # numpydoc ignore=PR01
     """Equation left-hand side part:
@@ -81,15 +78,6 @@ class EquationLHS(common.SwanItem):  # numpydoc ignore=PR01
         """Return left-hand side list."""
         return self._lhs_items
 
-    def __str__(self) -> str:
-        if len(self.lhs_items):
-            items = ", ".join([str(item) for item in self.lhs_items])
-            if self.is_partial_lhs:
-                items += ", .."
-        else:
-            items = "()"
-        return items
-
 
 class ExprEquation(common.Equation):  # numpydoc ignore=PR01
     """Flows definition using an expression:
@@ -97,7 +85,10 @@ class ExprEquation(common.Equation):  # numpydoc ignore=PR01
     *equation* ::= *lhs* [luid] = *expr*"""
 
     def __init__(
-        self, lhs: EquationLHS, expr: common.Expression, luid: Optional[common.Luid] = None
+        self,
+        lhs: EquationLHS,
+        expr: common.Expression,
+        luid: Optional[common.Luid] = None,
     ) -> None:
         super().__init__()
         self._lhs = lhs
@@ -120,10 +111,6 @@ class ExprEquation(common.Equation):  # numpydoc ignore=PR01
         """Equation LUID."""
         return self._luid
 
-    def __str__(self) -> str:
-        luid = f"{self.luid} " if self.luid else ""
-        return f"{self.lhs} {luid}= {self.expr};"
-
 
 # Definition by cases: state machines and activate if/when
 # ========================================================
@@ -136,7 +123,7 @@ class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
         name: Optional[common.Luid] = None,
         is_equation: bool = False,
     ) -> None:
-        common.Equation().__init__()
+        common.Equation.__init__(self)
         self._lhs = lhs
         self._name = name
         self._is_equation = is_equation
@@ -156,11 +143,6 @@ class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
         """True when the object is an equation."""
         return self._is_equation
 
-    def lhs_str(self) -> str:
-        if self.lhs:
-            return f"{self.lhs} : "
-        return ""
-
 
 # State Machines
 # ============================================================
@@ -170,7 +152,7 @@ class StateMachineItem(common.SwanItem, ABC):  # numpydoc ignore=PR01
     """Base class for state machine items (states and transitions)."""
 
     def __init__(self) -> None:
-        common.SwanItem().__init__()
+        common.SwanItem.__init__(self)
 
 
 class StateRef(common.SwanItem):  # numpydoc ignore=PR01
@@ -183,7 +165,9 @@ class StateRef(common.SwanItem):  # numpydoc ignore=PR01
     """
 
     def __init__(
-        self, lunum: Optional[common.Lunum] = None, id: Optional[common.Identifier] = None
+        self,
+        lunum: Optional[common.Lunum] = None,
+        id: Optional[common.Identifier] = None,
     ) -> None:
         super().__init__()
         self._lunum = lunum
@@ -198,11 +182,6 @@ class StateRef(common.SwanItem):  # numpydoc ignore=PR01
     def id(self) -> Union[common.Identifier, None]:
         """Id part, possible None."""
         return self._id
-
-    def __str__(self) -> str:
-        if self.lunum:
-            return str(self.lunum)
-        return str(self.id)
 
 
 class Fork(common.SwanItem):  # numpydoc ignore=PR01
@@ -234,10 +213,6 @@ class Target(common.SwanItem):  # numpydoc ignore=PR01
     def target(self) -> StateRef:
         """Target reference"""
         return self._target
-
-    def __str__(self):
-        kind = "restart" if self.is_restart else "resume"
-        return f"{kind} {self.target}"
 
 
 class Arrow(common.SwanItem):  # numpydoc ignore=PR01
@@ -281,21 +256,9 @@ class Arrow(common.SwanItem):  # numpydoc ignore=PR01
         return self._fork
 
     @property
-    def is_valid(self):
+    def is_valid(self) -> bool:
         "Check whether the arrow has a target or a fork."
         return bool(self.target) != bool(self.fork)
-
-    def __str__(self):
-        arrow = []
-        if self.guard:
-            arrow.append(f"({self.guard})")
-        if self.action:
-            arrow.append(f"{self.action}")
-        if self.target:
-            arrow.append(str(self.target))
-        else:
-            arrow.append(str(self.fork))
-        return " ".join(arrow)
 
 
 class ForkTree(Fork):  # numpydoc ignore=PR01
@@ -312,7 +275,7 @@ class ForkTree(Fork):  # numpydoc ignore=PR01
         if_arrow: Arrow,
         elsif_arrows: Optional[List[Arrow]] = None,
         else_arrow: Optional[Arrow] = None,
-    ):
+    ) -> None:
         super().__init__()
         self._if_arrow = if_arrow
         self._elsif_arrows = elsif_arrows if elsif_arrows else []
@@ -332,15 +295,6 @@ class ForkTree(Fork):  # numpydoc ignore=PR01
     def else_arrow(self) -> Union[Arrow, None]:
         """Else arrow."""
         return self._else_arrow
-
-    def __str__(self) -> str:
-        fork = f"if {self.if_arrow}"
-        if self.elsif_arrows:
-            elsif = "\n".join(f"elsif {arrow}" for arrow in self.elsif_arrows)
-            fork += f"\n{elsif}"
-        if self.else_arrow:
-            fork += f"\nelse {self.else_arrow}"
-        return f"{fork} end"
 
 
 class ForkWithPriority(common.SwanItem):  # numpydoc ignore=PR01
@@ -381,11 +335,6 @@ class ForkWithPriority(common.SwanItem):  # numpydoc ignore=PR01
             return self.arrow.guard is not None
         return self.arrow.guard is None
 
-    def __str__(self) -> str:
-        kind = "if" if self.is_if_arrow else "else"
-        priority = str(self.priority) if self.priority else " "
-        return f":{priority}: {kind} {self.arrow}"
-
 
 class ForkPriorityList(Fork):  # numpydoc ignore=PR01
     """List of :py:class:`ForkWithPriority`.
@@ -401,10 +350,6 @@ class ForkPriorityList(Fork):  # numpydoc ignore=PR01
     def prio_forks(self) -> List[ForkWithPriority]:
         """List of fork with priority."""
         return self._prio_forks
-
-    def __str__(self) -> str:
-        forks = "\n".join([str(fork) for fork in self.prio_forks])
-        return f"{forks} end" if forks else "end"
 
 
 class Transition(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
@@ -429,14 +374,6 @@ class Transition(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
     def is_guarded(self) -> bool:
         """True when arrow is guarded."""
         return self.arrow.guard is not None
-
-    def __str__(self) -> str:
-        pragmas = self.pragma_str()
-        if pragmas:
-            pragmas = " " + pragmas
-        if self.is_guarded:
-            return f"if {self.arrow}{pragmas};"
-        return f"{self.arrow}{pragmas};"
 
 
 class TransitionDecl(StateMachineItem):  # numpydoc ignore=PR01
@@ -480,12 +417,6 @@ class TransitionDecl(StateMachineItem):  # numpydoc ignore=PR01
     @property
     def state_ref(self) -> StateRef:
         return self._state_ref
-
-    def __str__(self) -> str:
-        ref = self.state_ref
-        kind = "unless" if self.is_strong else "until"
-        priority = str(self.priority) if self.priority else " "
-        return f":{priority}: {ref} {kind} {self.transition}"
 
 
 class State(StateMachineItem, common.PragmaBase):  # numpydoc ignore=PR01
@@ -552,30 +483,6 @@ class State(StateMachineItem, common.PragmaBase):  # numpydoc ignore=PR01
     def is_initial(self) -> Optional[bool]:
         return self._is_initial
 
-    def __str__(self) -> str:
-        decl = "initial state" if self.is_initial else "state"
-        if self.lunum:
-            decl += f" {self.lunum}"
-        if self.id:
-            decl += f" {self.id}"
-        decl += self.pragma_str()
-        decl += ":"
-
-        def str_of_transition(transitions, keyword):
-            if transitions:
-                text = "\n".join([str(transition) for transition in transitions])
-                return f"\n{keyword}\n{text}"
-            return ""
-
-        strong = str_of_transition(self.strong_transitions, "unless")
-        weak = str_of_transition(self.weak_transitions, "until")
-        if self.sections:
-            body = "\n" + "\n".join([str(section) for section in self.sections])
-        else:
-            body = ""
-        state = f"{decl}{strong}{body}{weak}"
-        return state
-
 
 class StateMachine(DefByCase):  # numpydoc ignore=PR01
     """State machine definition."""
@@ -595,17 +502,6 @@ class StateMachine(DefByCase):  # numpydoc ignore=PR01
     def items(self) -> List[StateMachineItem]:
         """Transitions and states of the state machine."""
         return self._items
-
-    def __str__(self) -> str:
-        name = f" {self.name}" if self.name else ""
-        lhs = self.lhs_str()
-        automaton = f"{lhs}automaton{name}"
-        if self.items:
-            items = "\n".join([str(item) for item in self.items])
-            automaton += "\n" + items
-        if self.is_equation:
-            automaton += ";"
-        return automaton
 
 
 #
@@ -643,6 +539,7 @@ class IfActivationBranch(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._condition = condition
         self._branch = branch
+        common.SwanItem.set_owner(self, branch)
 
     @property
     def condition(self) -> Union[common.Expression, None]:
@@ -653,13 +550,6 @@ class IfActivationBranch(common.SwanItem):  # numpydoc ignore=PR01
     def branch(self) -> IfteBranch:
         """Branch activation branch."""
         return self._branch
-
-    def to_str(self, index: int) -> str:
-        if index == 0:
-            return f"if {self.condition} then {self.branch}"
-        if self.condition:
-            return f"elsif {self.condition} then {self.branch}"
-        return f"else {self.branch}"
 
 
 class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
@@ -674,6 +564,7 @@ class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, branches: List[IfActivationBranch]) -> None:
         super().__init__()
         self._branches = branches
+        common.SwanItem.set_owner(self, branches)
 
     @property
     def branches(self) -> List[IfActivationBranch]:
@@ -697,10 +588,6 @@ class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
                 return False
         return True
 
-    def __str__(self) -> str:
-        branches = [branch.to_str(index) for (index, branch) in enumerate(self.branches)]
-        return "\n".join(branches)
-
 
 class IfteDataDef(IfteBranch):  # numpydoc ignore=PR01
     """
@@ -712,13 +599,11 @@ class IfteDataDef(IfteBranch):  # numpydoc ignore=PR01
     def __init__(self, data_def: Union[common.Equation, scopes.Scope]) -> None:
         super().__init__()
         self._data_def = data_def
+        common.SwanItem.set_owner(self, data_def)
 
     @property
     def data_def(self) -> Union[common.Equation, scopes.Scope]:
         return self._data_def
-
-    def __str__(self) -> str:
-        return str(self.data_def)
 
 
 class IfteIfActivation(IfteBranch):  # numpydoc ignore=PR01
@@ -731,14 +616,12 @@ class IfteIfActivation(IfteBranch):  # numpydoc ignore=PR01
     def __init__(self, if_activation: IfActivation) -> None:
         super().__init__()
         self._if_activation = if_activation
+        common.SwanItem.set_owner(self, if_activation)
 
     @property
     def if_activation(self) -> IfActivation:
         """If activation."""
         return self._if_activation
-
-    def __str__(self) -> str:
-        return str(self.if_activation)
 
 
 class ActivateIf(DefByCase):  # numpydoc ignore=PR01
@@ -760,20 +643,12 @@ class ActivateIf(DefByCase):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lhs, name, is_equation)
         self._if_activation = if_activation
-        if_activation.owner = self
+        common.SwanItem.set_owner(self, if_activation)
 
     @property
     def if_activation(self) -> IfActivation:
         """Activation branch of **activate**."""
         return self._if_activation
-
-    def __str__(self) -> str:
-        luid = f" {self.name}" if self.name else ""
-        lhs = self.lhs_str()
-        activate = f"{lhs}activate{luid}\n{self.if_activation}"
-        if self.is_equation:
-            activate += ";"
-        return activate
 
 
 # Activate When
@@ -801,9 +676,6 @@ class ActivateWhenBranch(common.SwanItem):  # numpydoc ignore=PR01
         """Branch data definition."""
         return self._data_def
 
-    def __str__(self) -> str:
-        return f"| {self.pattern} : {self.data_def}"
-
 
 class ActivateWhen(DefByCase):  # numpydoc ignore=PR01
     """Activate when operator definition.
@@ -827,7 +699,7 @@ class ActivateWhen(DefByCase):  # numpydoc ignore=PR01
         super().__init__(lhs, name, is_equation)
         self._condition = condition
         self._branches = branches
-        condition.owner = self
+        common.SwanItem.set_owner(self, condition)
         common.SwanItem.set_owner(self, branches)
 
     @property
@@ -844,12 +716,3 @@ class ActivateWhen(DefByCase):  # numpydoc ignore=PR01
     def branches(self) -> List[ActivateWhenBranch]:
         """Activate when branches."""
         return self._branches
-
-    def __str__(self) -> str:
-        luid = f" {self.name}" if self.name else ""
-        lhs = self.lhs_str()
-        branches = "\n".join([str(branch) for branch in self.branches])
-        activate = f"{lhs}activate{luid} when {self.condition} match\n{branches}"
-        if self.is_equation:
-            activate += ";"
-        return activate

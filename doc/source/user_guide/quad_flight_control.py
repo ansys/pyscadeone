@@ -52,4 +52,4 @@ print(type_list[1].get_full_path())  # => "QuadFlightControl::EngineHealth"
 
 # Stating op_decl is indeed a Swan operator
 operator = cast(swan.Operator, op_decl)
-print(f"first input: {next(operator.inputs).id}")  # => 'attitudeCmd'
+print(f"first input: {operator.inputs[0].id}")  # => 'attitudeCmd'

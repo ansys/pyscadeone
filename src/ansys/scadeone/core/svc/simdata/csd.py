@@ -607,7 +607,7 @@ class File(defs.FileBase):
 
 
 def open_file(file_path: str) -> defs.FileBase:
-    """Open a simdata file
+    """Open a simdata file in read-only mode
 
     Parameters
     ----------
@@ -624,7 +624,7 @@ def open_file(file_path: str) -> defs.FileBase:
     ScadeOneException
         file could not be opened
     """
-    file_id = dll_wrap.sdf_open(file_path)
+    file_id = dll_wrap.sdf_open(file_path, core.FileOpenMode.READ)
     if file_id == core.SD_ID_INVALID:
         raise ScadeOneException('cannot open file "{0}"'.format(file_path))
     return File(file_id)
@@ -648,9 +648,33 @@ def create_file(file_path: str) -> defs.FileBase:
     ScadeOneException
         file could not be created
     """
-    file_id = dll_wrap.sdf_create(file_path)
+    file_id = dll_wrap.sdf_open(file_path, core.FileOpenMode.CREATE)
     if file_id == core.SD_ID_INVALID:
         raise ScadeOneException('cannot create file "{0}"'.format(file_path))
+    return File(file_id)
+
+
+def edit_file(file_path: str) -> defs.FileBase:
+    """Open a simdata file in edit mode
+
+    Parameters
+    ----------
+    file_path : str
+        path of the file
+
+    Returns
+    -------
+    FileBase
+        The opened file
+
+    Raises
+    ------
+    ScadeOneException
+        The file could not be opened
+    """
+    file_id = dll_wrap.sdf_open(file_path, core.FileOpenMode.EDIT)
+    if file_id == core.SD_ID_INVALID:
+        raise ScadeOneException('cannot open file "{0}"'.format(file_path))
     return File(file_id)
 
 

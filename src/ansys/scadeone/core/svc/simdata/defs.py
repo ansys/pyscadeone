@@ -35,7 +35,7 @@ import ansys.scadeone.core.svc.simdata.core as core
 class Type:
     """Represents an abstract data type."""
 
-    def __init__(self, type_id: int, name: str = ""):
+    def __init__(self, type_id: int, name: str = "") -> None:
         self._type_id = type_id
         self._name = name
 
@@ -63,7 +63,7 @@ class PredefinedType(Type):
 
     _instances = {}
 
-    def __init__(self, type_id: int):
+    def __init__(self, type_id: int) -> None:
         try:
             self._kind = PredefinedTypeKind(type_id)
         except:  # noqa: E722
@@ -124,7 +124,7 @@ Float64 = PredefinedType(int(PredefinedTypeKind.FLOAT64))
 class StructTypeField:
     """Structure type's fields"""
 
-    def __init__(self, name: str, offset: int, sd_type: Type):
+    def __init__(self, name: str, offset: int, sd_type: Type) -> None:
         self._name = name
         self._offset = offset
         self._sd_type = sd_type
@@ -145,7 +145,7 @@ class StructTypeField:
 class StructType(Type):
     """Structure type defined with structure type fields"""
 
-    def __init__(self, type_id: int, fields: List[StructTypeField], name: str = ""):
+    def __init__(self, type_id: int, fields: List[StructTypeField], name: str = "") -> None:
         self._fields = fields
         super().__init__(type_id, name)
 
@@ -160,7 +160,7 @@ class StructType(Type):
 class ArrayType(Type):
     """Multidimensional array type"""
 
-    def __init__(self, type_id: int, base_type: Type, dims: List[int], name: str = ""):
+    def __init__(self, type_id: int, base_type: Type, dims: List[int], name: str = "") -> None:
         self._base_type = base_type
         self._dims = dims
         super().__init__(type_id, name)
@@ -174,13 +174,13 @@ class ArrayType(Type):
         return self._dims
 
     def __str__(self) -> str:
-        return str(self.base_type) + "^" + "^".join([str(d) for d in self.dims])
+        return str(self.base_type) + "^" + "^".join([str(d) for d in self.dims[::-1]])
 
 
 class EnumTypeValue:
     """Enumeration type value"""
 
-    def __init__(self, name: str, int_value: int):
+    def __init__(self, name: str, int_value: int) -> None:
         self._name = name
         self._int_value = int_value
 
@@ -198,7 +198,7 @@ class EnumType(Type):
 
     def __init__(
         self, type_id: int, base_type: PredefinedType, values: List[EnumTypeValue], name: str = ""
-    ):
+    ) -> None:
         self._base_type = base_type
         self._values = values
         super().__init__(type_id, name)
@@ -223,7 +223,7 @@ class EnumType(Type):
 class VariantTypeConstructor:
     """Variant type constructor"""
 
-    def __init__(self, name: str, value_type: Optional[Type]):
+    def __init__(self, name: str, value_type: Optional[Type]) -> None:
         self._name = name
         self._value_type = value_type
 
@@ -239,7 +239,9 @@ class VariantTypeConstructor:
 class VariantType(Type):
     """Variant type defined with variant type constructors"""
 
-    def __init__(self, type_id: int, constructors: List[VariantTypeConstructor], name: str = ""):
+    def __init__(
+        self, type_id: int, constructors: List[VariantTypeConstructor], name: str = ""
+    ) -> None:
         self._constructors = constructors
         super().__init__(type_id, name)
 
@@ -278,7 +280,7 @@ class ImportedType(Type):
         pfn_vsize_get_bytes_size: PfnVsizeGetBytesSize = None,
         pfn_vsize_to_bytes: PfnVsizeToBytes = None,
         name: str = "",
-    ):
+    ) -> None:
         self._mem_size = mem_size
         self._vsize = vsize
         self._pfn_vsize_get_bytes_size = pfn_vsize_get_bytes_size
@@ -335,7 +337,7 @@ class NoneValue(Value):
 class PredefinedCharValue(PredefinedValue):
     """Values for predefined type char"""
 
-    def __init__(self, value: core.sd_uint8_t):
+    def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -345,7 +347,7 @@ class PredefinedCharValue(PredefinedValue):
 class PredefinedBoolValue(PredefinedValue):
     """Values for predefined type boolean"""
 
-    def __init__(self, value: core.sd_uint8_t):
+    def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = True if value else False
 
     def __str__(self):
@@ -355,7 +357,7 @@ class PredefinedBoolValue(PredefinedValue):
 class PredefinedInt8Value(PredefinedValue):
     """Values for predefined type int 8"""
 
-    def __init__(self, value: core.sd_int8_t):
+    def __init__(self, value: core.sd_int8_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -365,7 +367,7 @@ class PredefinedInt8Value(PredefinedValue):
 class PredefinedInt16Value(PredefinedValue):
     """Values for predefined type int 16"""
 
-    def __init__(self, value: core.sd_int16_t):
+    def __init__(self, value: core.sd_int16_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -375,7 +377,7 @@ class PredefinedInt16Value(PredefinedValue):
 class PredefinedInt32Value(PredefinedValue):
     """Values for predefined type int 32"""
 
-    def __init__(self, value: core.sd_int32_t):
+    def __init__(self, value: core.sd_int32_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -385,7 +387,7 @@ class PredefinedInt32Value(PredefinedValue):
 class PredefinedInt64Value(PredefinedValue):
     """Values for predefined type int 64"""
 
-    def __init__(self, value: core.sd_int64_t):
+    def __init__(self, value: core.sd_int64_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -395,7 +397,7 @@ class PredefinedInt64Value(PredefinedValue):
 class PredefinedUInt8Value(PredefinedValue):
     """Values for predefined type unsigned int 8"""
 
-    def __init__(self, value: core.sd_uint8_t):
+    def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -405,7 +407,7 @@ class PredefinedUInt8Value(PredefinedValue):
 class PredefinedUInt16Value(PredefinedValue):
     """Values for predefined type unsigned int 16"""
 
-    def __init__(self, value: core.sd_uint16_t):
+    def __init__(self, value: core.sd_uint16_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -415,7 +417,7 @@ class PredefinedUInt16Value(PredefinedValue):
 class PredefinedUInt32Value(PredefinedValue):
     """Values for predefined type unsigned int 32"""
 
-    def __init__(self, value: core.sd_uint32_t):
+    def __init__(self, value: core.sd_uint32_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -425,7 +427,7 @@ class PredefinedUInt32Value(PredefinedValue):
 class PredefinedUInt64Value(PredefinedValue):
     """Values for predefined type unsigned int 64"""
 
-    def __init__(self, value: core.sd_uint64_t):
+    def __init__(self, value: core.sd_uint64_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -435,7 +437,7 @@ class PredefinedUInt64Value(PredefinedValue):
 class PredefinedFloat32Value(PredefinedValue):
     """Values for predefined type float 32"""
 
-    def __init__(self, value: core.sd_float32_t):
+    def __init__(self, value: core.sd_float32_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -445,7 +447,7 @@ class PredefinedFloat32Value(PredefinedValue):
 class PredefinedFloat64Value(PredefinedValue):
     """Values for predefined type float 64"""
 
-    def __init__(self, value: core.sd_float64_t):
+    def __init__(self, value: core.sd_float64_t) -> None:
         self._value = value
 
     def __str__(self):
@@ -455,7 +457,7 @@ class PredefinedFloat64Value(PredefinedValue):
 class ListValue(Value):
     """Values for list types"""
 
-    def __init__(self, values: List[Value]):
+    def __init__(self, values: List[Value]) -> None:
         self._values = values
 
     def __str__(self):
@@ -465,7 +467,7 @@ class ListValue(Value):
 class EnumValue(Value):
     """Values for enumeration types"""
 
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         self._name = name
 
     def __str__(self):
@@ -475,7 +477,7 @@ class EnumValue(Value):
 class VariantValue(Value):
     """Values for variant types"""
 
-    def __init__(self, name: str, value: Optional[Value]):
+    def __init__(self, name: str, value: Optional[Value]) -> None:
         self._name = name
         self._value = value
 
@@ -493,7 +495,7 @@ class UntypedVariantConstructorValue(Value):
 class ImportedValue(Value):
     """Values for imported types"""
 
-    def __init__(self, bytes_data):
+    def __init__(self, bytes_data) -> None:
         self._bytes_data = bytes_data
 
     def __str__(self):
@@ -513,7 +515,7 @@ class ElementBase(metaclass=abc.ABCMeta):
         name: str,
         sd_type: Optional[Type],
         kind: ElementKind,
-    ):
+    ) -> None:
         self._file = file
         self._parent = parent
         self._name = name

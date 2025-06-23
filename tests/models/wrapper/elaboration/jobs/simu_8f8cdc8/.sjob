@@ -1,0 +1,18 @@
+{
+  "Version": "2.1",
+  "Kind": "Simulation",
+  "Properties": {
+    "RootDeclarations": [
+      ""
+    ],
+    "Name": "SimulationJob0",
+    "CustomArguments": "",
+    "FileScenario": "",
+    "SimulationInputType": "Harness",
+    "TestHarness": "test_module1::harness0",
+    "UseCycleTime": "False"
+  },
+  "InputPaths": [
+    "assets/test_module1.swant"
+  ]
+}

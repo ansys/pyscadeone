@@ -9,7 +9,7 @@ PyScadeOne is part of the
 product, and is developed by its R&D team.
 
 Contributing to PyScadeOne is welcomed and can be in the form of discussions, code, 
-documentation, or issue reports
+documentation, or issue reports.
 
 
 Overall guidance on contributing to a PyAnsys library appears in the
@@ -32,7 +32,7 @@ Posting Issues
 
 Use the `PyScadeOne Issues <https://github.com/ansys/pyscadeone/issues>`_
 page to submit questions, report bugs, and request new features. When possible, 
-use one of the existing templates
+use one of the existing templates.
 
 
 To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.

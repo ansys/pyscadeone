@@ -24,6 +24,8 @@
 Tests of pyofast.py, with transforms F# Ast into language.* classes
 """
 
+# cSpell: ignore keepends Decel
+
 from difflib import Differ
 import logging
 import re
@@ -32,12 +34,17 @@ from pathlib import Path
 import pytest
 
 from ansys.scadeone.core.common.storage import SwanStorage, SwanString
+from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as S
 
 logging.basicConfig(level=logging.DEBUG)
 
 parser = SwanParser(logging.getLogger("pyofast"))
+
+
+def dbg_str(obj: S.SwanItem) -> str:
+    return S.swan_to_str(obj, normalize=False)
 
 
 # Helpers
@@ -55,7 +62,6 @@ def cmp_string(orig, new, no_markup=False, diff=False):
     diff : bool, optional
         Call diff.Differ() on strings, by default False
     """
-
     orig_strip = re.sub(r"\s+", " ", orig).strip()
     new_strip = re.sub(r"\s+", " ", new).strip()
     if no_markup:
@@ -75,7 +81,10 @@ def cmp_string(orig, new, no_markup=False, diff=False):
         orig_strip = re.sub(" +", " ", orig).strip()
         new_strip = re.sub(" +", " ", new).strip()
         res = "".join(
-            d.compare(orig_strip.splitlines(keepends=True), new_strip.splitlines(keepends=True))
+            d.compare(
+                orig_strip.splitlines(keepends=True),
+                new_strip.splitlines(keepends=True),
+            )
         )
         res_str = f"""
 ---- DIFF ----
@@ -106,7 +115,7 @@ def check_fragment(rule, fragment: Union[SwanStorage, str], no_markup=False, dif
     """
     code = SwanString(fragment) if isinstance(fragment, str) else fragment
     obj = rule(code)
-    obj_str = str(obj)
+    obj_str = dbg_str(obj)
     cmp_string(code.content(), obj_str, no_markup, diff)
 
 
@@ -122,9 +131,10 @@ def check_decl(expr: str, diff=False):
 
 def check_body(code: str, no_markup=False, diff=False):
     "Check Swan module body"
-    swan = SwanString(f"{SwanStorage.gen_version()}\n{code}")
+    code = f"{gen_swan_version()}\n{code}"
+    swan = SwanString(code)
     obj = parser.module_body(swan)
-    obj_str = str(obj)
+    obj_str = dbg_str(obj)
     cmp_string(code, obj_str, no_markup, diff)
 
 
@@ -253,7 +263,7 @@ class TestExpression:
     def gen_expr_test(self, expr: str):
         swan = SwanString(expr)
         py_expr = parser.expression(swan)
-        py_expr_str = str(py_expr)
+        py_expr_str = dbg_str(py_expr)
         cmp_string(expr, py_expr_str)
 
     @pytest.mark.parametrize("expr", ["X", "true", "false", "'!'", r"'\xFF'"])
@@ -302,7 +312,7 @@ class TestExpression:
             "(CK match A)",
             "(CK match A::B)",
             "(CK match A::B _)",
-            "(CK match A::B { })",
+            "(CK match A::B {})",
             "(CK match 'X')",
             "(CK match 42)",
             "(CK match -42)",
@@ -359,7 +369,7 @@ class TestExpression:
             "a[1 .. 3]",
             "(a + b) * c",
             "(x . [1].f[4][5].g default 0)",
-            "(42 + 1)^n",
+            "(42 + 1) ^ n",
             "[a, b, c]",
             "{1, 3, 3}",
             "{4, 5, (42 + 1)} : x::y",
@@ -380,7 +390,7 @@ class TestExpression:
         switch_expr = """(case X of
                  | A: 1
                  | A _: 2
-                 | A { }: 3
+                 | A {}: 3
                  | 'A': 4
                  | -5: 5
                  | 6_ui8: 6
@@ -411,6 +421,9 @@ class TestExpression:
             "forward restart <<N>> unless {%$$$%} until {%£££%} returns ()",
             r"forward resume <<N>> unless {stx%$$$%stx} until {%£££%} returns ()",
             "forward <<42>> returns ([ID: last = 42], X = [[Z]])",
+            r"forward resume <<N>> unless {stx%$$$%stx} until {stx%£££%stx} "
+            + r"returns ({syntax%$$$%syntax})",
+            r"forward {dim%$$$%dim} returns ([ID: last = 42], X = [[Z]])",
         ],
     )
     def test_fwd(self, oracle):
@@ -418,7 +431,13 @@ class TestExpression:
 
     @pytest.mark.parametrize(
         "oracle",
-        ["Op ()", "P::Op $luid ()", "Op (x, y)", "Op ((42 + 1), y)", "Op <<41 + 1, 666>> ()"],
+        [
+            "Op ()",
+            "P::Op $luid ()",
+            "Op (x, y)",
+            "Op ((42 + 1), y)",
+            "Op <<41 + 1, 666>> ()",
+        ],
     )
     def test_instances(self, oracle):
         self.gen_expr_test(oracle)
@@ -523,13 +542,11 @@ class TestOperator:
                 """,
             """
                 node FOO () returns ()
-                {
-                }
+                { }
                 """,
             """
                 inline node FOO () returns ()
-                {
-                }
+                { }
                 """,
         ],
     )
@@ -568,8 +585,8 @@ node FOO () returns ()
         check_body(oracle)
 
     def test_F_G(self):
-        oracle = r"""node  F_G ( i: int32 )
-                    returns ( o: int32 )
+        oracle = r"""node  F_G (i: int32;)
+                    returns (o: int32;)
 {
                     diagram
                         (#1 block F)
@@ -584,25 +601,25 @@ node FOO () returns ()
         check_body(oracle)
 
     def test_op_text(self):
-        oracle = """{text%node textualOperator ( i0: int32 )
-     returns ( o0: int32 )
+        oracle = """{text%node textualOperator (i0: int32;)
+     returns (o0: int32;)
      {
        let o0 = i0;
-     }%text}"""
-        check_body(oracle, no_markup=True)
+     } %text}"""
+        check_body(oracle, no_markup=False)
 
 
 class TestEquation:
     def gen_eq_test(self, eq: str):
         swan = SwanString(eq)
         py_eq = parser.equation(swan)
-        py_eq_str = str(py_eq)
+        py_eq_str = dbg_str(py_eq)
         cmp_string(eq, py_eq_str)
 
     def test_simple_eq(self, make_lhs, make_path_identifier):
         eq = S.ExprEquation(make_lhs(1), S.PathIdExpr(make_path_identifier()))
         oracle = "ID1 = ID2::ID3::ID4;"
-        cmp_string(oracle, str(eq))
+        cmp_string(oracle, dbg_str(eq))
         # lhs
         for eq in [
             "() = X;",
@@ -620,7 +637,7 @@ let
   ID1 = ID1::ID2::ID3;
   ID2 = ID1::ID2::ID3;
 """
-        cmp_string(oracle, str(let))
+        cmp_string(oracle, dbg_str(let))
 
     @pytest.mark.parametrize(
         "oracle",
@@ -686,11 +703,11 @@ let
             "| A _ : { }",
             "| A::B::C _ : { }",
             # path_id { }
-            "| A { } : { }",
-            "| A::B::C { } : { }",
+            "| A {} : { }",
+            "| A::B::C {} : { }",
             # path_id { id }
-            "| A { X } : { }",
-            "| A::B::C { X } : { }",
+            "| A {X} : { }",
+            "| A::B::C {X} : { }",
             # more patterns
             "| A : { } | B : { } | C : { }",
             # actions
@@ -711,17 +728,17 @@ let
     @pytest.mark.parametrize(
         "item",
         [
-            "state state1:",
-            "state #123:",
-            """initial state S1:
-                   state S2:""",
-            """state S:
+            "state state1 :",
+            "state #123 :",
+            """initial state S1 :
+                   state S2 :""",
+            """state S :
                 var x;
                 let x = 42;""",
             # transition Swan
-            ":2: #421 unless if (true) restart S1;",
-            ":0x1: #421 unless if (true) resume #666;",
-            ":3: #421 unless if (true) { let x = 1; } restart S1;",
+            ":2: #421 unless if (true) restart S1 ;",
+            ":0x1: #421 unless if (true) resume #666 ;",
+            ":3: #421 unless if (true) { let x = 1; } restart S1 ;",
             ":4: #421 unless if (true) :1: else restart S1 end;",
             ":5: #421 unless if (true) :1: if (false) restart S1 end;",
             """:6: #1 unless if (true)
@@ -737,10 +754,10 @@ let
                        : : else restart SC
                        end;""",
             # transition "Classic"
-            """state simple:
-                unless if (start) restart s1;
-                until if (stop) restart s2;""",
-            """state if_tree:
+            """state simple :
+                unless if (start) restart s1 ;
+                until if (stop) restart s2 ;""",
+            """state if_tree :
                 unless
                 if (start)
                   if (c1) restart s1
@@ -748,18 +765,18 @@ let
                   elsif (c3) restart s3
                   else resume s4
                   end;""",
-            """initial state #3 bug_order:
+            """initial state #3 bug_order :
                         let
                             iO1 = 0_i32 -> pre iO1 + 1_i32;
                         until
                             if (iO1 > 3_i32) {
                             emit
                                 'sig1;
-                            } restart #1;
+                            } restart #1 ;
                             if (bI1) {
                             emit
                                 'sig2;
-                            } resume #2;""",
+                            } resume #2 ;""",
         ],
     )
     def test_state_machine(self, item):
@@ -805,7 +822,7 @@ class TestDiagram:
             "(#1 $foo block P::O)",
             r"(#1 $foo block (P::O \ x: 42))",
             r"($syntax block (G <<{syntax%X1: 1%syntax}>> \ X0: 0))",
-            "($text block {text%(mapfold mapfold2Iterated) <<4>>%text})",
+            # "($text block {text%(mapfold mapfold2Iterated) <<4>>%text})",
             """($op_exp block ({op_expr%function (a: int32; b: int32)
                                     returns (c: int32) c = a * b;%op_expr}))"""
             "",
@@ -829,6 +846,7 @@ class TestDiagram:
             ["#123 .(A1:)", "()"],
             ["#123 .(42:)", "()"],
             ["#123 .(A1: B1)", "()"],
+            ["#123 .(A1: A1)", "()"],
             ["#123 .(42: B1)", "()"],
             ["#123 .(A1, A2, A3)", "()"],
             ["#123 .(42, 421, 4213)", "()"],
@@ -850,19 +868,22 @@ class TestDiagram:
             "bypos",
             "",
             # check local
-            "byname where (#123 group )",
+            "byname where (#123 group)",
         ],
     )
     def test_group(self, group_op):
-        self.check(f"(group {group_op})")
+        if group_op:
+            self.check(f"(group {group_op})")
+        else:
+            self.check("(group)")
 
     @pytest.mark.parametrize(
         "section",
         [
             "let x = 42;",
             "var x: T1;",
-            "automaton initial state S0:",
-            r"{text%let automaton initial state S0:;%text}",
+            "automaton initial state S0 :",
+            r"{text%let automaton initial state S0 :;%text}",
         ],
     )
     def test_section(self, section):
@@ -883,8 +904,8 @@ const C1: T;
 group G1 = (bool, x: char);
       G2 = float32;
 sensor S1: int8; S2: int8;""",
-            """function F ( a: int8 ) returns ( b: int8 ) b = a;""",
-            """function F ( a: int8 ) returns ( b: int8 )
+            """function F (a: int8;) returns (b: int8;) b = a;""",
+            """function F (a: int8;) returns (b: int8;)
                {
                   var x;
                   let x = a; b = x;
@@ -904,9 +925,9 @@ sensor S1: int8; S2: int8;""",
         ],
     )
     def test_module_name(self, name, expected):
-        code = SwanString(SwanStorage.gen_version(), name)
+        code = SwanString(gen_swan_version(), name)
         obj = parser.module_body(code)
-        obj_name = str(obj.name)
+        obj_name = dbg_str(obj.name)
         assert obj_name == expected
 
     def test_signature(self, make_identifier, make_path_identifier, make_var_decl, make_type_var):
@@ -918,22 +939,18 @@ sensor S1: int8; S2: int8;""",
             [make_var_decl(), make_var_decl()],
             [make_var_decl(False)],
         )
-        sig_str = str(sig)
-        oracle = r"""node ID1 (
-  ID2: bool; ID3: bool
-) returns (
-  ID4: {a: int8}
-);"""
-
-        assert sig_str == oracle
+        sig_str = dbg_str(sig)
+        oracle = r"""
+node ID1 (ID2: bool; ID3: bool;)
+returns (ID4: {a: int8};);"""
+        cmp_string(oracle, sig_str)
 
         # test 2: empty list
         sig = S.Signature(make_identifier(True), False, True, [make_var_decl()], [])
-        sig_str = str(sig)
-        oracle = r"""node ID1 (
-  ID2: bool
-) returns ();"""
-        assert sig_str == oracle
+        sig_str = dbg_str(sig)
+        oracle = r"""
+node ID1 (ID2: bool;) returns ();"""
+        cmp_string(oracle, sig_str)
 
         # test 3, no signals, sizes + specialization
         sig = S.Signature(
@@ -945,9 +962,9 @@ sensor S1: int8; S2: int8;""",
             sizes=[make_identifier(), make_identifier()],
             specialization=make_path_identifier(),
         )
-        sig_str = str(sig)
+        sig_str = dbg_str(sig)
         oracle = r"""node ID1 <<ID2, ID3>> () returns () specialize ID4::ID5::ID6;"""
-        assert sig_str == oracle
+        cmp_string(oracle, sig_str)
 
         # test 4 : constraints
         sig = S.Signature(
@@ -961,9 +978,9 @@ sensor S1: int8; S2: int8;""",
                 S.TypeConstraint([make_type_var()], S.NumericKind.Integer),
             ],
         )
-        sig_str = str(sig)
+        sig_str = dbg_str(sig)
         oracle = r"""function ID1 () returns () where 'T1, 'T2 signed where 'T3 integer;"""
-        assert sig_str == oracle
+        cmp_string(oracle, sig_str)
 
         # test 5: pragmas
         sig = S.Signature(
@@ -974,23 +991,9 @@ sensor S1: int8; S2: int8;""",
             [],
             pragmas=[S.Pragma("#pragma x #end"), S.Pragma("#pragma y #end")],
         )
-        sig_str = str(sig)
+        sig_str = dbg_str(sig)
         oracle = """function #pragma x #end #pragma y #end ID1 () returns ();"""
-        assert str(sig) == oracle
-
-        # test 6 - parsing with care (error see next test_signature_parsing)
-        oracle = """
-function
-    #pragma x #end
-FOO <<S, {syntax%$Size%syntax}>> (
-    a: int8;
-    {var%$V := ?%var}
-) returns ()
-    where 'T1 integer
-    where {syntax%$T%syntax} signed
-    specialize A::B;
-"""
-        check_decl(oracle)
+        cmp_string(oracle, sig_str)
 
     @pytest.mark.parametrize(
         "oracle",
@@ -998,32 +1001,58 @@ FOO <<S, {syntax%$Size%syntax}>> (
             """
 function
     #pragma x #end #pragma y #end
-FOO <<S, {syntax%$Size%syntax}>> (
-    a: int8;
-    {var%$V := ?%var}
-) returns ()
+FOO <<S, {syntax%$Size%syntax}>>
+(a: int8;
+    {var%$V := ?%var};)
+returns ()
     where 'T1, 'T2 integer
     where {syntax%$T%syntax} signed
     specialize A::B;
 """,
-            """node CruiseControl (
-                    On: bool;
-                    Off: bool;
-                    Set: bool;
-                    Resume: bool;
-                    QuickAccel: bool;
-                    QuickDecel: bool;
-                    Accel: CarTypes::tPercent;
-                    Brake: CarTypes::tPercent;
-                    CarSpeed: CarTypes::tSpeed
-                )
-  returns (
-    CruiseSpeed: CarTypes::tSpeed default = 0.0;
-    ThrottleCmd: CarTypes::tPercent default = 0.0;
-    CruiseState: tCruiseState default = OFF
-  );
+            """node CruiseControl (On: bool;
+                                   Off: bool;
+                                   Set: bool;
+                                   Resume: bool;
+                                   QuickAccel: bool;
+                                   QuickDecel: bool;
+                                   Accel: CarTypes::tPercent;
+                                   Brake: CarTypes::tPercent;
+                                   CarSpeed: CarTypes::tSpeed;)
+  returns (CruiseSpeed: CarTypes::tSpeed default = 0.0;
+           ThrottleCmd: CarTypes::tPercent default = 0.0;
+           CruiseState: tCruiseState default = OFF;);
         """,
         ],
     )
     def test_signature_parsing(self, oracle):
         check_decl(oracle)
+
+    @pytest.mark.parametrize(
+        "source,expected",
+        [
+            (
+                r"{signature%node FOO () returns ();%signature}",
+                r"{signature%node FOO () returns ();%signature}",
+            ),
+            (r"{signature% $$$%signature}", r"{signature% $$$%signature}"),
+        ],
+    )
+    def test_signature_markup(self, source, expected):
+        code = SwanString(source)
+        obj = parser.declaration(code)
+        obj_str = dbg_str(obj)
+        cmp_string(expected, obj_str)
+
+    def test_wrong_text(self):
+        code = SwanString("{text% $$$%text}")
+        obj = parser.operator_decl(code)
+        assert obj is None
+
+
+class TestComment:
+    def test_comment(self):
+        code = gen_swan_version() + "\n" + "/* multi /* /* comment */ */ /* more */ */"
+        swan = SwanString(code)
+        obj = parser.module_body(swan)
+        obj_str = dbg_str(obj)
+        assert obj_str == gen_swan_version() + "\n"

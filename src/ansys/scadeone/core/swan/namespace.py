@@ -44,8 +44,10 @@ from .variable import VarDecl
 class ModuleNamespace:
     """Class to handle named objects defined in a module."""
 
-    def __init__(self, module: Module):
+    def __init__(self, module: Module, stop_search: bool = False) -> None:
         self._module = module
+        # boolean to avoid infinite recursion between module interface and module body
+        self._stop_search = stop_search
 
     def get_declaration(self, name: str) -> SwanItem:
         """Returns the declaration with the given name."""
@@ -54,12 +56,15 @@ class ModuleNamespace:
             raise ScadeOneException("Name cannot be None or empty.")
 
         decl = ModuleNamespace._get_declaration(name, self._module)
-        if decl is not None:
+        if decl is not None or self._stop_search:
             return decl
         model = cast(Model, self._module.model)
-        module_int = model.get_module_interface(self._module.name.as_string)
-        if module_int is not None:
-            ns = ModuleNamespace(module_int)
+        if isinstance(self._module, ModuleBody):
+            module_peer = model.get_module_interface(self._module.name.as_string)
+        else:
+            module_peer = model.get_module_body(self._module.name.as_string)
+        if module_peer is not None:
+            ns = ModuleNamespace(module_peer, stop_search=True)
             return ns.get_declaration(name)
 
     @staticmethod
@@ -70,13 +75,15 @@ class ModuleNamespace:
                 found_decl = None
                 if isinstance(decl, GroupDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.groups)
-                if isinstance(decl, TypeDeclarations):
+                elif isinstance(decl, TypeDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.types)
-                if isinstance(decl, ConstDeclarations):
+                elif isinstance(decl, ConstDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.constants)
-                if isinstance(decl, SensorDeclarations):
+                elif isinstance(decl, SensorDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.sensors)
-                if isinstance(decl, Signature) and str(decl.id) == name:
+                elif (
+                    (isinstance(decl, Signature) or isinstance(decl, Operator)) and decl.id.value
+                ) == name:
                     found_decl = decl
                 if found_decl is not None:
                     return found_decl
@@ -111,7 +118,7 @@ class ScopeNamespace:
     to its enclosing scope.
     """
 
-    def __init__(self, scope: Union[Scope, ScopeSection]):
+    def __init__(self, scope: Union[Scope, ScopeSection]) -> None:
         self._scope = scope
 
     def get_declaration(self, name: str) -> SwanItem:

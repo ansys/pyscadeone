@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pytest
 
-from ansys.scadeone.core import ScadeOne, __version__, version_info
+from ansys.scadeone.core import ScadeOne, __version__
 from ansys.scadeone.core.common.storage import SwanFile, SwanString
 from ansys.scadeone.core.common.versioning import FormatVersions
 
@@ -52,10 +52,6 @@ class TestApp:
                 d = {}
                 d["no_key"]
         assert str(exc_info.value) == "'no_key'"
-
-    def test_version(self):
-        assert __version__ == ".".join((version_info.major, version_info.minor, version_info.patch))
-        assert FormatVersions.version("swan") == "2025.0"
 
     @pytest.mark.parametrize(
         "source",

@@ -127,11 +127,11 @@ jobs:
           library-name: ${{ env.LIBRARY_NAME }}
           use-trusted-publisher: true
 
-      - name: "Release to GitHub"
-        uses: ansys/actions/release-github@v8
-        with:
-          library-name: ${{ env.LIBRARY_NAME }}
-          additional-artifacts: 'examples'
+      # - name: "Release to GitHub"
+      #   uses: ansys/actions/release-github@v8
+      #   with:
+      #     library-name: ${{ env.LIBRARY_NAME }}
+      #     additional-artifacts: 'examples'
 
   doc-deploy-stable:
     name: "Deploy stable documentation"

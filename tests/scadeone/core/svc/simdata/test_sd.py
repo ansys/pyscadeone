@@ -53,7 +53,7 @@ def test_element_update():
     create_test_file(file_path)
 
     # reopen .sd file and modify element (name, type, kind):
-    f = sd.open_file(file_path)
+    f = sd.edit_file(file_path)
     # check initial content
     e_char = f.find_element("eChar")
     assert e_char
@@ -90,7 +90,7 @@ def test_element_remove():
     create_test_file(file_path)
 
     # reopen .sd file:
-    f = sd.open_file(file_path)
+    f = sd.edit_file(file_path)
     # check initial content
     e_char = f.find_element("eChar")
     assert e_char
@@ -122,7 +122,7 @@ def test_element_clear_values():
     create_test_file(file_path)
 
     # reopen .sd file:
-    f = sd.open_file(file_path)
+    f = sd.edit_file(file_path)
     # check initial content
     e_char = f.find_element("eChar")
     assert any(e_char.read_values())

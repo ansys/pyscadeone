@@ -3,8 +3,9 @@ repos:
     rev: v0.4.4
     hooks:
       - id: add-license-headers
+        exclude: ".*.j2"
         args:
-          - --start_year=2022
+          - --start_year=2024
 
   - repo: https://github.com/numpy/numpydoc
     rev: v1.8.0
@@ -42,3 +43,12 @@ repos:
     rev: 0.31.0
     hooks:
       - id: check-github-workflows
+
+  - repo: local
+    hooks:
+      - id: vale
+        language: system
+        name: vale
+        pass_filenames: false
+        entry: python
+        args: [doc/vale.py]

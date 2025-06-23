@@ -1,0 +1,15 @@
+-- version swan: 2025.0 graph: 2.0 swant: 1.1
+use module0;
+
+_harness harness0
+{
+  diagram
+    (#0 #pragma swt under_test #end block module0::operator0
+                                          #pragma diagram {"xy":"H-14050;V-9650","wh":"20000;14000"} #end)
+    (#1 expr _current_cycle mod 2 = 0
+    #pragma diagram {"xy":"H-55350;V-12550","wh":"28000;3200"} #end)
+    (let _stop_condition = _current_cycle = 2;
+    #pragma diagram {"xy":"H-40950;V4650","wh":"44000;3200"} #end)
+    
+    (#3 wire #1 => #0)
+}

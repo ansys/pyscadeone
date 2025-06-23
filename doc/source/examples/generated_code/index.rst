@@ -24,7 +24,7 @@ a :py:class:`GeneratedCode` object is created:
     :lines: 39-44
 
 Before being able to manipulate the generated code data, it is necessary to check that 
-the *CodeGen* job executed (this is done from the Scade One IDE).
+the *CodeGen* job was executed (this is done from the Scade One IDE).
 
 To check that the job has been executed, use the :py:attr:`GeneratedCode.is_code_generated` property. 
 

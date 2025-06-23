@@ -41,7 +41,10 @@ class SwanContext:
     RenamingRe = re.compile(r"(?P<kind>\w+)\s+(?P<old>\S+)\s+is\s+now\s+(?P<new>\S+)")
 
     def __init__(
-        self, project_path: str, s_one_path: Union[str, None], renamings: Union[str, None]
+        self,
+        project_path: str,
+        s_one_path: Union[str, None],
+        renamings: Union[str, None],
     ) -> None:
         self._s_one_install = s_one_path
         self._project_path = project_path
@@ -109,7 +112,7 @@ class SwanContext:
         project = self._app.load_project(self._project_path)
         if not project:
             ConverterLogger.exception("Invalid project")
-        self._model = project.model
+        self._model = self._app.model
         (full_name, is_renamed) = self.get_renamed("operator", op_name)
         module_part, name = swan.PathIdentifier.split(full_name)
         module = self._model.get_module_body(module_part)
@@ -146,7 +149,10 @@ class SwanContext:
         return None
 
     def get_sd_type_of_type_expr(
-        self, type_expr: swan.TypeExpression, module: swan.Module, name: Optional[str] = None
+        self,
+        type_expr: swan.TypeExpression,
+        module: swan.Module,
+        name: Optional[str] = None,
     ):
         if isinstance(type_expr, swan.ArrayTypeExpression):
             res = self.get_array_type(type_expr, module)
@@ -236,32 +242,31 @@ class SwanContext:
         return (sd_type, dims)
 
     def get_sd_predefined_type(self, predefined):
-        swan_type = str(predefined)
-        if swan_type == "bool":
+        if type(predefined) is swan.BoolType:
             return sd.Bool
-        if swan_type == "int8":
+        if type(predefined) is swan.Int8Type:
             return sd.Int8
-        if swan_type == "int16":
+        if type(predefined) is swan.Int16Type:
             return sd.Int16
-        if swan_type == "int32":
+        if type(predefined) is swan.Int32Type:
             return sd.Int32
-        if swan_type == "int64":
+        if type(predefined) is swan.Int64Type:
             return sd.Int64
-        if swan_type == "uint8":
+        if type(predefined) is swan.Uint8Type:
             return sd.UInt8
-        if swan_type == "uint16":
+        if type(predefined) is swan.Uint16Type:
             return sd.UInt16
-        if swan_type == "uint32":
+        if type(predefined) is swan.Uint32Type:
             return sd.UInt32
-        if swan_type == "uint64":
+        if type(predefined) is swan.Uint64Type:
             return sd.UInt64
-        if swan_type == "float32":
+        if type(predefined) is swan.Float32Type:
             return sd.Float32
-        if swan_type == "float64":
+        if type(predefined) is swan.Float64Type:
             return sd.Float64
-        if swan_type == "char":
+        if type(predefined) is swan.CharType:
             return sd.Char
-        ConverterLogger.error(f"Unknown Predefined Type: {swan_type}")
+        ConverterLogger.error(f"Unknown Predefined Type: {predefined}")
         return None
 
     def module_look_for(self, module_name, search_err_msg, search_fn):
@@ -327,7 +332,10 @@ class SwanContext:
             return -value if unary.operator == swan.UnaryOp.Minus else value
 
     def get_constant(
-        self, name: str, module: Optional[swan.Module] = None, no_const_ok: Optional[bool] = False
+        self,
+        name: str,
+        module: Optional[swan.Module] = None,
+        no_const_ok: Optional[bool] = False,
     ) -> Union[swan.Literal, None]:
         """Look for an enum without module part"""
         const_decl = None
@@ -359,7 +367,10 @@ class SwanContext:
         return const_decl
 
     def get_constant_value(
-        self, name: str, module: Optional[swan.Module] = None, no_const_ok: Optional[bool] = False
+        self,
+        name: str,
+        module: Optional[swan.Module] = None,
+        no_const_ok: Optional[bool] = False,
     ) -> Union[swan.Literal, None]:
         """Look for an enum without module part"""
         const_decl = self.get_constant(name, module, no_const_ok)

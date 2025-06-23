@@ -33,7 +33,7 @@ The :py:class:`ReferenceVisitor` is derived from :py:class:`SwanVisitor` class. 
 The following methods are implemented, overridden from the base class:
 
 - the :py:meth:`SwanVisitor.visit_Operator`: it keeps track of the current operator that is the caller, 
-  and calls the default process to go-on.
+  and calls the default process to go on.
 - and :py:meth:`SwanVisitor.visit_PathIdCall` which implements the name of a called operator, amongst the
   possible operator expressions. Here, we first assess that the call corresponds to an operator declaration.
   Then we create the cross-references (see :ref:`ref_visitor_full_code`).

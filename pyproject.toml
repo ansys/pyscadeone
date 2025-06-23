@@ -28,6 +28,17 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "Jinja2>=3.1.4",
+    "jsonschema>=4.23.0",
+    "platformdirs>=4.3.2",
+    "pyparsing>=3.1.4",
+    "pythonnet>=3.0.4",
+    "typing_extensions>=4.12.2",
+    "lark>=1.2.2",
+]
+
+[project.optional-dependencies]
+frozen-dependencies = [
     # Indirect dependencies,
     "attrs==24.2.0",
     "cffi==1.17.1",
@@ -44,9 +55,8 @@ dependencies = [
     "pyparsing==3.1.4",
     "pythonnet==3.0.4",
     "typing_extensions==4.12.2",
+    "lark==1.2.2",
 ]
-
-[project.optional-dependencies]
 tests = ["pytest>=7.1.0", "pytest-cov>=3.0.0", "click>=8.1.7", "fmpy>=0.3.21"]
 doc = [
     "ansys-sphinx-theme==1.2.4",
@@ -95,6 +105,7 @@ log_file = "logs/pytest-logs.txt"
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["test_printer.py"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E4", "E7", "E9", "F", "W"]

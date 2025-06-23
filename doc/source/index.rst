@@ -1,5 +1,5 @@
 
-PyScadeOne documentation  |version|
+PyScadeOne documentation  |release|
 ===================================
 
 PyScadeOne is a Python library for the
@@ -17,8 +17,10 @@ This library allows:
 
 - ecosystem integration
 
-  - importing `SCADE Test <https://www.ansys.com/products/embedded-software/ansys-scade-test>`_ tests procedures
-  - exporting `FMI 2.0 <https://fmi-standard.org/>`_ components
+  - :ref:`importing SCADE test <ref_sd_converter>` tests procedures
+  - :ref:`exporting FMI 2.0 <ref_fmu_export>` components
+ 
+    - For more information, consult the `FMI website <https://fmi-standard.org/>`_.
 
 .. grid:: 3
 

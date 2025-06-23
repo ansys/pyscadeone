@@ -28,12 +28,13 @@ from typing import Any, Union
 
 from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.svc.swan_visitor import SwanVisitor
+from ansys.scadeone.core.swan import swan_to_str
 
 
 class DumpVisitor(SwanVisitor):
     Indent = 0
 
-    def __init__(self, fd):
+    def __init__(self, fd) -> None:
         self._fd = fd
 
     def print(self, text):
@@ -51,9 +52,13 @@ class DumpVisitor(SwanVisitor):
             + f"as property: {swan_obj.__class__.__name__}.{property}"
         )
         if hasattr(swan_obj, "id"):
-            self.print(f"Object name:: {swan_obj.id}")
+            self.print(
+                f"Object name:: {swan_to_str(swan_obj.id) if swan_obj.id is not None else 'None'}"
+            )
         if hasattr(swan_obj, "luid"):
-            self.print(f"Object luid:: {swan_obj.luid}")
+            self.print(
+                f"Object luid:: {swan_to_str(swan_obj.luid) if swan_obj.luid is not None else 'None'}"
+            )
 
     def visit_builtin(self, object, owner_class, property):
         pass
@@ -64,10 +69,11 @@ class Test:
         app = ScadeOne()
         script_dir = Path(__file__).parents[4]
         cc_project = script_dir / "examples/models/CC/CruiseControl/CruiseControl.sproj"
-        model = app.load_project(cc_project).model
+        app.load_project(cc_project)
+        model = app.model
         model.load_all_modules()
-        # Get module[1]
-        module = list(model.modules)[1]
+        # Get module[0]
+        module = list(model.modules)[0]
         # Visit, save content in buffer
         buffer = StringIO()
         visitor = DumpVisitor(buffer)

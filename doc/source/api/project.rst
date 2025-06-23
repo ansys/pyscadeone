@@ -27,6 +27,7 @@ the application. To deal with the cross-links, we use the :py:class:`IProject` i
 .. autoclass:: IProject
 
 .. autoclass:: Project
+   :exclude-members: add_module, add_module_interface
 
 
 Project items

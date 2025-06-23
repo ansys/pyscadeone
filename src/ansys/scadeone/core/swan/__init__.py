@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Union
+
 from .common import *
 from .diagram import *
 from .equations import *
@@ -35,3 +37,13 @@ from .scopesections import *
 from .typedecl import *
 from .variable import *
 from .harness import *
+from .pragmas import *
+
+
+def swan_to_str(swan: Union[SwanItem, None], normalize: bool = False) -> str:  # noqa: F405
+    """Convert a SwanItem to a string.
+    When normalize is True, the output is normalized to a canonical form.
+    """
+    import ansys.scadeone.core.svc.swan_printer as swan_printer
+
+    return swan_printer.swan_to_str(swan, normalize)

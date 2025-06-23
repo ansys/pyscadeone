@@ -21,12 +21,11 @@
 # SOFTWARE.
 
 import argparse
-from importlib import import_module
 import logging
 from pathlib import Path
 import sys
 
-from ansys.scadeone.core import ScadeOne, ScadeOneException, __version__
+from ansys.scadeone.core import ScadeOne, ScadeOneException, full_version
 from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.common.versioning import FormatVersions
 from ansys.scadeone.core.svc.fmu import FMU_2_Export
@@ -34,32 +33,13 @@ from ansys.scadeone.core.svc.fmu import FMU_2_Export
 # cSpell: ignore outdir, oper
 
 
-def show_formats():
+def show_formats() -> bool:
     # Show supported formats: --formats option
     print(FormatVersions.get_versions())
-    exit(0)
+    return True
 
 
-def script_command(args):
-    # Scripting
-    if "script" in args:
-        script = Path(args.script).with_suffix("")
-        args.module = script.name
-        args.module_path = [str(script.parent)]
-
-    if "module" in args:
-        if "module_path" in args:
-            for path in args.module_path:
-                sys.path.insert(0, path)
-        try:
-            _ = import_module(args.module)
-            exit(0)
-        except Exception as e:
-            print(str(e))
-            exit(1)
-
-
-def fmu_export_command(args):
+def fmu_export_command(args) -> bool:
     print(
         f"Build FMU package for job {args.job_name} under directory {args.outdir}",
         flush=True,
@@ -87,25 +67,66 @@ def fmu_export_command(args):
         else:
             build_args = None
         fmu.build(args.with_sources, build_args)
+        return True
     except ScadeOneException as error:
         print("ERROR -", error.args[0], file=sys.stderr)
+        return False
 
 
-def view_sd_command(args):
+def python_wrapper_command(args) -> bool:
+    from ansys.scadeone.core.svc.wrapper.python_wrapper import PythonWrapper
+
+    print(
+        f"Generate Python wrapper for project {args.project}",
+        flush=True,
+    )
+
+    try:
+        app = ScadeOne(args.install_dir)
+        project_path = Path(args.project)
+        if not project_path.is_absolute():
+            project_path = Path.cwd() / project_path
+        project = app.load_project(project_path)
+        job_name = args.job
+        out_name = None
+        if args.output:
+            out_name = args.output
+        target_path = None
+        if args.target_dir:
+            target_path = args.target_dir
+
+        py_wrapper = PythonWrapper(project, job_name, out_name, target_path)
+        py_wrapper.generate()
+
+        print(
+            f"Files generated under {py_wrapper._target_dir()}",
+            flush=True,
+        )
+        return True
+    except ScadeOneException as error:
+        print("ERROR -", error.args[0], file=sys.stderr)
+        return False
+
+
+def view_sd_command(args) -> bool:
     import ansys.scadeone.core.svc.simdata as sd
 
     if args.sd:
         sd_path = Path(args.sd)
         if not sd_path.exists():
             print(f"File not found: {sd_path}")
-            sys.exit(1)
+            return False
         sd_fd = sd.open_file(str(sd_path))
         print(sd_fd)
         sd_fd.close()
+        return True
+    return False
 
 
-def main():
-    """Scade One Python command line"""
+def main() -> bool:
+    """Scade One Python command line.
+
+    Returns True if the command line is executed successfully."""
     parser = argparse.ArgumentParser(
         prog="pyscadeone",
         description="Scade One Python library command line tool",
@@ -113,8 +134,17 @@ def main():
         "https://www.ansys.com/products/embedded-software/ansys-scade-one",
         fromfile_prefix_chars="@",
     )
-    parser.add_argument("--version", action="version", version=__version__, help="%(prog)s version")
-    parser.add_argument("--formats", action="store_true", help="Shows supported formats")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=full_version,
+        help="%(prog)s version",
+    )
+    parser.add_argument(
+        "--formats",
+        action="store_true",
+        help="Shows supported formats",
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -131,32 +161,37 @@ def main():
         dest="subparser_command",
     )
 
-    # Script mode command
-    script_parser = subparser.add_parser("script", help="Executes given script or module")
-    script_parser.add_argument("--file", help="Loads & runs script file", dest="script")
-    script_parser.add_argument("--module", help="Loads & runs module")
-    script_parser.add_argument(
-        "--path",
-        action="append",
-        help="module path, inserted at beginning of sys.path." + " Several --path can be given.",
-        dest="module_path",
-    )
-    script_parser.set_defaults(func=script_command)
-
     # FMU export command
     fmu_parser = subparser.add_parser("fmu", help="Generate FMU")
-    fmu_parser.add_argument("project", type=Path, help="Scade One project")
-    fmu_parser.add_argument("job_name", type=str, help="Generated Code job name")
     fmu_parser.add_argument(
-        "-inst", "--install_dir", type=Path, help="Scade One installation directory"
+        "project",
+        type=Path,
+        help="Scade One project",
     )
-    fmu_parser.add_argument("-op", "--oper_name", type=str, default="", help="Root operator name")
+    fmu_parser.add_argument(
+        "job_name",
+        type=str,
+        help="Generated Code job name",
+    )
+    fmu_parser.add_argument(
+        "-inst",
+        "--install_dir",
+        type=Path,
+        help="Scade One installation directory",
+    )
+    fmu_parser.add_argument(
+        "-op",
+        "--oper_name",
+        type=str,
+        default="",
+        help="Root operator name",
+    )
     fmu_parser.add_argument(
         "-max",
         "--max_variables",
         type=int,
         default=1000,
-        help="maximum number on FMI variables (flattened sensors, inputs and "
+        help="Maximum number on FMI variables (flattened sensors, inputs and "
         "outputs) supported by the export (1000 by default).",
     )
     fmu_parser.add_argument(
@@ -164,7 +199,7 @@ def main():
         "--kind",
         type=str,
         default="ME",
-        help="FMI kind: ‘ME’ for Model Exchange (default), ‘CS’ for Co-Simulation",
+        help="FMI kind: 'ME' for Model Exchange (default), 'CS' for Co-Simulation",
     )
     fmu_parser.add_argument(
         "-o",
@@ -172,9 +207,17 @@ def main():
         type=Path,
         help="Directory where the FMU is built (by default, 'FMU_Export_<kind>_<job_name>')",
     )
-    fmu_parser.add_argument("-p", "--period", type=float, help="Execution period in seconds")
     fmu_parser.add_argument(
-        "-ws", "--with_sources", action="store_true", help="Keep the sources in the FMU package"
+        "-p",
+        "--period",
+        type=float,
+        help="Execution period in seconds",
+    )
+    fmu_parser.add_argument(
+        "-ws",
+        "--with_sources",
+        action="store_true",
+        help="Keep the sources in the FMU package",
     )
     #    fmu_parser.add_argument("-args", "--args", type=str, help="build arguments")
     fmu_parser.add_argument(
@@ -200,16 +243,48 @@ def main():
     )
     fmu_parser.set_defaults(func=fmu_export_command)
 
+    # Python wrapper command
+    pw_parser = subparser.add_parser("pycodewrap", help="Generates Scade One wrapper in Python")
+    pw_parser.add_argument(
+        "--install-dir",
+        type=Path,
+        help="Scade One installation directory",
+        required=True,
+    )
+    pw_parser.add_argument(
+        "project",
+        type=Path,
+        help="Scade One project",
+    )
+    pw_parser.add_argument("-j", "--job", type=str, help="Generated Code job name", required=True)
+    pw_parser.add_argument(
+        "-o",
+        "--output",
+        help="Name of the Python wrapper module. By default, the name is `root_wrapper`",
+    )
+    pw_parser.add_argument(
+        "--target-dir",
+        type=Path,
+        help="Target wrapper directory. By default, a directory with the wrapper name is created "
+        "in the current directory.",
+    )
+
+    pw_parser.set_defaults(func=python_wrapper_command)
+
     # Simulation data
     sd_parser = subparser.add_parser("simdata", help="Simulation data related command")
-    sd_parser.add_argument("--show", help="Show content of a simulation data file", dest="sd")
+    sd_parser.add_argument(
+        "--show",
+        help="Show content of a simulation data file",
+        dest="sd",
+    )
     sd_parser.set_defaults(func=view_sd_command)
 
     # Parsing
-    args = parser.parse_args()
+    parser_args = parser.parse_args()
 
-    if args.verbosity > 0:
-        if args.verbosity == 1:
+    if parser_args.verbosity > 0:
+        if parser_args.verbosity == 1:
             level = logging.INFO
         else:
             level = logging.DEBUG
@@ -217,14 +292,15 @@ def main():
             if isinstance(handler, logging.StreamHandler):
                 handler.setLevel(level)
 
-    LOGGER.debug(f"Running pyscadeone command line with: {args}")
+    LOGGER.debug(f"Running pyscadeone command line with: {parser_args}")
 
-    if args.formats:
-        show_formats()
-
-    if args.subparser_command:
-        args.func(args)
+    ret = False
+    if parser_args.formats:
+        ret = show_formats()
+    elif parser_args.subparser_command:
+        ret = parser_args.func(parser_args)
+    sys.exit(0 if ret else 1)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(0 if main() else 1)

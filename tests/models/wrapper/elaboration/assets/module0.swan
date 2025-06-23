@@ -1,0 +1,62 @@
+-- version swan: 2025.0 graph: 2.0
+type T_Variant = T_int{int32} | T_bool_box{bool^1};
+
+const C1: T_Variant^12 = T_int{9_i32}^12;
+
+const C2: T_Variant = T_bool_box{false^1};
+
+node operator0 (i0: bool;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H11738;V-33125"} #end)
+    (#1 expr C1
+    #pragma diagram {"xy":"H-11550;V-22612"} #end)
+    (#2 expr if #3 then #4 else #5
+      where
+        (#3 group)
+        (#4 group)
+        (#5 group)
+    #pragma diagram {"xy":"H21588;V-17425"} #end)
+    (#6 expr #7[0]
+      where
+        (#7 group)
+    #pragma diagram {"xy":"H1850;V-22612","wh":"12000;7000"} #end)
+    (#8 expr C2
+    #pragma diagram {"xy":"H-6862;V-13588"} #end)
+    (#9 def variant
+    #pragma diagram {"xy":"H35562;V-17425","wh":"12000;3200"} #end)
+    
+    (#10 wire #8 => #5
+    #pragma diagram {"wp":"#8 h15024 v-1937 #5"} #end)
+    (#11 wire #6 => #4
+    #pragma diagram {"wp":"#6 h5869 v3287 #4"} #end)
+    (#12 wire #1 => #7)
+    (#13 wire #0 => #3
+    #pragma diagram {"wp":"#0 h7350 #3"} #end)
+    (#14 wire #2 => #9)
+    
+    (var
+        variant;)
+    (activate $ActivateWhen0 when variant match
+      | T_int { int_val } :
+        {
+          diagram
+            (#15 def o0
+            #pragma diagram {"xy":"h6238;v-275"} #end)
+            (#16 expr int_val
+            #pragma diagram {"xy":"h-10688;v-275","wh":"12000;3200"} #end)
+            
+            (#17 wire #16 => #15)
+        #pragma diagram {"xy":"h0;v-3720","wh":"51700;8250"} #end
+        }
+      | T_bool_box { bool_val } :
+        {
+          diagram
+            (let o0 = if bool_val[0] then 1 else -1;
+            #pragma diagram {"xy":"h1275;v666","wh":"42000;3200"} #end)
+        #pragma diagram {"xy":"h0;v8914","wh":"51700;9300"} #end
+        }
+      #pragma diagram {"xy":"H14212;V12520","wh":"54700;30128"} #end)
+}

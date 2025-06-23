@@ -21,4 +21,7 @@ Model documentation
 .. currentmodule:: ansys.scadeone.core.model
 
 .. autoclass:: Model
+    :exclude-members: add_body, add_interface
+
+
 

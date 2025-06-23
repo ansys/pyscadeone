@@ -53,12 +53,6 @@ class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
         """Constant optional value. None if undefined."""
         return self._value
 
-    def __str__(self) -> str:
-        type = f": {self.type}" if self.type else ""
-        decl = self.id
-        init = f" = {self.value}" if self.value else ""
-        return f"{decl}{type}{init}"
-
 
 class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
     """Sensor declaration with an id and a type."""
@@ -71,6 +65,3 @@ class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
     def type(self) -> common.TypeExpression:
         """Sensor type."""
         return self._type
-
-    def __str__(self) -> str:
-        return f"{self.id}: {self.type}"

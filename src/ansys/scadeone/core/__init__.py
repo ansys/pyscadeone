@@ -23,16 +23,41 @@
 from pathlib import Path
 from collections import namedtuple
 from platformdirs import PlatformDirs
+import re
 
 # Version must be directly defined for flit. No computation, else flit will fails
-__version__ = "0.6.dev1"
+__version__ = "0.7.0"
 
-Version = namedtuple("Version", ["major", "minor", "patch", "build"])
-(M, m, p) = __version__.split(".")
-(p, b) = (p, "") if p.find("+") == -1 else p.split("+")
+m = re.match(
+    r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+)   # Major, minor, patch
+        (?:\+(?P<b>\d+))?                    # Build (optional)
+        (?:(?P<pr>\D.*))?                    # Pre-release (optional)
+    """,
+    __version__,
+    re.X,
+)
 
 # version as a named tuple
-version_info = Version(M, m, p, b)
+Version = namedtuple("Version", ["major", "minor", "patch", "build", "pre_release"])
+
+version_info = (
+    Version(
+        m.group("M"),
+        m.group("m"),
+        m.group("p"),
+        m.group("b") if m.group("b") else "",
+        m.group("pr") is not None,
+    )
+    if m
+    else Version(0, 0, 0, 0, False)
+)
+
+# full version as a string
+full_version = ".".join([version_info.major, version_info.minor, version_info.patch])
+if version_info.build:
+    full_version += f"+{version_info.build}"
+if version_info.pre_release:
+    full_version += " - Prerelease"
 
 PYSCADEONE_DIR = Path(__file__).parent
 PLATFORM_DIRS = PlatformDirs("PyScadeOne", "Ansys")

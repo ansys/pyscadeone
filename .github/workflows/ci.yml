@@ -1,6 +1,7 @@
 name: GitHub CI
 on:
   pull_request:
+    types: [opened, reopened, synchronize, edited, closed]
   push:
     tags:
       - "*"
@@ -31,7 +32,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@v8
+      - uses: ansys/actions/doc-deploy-changelog@v10
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -43,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@v8
+        uses: ansys/actions/check-pr-title@v10
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,38 +52,42 @@ jobs:
     name: Code style
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@v8
+      - uses: ansys/actions/code-style@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          use-uv: true
 
   doc-style:
     name: Doc style
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@v8
+      - uses: ansys/actions/doc-style@v10
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   doc-build:
     name: Doc building
+    if: github.event.action != 'closed'
     needs: [doc-style]
     runs-on: [windows-latest]
     steps:
-      - uses: ansys/actions/doc-build@v8
+      - uses: ansys/actions/doc-build@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           sphinxopts: -j auto -W
           add-pdf-html-docs-as-assets: false
+          use-uv: true
 
   smoke-test:
     name: Smoke test
     needs: code-style
     runs-on: [ubuntu-latest]
     steps:
-      - uses: ansys/actions/tests-pytest@v8
+      - uses: ansys/actions/tests-pytest@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-postargs: 'tests/test_smoke.py'
+          use-uv: true
  
   build-library:
     name: Build
@@ -91,10 +96,11 @@ jobs:
     runs-on: [ubuntu-latest]
 
     steps:
-      - uses: ansys/actions/build-library@v8
+      - uses: ansys/actions/build-library@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          use-uv: true
            
   doc-deploy-dev:
     name: "Deploy development documentation"
@@ -103,7 +109,7 @@ jobs:
     needs: [build-library]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: ansys/actions/doc-deploy-dev@v8
+      - uses: ansys/actions/doc-deploy-dev@v10
         with:
           doc-artifact-name: 'documentation-html'
           cname: ${{ env.DOCUMENTATION_CNAME }}
@@ -111,27 +117,52 @@ jobs:
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
 
+  doc-deploy-pr:
+    name: "Deploy PR documentation"
+    # Deploy documentation for PRs, deletes at closure
+    runs-on: ubuntu-latest
+    needs: doc-build
+    if: always() && (needs.doc-build.result == 'success' || needs.doc-build.result == 'skipped')
+    steps:
+      - uses: ansys/actions/doc-deploy-pr@v10
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+          maximum-pr-doc-deployments: 10
+
   release:
     name: "Release project"
+    if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
+    needs: build-library
     runs-on: ubuntu-latest
-    needs: [build-library]
+    environment: release
     permissions:
       id-token: write
       contents: write
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-
-      - name: "Release to public PyPI"
-        uses: ansys/actions/release-pypi-public@v8
-        with:
-          library-name: ${{ env.LIBRARY_NAME }}
-          use-trusted-publisher: true
-
+    
+      # Not working yet since PyScadeOne does not have PDF documentation
       # - name: "Release to GitHub"
-      #   uses: ansys/actions/release-github@v8
+      #   uses: ansys/actions/release-github@v10
       #   with:
       #     library-name: ${{ env.LIBRARY_NAME }}
       #     additional-artifacts: 'examples'
+
+      - name: "Download the library artifacts from build-library step"
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: ${{ env.LIBRARY_NAME }}-artifacts
+          path: ${{ env.LIBRARY_NAME }}-artifacts
+
+      - name: "Upload release to PyPI using trusted publisher"
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+        with:
+          repository-url: "https://upload.pypi.org/legacy/"
+          print-hash: true
+          packages-dir: ${{ env.LIBRARY_NAME }}-artifacts
+          skip-existing: false
 
   doc-deploy-stable:
     name: "Deploy stable documentation"
@@ -140,10 +171,17 @@ jobs:
     needs: [release]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-stable@v8
+      - uses: ansys/actions/doc-deploy-stable@v10
         with:
           doc-artifact-name: 'documentation-html'
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+
+  check-actions-security:
+    name: "Audit workflow security"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ansys/actions/check-actions-security@v10

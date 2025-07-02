@@ -11,8 +11,8 @@ Installation
 
 .. _PyPi: https://pypi.org/project/ansys-scadeone-core/
 
-PyScadeOne is compatible with any Python version greater than Python 3.9. 
-It has been tested with Python 3.9 and 3.12. It can be found on `PyPi`_ 
+PyScadeOne is compatible with any Python version strictly greater than Python 3.9. 
+It has been tested with Python 3.12. It can be found on `PyPi`_ 
 and it also distributed as a wheel package with the Scade One tool. 
 
 To install PyScadeOne use the command:

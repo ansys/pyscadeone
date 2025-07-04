@@ -76,7 +76,7 @@ jobs:
       - uses: ansys/actions/doc-build@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          sphinxopts: -j auto -W
+          sphinxopts: -W
           add-pdf-html-docs-as-assets: false
           use-uv: true
 

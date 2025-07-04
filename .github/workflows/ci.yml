@@ -71,7 +71,7 @@ jobs:
     name: Doc building
     if: github.event.action != 'closed'
     needs: [doc-style]
-    runs-on: [windows-latest]
+    runs-on: [ubuntu-latest]
     steps:
       - uses: ansys/actions/doc-build@v10
         with:

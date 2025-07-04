@@ -30,7 +30,12 @@ Bash might not be available on Windows, and PowerShell may have different names 
 """
 
 import subprocess
+import sys
+from pathlib import Path
 
+if not Path("OSS").exists():
+    # Not on github repository
+    sys.exit(0)
 config = "--config=doc/.vale.ini"
 proc = subprocess.run(["vale", "sync", config], capture_output=True, text=True)
 proc.check_returncode()  # Note: Vale returns 0 even if there are errors
@@ -39,5 +44,5 @@ proc = subprocess.run(
 )
 if proc.stdout:  # Message from Vale if there are errors
     print(proc.stdout)
-    exit(1)
-exit(0)
+    sys.exit(1)
+sys.exit(0)

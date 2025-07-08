@@ -7,7 +7,7 @@
   color: e0b063
 
 - name: dependencies
-  description: Related with project dependencies
+  description: Related to project dependencies
   color: ffc0cb
 
 - name: documentation
@@ -34,3 +34,6 @@
   description: Request for a new template
   color: 000000
   
+- name: testing
+  description: Related to tests
+  color: "ededed"

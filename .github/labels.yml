@@ -26,6 +26,10 @@
   description: Package and maintenance related
   color: f78c37
 
+- name: testing
+  description: Related to tests
+  color: ededed
+
 - name: release
   description: Anything related to an incoming release
   color: ffffff
@@ -33,7 +37,3 @@
 - name: new template
   description: Request for a new template
   color: 000000
-  
-- name: testing
-  description: Related to tests
-  color: "ededed"

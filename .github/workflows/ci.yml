@@ -10,7 +10,7 @@ on:
       - sync/*
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
 
 env:
@@ -108,6 +108,9 @@ jobs:
     name: "Deploy development documentation"
     # Deploy development only when merging or pushing to the 'main' branch
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [build-library]
     if: github.ref == 'refs/heads/main'
     steps:
@@ -123,6 +126,9 @@ jobs:
     name: "Deploy PR documentation"
     # Deploy documentation for PRs, deletes at closure
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     needs: doc-build
     if: always() && (needs.doc-build.result == 'success' || needs.doc-build.result == 'skipped')
     steps:
@@ -170,6 +176,9 @@ jobs:
     name: "Deploy stable documentation"
     # Deploy release documentation when creating a new tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [release]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:

@@ -60,7 +60,7 @@ def smoke():
 
     # %%
     op = cast(swan.Operator, decl)
-    first_input = str(next(op.inputs).id)
+    first_input = str(op.inputs[0].id)
 
     assert first_input == "CruiseSpeed"
 

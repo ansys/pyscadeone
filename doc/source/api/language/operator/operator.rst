@@ -11,7 +11,7 @@ Signature
 Operator interface declaration, found in module interface.
 
 .. autoclass:: Signature
-    :exclude-members: to_str
+    :exclude-members: to_str, add_input, add_output, add_diagram
 
 Operator
 ---------
@@ -19,7 +19,7 @@ Operator
 Operator definition, found in module body.
 
 .. autoclass:: Operator
-    :exclude-members: to_str
+    :exclude-members: to_str, add_input, add_output, add_diagram
 
 Constraints
 -----------

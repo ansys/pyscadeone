@@ -1,2 +1,2 @@
-pysimdata 2.2.0.109.zip
-DotnetParser 2.3.0.003.zip
+pysimdata 2.3.0.092.zip
+DotnetParser 2.3.0.275.zip

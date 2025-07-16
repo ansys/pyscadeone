@@ -32,9 +32,6 @@ from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.svc.fmu import FMU_2_Export
 
-# Tests require path on Scade One. check if it is installed
-s_one_install = Path(r"C:\Scade One")
-
 
 class TestFMUExport:
     def test_init_no_project(self):
@@ -204,7 +201,18 @@ class TestFMUExport:
             ("CodeGenNoOutput", "", "ME", False, "", True, 0, []),
         ],
     )
-    def test_build(self, job, root, kind, with_sources, arch, default_path, keep_outdir, sources):
+    def test_build(
+        self,
+        job,
+        root,
+        kind,
+        with_sources,
+        arch,
+        default_path,
+        keep_outdir,
+        sources,
+        scadeone_install_path,
+    ):
         basegen = Path(__file__).parent / "test_fmu_data"
         basegen.mkdir(exist_ok=True)
         out_dir = basegen / f"test_FMU_{kind}"
@@ -213,9 +221,9 @@ class TestFMUExport:
             args["arch"] = arch
 
         if default_path:
-            app = ScadeOne(s_one_install)
+            app = ScadeOne(scadeone_install_path)
         else:
-            gcc_path = s_one_install / "contrib" / "mingw64" / "bin"
+            gcc_path = Path(scadeone_install_path) / "contrib" / "mingw64" / "bin"
             args["gcc_path"] = str(gcc_path)
             app = ScadeOne()
 
@@ -276,7 +284,7 @@ class TestFMUExport:
         args = {"cc": compiler}
         sav_path = os.environ["PATH"]
 
-        app = ScadeOne()
+        app = ScadeOne("wrong_sone_path")
         prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
         try:
             if out_dir.exists():

@@ -34,8 +34,7 @@ import ansys.scadeone.core.swan as S
 @pytest.fixture
 def model(cc_project):
     app = ScadeOne()
-    asset = cc_project
-    project = app.load_project(asset)
+    project = app.load_project(cc_project)
     return project.model
 
 
@@ -59,17 +58,16 @@ class TestModel:
     def test_find_regulation(self, model: Model):
         def filter(obj: S.GlobalDeclaration):
             if isinstance(obj, S.Operator):
-                name = obj.id
-                return str(name) == "Regulation"
+                return str(obj.id) == "Regulation"
             return False
 
         decl = model.find_declaration(filter)
         assert decl is not None
         # DOES NOTHING AT RUNTIME, BUT TYPING KNOWS
         op = cast(S.Operator, decl)
-        first = cast(S.VarDecl, next(op.inputs))
+        first = cast(S.VarDecl, op.inputs[0])
         assert str(first.id) == "CruiseSpeed"
-        assert not model.all_modules_loaded
+        assert model.all_modules_loaded
 
     def test_path(self, model: Model):
         types = list(model.types)

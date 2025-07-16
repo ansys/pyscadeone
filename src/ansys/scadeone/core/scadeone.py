@@ -20,23 +20,62 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import platform
 from pathlib import Path
 from typing import List, Optional, Union
 
 from ansys.scadeone.core.common.exception import ScadeOneException
-from ansys.scadeone.core.common.logger import LOGGER
+from ansys.scadeone.core.common.logger import LOGGER, ScadeOneLogger
 from ansys.scadeone.core.common.storage import ProjectFile, ProjectStorage
 from ansys.scadeone.core.interfaces import IScadeOne as IScadeOne
 from ansys.scadeone.core.project import Project
+from ansys.scadeone.core.model.model import Model
 
 
 class ScadeOne(IScadeOne):
-    """Scade One application API."""
+    """Scade One API."""
 
-    def __init__(self, install_dir: Optional[Union[str, Path]] = None):
+    def __init__(self, install_dir: Optional[Union[str, Path]] = None) -> None:
         self._logger = LOGGER
         self._projects = []
         self._install_dir = Path(install_dir) if isinstance(install_dir, str) else install_dir
+        self._model = Model()
+        self._tools = self._Tools(self._install_dir)
+
+    class _Tools:
+        """Private class for Scade One installation tools."""
+
+        def __init__(self, install_dir: Optional[Path] = None) -> None:
+            self._install_dir = install_dir
+
+        @property
+        def job_launcher(self) -> Union[Path, None]:
+            """Get job launcher executable path if exists."""
+            if not self._install_dir:
+                return None
+            launcher = (
+                self._install_dir / "tools/job_launcher/scade_one_job_launcher.exe"
+                if platform.system() == "Windows"
+                else self._install_dir / "tools/job_launcher/scade_one_job_launcher"
+            )
+            if launcher.exists():
+                return launcher
+            return None
+
+    @property
+    def model(self) -> Model:
+        return self._model
+
+    @property
+    def projects(self) -> List[Project]:
+        """Returns the loaded projects.
+
+        Returns
+        -------
+        List[Project]
+           Loaded projects.
+        """
+        return self._projects
 
     @property
     def install_dir(self) -> Union[Path, None]:
@@ -45,21 +84,25 @@ class ScadeOne(IScadeOne):
 
     @property
     def version(self) -> str:
-        "API version."
+        """API version."""
         from ansys.scadeone.core import __version__
 
         return __version__
 
     @property
-    def logger(self):
+    def logger(self) -> ScadeOneLogger:
         return self._logger
 
+    @property
+    def tools(self) -> _Tools:
+        return self._tools
+
     # For context management
-    def __enter__(self):
+    def __enter__(self) -> "ScadeOne":
         self.logger.info("Entering context")
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_tb):
+    def __exit__(self, exc_type, exc_value, exc_tb) -> bool:
         if exc_type and not isinstance(exc_type, Union[ScadeOneException, SystemExit]):
             msg = f"Exiting on exception {exc_type}"
             if exc_value:
@@ -71,11 +114,11 @@ class ScadeOne(IScadeOne):
 
     # end context management
 
-    def close(self):
+    def close(self) -> None:
         """Close application, releasing any connection."""
         pass
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
 
     def load_project(self, storage: Union[ProjectStorage, str, Path]) -> Union[Project, None]:
@@ -83,7 +126,7 @@ class ScadeOne(IScadeOne):
 
         Parameters
         ----------
-        storage : Union[ProjectAsset, Path, str]
+        storage : Union[ProjectStorage, str, Path]
             Storage containing project data.
 
         Returns
@@ -98,18 +141,8 @@ class ScadeOne(IScadeOne):
             return None
         project = Project(self, storage)
         self._projects.append(project)
+        self._model.configure(project)
         return project
-
-    @property
-    def projects(self) -> List[Project]:
-        """Return the loaded projects.
-
-        Returns
-        -------
-        List[Project]
-           Loaded projects.
-        """
-        return self._projects
 
     def subst_in_path(self, path: str) -> str:
         """Substitute $(SCADE_ONE_LIBRARIES_DIR) in path.
@@ -120,3 +153,37 @@ class ScadeOne(IScadeOne):
             return path.replace("$(SCADE_ONE_LIBRARIES_DIR)", str(self.install_dir / "libraries"))
 
         return path
+
+    def new_project(self, storage: Union[str, Path]) -> Optional[Project]:
+        """Create a new project.
+
+        Parameters
+        ----------
+        storage : Union[str, Path]
+            Project location.
+
+        Returns
+        -------
+        Project
+            Project object.
+        """
+
+        if not storage:
+            raise ScadeOneException("Storage must be provided.")
+
+        if isinstance(storage, str):
+            storage = Path(storage)
+
+        if storage.exists():
+            raise ScadeOneException(f"'{storage.name}' project already exists.")
+
+        storage = ProjectFile(storage)
+
+        from ansys.scadeone.core.svc.swan_creator.project_creator import (
+            ProjectAdder,
+            ProjectFactory,
+        )
+
+        project = ProjectFactory.create_project(self, storage)
+        ProjectAdder.add_project(self, project)
+        return project

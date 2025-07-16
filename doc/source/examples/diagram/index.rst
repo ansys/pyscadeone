@@ -15,7 +15,8 @@ The ``QuadFlightControl`` example is used. To setup the example see
 The operator is first retrieved from the module:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 40-48
+    :start-after: Step 1
+    :end-before: Step 2
 
 Diagram block
 -------------
@@ -23,7 +24,8 @@ Diagram block
 The operator's diagram block can be accessed with the :py:attr:`ansys.scadeone.core.swan.Operator.diagrams` property.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 50
+    :start-after: Step 2
+    :end-at: diag =
 
 
 From the **MotorControl** diagram block, one can get the list of diagram objects (blocks, wires, etc.) and the
@@ -38,7 +40,8 @@ To get the source and target objects, one need to get the diagram objects using 
 to get the blocks list.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 53
+    :start-after: Step 3
+    :end-at: blocks = list
 
 
 Sources and targets
@@ -47,13 +50,15 @@ Using the **MotorControl** diagram block, one can get the operator's sources usi
 :py:attr:`ansys.scadeone.core.swan.DiagramObject.sources` property:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 55-61
+    :start-after: Step 4
+    :end-at: sources = 
 
 One can also get the operator's targets using the
 :py:attr:`ansys.scadeone.core.swan.DiagramObject.targets` property:
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 63-64
+    :start-after: Step 5
+    :end-at: targets =
 
 
 Navigate from Input to Output
@@ -67,7 +72,8 @@ until one arrive at the ending point, **rotorCmd**.
 First, one get the **attitudeCmd** input with its fields.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 105-114
+    :start-at: def input_filter
+    :end-at: attitude_cmd_fields =
 
 
 Once one have the input, one can move to the next object diagram using
@@ -76,7 +82,8 @@ For each object diagram target, one can move to the
 next object, and so on until one arrive at the output. For each move, one can save the navigated object.
 
 .. literalinclude:: quad_flight_control.py
-    :lines: 117-130
+    :start-at: def contains_output
+    :end-at: attitude_cmd_fields =
 
 Complete example
 ----------------

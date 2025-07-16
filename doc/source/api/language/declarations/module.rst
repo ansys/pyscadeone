@@ -16,7 +16,11 @@ See also :ref:`ref_op_decl` and :ref:`ref_global_decl`.
 .. .. autoclass:: Module
 
 .. autoclass:: ModuleBody
+    :exclude-members: add_constant, add_declaration, add_enum, add_group, add_operator, add_sensor, add_signature, 
+                      add_struct, add_textual_operator, add_textual_signature, add_type
 
 .. autoclass:: ModuleInterface
+    :exclude-members: add_constant, add_declaration, add_enum, add_group, add_operator, add_sensor, add_signature,
+                      add_struct, add_textual_operator, add_textual_signature, add_type
 
 .. autoclass:: UseDirective

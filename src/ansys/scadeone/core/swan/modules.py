@@ -24,18 +24,19 @@
 This module contains classes for package and interface.
 """
 
-from typing import TYPE_CHECKING, Generator, List, Optional, Union
+from typing import List, Optional, Union, cast
+from pathlib import Path
 
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.logger import LOGGER
+from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleCreator
 import ansys.scadeone.core.swan.common as common
+
 
 from .globals import ConstDecl, SensorDecl
 from .groupdecl import GroupDecl
 from .operators import Operator, Signature
 from .typedecl import TypeDecl
-
-if TYPE_CHECKING:
-    from .namespace import ModuleNamespace  # noqa
 
 
 class GlobalDeclaration(common.ModuleItem):  # numpydoc ignore=PR01
@@ -50,17 +51,13 @@ class GlobalDeclaration(common.ModuleItem):  # numpydoc ignore=PR01
     """
 
     def __init__(self) -> None:
-        common.SwanItem().__init__()
+        super().__init__()
 
     def get_full_path(self) -> str:
         """Full path of Swan construct."""
         if self.owner is None:
             raise ScadeOneException("No owner")
         return f"{self.owner.get_full_path()}"
-
-    def to_str(self, kind: str, items: List[common.Declaration]) -> str:
-        decls = "; ".join([str(i) for i in items]) + ";" if items else ""
-        return f"{kind} {decls}"
 
 
 class TypeDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
@@ -76,9 +73,6 @@ class TypeDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
         """Declared types."""
         return self._types
 
-    def __str__(self):
-        return self.to_str("type", self.types)
-
 
 class ConstDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Constant declarations: **constant** {{ *constant_decl* ; }}."""
@@ -92,9 +86,6 @@ class ConstDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     def constants(self) -> List[ConstDecl]:
         """Declared constants."""
         return self._constants
-
-    def __str__(self):
-        return self.to_str("const", self.constants)
 
 
 class SensorDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
@@ -110,9 +101,6 @@ class SensorDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
         """Declared sensors."""
         return self._sensors
 
-    def __str__(self):
-        return self.to_str("sensor", self.sensors)
-
 
 class GroupDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     """Group declarations: **group** {{ *group_decl* ; }}."""
@@ -126,9 +114,6 @@ class GroupDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
     def groups(self) -> List[GroupDecl]:
         """Declared groups."""
         return self._groups
-
-    def __str__(self):
-        return self.to_str("group", self.groups)
 
 
 class UseDirective(common.ModuleItem):  # numpydoc ignore=PR01
@@ -151,17 +136,11 @@ class UseDirective(common.ModuleItem):  # numpydoc ignore=PR01
         """Renaming of module."""
         return self._alias
 
-    def __str__(self) -> str:
-        use = f"use {self.path}"
-        if self.alias:
-            use += f" as {self.alias}"
-        return f"{use};"
-
 
 class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore=PR01
     """Protected declaration."""
 
-    def __init__(self, markup: str, data: str):
+    def __init__(self, markup: str, data: str) -> None:
         super().__init__(data, markup)
 
     @property
@@ -198,8 +177,8 @@ class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore
         return f"{self.owner.get_full_path()}::<protected>"
 
 
-class Module(common.ModuleBase):  # numpydoc ignore=PR01
-    """Module base class
+class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
+    """Module base class.
 
     Parameters
     ----------
@@ -214,8 +193,8 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
     def __init__(
         self,
         name: common.PathIdentifier,
-        use_directives: Union[List[UseDirective], None],
-        declarations: Union[List[common.ModuleItem], None],
+        use_directives: List[UseDirective] = None,
+        declarations: List[common.ModuleItem] = None,
     ) -> None:
         super().__init__()
         self._name = name
@@ -241,23 +220,13 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         self._source = path
 
     @property
-    def declarations(self) -> Generator[common.ModuleItem, None, None]:
-        """Declarations as a generator."""
-        return (d for d in self._declarations)
-
-    @property
-    def declaration_list(self) -> List[common.ModuleItem]:
-        """Declarations as a list. Can be modified."""
+    def declarations(self) -> List[common.ModuleItem]:
+        """Module's declarations"""
         return self._declarations
 
     @property
-    def use_directives(self) -> Generator[UseDirective, None, None]:
-        """Module's **use** directives as a generator."""
-        return (d for d in self._uses)
-
-    @property
-    def use_directive_list(self) -> List[UseDirective]:
-        """Module's **use** directives as a list. Can be modified."""
+    def use_directives(self) -> List[UseDirective]:
+        """Module's **use** directives as a list."""
         return self._uses
 
     @property
@@ -268,35 +237,86 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
     @property
     def file_name(self) -> str:
         """Return a file name based on module name and namespaces."""
-        return self.get_full_path().replace("::", "-") + self.extension
+        return self.name.as_string.replace("::", "-") + self.extension
+
+    @staticmethod
+    def module_name_from_path(path: Path) -> str:
+        """Returns a module name from a path.
+
+        Parameters
+        ----------
+        path : Path
+            Path to the module, e.g. */path/to/namespace-module.swan*
+
+        Returns
+        -------
+        str
+            Module name, e.g. *namespace::module*
+        """
+        module_name = path.stem.replace("-", "::")
+        if common.PathIdentifier.is_valid_path(module_name):
+            return module_name
+        raise ScadeOneException(f"Invalid module path name: {path}")
+
+    def filter_declarations(self, filter_fn) -> List[GlobalDeclaration]:
+        """Return declarations matched by a filter.
+
+        Parameters
+        ----------
+        filter_fn : function
+            A function of one argument of type GlobalDeclaration, returning True or False.
+
+        Returns
+        -------
+        List[GlobalDeclaration]
+            List of matching declarations.
+        """
+        return list(filter(filter_fn, self.declarations))
 
     @property
-    def types(self) -> Generator[TypeDecl, None, None]:
-        """Return a generator on type declarations."""
+    def types(self) -> List[TypeDecl]:
+        """Return a list of type declarations."""
+        types = []
         for decl in self.filter_declarations(lambda x: isinstance(x, TypeDeclarations)):
-            for typ in decl.types:
-                yield typ
+            for typ in cast(TypeDeclarations, decl).types:
+                types.append(typ)
+        return types
 
     @property
-    def sensors(self) -> Generator[SensorDecl, None, None]:
-        """Return a generator on sensor declarations."""
+    def sensors(self) -> List[SensorDecl]:
+        """Return a list of sensor declarations."""
+        sensors = []
         for decl in self.filter_declarations(lambda x: isinstance(x, SensorDeclarations)):
-            for sensor in decl.sensors:
-                yield sensor
+            for sensor in cast(SensorDeclarations, decl).sensors:
+                sensors.append(sensor)
+        return sensors
 
     @property
-    def constants(self) -> Generator[ConstDecl, None, None]:
-        """Return a generator on constant declarations."""
+    def constants(self) -> List[ConstDecl]:
+        """Return a list of constant declarations."""
+        constants = []
         for decl in self.filter_declarations(lambda x: isinstance(x, ConstDeclarations)):
-            for constant in decl.constants:
-                yield constant
+            for constant in cast(ConstDeclarations, decl).constants:
+                constants.append(constant)
+        return constants
 
     @property
-    def groups(self) -> Generator[GroupDecl, None, None]:
-        """Return a generator on group declarations."""
+    def groups(self) -> List[GroupDecl]:
+        """Return a list of group declarations."""
+        groups = []
         for decl in self.filter_declarations(lambda x: isinstance(x, GroupDeclarations)):
-            for grp in decl.groups:
-                yield grp
+            for grp in cast(GroupDeclarations, decl).groups:
+                groups.append(grp)
+        return groups
+
+    @property
+    def signatures(self) -> List[Signature]:
+        """Return a list of signatures."""
+        return [
+            cast(Signature, signature)
+            for signature in self.filter_declarations(lambda x: isinstance(x, Signature))
+            if signature
+        ]
 
     def get_full_path(self) -> str:
         """Full Swan path of module."""
@@ -307,29 +327,23 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         from .namespace import ModuleNamespace
 
         m_ns = ModuleNamespace(self)
-        return m_ns.get_declaration(name)
+        decl = m_ns.get_declaration(name)
+        return cast(GlobalDeclaration, decl) if decl else None
 
-    def filter_declarations(self, filter_fn) -> Generator[GlobalDeclaration, None, None]:
-        """Return declarations matched by a filter.
+    def get_use_directive(self, module_name: str) -> Union[UseDirective, None]:
+        """Return the use directive searching by module name or alias name.
+
+        Aliases are searched first, the module name is searched if no alias is found.
+        When a module name is searched, use directive with first occurrence is returned.
 
         Parameters
         ----------
-        filter_fn : function
-            A function of one argument of type GlobalDeclaration, returning True or False.
-
-        Yields
-        ------
-        Generator[GlobalDeclaration, None, None]
-            Generator on matching declarations.
-        """
-        return filter(filter_fn, self.declarations)
-
-    def get_use_directive(self, name: str) -> UseDirective:
-        """Return a dictionary of use directives by their name or given alias.
-        The name is the last part of the path ID.
+            module_name : str
+                Name of the module (last part of a path) or alias.
 
         Returns
-        Dict[str, UseDirective]
+        -------
+            Found UseDirective or None
         """
         for use in self.use_directives:
             if use.alias:
@@ -338,7 +352,7 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
                 if not isinstance(use.path.path_id, list):
                     raise ScadeOneException(f"{use.path.as_string} is invalid.")
                 key = use.path.path_id[-1].value
-            if key == name:
+            if key == module_name:
                 return use
         return None
 
@@ -350,11 +364,9 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         """Return the module body for a module interface if it exists."""
         return None
 
-    def __str__(self) -> str:
-        decls = []
-        decls.extend([str(use) for use in self.use_directives])
-        decls.extend([str(decl) for decl in self.declarations])
-        return "\n\n".join(decls)
+    def harness(self):
+        """Return the test harness if it exists."""
+        return None
 
 
 class ModuleInterface(Module):  # numpydoc ignore=PR01
@@ -373,12 +385,6 @@ class ModuleInterface(Module):  # numpydoc ignore=PR01
         """Return module extension, with . included."""
         return ".swani"
 
-    @property
-    def signatures(self) -> Generator[Signature, None, None]:
-        """Return a generator on signatures."""
-        for decl in self.filter_declarations(lambda x: isinstance(x, Signature)):
-            yield decl
-
     def body(self) -> "ModuleBody":
         """Return the module body for a module interface if it exists."""
         return self.model.get_module_body(self.name.as_string)
@@ -395,16 +401,23 @@ class ModuleBody(Module):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(name, use_directives, declarations)
 
+        from ansys.scadeone.core.model.loader import SwanParser
+
+        self._parser = SwanParser(LOGGER)
+
     @property
     def extension(self) -> str:
         """Return module extension, with '.' included."""
         return ".swan"
 
     @property
-    def operators(self) -> Generator[Operator, None, None]:
-        """Return a generator on operators."""
-        for decl in self.filter_declarations(lambda x: isinstance(x, Operator)):
-            yield decl
+    def operators(self) -> List[Operator]:
+        """Return a list of operators."""
+        return [
+            cast(Operator, decl)
+            for decl in self.filter_declarations(lambda x: isinstance(x, Operator))
+            if decl
+        ]
 
     def interface(self) -> "ModuleInterface":
         """Return the module interface for a module body if it exists."""

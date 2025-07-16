@@ -50,10 +50,10 @@ QuadUtils::LimiterUnSymmetrical called by:
 
 import logging
 from pathlib import Path
-from typing import cast, Union
+from typing import cast
 
 from ansys.scadeone.core.scadeone import ScadeOne
-from ansys.scadeone.core.svc.swan_visitor import SwanVisitor
+from ansys.scadeone.core.svc.swan_visitor import SwanVisitor, Owner, OwnerProperty
 import ansys.scadeone.core.swan as swan
 
 # Update according to your installation
@@ -91,7 +91,7 @@ class ReferenceVisitor(SwanVisitor):
         return self._called.get(name, None)
 
     def visit_Operator(
-        self, swan_obj: swan.Operator, owner: Union[swan.Any, None], property: Union[str, None]
+        self, swan_obj: swan.Operator, owner: Owner, property: OwnerProperty
     ) -> None:
         self._current_op = swan_obj
         self._callers[swan_obj.get_full_path()] = {}
@@ -99,7 +99,7 @@ class ReferenceVisitor(SwanVisitor):
         self._current_op = None
 
     def visit_PathIdOpCall(
-        self, swan_obj: swan.PathIdOpCall, owner: Union[swan.Any, None], property: Union[str, None]
+        self, swan_obj: swan.PathIdOpCall, owner: OwnerProperty, property: OwnerProperty
     ) -> None:
         if self._current_op is None:
             return

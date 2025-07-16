@@ -20,8 +20,9 @@ Identifier classes
 Swan identifiers are represented by the following classes with a simple identifier or 
 a path identifier, which is a list of identifiers separated by '::'.
 
-A **luid** is used to identify diagram blocks, connections, but also to name instances
-of operators, or parts of automata.
+A **luid** (:class:`Luid`) is used to name instances of operators, automata, or activate.
+
+A **lunum** (:class:`Lunum`) is used to reference a block in a :class:`Diagram`.
 
 .. autoclass:: Identifier
 
@@ -29,12 +30,8 @@ of operators, or parts of automata.
 
 .. autoclass:: Luid
 
-Pragma class
-------------
+.. autoclass:: Lunum
 
-The :py:class:`Pragma` stores a pragma information given in the code.
-
-.. autoclass:: Pragma
 
 Protection class
 ----------------

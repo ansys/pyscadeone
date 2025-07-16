@@ -28,8 +28,6 @@ from abc import ABC
 from enum import Enum, auto
 from typing import List, Optional, Union
 
-from typing_extensions import Self
-
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
 
@@ -41,21 +39,13 @@ class OperatorBase(common.SwanItem, ABC):  # numpydoc ignore=PR01  # numpydoc ig
     """Base class for: operator ::= prefix_op [[sizes]]."""
 
     def __init__(self, sizes: List[common.Expression]) -> None:
-        common.SwanItem().__init__()
+        common.SwanItem.__init__(self)
         self._sizes = sizes
 
     @property
     def sizes(self) -> List[common.Expression]:
         """Size parameters of call."""
         return self._sizes
-
-    def to_str(self, op_str: str) -> str:
-        """Returns op_str [<<sizes>>]."""
-        buffer = op_str
-        if self.sizes:
-            sz_str = common.to_str_comma_list(self.sizes)
-            buffer += f" <<{sz_str}>>"
-        return buffer
 
 
 class PathIdOpCall(OperatorBase, common.PragmaBase):  # numpydoc ignore=PR01
@@ -76,9 +66,6 @@ class PathIdOpCall(OperatorBase, common.PragmaBase):  # numpydoc ignore=PR01
         """Operator path."""
         return self._path_id
 
-    def __str__(self) -> str:
-        return self.to_str(str(self.path_id))
-
 
 class PrefixPrimitiveKind(Enum):
     """Prefix primitive kind: reverse, transpose, pack, and flatten."""
@@ -95,7 +82,7 @@ class PrefixPrimitiveKind(Enum):
     Transpose = auto()
 
     @staticmethod
-    def to_str(value: Self) -> str:
+    def to_str(value: "PrefixPrimitiveKind") -> str:
         return value.name.lower()
 
 
@@ -117,9 +104,6 @@ class PrefixPrimitive(OperatorBase):  # numpydoc ignore=PR01
         """Primitive kind."""
         return self._kind
 
-    def __str__(self) -> str:
-        return self.to_str(PrefixPrimitiveKind.to_str(self.kind))
-
 
 class Transpose(PrefixPrimitive):  # numpydoc ignore=PR01
     """Transpose operator.
@@ -127,32 +111,28 @@ class Transpose(PrefixPrimitive):  # numpydoc ignore=PR01
     Parameters are a list of integer, but could be a
     single string if the indices are syntactically incorrect."""
 
-    def __init__(self, params: Union[List[int], str], sizes: List[common.Expression]) -> None:
+    def __init__(self, params: Union[List[str], str], sizes: List[common.Expression]) -> None:
         super().__init__(PrefixPrimitiveKind.Transpose, sizes)
         self._params = params
         self._is_valid = isinstance(params, list)
 
     @property
-    def params(self) -> List[str]:
-        """Transpose indices a list of str."""
+    def params(self) -> Union[List[str], str]:
+        """Transpose indices as list of str is transpose indices
+        are valid, else the invalid string of indices."""
         return self._params
 
-    def __str__(self) -> str:
-        buffer = "transpose"
-        if isinstance(self._params, str):
-            p = common.Markup.to_str(self._params)
-        else:
-            p = common.to_str_comma_list(self._params)
-        if p != "":
-            buffer += f" {{{p}}}"
-        return self.to_str(buffer)
+    @property
+    def is_valid(self) -> bool:
+        """True when indices are a valid list, else one has a string."""
+        return self._is_valid
 
 
 class OperatorExpression(common.SwanItem, ABC):  # numpydoc ignore=PR01
     """Base class for *op_expr*."""
 
     def __init__(self) -> None:
-        common.SwanItem().__init__()
+        common.SwanItem.__init__(self)
 
 
 class PrefixOperatorExpression(OperatorBase):  # numpydoc ignore=PR01
@@ -161,16 +141,31 @@ class PrefixOperatorExpression(OperatorBase):  # numpydoc ignore=PR01
     def __init__(self, op_expr: OperatorExpression, sizes: List[common.Expression]) -> None:
         super().__init__(sizes)
         self._op_expr = op_expr
+        self._is_text = False
+        self._is_op_expr = False
 
     @property
     def op_expr(self) -> OperatorExpression:
         """Operator expression."""
         return self._op_expr
 
-    def __str__(self) -> str:
-        """Returns '(operator_expr)' string."""
-        buffer = f"({self.op_expr})"
-        return self.to_str(buffer)
+    @property
+    def is_text(self) -> bool:
+        """Return True if *op_expr* is read from {text% ...%text}."""
+        return self._is_text
+
+    @is_text.setter
+    def is_text(self, is_text: bool):
+        self._is_text = is_text
+
+    @property
+    def is_op_expr(self) -> bool:
+        """Return True if *op_expr* is read from {op_expr% ...%op_expr}."""
+        return self._is_op_expr
+
+    @is_op_expr.setter
+    def is_op_expr(self, is_op_expr: bool):
+        self._is_op_expr = is_op_expr
 
 
 class IteratorKind(Enum):
@@ -192,7 +187,7 @@ class IteratorKind(Enum):
     Mapfoldi = auto()
 
     @staticmethod
-    def to_str(value: Self) -> str:
+    def to_str(value: "IteratorKind") -> str:
         if value == IteratorKind.Map:
             return "map"
         elif value == IteratorKind.Fold:
@@ -225,9 +220,6 @@ class Iterator(OperatorExpression):  # numpydoc ignore=PR01
         """Iterated operator."""
         return self._operator
 
-    def __str__(self) -> str:
-        return f"{IteratorKind.to_str(self.kind)} {self.operator}"
-
 
 class ActivateClock(OperatorExpression):  # numpydoc ignore=PR01
     """**activate** *operator* **every** *clock_expr*"""
@@ -246,9 +238,6 @@ class ActivateClock(OperatorExpression):  # numpydoc ignore=PR01
     def clock(self) -> ClockExpr:
         """Activation clock expression"""
         return self._clock
-
-    def __str__(self) -> str:
-        return f"activate {self.operator} every {self.clock}"
 
 
 class ActivateEvery(OperatorExpression):  # numpydoc ignore=PR01
@@ -288,13 +277,6 @@ class ActivateEvery(OperatorExpression):  # numpydoc ignore=PR01
         """Activation default/last expression."""
         return self._expr
 
-    def __str__(self) -> str:
-        o = str(self.operator)
-        c = str(self.condition)
-        d = str(self.expr)
-        k = "last" if self.is_last else "default"
-        return f"activate {o} every {c} {k} {d}"
-
 
 class Restart(OperatorExpression):  # numpydoc ignore=PR01
     """Higher-order restart expression: **restart** *operator* **every** *expr*."""
@@ -314,9 +296,6 @@ class Restart(OperatorExpression):  # numpydoc ignore=PR01
         """Activation condition."""
         return self._condition
 
-    def __str__(self) -> str:
-        return f"restart {self.operator} every {self.condition}"
-
 
 class OptGroupItem(common.SwanItem):  # numpydoc ignore=PR01
     """Optional group item: *opt_group_item* ::= _ | *group_item*."""
@@ -334,9 +313,6 @@ class OptGroupItem(common.SwanItem):  # numpydoc ignore=PR01
     def item(self) -> Union[GroupItem, None]:
         """Returns the group item, either a GroupItem or None."""
         return self._item
-
-    def __str__(self) -> str:
-        return "_" if self.is_underscore else str(self.item)
 
 
 class Partial(OperatorExpression):  # numpydoc ignore=PR01
@@ -356,10 +332,6 @@ class Partial(OperatorExpression):  # numpydoc ignore=PR01
     def partial_group(self) -> List[OptGroupItem]:
         """Returns the partial group items."""
         return self._partial_group
-
-    def __str__(self) -> str:
-        p = common.to_str_comma_list(self.partial_group)
-        return f"{self.operator} \\ {p}"
 
 
 class NaryOp(Enum):
@@ -384,7 +356,7 @@ class NaryOp(Enum):
     Concat = auto()
 
     @staticmethod
-    def to_str(value: Self):
+    def to_str(value: "NaryOp"):
         if value == NaryOp.Plus:
             return "+"
         elif value == NaryOp.Mult:
@@ -415,9 +387,6 @@ class NAryOperator(OperatorExpression):  # numpydoc ignore=PR01
         """N-ary operator."""
         return self._operator
 
-    def __str__(self) -> str:
-        return NaryOp.to_str(self.operator)
-
 
 class AnonymousOperatorWithExpression(OperatorExpression):  # numpydoc ignore=PR01
     """Anonymous operator expression:
@@ -437,7 +406,7 @@ class AnonymousOperatorWithExpression(OperatorExpression):  # numpydoc ignore=PR
         self._expr = expr
 
     @property
-    def is_node(self):
+    def is_node(self) -> bool:
         """True when anonymous operator is a node, else a function."""
         return self._is_node
 
@@ -455,15 +424,6 @@ class AnonymousOperatorWithExpression(OperatorExpression):  # numpydoc ignore=PR
     def expr(self) -> common.Expression:
         """Anonymous operator body."""
         return self._expr
-
-    def __str__(self) -> str:
-        kind = "node" if self.is_node else "function"
-        params = common.to_str_comma_list(self.params)
-        sections = " ".join(str(s) for s in self.sections)
-        if sections:
-            sections = " " + sections
-        expression = str(self.expr)
-        return f"{kind} {params}{sections} => {expression}"
 
 
 class AnonymousOperatorWithDataDefinition(OperatorExpression):  # numpydoc ignore=PR01
@@ -484,7 +444,7 @@ class AnonymousOperatorWithDataDefinition(OperatorExpression):  # numpydoc ignor
         self._data_def = data_def
 
     @property
-    def is_node(self):
+    def is_node(self) -> bool:
         """True when anonymous operator is a node, else a function."""
         return self._is_node
 
@@ -502,13 +462,6 @@ class AnonymousOperatorWithDataDefinition(OperatorExpression):  # numpydoc ignor
     def data_def(self) -> Union[common.Equation, scopes.Scope]:
         """Anonymous operator data definition, either an equation or a scope."""
         return self._data_def
-
-    def __str__(self) -> str:
-        kind = "node" if self.is_node else "function"
-        inputs = common.to_str_semi_list(self.inputs)
-        outputs = common.to_str_semi_list(self.outputs)
-        data_def = str(self.data_def)
-        return f"{kind} ({inputs}) returns ({outputs}) {data_def}"
 
 
 class OperatorInstance(common.Expression):  # numpydoc ignore=PR01
@@ -540,11 +493,6 @@ class OperatorInstance(common.Expression):  # numpydoc ignore=PR01
     def luid(self) -> Union[common.Luid, None]:
         """Optional luid."""
         return self._luid
-
-    def __str__(self) -> str:
-        if self.luid:
-            return f"{self.operator} {self.luid} ({self.params})"
-        return f"{self.operator} ({self.params})"
 
 
 # =============================================

@@ -1,10 +1,10 @@
-Assume/guarantee - emission
-===========================
+Formal properties - emission
+============================
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-Assume guarantee sections
--------------------------
+Assume, guarantee, assert sections
+----------------------------------
 
 .. autoclass:: FormalProperty
 
@@ -12,6 +12,9 @@ Assume guarantee sections
     :exclude-members: to_str
 
 .. autoclass:: GuaranteeSection
+    :exclude-members: to_str
+
+.. autoclass:: AssertSection
     :exclude-members: to_str
 
 Emissions

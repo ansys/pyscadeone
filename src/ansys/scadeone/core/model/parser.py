@@ -22,9 +22,9 @@
 
 from abc import ABC, abstractmethod
 from typing import Union
-from typing_extensions import Self
 
 from ansys.scadeone.core.common.storage import SwanStorage
+from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.swan as S
 
 
@@ -37,11 +37,14 @@ class Parser(ABC):
     _CurrentParser = None
 
     @classmethod
-    def get_current_parser(cls) -> Self:
-        return cls._CurrentParser
+    def get_current_parser(cls) -> "Parser":
+        """Returns the current parser in use. Parser must be set."""
+        if cls._CurrentParser:
+            return cls._CurrentParser
+        raise ScadeOneException("Current parser not set.")
 
     @classmethod
-    def set_current_parser(cls, parser: Self):
+    def set_current_parser(cls, parser: "Parser"):
         cls._CurrentParser = parser
 
     # Source of parsing
@@ -194,17 +197,17 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def operator(self, source: SwanStorage) -> S.Operator:
+    def operator_decl(self, source: SwanStorage) -> Union[S.Operator, S.Signature]:
         """Parse a Swan operator
 
-         Parameters
+        Parameters
         ----------
         source : SwanStorage
-            Swan operator text
+            Swan operator text or operator interface
 
         Returns
         -------
-        S.Operator
-            Instance of the operator
+        S.Operator|S.Signature
+            Instance of the operator, or its signature
         """
         pass

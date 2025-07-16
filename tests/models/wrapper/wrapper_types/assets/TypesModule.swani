@@ -1,0 +1,4 @@
+-- version swan: 2025.0 graph: 2.0
+type floatType = float32;
+
+type tSize = enum{Small, High};

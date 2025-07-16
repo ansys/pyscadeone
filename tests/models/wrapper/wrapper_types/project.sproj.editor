@@ -1,0 +1,11 @@
+{
+  "JobsOrder": [
+    "jobs\\codegen_a1917cd\\.sjob",
+    "jobs\\simu_bed5626\\.sjob"
+  ],
+  "ModulesOrder": [
+    "assets\\TypesModule.swani",
+    "assets\\module0.swan",
+    "assets\\module1.swant"
+  ]
+}

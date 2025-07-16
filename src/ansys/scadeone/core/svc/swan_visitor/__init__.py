@@ -21,3 +21,8 @@
 # SOFTWARE.
 
 from .visitor import *
+from .visitor import (
+    SwanVisitor as SwanVisitor,
+    Owner as Owner,
+    OwnerProperty as OwnerProperty,
+)

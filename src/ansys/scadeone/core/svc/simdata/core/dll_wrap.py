@@ -66,8 +66,9 @@ def wrap_function(lib, func_name, argtypes, restype):
     return func
 
 
-sdf_create_wrap = wrap_function(SWAN_SD_CDLL, "sdf_wcreate", [ctypes.c_wchar_p], core.sd_id_t)
-sdf_open_wrap = wrap_function(SWAN_SD_CDLL, "sdf_wopen", [ctypes.c_wchar_p], core.sd_id_t)
+sdf_open_wrap = wrap_function(
+    SWAN_SD_CDLL, "sdf_wopen", [ctypes.c_wchar_p, core.sdf_open_mode_t], core.sd_id_t
+)
 sdf_get_version_wrap = wrap_function(
     SWAN_SD_CDLL, "sdf_get_format_version", [core.sd_id_t], ctypes.c_char_p
 )
@@ -484,18 +485,9 @@ sdd_sequence_close_wrap = wrap_function(
 # file operations
 
 
-def sdf_create(file_path: Union[str, Path]) -> int:
-    if isinstance(file_path, Path):
-        file_path = str(file_path)
+def sdf_open(file_path: str, mode: core.FileOpenMode) -> int:
     b_file_path = ctypes.c_wchar_p(file_path)
-    return sdf_create_wrap(b_file_path)
-
-
-def sdf_open(file_path: Union[str, Path]) -> int:
-    if isinstance(file_path, Path):
-        file_path = str(file_path)
-    b_file_path = ctypes.c_wchar_p(file_path)
-    return sdf_open_wrap(b_file_path)
+    return sdf_open_wrap(b_file_path, mode)
 
 
 def sdf_get_version(file_id: int) -> str:

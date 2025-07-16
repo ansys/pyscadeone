@@ -108,27 +108,6 @@ class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
         """True when variable is local."""
         return not self.is_input and not self.is_output
 
-    def __str__(self) -> str:
-        buffer = ""
-        if self.is_clock:
-            buffer += "clock "
-        if self.is_probe:
-            buffer += "#pragma cg probe #end "
-        buffer += str(self.id)
-        if self.type:
-            buffer += f": {self.type}"
-        if self.when:
-            buffer += f" when {self.when}"
-        if self.default:
-            buffer += f" default = {self.default}"
-        if self.last:
-            buffer += f" last = {self.last}"
-        return buffer
-
-    def var_decl(self) -> str:
-        """Return variable declaration string."""
-        return f"var {self};\n"
-
 
 class ProtectedVariable(common.Variable, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected variable definition as a string."""

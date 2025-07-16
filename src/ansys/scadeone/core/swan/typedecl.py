@@ -47,10 +47,6 @@ class TypeDecl(common.Declaration):  # numpydoc ignore=PR01
     def definition(self) -> Union[TypeDefinition, None]:
         return self._definition
 
-    def __str__(self) -> str:
-        decl = f"{self.id}"
-        return f"{decl} = {self.definition}" if self.definition else f"{decl}"
-
 
 # Type definitions
 # ----------------
@@ -64,11 +60,8 @@ class ExprTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
         self._type = type
 
     @property
-    def type(self):
+    def type(self) -> common.TypeExpression:
         return self._type
-
-    def __str__(self) -> str:
-        return str(self.type)
 
 
 class EnumTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
@@ -79,12 +72,8 @@ class EnumTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
         self._tags = tags
 
     @property
-    def tags(self):
+    def tags(self) -> List[common.Identifier]:
         return self._tags
-
-    def __str__(self):
-        tags_str = [str(t) for t in self.tags]
-        return f"enum {{{', '.join(tags_str)}}}"
 
 
 class PredefinedType(common.TypeExpression):  # numpydoc ignore=PR01
@@ -102,9 +91,6 @@ class PredefinedType(common.TypeExpression):  # numpydoc ignore=PR01
     def name(self) -> str:
         """Name of a predefined type from its class."""
         return self.__class__.__name__[:-4].lower()
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class BoolType(PredefinedType):  # numpydoc ignore=PR01
@@ -176,12 +162,6 @@ class SizedTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
     def size(self):
         return self._expr
 
-    def __str__(self) -> str:
-        if self.is_signed:
-            return f"signed <<{self.size}>>"
-        else:
-            return f"unsigned <<{self.size}>>"
-
 
 class TypeReferenceExpression(common.TypeExpression):  # numpydoc ignore=PR01
     """Type reference to another type: *type_expr* ::= *path_id*."""
@@ -194,9 +174,6 @@ class TypeReferenceExpression(common.TypeExpression):  # numpydoc ignore=PR01
     def alias(self) -> common.PathIdentifier:
         """Returns aliased type name."""
         return self._alias
-
-    def __str__(self) -> str:
-        return str(self.alias)
 
 
 class VariableTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
@@ -212,9 +189,6 @@ class VariableTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
     def name(self) -> common.Identifier:
         """Name of variable."""
         return self._name
-
-    def __str__(self) -> str:
-        return f"{self.name}"
 
 
 class StructField(common.SwanItem):  # numpydoc ignore=PR01
@@ -235,9 +209,6 @@ class StructField(common.SwanItem):  # numpydoc ignore=PR01
         """Field type."""
         return self._type
 
-    def __str__(self) -> str:
-        return f"{self.id}: {self.type}"
-
 
 class StructTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     """Type definition as a structure: *type_expr* ::= { *field_decl* {{, *field_decl*}}}."""
@@ -250,10 +221,6 @@ class StructTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     def fields(self) -> List[StructField]:
         """List of fields."""
         return self._fields
-
-    def __str__(self) -> str:
-        f_str = [str(f) for f in self._fields]
-        return f"{{{', '.join(f_str)}}}"
 
 
 class ArrayTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
@@ -274,9 +241,6 @@ class ArrayTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
         """Array cell type."""
         return self._type
 
-    def __str__(self) -> str:
-        return f"{self.type} ^ {self.size}"
-
 
 class VariantComponent(common.SwanItem):  # numpydoc ignore=PR01
     """Variant component: *variant* ::= id *variant_type_expr*."""
@@ -286,7 +250,7 @@ class VariantComponent(common.SwanItem):  # numpydoc ignore=PR01
         self._tag = tag
 
     @property
-    def tag(self):
+    def tag(self) -> common.Identifier:
         """Variant tag."""
         return self._tag
 
@@ -298,9 +262,6 @@ class VariantSimple(VariantComponent):  # numpydoc ignore=PR01
 
     def __init__(self, tag: common.Identifier) -> None:
         super().__init__(tag)
-
-    def __str__(self) -> str:
-        return f"{self.tag} {{}}"
 
 
 class VariantTypeExpr(VariantComponent):  # numpydoc ignore=PR01
@@ -317,12 +278,6 @@ class VariantTypeExpr(VariantComponent):  # numpydoc ignore=PR01
         """Variant type expression."""
         return self._type
 
-    def __str__(self) -> str:
-        if self.type:
-            return f"{self.tag} {{ {self.type} }}"
-        else:
-            return f"{self.tag} {{ }}"
-
 
 class VariantStruct(VariantComponent):  # numpydoc ignore=PR01
     """Variant structure expression:
@@ -338,10 +293,6 @@ class VariantStruct(VariantComponent):  # numpydoc ignore=PR01
         """Variant structure fields."""
         return self._fields
 
-    def __str__(self) -> str:
-        f_str = [str(f) for f in self.fields]
-        return f"{self.tag} {{{', '.join(f_str)}}}"
-
 
 class VariantTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     """Type definition as a variant: *type_def* ::= *variant* {{ | *variant* }}."""
@@ -351,12 +302,8 @@ class VariantTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
         self._tags = tags
 
     @property
-    def tags(self):
+    def tags(self) -> List[VariantComponent]:
         return self._tags
-
-    def __str__(self) -> str:
-        v_str = [str(v) for v in self.tags]
-        return " | ".join(v_str)
 
 
 class ProtectedTypeExpr(common.TypeExpression, common.ProtectedItem):  # numpydoc ignore=PR01

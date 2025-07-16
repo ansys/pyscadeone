@@ -7,7 +7,7 @@
   color: e0b063
 
 - name: dependencies
-  description: Related with project dependencies
+  description: Related to project dependencies
   color: ffc0cb
 
 - name: documentation
@@ -37,4 +37,3 @@
 - name: new template
   description: Request for a new template
   color: 000000
-  

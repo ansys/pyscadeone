@@ -1,0 +1,24 @@
+{
+  "Version": "2.0",
+  "Kind": "CodeGeneration",
+  "Properties": {
+    "RootDeclarations": [
+      "module0::operator0"
+    ],
+    "Name": "CodeGenerationJob0",
+    "CustomArguments": "",
+    "Expansion": "None",
+    "ExpansionExp": "",
+    "ExpansionNoExp": "",
+    "ShortCircuitOperators": "False",
+    "NameLength": "200",
+    "SignificanceLength": "31",
+    "KeepAssume": "False",
+    "GlobalsPrefix": "",
+    "UseMacros": "False",
+    "StaticLocals": "False"
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

@@ -46,7 +46,8 @@ import jinja2
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.logger import LOGGER
-import ansys.scadeone.core.project as project
+
+from ansys.scadeone.core.project import Project
 import ansys.scadeone.core.svc.generated_code as GC
 
 script_dir = Path(__file__).parent
@@ -96,19 +97,19 @@ class ModelVar:
             category = ty["category"]
 
             if category == "predefined_type":
-                if type_name == "swan_float32" or type_name == "swan_float64":
+                if type_name in ("swan_float32", "swan_float64"):
                     fmu_ty = "Real"
-                elif (
-                    type_name == "swan_int8"
-                    or type_name == "swan_int16"
-                    or type_name == "swan_int32"
-                    or type_name == "swan_int64"
-                    or type_name == "swan_uint8"
-                    or type_name == "swan_uint16"
-                    or type_name == "swan_uint32"
-                    or type_name == "swan_uint64"
-                    or type_name == "swan_char"
-                    or type_name == "swan_size"
+                elif type_name in (
+                    "swan_int8",
+                    "swan_int16",
+                    "swan_int32",
+                    "swan_int64",
+                    "swan_uint8",
+                    "swan_uint16",
+                    "swan_uint32",
+                    "swan_uint64",
+                    "swan_char",
+                    "swan_size",
                 ):
                     fmu_ty = "Integer"
                 elif type_name == "swan_bool":
@@ -195,22 +196,20 @@ class ModelVar:
             base_type = code_type["elements"]["base_type"]
             for i in range(0, code_type["elements"]["size"]):
                 var_list.extend(
-                    ModelVar.paths_of_param(
-                        "%s[%d]" % (sc_path, i), "%s[%d]" % (c_path, i), base_type
-                    )
+                    ModelVar.paths_of_param(f"{sc_path}[{i}]", f"{c_path}[{i}]", base_type)
                 )
         elif code_type["category"] == "struct":
             for f in code_type["elements"]:
                 var_list.extend(
                     ModelVar.paths_of_param(
-                        "%s.%s" % (sc_path, f["name"]), "%s.%s" % (c_path, f["name"]), f["type"]
+                        f"{sc_path}.{f['name']}", f"{c_path}.{f['name']}", f["type"]
                     )
                 )
         elif code_type["category"] == "union":
             for f in code_type["elements"]:
                 var_list.extend(
                     ModelVar.paths_of_param(
-                        "%s.%s" % (sc_path, f["name"]), "%s.%s" % (c_path, f["name"]), f["type"]
+                        f"{sc_path}.{f['name']}", f"{c_path}.{f['name']}", f["type"]
                     )
                 )
         else:
@@ -276,7 +275,7 @@ class FMU_Export(ABC):
     unique, if provided it has to be a root operator for the job).
     """
 
-    def __init__(self, prj: project.Project, job_name: str, oper_name: str = "") -> None:
+    def __init__(self, prj: Project, job_name: str, oper_name: str = "") -> None:
         if prj is None:
             raise ScadeOneException("FMU_Export: Valid Scade One project is expected.")
         self._project = prj
@@ -358,6 +357,11 @@ class FMU_Export(ABC):
             self._sensors = self.codegen.get_model_sensors()
         return self._sensors
 
+    @property
+    def elaboration_function(self) -> Optional[GC.CFunction]:
+        # Returns the elaboration function of the operator.
+        return self.codegen.get_elaboration_function()
+
     def create_xml_child(self, name: str, parent: D.Node) -> D.Element:
         # Creates an XML child element
         d = self._doc.createElement(name)
@@ -404,7 +408,7 @@ class FMU_2_Export(FMU_Export):
     """
 
     def __init__(
-        self, prj: project.Project, job_name: str, oper_name: str = "", max_variables: int = 1000
+        self, prj: Project, job_name: str, oper_name: str = "", max_variables: int = 1000
     ) -> None:
         super().__init__(prj, job_name, oper_name)
         self.max_variables = max_variables
@@ -476,17 +480,20 @@ class FMU_2_Export(FMU_Export):
             fmu_ty = mv.type_kind
             if fmu_ty == var_type:
                 stmts_set.append(
-                    "case %d: %s = (%s) value[i]; break;"
-                    % (idx, mv.get_context_path(), mv.type_name)
+                    "case {tag}: {var} = ({type}) value[i]; break;".format(
+                        tag=idx, var=mv.get_context_path(), type=mv.type_name
+                    )
                 )
                 stmts_get.append(
-                    "case %d: value[i] = %s; break;" % (idx, mv.get_context_path(fmu_ty))
+                    "case {tag}: value[i] = {expr}; break;".format(
+                        tag=idx, expr=mv.get_context_path(fmu_ty)
+                    )
                 )
                 idx = idx + 1
 
         if var_type == "Real":
-            stmts_set.append("case %d: comp->period = value[i]; break;" % idx)
-            stmts_get.append("case %d: value[i] = comp->period; break;" % idx)
+            stmts_set.append(f"case {idx}: comp->period = value[i]; break;")
+            stmts_get.append(f"case {idx}: value[i] = comp->period; break;")
 
         return "\n".join(stmts_set), "\n".join(stmts_get)
 
@@ -495,11 +502,14 @@ class FMU_2_Export(FMU_Export):
         stmts_init = []
         for mv in self._mvars:
             stmts_init.append(
-                "%s = (%s)%s;"
-                % (mv.get_context_path(), mv.type_name, mv.get_default_value(xml=False))
+                "{var} = ({type}){expr};".format(
+                    var=mv.get_context_path(),
+                    type=mv.type_name,
+                    expr=mv.get_default_value(xml=False),
+                )
             )
 
-        stmts_init.append("comp->period = %s;" % self.default_period)
+        stmts_init.append(f"comp->period = {self.default_period};")
 
         return "\n".join(stmts_init)
 
@@ -520,24 +530,24 @@ class FMU_2_Export(FMU_Export):
             trim_blocks=True,
             lstrip_blocks=True,
         )
-        template = environment.get_template("FMI_v2.0_template.c")
+        template = environment.get_template("FMI_v2.0_template.j2")
 
         cycle_function = self.oper.cycle_method
         init_function = self.oper.init_method
         reset_function = self.oper.reset_method
 
-        includes = (
-            """
-#include "%s"
-"""
-            % (cycle_function.get_interface_file())
-        ).strip()
+        include_files = [cycle_function.get_interface_file(), "swan_consts.h", "swan_sensors.h"]
+
+        if self.elaboration_function:
+            include_files.append(self.elaboration_function.get_interface_file())
+
+        includes = "\n".join(f'#include "{f}"' for f in include_files)
 
         fmi_set_real, fmi_get_real = self._generate_var_infos("Real")
         fmi_set_integer, fmi_get_integer = self._generate_var_infos("Integer")
         fmi_set_boolean, fmi_get_boolean = self._generate_var_infos("Boolean")
 
-        scade_context = "SCADE_%s" % self.model_id
+        scade_context = f"SCADE_{self.model_id}"
 
         return_type = cycle_function.return_type
 
@@ -554,14 +564,12 @@ class FMU_2_Export(FMU_Export):
                 sensors += f"\n{s.code_type_name} {s.code_name};"
         else:
             sensors = ""
-        define_scade_context = (
-            """
-typedef struct {
-    %s
-} %s;%s
-"""
-            % ("\n    ".join(ctx_params), scade_context, sensors)
-        ).strip()
+
+        define_scade_context = """
+typedef struct {{
+    {fields}
+}} {context};{sensors}
+""".format(fields="\n    ".join(ctx_params), context=scade_context, sensors=sensors).strip()
 
         define_state_vector = "#define STATE_VECTOR_SIZE 0"
 
@@ -571,7 +579,7 @@ typedef struct {
                 for param in init_function.parameters:
                     access = "&" if param.pointer else ""
                     call_params.append(f"{access}comp->context->{param.name}")
-                call_init = "%s(%s);" % (init_function.name, ", ".join(call_params))
+                call_init = f"{init_function.name}({', '.join(call_params)});"
             else:
                 call_init = ""
             if reset_function is not None:
@@ -579,24 +587,23 @@ typedef struct {
                 for param in reset_function.parameters:
                     access = "&" if param.pointer else ""
                     call_params.append(f"{access}comp->context->{param.name}")
-                call_reset = "%s(%s);" % (reset_function.name, ", ".join(call_params))
+                call_reset = f"{reset_function.name}({', '.join(call_params)});"
             else:
                 call_reset = ""
 
             init_context = (
-                """
+                f"""
 #ifndef SWAN_USER_DEFINED_INIT
-        %s
+        {call_init}
 #else
 #ifndef SWAN_NO_EXTERN_CALL_TO_RESET
-        %s
+        {call_reset}
 #endif
 #endif
 """
-                % (call_init, call_reset)
             ).strip()
         else:
-            init_context = ""
+            init_context = "/* no context to initialize */"
 
         call_params = []
         for param in cycle_function.parameters:
@@ -610,38 +617,49 @@ typedef struct {
         else:
             call_cycle_return = ""
 
-        call_cycle = "%s%s(%s);" % (call_cycle_return, cycle_function.name, ", ".join(call_params))
-
-        content = template.render(
-            FMI_KIND_CS=self._kind_cs,
-            FMI_USE_DBG_LOGS=0,
-            FMI_FILE_NAME=out_c_file,
-            FMI_INCLUDES=includes,
-            FMI_DEFINE_SCADE_CONTEXT=define_scade_context,
-            FMI_SCADE_CONTEXT=scade_context,
-            FMI_SCADE_CONTEXT_SIZE=f"sizeof({scade_context})",
-            FMI_DEFINE_STATE_VECTOR=define_state_vector,
-            FMI_MODEL_IDENTIFIER=self.model_id + "_FMU",
-            FMI_MODEL_GUID=self.uuid,
-            FMI_TASK_PERIOD=self.default_period,
-            FMI_NB_REALS=self._value_ref_counter.get("Real", -1) + 1,
-            FMI_NB_INTEGERS=self._value_ref_counter.get("Integer", -1) + 1,
-            FMI_NB_BOOLEANS=self._value_ref_counter.get("Boolean", -1) + 1,
-            FMI_GET_REAL=fmi_get_real,
-            FMI_GET_INTEGER=fmi_get_integer,
-            FMI_GET_BOOLEAN=fmi_get_boolean,
-            FMI_GET_STATES_FUNC_DECL="/* get state decl: N/A */",
-            FMI_SET_REAL=fmi_set_real,
-            FMI_SET_INTEGER=fmi_set_integer,
-            FMI_SET_BOOLEAN=fmi_set_boolean,
-            FMI_SET_STATES_FUNC_DECL="/* set state decl: N/A */",
-            FMI_INIT_VALUES=self._generate_var_init(),
-            FMI_INIT_CONTEXT=init_context,
-            FMI_CALL_CYCLE=call_cycle,
-            FMI_GET_FMU_STATE_FUNC="/* get state not implemented */",
-            FMI_SET_FMU_STATE_FUNC="/* set state not implemented */",
-            FMI_ROOT_OP_NAME=self.model_id,
+        call_cycle = "{assign}{function}({args});".format(
+            assign=call_cycle_return,
+            function=cycle_function.name,
+            args=", ".join(call_params),
         )
+
+        if self.elaboration_function:
+            call_elaborate = f"{self.elaboration_function.name}();"
+        else:
+            call_elaborate = ""
+
+        rendering_context = {
+            "FMI_KIND_CS": self._kind_cs,
+            "FMI_USE_DBG_LOGS": 0,
+            "FMI_FILE_NAME": out_c_file,
+            "FMI_INCLUDES": includes,
+            "FMI_DEFINE_SCADE_CONTEXT": define_scade_context,
+            "FMI_SCADE_CONTEXT": scade_context,
+            "FMI_SCADE_CONTEXT_SIZE": f"sizeof({scade_context})",
+            "FMI_DEFINE_STATE_VECTOR": define_state_vector,
+            "FMI_MODEL_IDENTIFIER": self.model_id + "_FMU",
+            "FMI_MODEL_GUID": self.uuid,
+            "FMI_TASK_PERIOD": self.default_period,
+            "FMI_NB_REALS": self._value_ref_counter.get("Real", -1) + 1,
+            "FMI_NB_INTEGERS": self._value_ref_counter.get("Integer", -1) + 1,
+            "FMI_NB_BOOLEANS": self._value_ref_counter.get("Boolean", -1) + 1,
+            "FMI_GET_REAL": fmi_get_real,
+            "FMI_GET_INTEGER": fmi_get_integer,
+            "FMI_GET_BOOLEAN": fmi_get_boolean,
+            "FMI_GET_STATES_FUNC_DECL": "/* get state decl: N/A */",
+            "FMI_SET_REAL": fmi_set_real,
+            "FMI_SET_INTEGER": fmi_set_integer,
+            "FMI_SET_BOOLEAN": fmi_set_boolean,
+            "FMI_SET_STATES_FUNC_DECL": "/* set state decl: N/A */",
+            "FMI_INIT_VALUES": self._generate_var_init(),
+            "FMI_INIT_CONTEXT": init_context,
+            "FMI_CALL_ELABORATE": call_elaborate,
+            "FMI_CALL_CYCLE": call_cycle,
+            "FMI_GET_FMU_STATE_FUNC": "/* get state not implemented */",
+            "FMI_SET_FMU_STATE_FUNC": "/* set state not implemented */",
+            "FMI_ROOT_OP_NAME": self.model_id,
+        }
+        content = template.render(rendering_context)
 
         with open(self.fmu_c_file, mode="w", encoding="utf-8") as out:
             out.write(content)
@@ -732,7 +750,7 @@ typedef struct {
 
         if compiler == "gcc":
             # call GCC compiler
-            if arch == "win32" or arch == "linux32":
+            if arch in ("win32", "linux32"):
                 gcc_arch = "-m32"
             else:
                 gcc_arch = "-m64"

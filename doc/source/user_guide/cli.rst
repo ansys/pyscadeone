@@ -12,7 +12,7 @@ The name of the tool is **pyscadeone**. It has the following sub-commands and op
 
 Sub-commands:     
   - ``fmu``            generates an FMU. For more information, see :ref:`ref_fmu_export`.
-  - ``script``         executes given script or module. 
+  - ``pycodewrap``     Generates Scade One wrapper in Python, see :ref:`ref_python_wrapper`.
   - ``simdata``        shows :ref:`ref_sim_data` files (in combination with --show).
 
 Use ``pyscadeone <command> --help`` for a specific *<command>* help.

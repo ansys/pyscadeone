@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Generator, Union, cast
+from typing import List, Union, cast
 
 from ansys.scadeone.core import project  # noqa: F401
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.storage import SwanFile
-import ansys.scadeone.core.swan as S
+import ansys.scadeone.core.swan as swan
 
 from .loader import SwanParser
 
@@ -37,19 +37,125 @@ class Model:
     Loading of Swan sources is lazy.
     """
 
-    def __init__(self):
-        self._modules = {}
+    def __init__(self) -> None:
         self._project = None
         self._parser = None
+        # dictionaries of Swan module, interface and test harness
+        # Key is the Swan name of the module, interface or test harness
+        self._bodies = {}  # _bodies["N1::N2::M"] = ModuleBody | SwanFile
+        self._interfaces = {}
+        self._harnesses = {}
 
-    def configure(self, project: "project.IProject"):
-        """Configure model with project as owner. The configuration
-        associate the project and the model and prepare internal data to
+    def _add_module(self, swan_elt: Union[swan.SwanFile, swan.Module], where: dict) -> None:
+        # add element to the corresponding dictionary where'
+        where[Model._get_swan_name(swan_elt)] = swan_elt
+        if isinstance(swan_elt, swan.Module):
+            swan_elt.owner = self
+
+    def add_body(self, swan_elt: Union[swan.SwanFile, swan.ModuleBody]) -> None:
+        """Add a module body to the model.
+
+        The module body can be a SwanFile or a ModuleBody object. If it is a SwanFile,
+        it is not loaded: this happens when needed. If it is a ModuleBody it is directly added
+        to the model.
+
+
+        Parameters
+        ----------
+        swan_elt : Union[swan.SwanFile, swan.ModuleBody]
+            Content of the module body
+        """
+        self._add_module(swan_elt, self._bodies)
+
+    def add_interface(self, swan_elt: Union[swan.SwanFile, swan.ModuleInterface]) -> None:
+        """Add a module interface to the model.
+
+        The module interface can be a SwanFile or a ModuleInterface object. If it is a SwanFile,
+        it is not loaded: this happens when needed. If it is a ModuleInterfacee it is directly added
+        to the model.
+
+
+        Parameters
+        ----------
+        swan_elt : Union[swan.SwanFile, swan.ModuleInterface]
+            Content of the module interface
+        """
+        self._add_module(swan_elt, self._interfaces)
+
+    def add_harness(self, swan_elt: Union[swan.SwanFile, swan.TestModule]) -> None:
+        self._add_module(swan_elt, self._harnesses)
+
+    def module_exists(self, module: Union[swan.SwanFile, swan.Module]) -> bool:
+        """Check if a module exists in the model.
+
+        Parameters
+        ----------
+        module :Union[swan.SwanFile, swan.Module]
+            Module source or module object to check. In case of a source, it is not loaded.
+
+        Returns
+        -------
+        bool
+            True if the module exists, False otherwise.
+        """
+        where = None
+        if isinstance(module, swan.Module):
+            module_name = cast(swan.Module, module).name.as_string
+            if isinstance(module, swan.ModuleBody):
+                where = self._bodies
+            elif isinstance(module, swan.ModuleInterface):
+                where = self._interfaces
+            elif isinstance(module, swan.TestModule):
+                where = self._harnesses
+        else:
+            module_name = Model._get_swan_name(module)
+            if cast(SwanFile, module).is_module:
+                where = self._bodies
+            elif cast(SwanFile, module).is_interface:
+                where = self._interfaces
+            elif cast(SwanFile, module).is_test:
+                where = self._harnesses
+        if where:
+            return module_name in where.keys()
+        return False
+
+    @staticmethod
+    def _get_swan_name(swan_elt: Union[swan.SwanFile, swan.Module]) -> str:
+        """Returns the name of a Swan element.
+
+        Parameters
+        ----------
+        swan_elt : Union[swan.SwanFile, swan.TestModule]
+            Swan element
+
+        Returns
+        -------
+        str
+            Name of the Swan element.
+        """
+        if isinstance(swan_elt, SwanFile):
+            return swan.Module.module_name_from_path(swan_elt.path)
+        return swan_elt.name.as_string.replace("-", "::")
+
+    def configure(self, project_instance: "project.IProject"):
+        """Configures model for a given project. The configuration
+        associates the project and the model and prepares internal data to
         store module bodies and interfaces.
 
         It is called by :py:attr:`ansys.scadeone.core.project.Project.model`."""
-        self._modules = {swan: None for swan in project.swan_sources(all=True)}
-        self._project = project
+
+        if project_instance.storage.exists():
+            for swan_file in project_instance.swan_sources(all=True):
+                module_name = swan.Module.module_name_from_path(swan_file.path)
+                if swan_file.is_module:
+                    self._bodies[module_name] = swan_file
+                elif swan_file.is_interface:
+                    self._interfaces[module_name] = swan_file
+                # TODO use this once test harness visitor and creator are implemented
+                # elif swan_file.is_test:
+                #     self._harnesses[module_name] = swan_file
+
+        self._project = project_instance
         self._parser = SwanParser(self.project.app.logger)
         return self
 
@@ -63,18 +169,21 @@ class Model:
         """Swan parser."""
         return self._parser
 
-    def _load_source(self, swan: SwanFile) -> S.Module:
-        """Read a Swan file (.swan or .swani)
+    def _load_source(
+        self,
+        swan_f: Union[SwanFile, swan.ModuleBody, swan.ModuleInterface, swan.TestModule],
+    ) -> swan.Module:
+        """Read a Swan file (.swan or .swani or .swant)
 
         Parameters
         ----------
-        swan : SwanFile
-            Swan source code.
+        swan_f : Union[SwanFile, swan.ModuleBody, swan.ModuleInterface, swan.TestModule]
+            Swan source code or module
 
         Returns
         -------
         Module
-            Swan Module, either a ModuleBody or a ModuleInterface.
+            Swan Module, either a ModuleBody, a ModuleInterface or a TestModule.
 
         Raises
         ------
@@ -82,53 +191,79 @@ class Model:
             - Error when file has not the proper suffix
             - Parse error
         """
-        if swan.is_module:
-            ast = self.parser.module_body(swan)
-        elif swan.is_interface:
-            ast = self.parser.module_interface(swan)
+        if (
+            isinstance(swan_f, swan.ModuleBody)
+            or isinstance(swan_f, swan.ModuleInterface)
+            or isinstance(swan_f, swan.TestModule)
+        ):
+            return swan_f
+        elif swan_f.is_module:
+            ast = self.parser.module_body(swan_f)
+            ast.source = str(swan_f.path)
+        elif swan_f.is_interface:
+            ast = self.parser.module_interface(swan_f)
+            ast.source = str(swan_f.path)
+        elif swan_f.is_test:
+            ast = self.parser.test_harness(swan_f)
         else:
-            raise ScadeOneException("Model.load_source: unexpected file kind {swan.path}.")
-        self._modules[swan] = ast
+            raise ScadeOneException(f"Model.load_source: unexpected file kind {swan_f.path}.")
         ast.owner = self
-        ast.source = str(swan.path)
         return ast
 
     @property
-    def all_modules_loaded(self) -> True:
-        """Return True when all Swan modules have been loaded."""
-        return all(self._modules.values())
+    def all_modules_loaded(self) -> bool:
+        """Returns True when all Swan modules have been loaded."""
+        for module in self.all_modules:
+            if not (
+                isinstance(module, swan.ModuleBody)
+                or isinstance(module, swan.ModuleInterface)
+                or isinstance(module, swan.TestModule)
+            ):
+                return False
+        return True
 
     @property
-    def modules(self) -> Generator[S.Module, None, None]:
-        """Loaded module (module body or interface) as a generator."""
-        return (module for module in self._modules.values() if module)
+    def modules(self) -> List[swan.Module]:
+        """Returns all *loaded* Module objects (module body, interface, test module) as a list."""
+        modules_list = [mod for mod in self.all_modules if isinstance(mod, swan.Module)]
+        return modules_list
 
-    def _get_module(self, name: str, search_module_body: bool) -> Union[S.Module, None]:
-        """Return module body of name 'name'"""
-        for swan_code, swan_object in self._modules.items():
-            if swan_object is None:
-                swan_object = self._load_source(swan_code)
-            if (
-                swan_object.name.as_string == name
-                and isinstance(swan_object, S.ModuleBody) == search_module_body
-            ):
-                return swan_object
-        return None
+    @property
+    def all_modules(self) -> List[Union[swan.Module, SwanFile]]:
+        """Returns *all* modules (loaded Module objects, or not-yet-loaded module files) as a list."""
+        modules = (
+            list(self._bodies.values())
+            + list(self._interfaces.values())
+            + list(self._harnesses.values())
+        )
+        return modules
 
-    def get_module_body(self, name: str) -> Union[S.ModuleBody, None]:
-        """Return module body of name 'name'"""
-        if body := self._get_module(name, True):
-            return cast(S.ModuleBody, body)
-        return None
+    def get_module_body(self, name: str) -> Union[swan.ModuleBody, None]:
+        """Returns module body of name 'name'"""
+        if name not in self._bodies:
+            return None
+        if isinstance(self._bodies.get(name), SwanFile):
+            self._bodies[name] = self._load_source(self._bodies[name])
+        return self._bodies[name]
 
-    def get_module_interface(self, name: str) -> Union[S.ModuleInterface, None]:
-        """Return module interface of name 'name'"""
-        if interface := self._get_module(name, False):
-            return cast(S.ModuleInterface, interface)
-        return None
+    def get_module_interface(self, name: str) -> Union[swan.ModuleInterface, None]:
+        """Returns module interface of name 'name'"""
+        if name not in self._interfaces:
+            return None
+        if isinstance(self._interfaces.get(name), SwanFile):
+            self._interfaces[name] = self._load_source(self._interfaces[name])
+        return self._interfaces[name]
 
-    def get_module_from_pathid(self, pathid: str, module: S.Module) -> Union[S.Module, None]:
-        """Return the :py:class:`Module` instance for a given *pathid*.
+    def get_test_harness(self, name: str) -> Union[swan.TestModule, None]:
+        """Returns module test harness of name 'name'"""
+        if name not in self._harnesses:
+            return None
+        if isinstance(self._harnesses.get(name), SwanFile):
+            self._harnesses[name] = self._load_source(self._harnesses[name])
+        return self._harnesses[name]
+
+    def get_module_from_pathid(self, pathid: str, module: swan.Module) -> Union[swan.Module, None]:
+        """Return the :py:class:`Module` instance for a given *pathid*
         A *path* is of the form *[ID ::]+ ID*, where the last ID is the object
         name, and the "ID::ID...::" is the module path.
 
@@ -152,7 +287,6 @@ class Model:
         if len(ids) == 1:
             return module
 
-        model = cast(Model, module.model)
         if len(ids) == 2:
             # case M::ID
             if module.name.as_string == ids[0]:
@@ -169,110 +303,217 @@ class Model:
                 use = interface.get_use_directive(ids[0])
                 if not use:
                     return None
-            module_path = cast(S.UseDirective, use).path.as_string
+            module_path = cast(swan.UseDirective, use).path.as_string
         else:
             module_path = "::".join(ids[0:-1])
-        m = model.get_module_body(module_path)
+        m = self.get_module_body(module_path)
         if m is None:
-            m = model.get_module_interface(module_path)
+            m = self.get_module_interface(module_path)
         return m
 
-    @property
-    def types(self) -> Generator[S.TypeDecl, None, None]:
-        """Return a generator on type declarations."""
-        for decls in self.filter_declarations(lambda x: isinstance(x, S.TypeDeclarations)):
-            for decl in cast(S.TypeDeclarations, decls).types:
-                yield decl
-
-    @property
-    def sensors(self) -> Generator[S.SensorDecl, None, None]:
-        """Return a generator on sensor declarations."""
-        for decls in self.filter_declarations(lambda x: isinstance(x, S.SensorDeclarations)):
-            for decl in cast(S.SensorDeclarations, decls).sensors:
-                yield decl
-
-    @property
-    def constants(self) -> Generator[S.ConstDecl, None, None]:
-        """Return a generator on constant declarations."""
-        for decls in self.filter_declarations(lambda x: isinstance(x, S.ConstDeclarations)):
-            for decl in cast(S.ConstDeclarations, decls).constants:
-                yield decl
-
-    @property
-    def groups(self) -> Generator[S.GroupDecl, None, None]:
-        """Return a generator on group declarations."""
-        for decls in self.filter_declarations(lambda x: isinstance(x, S.GroupDeclarations)):
-            for decl in cast(S.GroupDeclarations, decls).groups:
-                yield decl
-
-    @property
-    def operators(self) -> Generator[S.Operator, None, None]:
-        """Return a generator on operator declarations."""
-        for decl in self.filter_declarations(lambda x: isinstance(x, S.Operator)):
-            yield decl
-
-    @property
-    def signatures(self) -> Generator[S.Signature, None, None]:
-        """Return a generator on operator signature declarations."""
-        for decl in self.filter_declarations(
-            lambda x: isinstance(x, S.Signature) and not isinstance(x, S.Operator)
-        ):
-            yield decl
-
-    def load_module(self, name: str):
-        """Load module by name
+    @staticmethod
+    def get_path_in_module(
+        declaration: swan.Declaration, module: swan.Module
+    ) -> swan.PathIdentifier:
+        """Get the path of declaration in module. If the declaration is in module, return the identifier,
+        else return the path of the declaration in the module based on the use directives.
 
         Parameters
         ----------
-        name : str
-            Module name.
+        item: SwanItem
+            Declaration to get the path for.
+        module: Module
+            Module where the declaration is used.
 
         Returns
         -------
-        Module
-            Swan Module, either a ModuleBody or a ModuleInterface.
+        PathIdentifier
+            Path of the item in the module.
 
+        Raises
+        ------
+        ScadeOneException
+            - If the declaration does not have a module.
+            - If the module does not exist.
+            - If the module does not have a use directive for the declaration module.
         """
-        for swan in self._modules.keys():
-            if swan.name.lower() == name.lower():
-                self._load_source(swan)
 
-    def load_all_modules(self):
-        """Load systematically all modules."""
-        for swan in self._modules.keys():
-            self._load_source(swan)
+        if declaration.module is None:
+            raise ScadeOneException(f"{declaration.get_full_path()} does not have a module.")
+        if module is None:
+            raise ScadeOneException("Module does not exist.")
+
+        if cast(swan.Module, declaration.module).name == module.name:
+            # The operator is in the same module as the instance
+            return swan.PathIdentifier([declaration.id])
+
+        # `declaration`` is in another module
+
+        # Get the use directive of the operator module including body and/or interface
+        module_uses = module.use_directives
+        if module.model:
+            # if model is defined (required by called functions), get the peer module from the model
+            peer_module = (
+                module.interface() if isinstance(module, swan.ModuleBody) else module.body()
+            )
+        else:
+            peer_module = None
+        peer_uses = cast(swan.Module, peer_module).use_directives if peer_module else []
+
+        # Find use directive for the declaration module in all uses
+        decl_module_path = cast(swan.Module, declaration.module).name.as_string
+
+        uses = [
+            use
+            for use_list in [module_uses, peer_uses]
+            for use in use_list
+            if use.path.as_string == decl_module_path
+        ]
+        if not uses:
+            raise ScadeOneException(
+                f"Missing use directive in module {module.name.as_string} for item {declaration.get_full_path()}."
+            )
+        # Get the module part of the use directive
+        # If the use directive has an alias, use it. Otherwise, use the last part of the path.
+        mod_part = (
+            uses[0].alias.value
+            if uses[0].alias
+            else swan.PathIdentifier.split(uses[0].path.as_string)[-1]
+        )
+        return swan.PathIdentifier.from_string(f"{mod_part}::{declaration.id}")
 
     @property
-    def declarations(self) -> Generator[S.GlobalDeclaration, None, None]:
-        """Declarations found in all modules/interfaces as a generator.
+    def types(self) -> List[swan.TypeDecl]:
+        """Returns a list of type declarations."""
+        types = []
+        for decls in self.filter_declarations(lambda x: isinstance(x, swan.TypeDeclarations)):
+            for type in cast(swan.TypeDeclarations, decls).types:
+                types.append(type)
+        return types
+
+    @property
+    def sensors(self) -> List[swan.SensorDecl]:
+        """Returns a list of sensor declarations."""
+        sensors = []
+        for decls in self.filter_declarations(lambda x: isinstance(x, swan.SensorDeclarations)):
+            for sensor in cast(swan.SensorDeclarations, decls).sensors:
+                sensors.append(sensor)
+        return sensors
+
+    @property
+    def constants(self) -> List[swan.ConstDecl]:
+        """Returns a list of constant declarations."""
+        consts = []
+        for decls in self.filter_declarations(lambda x: isinstance(x, swan.ConstDeclarations)):
+            for const in cast(swan.ConstDeclarations, decls).constants:
+                consts.append(const)
+        return consts
+
+    @property
+    def groups(self) -> List[swan.GroupDecl]:
+        """Returns a list of group declarations."""
+        groups = []
+        for decls in self.filter_declarations(lambda x: isinstance(x, swan.GroupDeclarations)):
+            for group in cast(swan.GroupDeclarations, decls).groups:
+                groups.append(group)
+        return groups
+
+    @property
+    def operators(self) -> List[swan.Operator]:
+        """Returns a list of operator declarations."""
+        return [
+            cast(swan.Operator, operator)
+            for operator in self.filter_declarations(lambda x: isinstance(x, swan.Operator))
+        ]
+
+    @property
+    def signatures(self) -> List[swan.Signature]:
+        """Returns a list of operator signature declarations."""
+        return [
+            cast(swan.Signature, signature)
+            for signature in self.filter_declarations(
+                lambda x: isinstance(x, swan.Signature) and not isinstance(x, swan.Operator)
+            )
+        ]
+
+    def _load_module(self, name: str, mod_dict: dict) -> None:
+        swan_file = mod_dict.get(name)
+        if swan_file and isinstance(swan_file, SwanFile):
+            mod_dict[name] = self._load_source(swan_file)
+
+    def load_module_body(self, name: str) -> None:
+        self._load_module(name, self._bodies)
+
+    def load_module_interface(self, name: str) -> None:
+        self._load_module(name, self._interfaces)
+
+    def load_test_harness(self, name: str) -> None:
+        self._load_module(name, self._harnesses)
+
+    def load_all_modules(
+        self, bodies: bool = True, interfaces: bool = True, harnesses: bool = True
+    ) -> None:
+        """Loads systematically all modules.
+
+        Parameters
+        ----------
+        bodies : bool, optional
+            Includes module bodies
+        interfaces : bool, optional
+            Includes module interfaces
+        harnesses : bool, optional
+            Includes test harnesses
+        """
+        for cond, data, load_fn in [
+            (bodies, self._bodies, self.load_module_body),
+            (interfaces, self._interfaces, self.load_module_interface),
+            (harnesses, self._harnesses, self.load_test_harness),
+        ]:
+            if cond:
+                for name in data.keys():
+                    load_fn(name)
+
+    @property
+    def declarations(self) -> List[swan.GlobalDeclaration]:
+        """Declarations found in all modules/interfaces as a list.
 
         The Swan code of a module/interface is loaded if not yet loaded.
         """
 
-        # Need to use self._modules here, as self.modules is not a direct access to it
-        for swan_code, swan_object in self._modules.items():
-            if swan_object is None:
-                swan_object = self._load_source(swan_code)
-            for decl in swan_object.declarations:
-                yield decl
+        declarations = []
+        for data, load_fn in [
+            (self._interfaces, self.load_module_interface),
+            (self._bodies, self.load_module_body),
+            (self._harnesses, self.load_test_harness),
+        ]:
+            for swan_code, swan_object in data.items():
+                if isinstance(swan_object, SwanFile):
+                    swan_object = self._load_source(swan_object)
+                    data[swan_code] = swan_object
+                elif swan_object is None:
+                    swan_object = load_fn(swan_code)
+                    data[swan_code] = swan_object
+                for decl in swan_object.declarations:
+                    declarations.append(cast(swan.GlobalDeclaration, decl))
+        return declarations
 
-    def filter_declarations(self, filter_fn) -> Generator[S.GlobalDeclaration, None, None]:
-        """Return declarations matched by a filter.
+    def filter_declarations(self, filter_fn) -> List[swan.GlobalDeclaration]:
+        """Returns declarations matched by a filter.
 
         Parameters
         ----------
         filter_fn : function
             A function of one argument of type S.GlobalDeclaration, returning True or False.
 
-        Yields
-        ------
-        Generator[S.GlobalDeclaration, None, None]
-            Generator on matching declarations.
+        Returns
+        -------
+        List[S.GlobalDeclaration]
+            List of matching declarations.
         """
-        return filter(filter_fn, self.declarations)
+        return list(filter(filter_fn, self.declarations))
 
-    def find_declaration(self, predicate_fn) -> Union[S.GlobalDeclaration, None]:
-        """Find a declaration for which predicate_fn returns True.
+    def find_declaration(self, predicate_fn) -> Union[swan.GlobalDeclaration, None]:
+        """Finds a declaration for which predicate_fn returns True.
 
         Parameters
         ----------

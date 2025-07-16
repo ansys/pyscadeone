@@ -45,8 +45,8 @@ def cc_project():
 
 # scadeone "installation" path for tests
 @pytest.fixture(scope="session")
-def installation():
-    return "src/ansys/scadeone"
+def scadeone_install_path():
+    return "C:/Scade One"
 
 
 #######################################

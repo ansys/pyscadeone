@@ -1,0 +1,48 @@
+-- version swan: 2025.0 graph: 2.0 swant: 1.1
+use module0;
+
+use TypesModule;
+
+_harness harness0
+{
+  diagram
+    (#0 #pragma swt under_test #end block module0::operator0
+                                          #pragma diagram {"xy":"H7825;V7869","wh":"20000;56688"} #end)
+    (#1 expr _current_cycle = 10
+    #pragma diagram {"xy":"H-37825;V-28130","wh":"22000;3200"} #end)
+    (#2 def _stop_condition
+    #pragma diagram {"xy":"H-4825;V-28130","wh":"20000;3200"} #end)
+    (#3 expr 1
+    #pragma diagram {"xy":"H-33950;V-4475"} #end)
+    (#6 expr 2
+    #pragma diagram {"xy":"H-33950;V-9475"} #end)
+    (#8 expr 3.14
+    #pragma diagram {"xy":"H-33950;V525"} #end)
+    (#10 expr module0::RED
+    #pragma diagram {"xy":"H-30688;V5525","wh":"16000;3200"} #end)
+    (#12 expr TypesModule::Small
+    #pragma diagram {"xy":"H-30688;V10438","wh":"22000;3200"} #end)
+    (#13 expr true
+    #pragma diagram {"xy":"H-35250;V15350"} #end)
+    (#14 expr 2.5
+    #pragma diagram {"xy":"H-35250;V26362"} #end)
+    (#15 expr {#16}: module0::tStruct
+      where
+        (#16 group)
+    #pragma diagram {"xy":"H-18275;V22962","wh":"12000;10000"} #end)
+    (#17 expr 3
+    #pragma diagram {"xy":"H-35250;V21075"} #end)
+    (#18 expr {3, 5.6_f32 } : module0::tStruct
+    #pragma diagram {"xy":"H-27000;V33712","wh":"36000;3200"} #end)
+    
+    (#4 wire #1 => #2)
+    (#5 wire #3 => #0 .(i0))
+    (#7 wire #6 => #0 .(i1))
+    (#9 wire #8 => #0 .(i3))
+    (#11 wire #10 => #0 .(i4))
+    (#19 wire #12 => #0 .(i5))
+    (#20 wire #13 => #0 .(i6))
+    (#21 wire #15 => #0 .(i7))
+    (#22 wire #14 => #16 .(y))
+    (#23 wire #17 => #16 .(x))
+}

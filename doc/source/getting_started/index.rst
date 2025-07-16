@@ -9,14 +9,37 @@ Installation
 
 .. _venv: https://docs.python.org/3/library/venv.html
 
-PyScadeOne is compatible with any Python version greater than Python 3.9. 
-It has been tested with Python 3.9 and 3.12. It is distributed as a wheel package. 
+.. _PyPi: https://pypi.org/project/ansys-scadeone-core/
+
+PyScadeOne is compatible with any Python version strictly greater than Python 3.9. 
+It has been tested with Python 3.12. It can be found on `PyPi`_ 
+and it also distributed as a wheel package with the Scade One tool. 
 
 To install PyScadeOne use the command:
 
 .. code::
 
-    pip install ansys_scadeone-<version>-py3-none-any.whl
+    pip install ansys-scadeone-core
+
+.. note::
+
+    PyScadeOne comes with two (2) sets of package dependencies:
+
+    - **Direct dependencies** are the packages that PyScadeOne directly relies on, 
+      with their minimum required versions. This is the default installation mode.
+
+    - **Frozen dependencies** include both the direct and indirect packages that 
+      PyScadeOne depends on, with their exact versions. This is an optional installation mode.
+      Frozen dependencies are useful when you want to install the exact versions of the dependencies 
+      that PyScadeOne was tested and validated with.
+
+
+    To install PyScadeOne with the frozen dependencies, use the command:
+    
+        pip install ansys-scadeone-core[frozen-dependencies]
+        
+    The installation may fail if the exact version of a frozen dependency is not compatible 
+    with a version in the Python environment. A *virtual environment* is recommended to avoid conflicts.
 
 You may want to install PyScadeOne in a Python virtual environment. Please look at
 the Python `venv`_ module.
@@ -68,3 +91,17 @@ and get its model.
     
 More details can be found in :ref:`Modeler <ref_modeler>` section,
 and in :ref:`API <ref_api>` sections.
+
+Limitations
+-----------
+
+- The :ref:`ref_python_wrapper` support:
+
+  - Two sensors with the same name in different modules cannot be correctly generated.
+  - Linux is not supported.
+
+- Swan language support:
+
+  - The n-ary **lxor** operator is not supported.
+  - The optional *luid* of a **diagram** construct is ignored.
+

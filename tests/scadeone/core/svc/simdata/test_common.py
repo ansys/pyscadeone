@@ -31,7 +31,7 @@ class Imported(ctypes.Structure):
 class VSizeImported(ctypes.Structure):
     _fields_ = [("eLen", ctypes.c_short), ("eValue", ctypes.c_void_p)]
 
-    def __init__(self, str_value: str, *args, **kw):
+    def __init__(self, str_value: str, *args, **kw) -> None:
         super().__init__(*args, **kw)
         bytes_value = bytearray(str_value.encode("utf-8"))
         c_bytes_type = ctypes.c_uint8 * len(bytes_value)

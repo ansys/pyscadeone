@@ -20,8 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# cSpell: ignore autouse
+
 import os
 import subprocess
+import shutil
 from pathlib import Path
 import pytest
 
@@ -32,8 +35,22 @@ s_one_install = "C:/Scade One"
 s_one_exists = Path(s_one_install).exists()
 
 
+# Following fixture cleans up FMU data after tests
+# - it is module scoped: called once before and after all tests
+# - it is autouse: called automatically
+# - it is a yield fixture: the code after yield is executed after all tests
+@pytest.fixture(scope="module", autouse=True)
+def clean_fmu_data():
+    # nothing to do
+    yield
+    # Tear down
+    print("\nTearing down unnecessary files...")
+    shutil.rmtree("QuadFlight_FMU_ME", ignore_errors=True)
+    shutil.rmtree("QuadFlight_FMU_CS", ignore_errors=True)
+
+
 def check_example(example: Path):
-    """Check if example requires 's_one_install'"""
+    """Return True if Scade One is not required for example or if it is installed."""
     with example.open() as fd:
         for line in fd:
             if line.find(s_one_install) > 0:
@@ -45,25 +62,39 @@ def collect():
     """Collect Python files in documentation tree"""
     # Root directory for doc tree analysis
     doc_root = "doc/source"
-    # Python files to skip
-    skip = "conf.py"
     examples = []
     for dirpath, _, files in os.walk(doc_root):
+        # python_wrapper.py is an example to illustrate the use of the Python Wrapper, but
+        # the used example is not supported yet.
         examples.extend(
-            os.path.join(dirpath, f) for f in files if f[-3:] == ".py" and f not in skip
+            Path(dirpath) / f
+            for f in files
+            if f[-3:] == ".py"
+            and f not in ("conf.py", "python_wrapper.py", "python_wrapper_usage.py")
         )
     return examples
 
 
-class TestDocumentation:
-    @pytest.mark.parametrize(
-        "example",
-        collect(),
-    )
-    def test_example(self, example, capsys):
-        if check_example(Path(example)):
-            proc = subprocess.run([PYTHON, example])
-            assert proc.returncode == 0
+def test_example(capsys):
+    success = 0
+    examples = collect()
+    failed = []
+    with capsys.disabled():
+        print(f"Found {len(examples)} examples")
+    for example in examples:
+        if check_example(example):
+            proc = subprocess.run([PYTHON, str(example)])
+            if proc.returncode == 0:
+                success += 1
+            else:
+                failed.append(example)
         else:
             with capsys.disabled():
                 print(f"Example {example} requires Scade One")
+            success += 1
+    with capsys.disabled():
+        if failed:
+            print("Failed examples:")
+            for example in failed:
+                print(example)
+    assert success == len(examples)

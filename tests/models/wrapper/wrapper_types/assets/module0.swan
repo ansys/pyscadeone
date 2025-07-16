@@ -1,0 +1,97 @@
+-- version swan: 2025.0 graph: 2.0
+use TypesModule as tType;
+
+node operator0 (i0 : int32;
+                i1 : int32;
+                i3 : tType::floatType;
+                i4 : tColor default = BLUE;
+                i5 : tType::tSize;
+                i6 : bool;
+                i7 : tStruct;)
+  returns (o0: int32;
+           o1 : int32;
+           o3 : tType::floatType;
+           o4 : tColor default = RED;
+           o5 : tType::tSize;
+           o6 : bool;
+           o7 : tStruct;)
+{
+  diagram
+    (#5 def o0
+    #pragma diagram {"xy":"H-6750;V-14450"} #end)
+    (#3 expr i0
+    #pragma diagram {"xy":"H-52750;V-25450"} #end)
+    (#1 expr #2 pre #4
+      where
+        (#2 group)
+        (#4 group)
+    #pragma diagram {"xy":"H-30750;V-23550"} #end)
+    (#6 expr #8 + #9
+      where
+        (#8 group)
+        (#9 group)
+    #pragma diagram {"xy":"H-7750;V-20050"} #end)
+    (#10 def o1
+    #pragma diagram {"xy":"H13250;V-27550"} #end)
+    (#12 expr #13 - #14
+      where
+        (#13 group)
+        (#14 group)
+    #pragma diagram {"xy":"H-7750;V-27550"} #end)
+    (#15 expr i1
+    #pragma diagram {"xy":"H-28750;V-29150"} #end)
+    (#18 expr i3
+    #pragma diagram {"xy":"H-48000;V-6300"} #end)
+    (#19 def o3
+    #pragma diagram {"xy":"H-28750;V-6300"} #end)
+    (#21 expr i4
+    #pragma diagram {"xy":"H-48000;V-125"} #end)
+    (#22 def o4
+    #pragma diagram {"xy":"H-28750;V-125"} #end)
+    (#24 expr i5
+    #pragma diagram {"xy":"H-48000;V6050"} #end)
+    (#25 def o5
+    #pragma diagram {"xy":"H-28750;V6050"} #end)
+    (#27 expr i6
+    #pragma diagram {"xy":"H-48000;V12225"} #end)
+    (#28 def o6
+    #pragma diagram {"xy":"H-28750;V12225"} #end)
+    (#30 expr i7
+    #pragma diagram {"xy":"H-48000;V18400"} #end)
+    (#31 def o7
+    #pragma diagram {"xy":"H-28750;V18400"} #end)
+    
+    (#7 wire #1 => #5, #9, #14
+    #pragma diagram {"wp":"#1 h4500[v9100 #5, h2000[v5400 #9, h4000 v-2100 #14]]"} #end)
+    (#0 wire #3 => #2)
+    (#11 wire #6 => #4
+    #pragma diagram {"wp":"#6 h3500 v8200 h-38000 v-9800 #4"} #end)
+    (#16 wire #12 => #10)
+    (#17 wire #15 => #13, #8
+    #pragma diagram {"wp":"#15 h8500[h2000 v-300 #13, v7200 #8]"} #end)
+    (#20 wire #18 => #19)
+    (#23 wire #21 => #22)
+    (#26 wire #24 => #25)
+    (#29 wire #27 => #28)
+    (#32 wire #30 => #31)
+}
+
+function operator1 (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-32450;V-12250"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H16050;V-12250"} #end)
+    
+    (#2 wire #0 => #1)
+}
+
+type tColor = enum {GREEN, BLUE, ORANGE, RED};
+
+type tStruct = { x : int32, y : float32 };
+
+sensor sensor0: int32;
+
+sensor sensor1: float32;

@@ -25,8 +25,11 @@
 # see https://softwareengineering.stackexchange.com/questions/369146/how-to-avoid-bidirectional-class-and-module-dependencies  # noqa: E501
 # The point is that ScadeOne and Project uses each other
 # Alternative is to create an intermediate interfaces.py.
-
 from pathlib import Path
+from typing import Optional
+
+from ansys.scadeone.core.common.storage import ProjectStorage
+
 from typing import Union
 
 
@@ -34,15 +37,26 @@ class IProject:
     """Interface class"""
 
     @property
-    def app(self) -> "IScadeOne":
-        pass
+    def app(self) -> Optional["IScadeOne"]:
+        return None
+
+    @property
+    def storage(self) -> Optional["ProjectStorage"]:
+        return None
+
+    @property
+    def directory(self) -> Optional[Path]:
+        return None
+
+    def swan_sources(self, all: bool = False):
+        return None
 
 
 class IScadeOne:
     """Interface class"""
 
     @property
-    def logger(self):
+    def logger(self) -> None:
         return None
 
     @property

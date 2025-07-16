@@ -20,14 +20,14 @@ diagram_object:
     is a diagram object connected as a source of the current block.
 
 source_adaptation:
-    is an adaptation from the *diagram_object*, giving which outputs of the source
-    and how the outputs are connected (index, name, and so on).
+    is an adaptation from the *diagram_object*, giving its outputs connected to
+    the current block and how they are connected to source block (index, name, and so on).
 
     Note that there may be no *source_adaptation* if there is a single connection.
 
 target_adaptation:
-    is an adaptation to the current object, giving which input of the current block
-    and how the input is connected (index, name, and so on).
+    is an adaptation to the current block, giving the connected inputs of the current block
+    and how they are connected (index, name, and so on).
 
     One may have several *target_adaptation* if the source is connected to several
     inputs. The *target_adaptation* is *None* if there is no specific adaptation.
@@ -45,11 +45,11 @@ diagram_object:
     is a diagram object connected as an output of the current block.
 
 source_adaptation:
-    is an adaptation from the *diagram_object*, giving which inputs of the target 
-    and how the inputs are connected (index, name, and so on).
+    is an adaptation from the *diagram_object*, giving the connected inputs of the target 
+    and how they are connected (index, name, and so on).
 
 target_adaptation:
-    is an adaptation to the current object, giving which input and how the input is connected (index, name, and so on).
+    is an adaptation to the current object, giving which input and how it is connected (index, name, and so on).
 
 
 

@@ -24,7 +24,8 @@ from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
 project = "PyScadeOne"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
-release = version = f"{version_info.major}.{version_info.minor}"
+version = f"{version_info.major}.{version_info.minor}"
+release = f"{version}{' - Prerelease' if version_info.pre_release else ''}"
 
 # Selection of documentation parts
 config = {}
@@ -33,7 +34,7 @@ config["clock_exclude"] = ["api/language/clock.rst"]
 
 # PyScadeOne service versions
 supported_versions = Path(__file__).parent / "getting_started/versions.rst"
-supported_versions.write_text(FormatVersions.get_versions())
+supported_versions.write_text(".. Generated files from conf.py\n\n" + FormatVersions.get_versions())
 
 
 # Copy button customization ---------------------------------------------------
@@ -56,7 +57,9 @@ extensions = [
 ]
 
 
-exclude_patterns = []
+exclude_patterns = [
+    "changelog.rst",
+]
 
 if not config["clock"]:
     exclude_patterns.extend(config["clock_exclude"])
@@ -120,8 +123,7 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(__version__),
     },
-    # TODO: remove this check when the lbirary gets public
-    "check_switcher": False,
+    "check_switcher": True,
     "logo": "pyansys",
     "ansys_sphinx_theme_autoapi": {
         "project": project,

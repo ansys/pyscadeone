@@ -25,7 +25,7 @@ This module contains classes to manipulate group declarations
 and group expressions.
 """
 
-from typing import Generator, List
+from typing import List
 
 import ansys.scadeone.core.swan.common as common
 
@@ -38,12 +38,9 @@ class TypeGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR
         self._type = type
 
     @property
-    def type(self):
+    def type(self) -> common.TypeExpression:
         """Type expression of group item"""
         return self._type
-
-    def __str__(self):
-        return str(self.type)
 
 
 class NamedGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR01
@@ -55,17 +52,14 @@ class NamedGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=P
         self._type = type
 
     @property
-    def label(self):
+    def label(self) -> common.Identifier:
         """Label of named group item."""
         return self._label
 
     @property
-    def type(self):
+    def type(self) -> common.GroupTypeExpression:
         """Type of named group item."""
         return self._type
-
-    def __str__(self):
-        return f"{self.label}: {self.type}"
 
 
 class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR01
@@ -78,33 +72,33 @@ class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR
     """
 
     def __init__(
-        self, positional: List[common.GroupTypeExpression], named: List[NamedGroupTypeExpression]
+        self,
+        positional: List[common.GroupTypeExpression],
+        named: List[NamedGroupTypeExpression],
     ) -> None:
         super().__init__()
         self._positional = positional
         self._named = named
 
     @property
-    def positional(self) -> Generator[common.GroupTypeExpression, None, None]:
+    def positional(self) -> List[common.GroupTypeExpression]:
         """Return positional group items"""
-        return (p for p in self._positional)
+        return [p for p in self._positional]
 
     @property
-    def named(self) -> Generator[NamedGroupTypeExpression, None, None]:
+    def named(self) -> List[NamedGroupTypeExpression]:
         """Return named group items"""
-        return (p for p in self._named)
+        return [p for p in self._named]
 
     @property
-    def items(self) -> Generator[common.GroupTypeExpression, None, None]:
+    def items(self) -> List[common.GroupTypeExpression]:
         """Returns all items"""
+        items = []
         for pos in self.positional:
-            yield pos
+            items.append(pos)
         for named in self.named:
-            yield named
-
-    def __str__(self):
-        items_str = ", ".join(str(item) for item in self.items)
-        return f"({items_str})"
+            items.append(named)
+        return items
 
 
 class GroupDecl(common.Declaration):  # numpydoc ignore=PR01
@@ -118,6 +112,3 @@ class GroupDecl(common.Declaration):  # numpydoc ignore=PR01
     def type(self) -> common.GroupTypeExpression:
         """Group type expression."""
         return self._type
-
-    def __str__(self) -> str:
-        return f"{self.id} = {self.type}"

@@ -53,6 +53,7 @@ sdd_sequence_class_t = ctypes.c_int32
 sd_value_iterator_t = ctypes.c_void_p
 sd_value_t = ctypes.c_void_p
 sd_sequence_t = ctypes.c_void_p
+sdf_open_mode_t = ctypes.c_int32
 
 sd_pfn_vsize_get_bytes_size_t = ctypes.CFUNCTYPE(sd_size_t, ctypes.c_void_p)
 sd_pfn_vsize_to_bytes_t = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.POINTER(sd_byte_t))
@@ -124,3 +125,9 @@ class DataClass(IntEnum):
     VARIANT = 4
     UNTYPED_VARIANT_CONSTRUCTOR = 5
     IMPORTED = 6
+
+
+class FileOpenMode(IntEnum):
+    READ = 0
+    CREATE = 1
+    EDIT = 2

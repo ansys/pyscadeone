@@ -14,3 +14,5 @@ This section presents some examples using PyScadeOne:
     visitor/index
     generated_code/index
     fmu_export/index
+    wrapper/index
+    creator/index

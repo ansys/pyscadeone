@@ -13,7 +13,7 @@ It contains the various blocks (see figure) and connections using
     Diagram class diagram
 
 .. autoclass:: Diagram
-    :exclude-members: to_str
+    :exclude-members: to_str, add_block, add_def_block, add_expr_block, add_bar, connect
 
 .. autoclass:: DiagramObject
 

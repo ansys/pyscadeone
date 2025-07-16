@@ -1,0 +1,7 @@
+The versions for the supported format/code are:
+
+- Graphical information format: 2.0
+- Simulation data format: 1.1
+- Swan language version: 2025.0
+- Swan Test Harness: 1.1
+- Test results format: 1.0

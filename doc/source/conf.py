@@ -163,3 +163,8 @@ linkcheck_ignore = [
     "https://www.ansys.com/*",
 ]
 linkcheck_exclude_documents = ["changelog.rst"]
+
+# PyAnsys tags configuration
+html_context = {
+    "pyansys_tags": ['Embedded Software']
+}

@@ -5,7 +5,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      # Delay between Dependabot PRs to avoid noise
       cooldown: "1 day"
     labels:
       - "maintenance"
@@ -17,6 +16,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      cooldown: "1 day"
     labels:
       - "maintenance"
     commit-message:

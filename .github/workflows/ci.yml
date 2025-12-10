@@ -10,7 +10,9 @@ on:
       - sync/*
   workflow_dispatch:
 permissions:
+  # Adding read permission to contents to allow checking out the code
   contents: read
+  # Adding read permission to pull-requests to allow checking PR details
   pull-requests: read
 
 env:

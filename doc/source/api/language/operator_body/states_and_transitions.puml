@@ -1,0 +1,58 @@
+@startuml
+' States and transistion declarations
+skinparam groupInheritance 2
+
+
+DefByCase <|-- StateMachine
+
+HasPragma <|-- StateMachineItem
+
+Transition <|-- StateMachineItem
+
+class Transition {
+   is_strong: bool
+   priority: Optional[Literal, None]
+   is_transition_decl: bool
+   is_resume: bool
+   source: Optional[StateRef]
+   target: Union[StateRef, Fork]
+   head: Union[State, Fork]
+   tail: Union[State, Fork]
+}
+
+
+class StateRef {
+   id: Optional[Identifier]
+   lunum: Optional[Lunum]
+}
+
+Transition *-- StateRef
+Transition *-- Expression : guard >
+Transition *-- Scope : action >
+
+Fork *-- "*" Transition
+Transition *-- Fork
+
+class State {
+   id: Optional[Identifier]
+   lunum: Optional[Lunum]
+   is_initial: bool
+   strong_transitions: List[Transition]
+   weak_transitions: List[Transition]
+}
+
+StateMachineItem <|-- State
+
+State *--  Scope : body >
+
+StateMachine *-- "0..*" StateMachineItem : items >
+
+class StateMachine {
+   lhs: Optional[EquationLHS] = None,
+   lunum: Optional[common.Lunum] = None,
+   luid: Optional[common.Luid]
+   initial_state: List[State]
+   states: List[State]
+   transition_decls: List[Transition]
+}
+@enduml

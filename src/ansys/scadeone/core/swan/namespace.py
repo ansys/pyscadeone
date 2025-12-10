@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Generator, Union, Optional, cast
+from typing import Sequence, Union, Optional, cast
 
 from ..common.exception import ScadeOneException
 from ..model import Model
 from .common import Declaration, SwanItem
-from .diagram import Diagram, SectionBlock
+from .diagram import Diagram, SectionObject
 from .modules import (
     Module,
     GroupDeclarations,
@@ -35,7 +35,7 @@ from .modules import (
     ModuleInterface,
     ModuleBody,
 )
-from .operators import Operator, Signature
+from .operators import OperatorDefinition, OperatorDeclaration
 from .scopes import Scope, ScopeSection
 from .scopesections import VarSection
 from .variable import VarDecl
@@ -49,7 +49,7 @@ class ModuleNamespace:
         # boolean to avoid infinite recursion between module interface and module body
         self._stop_search = stop_search
 
-    def get_declaration(self, name: str) -> SwanItem:
+    def get_declaration(self, name: str) -> Optional[Declaration]:
         """Returns the declaration with the given name."""
 
         if not name:
@@ -68,8 +68,11 @@ class ModuleNamespace:
             return ns.get_declaration(name)
 
     @staticmethod
-    def _get_declaration(name: str, module: Module) -> SwanItem:
-        # Returns declaration searching by name
+    def _get_declaration(name: str, module: Module) -> Optional[Declaration]:
+        """Returns the declaration with the given name.
+        If name does not contain '::', search in the given module in groups, types, constants, sensors, operators.
+        Else consider name as path_id to get the module and search in it.
+        """
         if name.find("::") == -1:
             for decl in module.declarations:
                 found_decl = None
@@ -82,11 +85,11 @@ class ModuleNamespace:
                 elif isinstance(decl, SensorDeclarations):
                     found_decl = ModuleNamespace._find_declaration(name, decl.sensors)
                 elif (
-                    (isinstance(decl, Signature) or isinstance(decl, Operator)) and decl.id.value
+                    isinstance(decl, (OperatorDeclaration, OperatorDefinition)) and decl.id.value
                 ) == name:
                     found_decl = decl
                 if found_decl is not None:
-                    return found_decl
+                    return cast(Declaration, found_decl)
             return None
         else:
             # look for path_id
@@ -97,9 +100,7 @@ class ModuleNamespace:
             return module_ns.get_declaration(name.split("::")[-1])
 
     @staticmethod
-    def _find_declaration(
-        name: str, declarations: Generator[Declaration, None, None]
-    ) -> Optional[Declaration]:
+    def _find_declaration(name: str, declarations: Sequence[Declaration]) -> Optional[Declaration]:
         """Look for a declaration searching by name"""
         if name is None:
             raise ScadeOneException("Declaration name is None.")
@@ -121,7 +122,7 @@ class ScopeNamespace:
     def __init__(self, scope: Union[Scope, ScopeSection]) -> None:
         self._scope = scope
 
-    def get_declaration(self, name: str) -> SwanItem:
+    def get_declaration(self, name: str) -> Optional[Declaration]:
         """Returns the declaration with the given name."""
         from .scopes import Scope, ScopeSection
 
@@ -134,20 +135,22 @@ class ScopeNamespace:
                 return ScopeNamespace._get_section_declaration(name, section)
 
     @staticmethod
-    def _get_section_declaration(name: str, section: ScopeSection) -> SwanItem:
+    def _get_section_declaration(name: str, section: ScopeSection) -> Optional[Declaration]:
         """Returns the section declaration with the given namespace."""
         if name.find("::") == -1:
             return ScopeNamespace._find_declaration(name, section)
 
         # look for path_id
-        module_from_name = cast(Model, section.model).get_module_from_pathid(name, section.module)
+        module_from_name = cast(Model, section.model).get_module_from_pathid(
+            name, cast(Module, section.module)
+        )
         if module_from_name is None:
             raise ScadeOneException(f"Module not found: {name}.")
         module_ns = ModuleNamespace(module_from_name)
         return module_ns.get_declaration(name.split("::")[-1])
 
     @staticmethod
-    def _find_declaration(name: str, item: SwanItem) -> SwanItem:
+    def _find_declaration(name: str, item: SwanItem) -> Optional[Declaration]:
         # Look for declaration with the given name.
 
         if isinstance(item, ModuleBody):
@@ -156,7 +159,7 @@ class ScopeNamespace:
         if isinstance(item, ModuleInterface):
             module_ns = ModuleNamespace(item)
             return module_ns.get_declaration(name)
-        if isinstance(item, Operator):
+        if isinstance(item, OperatorDefinition):
             for input in item.inputs:
                 if not isinstance(input, VarDecl):
                     raise ScadeOneException("Input is not a variable.")
@@ -178,20 +181,20 @@ class ScopeNamespace:
                 return decl
         if item.owner is None:
             raise ScadeOneException(f"Item without owner: {type(item)}")
-        return ScopeNamespace._find_declaration(name, item.owner)
+        return ScopeNamespace._find_declaration(name, cast(SwanItem, item.owner))
 
     @staticmethod
-    def _find_section_obj(name: str, section: ScopeSection) -> Declaration:
+    def _find_section_obj(name: str, section: ScopeSection) -> Optional[Declaration]:
         """Returns the section object with the given name."""
         if isinstance(section, VarSection):
             for var_decl in section.var_decls:
-                if var_decl.id.value == name:
-                    return var_decl
+                if isinstance(var_decl, VarDecl) and var_decl.id.value == name:
+                    return cast(VarDecl, var_decl)
         if isinstance(section, Diagram):
-            for obj in filter(lambda sec_obj: isinstance(sec_obj, SectionBlock), section.objects):
-                if not isinstance(obj.section, VarSection):
-                    continue
-                var_sec = ScopeNamespace._find_section_obj(name, obj.section)
+            for section in [
+                obj.section for obj in section.objects if isinstance(obj, SectionObject)
+            ]:
+                var_sec = ScopeNamespace._find_section_obj(name, section)
                 if var_sec is not None:
                     return var_sec
         return None

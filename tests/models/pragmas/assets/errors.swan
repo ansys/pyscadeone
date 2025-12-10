@@ -1,0 +1,49 @@
+-- version swan: 2025.2 graph: 2.1
+#pragma some use #end {use%use ;%use}
+
+#pragma some const #end {const%const con st0: int32 = 0;%const}
+
+#pragma some type #end {type%type  = int32;%type}
+
+#pragma some sensor #end {sensor%sensor : int32;%sensor}
+
+#pragma some group #end {group%group  = (int32, int32);%group}
+
+node #pragma some operator #end {syntax%hop la%syntax} (#pragma some input #end {var%: int32%var};)
+  returns (#pragma some output #end {var%int32%var};)
+{
+  diagram
+    (var
+        #pragma some var #end {var%$$$%var};)
+    (automaton $automaton0
+      initial state #0 state0
+      #pragma diagram {"xy":"h-26000;v0","wh":"40000;26000"} #end :
+        diagram
+          (var
+              {var%$$$%var};)
+      state #1 state1
+      #pragma diagram {"xy":"h26000;v0","wh":"40000;26000"} #end :
+      :1: #0 until 
+      restart #1
+      #pragma diagram {"tp":"h20000;v150|#0 h4000 h4000 h-20000;v150|#1"} #end;
+    #pragma diagram {"xy":"H69550;V2550","wh":"100000;34000"} #end)
+    (activate $ActivateIf0
+      if {syntax%%syntax}
+      then
+        {
+          diagram
+            (var
+                x0;)
+        #pragma diagram {"xy":"h0;v-10500","wh":"51000;20000"} #end
+        }
+      else
+        {
+        #pragma diagram {"xy":"h0;v13359","wh":"51000;20000"} #end
+        }
+    #pragma diagram {"xy":"H-1250;V46450","wh":"51000;49719"} #end)
+}
+
+{const%const #pragma error #end  int32 = 0;%const}
+
+const #pragma hello world #end
+      #pragma ??? #end foo: int32 = 0;

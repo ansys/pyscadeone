@@ -77,7 +77,4 @@ class TestApp:
         file.unlink()
 
     def test_swan_no_version(self):
-        with pytest.raises(Exception) as exc_info:
-            SwanString("/* some code */").check_swan_version()
-        assert str(exc_info.value) == "No version information found."
-        assert type(exc_info.value).__name__ == "ScadeOneException"
+        assert not SwanString("/* some code */").check_swan_version()

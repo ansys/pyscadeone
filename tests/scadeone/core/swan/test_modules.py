@@ -104,7 +104,7 @@ class TestModuleBody:
         assert isinstance(groups[1], swan.GroupDecl)
         assert groups[1].id.value == "group1"
 
-    def test_get_operators(self, parser: SwanParser):
+    def test_get_operator_definitions(self, parser: SwanParser):
         code = gen_code(
             """
                 node operator0 (i0: int32)
@@ -115,11 +115,11 @@ class TestModuleBody:
             "module0",
         )
         body = parser.module_body(code)
-        ops = list(body.signatures)
+        ops = list(body.operator_declarations)
         assert len(ops) == 2
-        assert isinstance(ops[0], swan.Signature)
+        assert isinstance(ops[0], swan.OperatorDeclaration)
         assert ops[0].id.value == "operator0"
-        assert isinstance(ops[1], swan.Signature)
+        assert isinstance(ops[1], swan.OperatorDeclaration)
         assert ops[1].id.value == "operator1"
 
     def test_add_use_directive(self, parser: SwanParser):
@@ -285,7 +285,7 @@ class TestModuleBody:
         assert swan.swan_to_str(group) == "group0 = (a: int32, b: int32, c: int32)"
         assert body.groups[0] == group
 
-    def test_add_operator(self, parser: SwanParser):
+    def test_add_operator_definition(self, parser: SwanParser):
         code = gen_code(
             """
                 const const0: int32 = 0;
@@ -293,11 +293,11 @@ class TestModuleBody:
             "module0",
         )
         body = parser.module_body(code)
-        operator = body.add_operator("operator1")
+        operator = body.add_operator_definition("operator1")
         operator.add_input("i0", "int32")
         operator.add_output("o0", "int32")
         assert operator is not None
-        assert isinstance(operator, swan.Operator)
+        assert isinstance(operator, swan.OperatorDefinition)
         assert swan.swan_to_str(operator.id) == "operator1"
         assert operator.is_node
         assert not operator.is_text
@@ -317,10 +317,10 @@ class TestModuleBody:
         assert operator.body is not None
         assert isinstance(operator.body, swan.Scope)
         assert not operator.body.sections
-        assert len(body.operators) == 1
-        assert body.operators[0] == operator
+        assert len(body.operator_definitions) == 1
+        assert body.operator_definitions[0] == operator
 
-    def test_add_signature(self, parser: SwanParser):
+    def test_add_op_decl(self, parser: SwanParser):
         code = gen_code(
             """
                 const const0: int32 = 0;
@@ -328,11 +328,11 @@ class TestModuleBody:
             "module0",
         )
         body = parser.module_body(code)
-        sign = body.add_signature("operator1")
+        sign = body.add_operator_declaration("operator1")
         sign.add_input("i0", "int32")
         sign.add_output("o0", "int32")
         assert sign is not None
-        assert isinstance(sign, swan.Signature)
+        assert isinstance(sign, swan.OperatorDeclaration)
         assert swan.swan_to_str(sign.id) == "operator1"
         assert sign.is_node
         assert not sign.is_text
@@ -345,7 +345,7 @@ class TestModuleBody:
         output = cast(swan.VarDecl, sign.outputs[0])
         assert swan.swan_to_str(output.id) == "o0"
         assert swan.swan_to_str(output.type) == "int32"
-        assert body.signatures[0] == sign
+        assert body.operator_declarations[0] == sign
 
 
 class TestModuleInterface:
@@ -413,7 +413,7 @@ class TestModuleInterface:
         assert isinstance(groups[1], swan.GroupDecl)
         assert groups[1].id.value == "group1"
 
-    def test_get_signatures(self, parser: SwanParser):
+    def test_get_operator_declarations(self, parser: SwanParser):
         code = gen_code(
             """
                 node operator0 (i0: int32)
@@ -424,11 +424,11 @@ class TestModuleInterface:
             "module0",
         )
         interface = parser.module_interface(code)
-        signs = list(interface.signatures)
+        signs = list(interface.operator_declarations)
         assert len(signs) == 2
-        assert isinstance(signs[0], swan.Signature)
+        assert isinstance(signs[0], swan.OperatorDeclaration)
         assert signs[0].id.value == "operator0"
-        assert isinstance(signs[1], swan.Signature)
+        assert isinstance(signs[1], swan.OperatorDeclaration)
         assert signs[1].id.value == "operator1"
 
     def test_add_declaration(self, parser: SwanParser):
@@ -527,7 +527,7 @@ class TestModuleInterface:
         assert len(interface.groups) == 1
         assert interface.groups[0] == group
 
-    def test_add_signature(self, parser: SwanParser):
+    def test_add_operator_declaration(self, parser: SwanParser):
         code = gen_code(
             """
                 const const0: int32 = 0;
@@ -535,11 +535,11 @@ class TestModuleInterface:
             "module0",
         )
         interface = parser.module_interface(code)
-        sign = interface.add_signature("operator1")
+        sign = interface.add_operator_declaration("operator1")
         sign.add_input("i0", "int32")
         sign.add_output("o0", "int32")
         assert sign is not None
-        assert isinstance(sign, swan.Signature)
+        assert isinstance(sign, swan.OperatorDeclaration)
         assert swan.swan_to_str(sign.id) == "operator1"
         assert sign.is_node
         assert not sign.is_inlined

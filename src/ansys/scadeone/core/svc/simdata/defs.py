@@ -41,10 +41,12 @@ class Type:
 
     @property
     def type_id(self) -> int:
+        """Type identifier in the simulation data file"""
         return self._type_id
 
     @property
     def name(self) -> str:
+        """Type name"""
         return self._name
 
     @name.setter
@@ -99,7 +101,7 @@ class PredefinedType(Type):
         return "<unknown>"
 
     @property
-    def kind(self):
+    def kind(self) -> PredefinedTypeKind:
         return self._kind
 
     @classmethod
@@ -131,6 +133,7 @@ class StructTypeField:
 
     @property
     def name(self) -> str:
+        "Field name"
         return self._name
 
     @property
@@ -139,6 +142,7 @@ class StructTypeField:
 
     @property
     def sd_type(self) -> Type:
+        "Field type"
         return self._sd_type
 
 
@@ -151,6 +155,7 @@ class StructType(Type):
 
     @property
     def fields(self) -> List[StructTypeField]:
+        "Structure fields"
         return self._fields
 
     def __str__(self) -> str:
@@ -167,10 +172,12 @@ class ArrayType(Type):
 
     @property
     def base_type(self) -> Type:
+        "Base type of array elements"
         return self._base_type
 
     @property
     def dims(self) -> List[int]:
+        "Array dimensions as list of integers for multidimensional arrays"
         return self._dims
 
     def __str__(self) -> str:
@@ -186,10 +193,12 @@ class EnumTypeValue:
 
     @property
     def name(self) -> str:
+        "Enumeration value name"
         return self._name
 
     @property
     def int_value(self) -> int:
+        "Enumeration value integer value"
         return self._int_value
 
 
@@ -205,10 +214,12 @@ class EnumType(Type):
 
     @property
     def base_type(self) -> PredefinedType:
+        "Base type of enumeration values"
         return self._base_type
 
     @property
     def values(self) -> List[EnumTypeValue]:
+        "Enumeration values, with their names and integer values"
         return self._values
 
     def __str__(self) -> str:
@@ -229,10 +240,12 @@ class VariantTypeConstructor:
 
     @property
     def name(self) -> str:
+        "Variant constructor name"
         return self._name
 
     @property
     def value_type(self) -> Optional[Type]:
+        "Variant constructor value type"
         return self._value_type
 
 
@@ -247,9 +260,11 @@ class VariantType(Type):
 
     @property
     def constructors(self) -> List[VariantTypeConstructor]:
+        "Variant constructors for each possible value of the variant"
         return self._constructors
 
     def find_constructor(self, name: str) -> Optional[VariantTypeConstructor]:
+        "Find variant constructor by name"
         for c in self._constructors:
             if c.name == name:
                 return c
@@ -276,24 +291,25 @@ class ImportedType(Type):
         self,
         type_id: int,
         mem_size: int,
-        vsize: bool = False,
+        is_vsize: bool = False,
         pfn_vsize_get_bytes_size: PfnVsizeGetBytesSize = None,
         pfn_vsize_to_bytes: PfnVsizeToBytes = None,
         name: str = "",
     ) -> None:
         self._mem_size = mem_size
-        self._vsize = vsize
+        self._is_vsize = is_vsize
         self._pfn_vsize_get_bytes_size = pfn_vsize_get_bytes_size
         self._pfn_vsize_to_bytes = pfn_vsize_to_bytes
         super().__init__(type_id, name)
 
     @property
     def mem_size(self) -> int:
+        "Memory size in bytes for fixed-size imported types"
         return self._mem_size
 
     @property
-    def vsize(self) -> bool:
-        return self._vsize
+    def is_vsize(self) -> bool:
+        return self._is_vsize
 
     @property
     def pfn_vsize_get_bytes_size(self) -> PfnVsizeGetBytesSize:
@@ -312,11 +328,14 @@ class ImportedType(Type):
         self._pfn_vsize_to_bytes = pfn_vsize_to_bytes
 
     def __str__(self) -> str:
-        return "<variable size imported>" if self.vsize else "<imported>"
+        return "<variable size imported>" if self.is_vsize else "<imported>"
 
 
 class Value:
-    """Interface for all element types values that shall provide a readable string representation"""
+    """Interface for all element types values that shall
+    provide a readable string representation.
+    Derived classes shall implement __str__() method.
+    """
 
     pass
 
@@ -330,7 +349,7 @@ class PredefinedValue(Value):
 class NoneValue(Value):
     """None Values"""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "none"
 
 
@@ -340,7 +359,7 @@ class PredefinedCharValue(PredefinedValue):
     def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "'" + chr(self._value.value) + "'"
 
 
@@ -350,7 +369,7 @@ class PredefinedBoolValue(PredefinedValue):
     def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = True if value else False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "true" if self._value else "false"
 
 
@@ -360,7 +379,7 @@ class PredefinedInt8Value(PredefinedValue):
     def __init__(self, value: core.sd_int8_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -370,7 +389,7 @@ class PredefinedInt16Value(PredefinedValue):
     def __init__(self, value: core.sd_int16_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -380,7 +399,7 @@ class PredefinedInt32Value(PredefinedValue):
     def __init__(self, value: core.sd_int32_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -390,7 +409,7 @@ class PredefinedInt64Value(PredefinedValue):
     def __init__(self, value: core.sd_int64_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -400,7 +419,7 @@ class PredefinedUInt8Value(PredefinedValue):
     def __init__(self, value: core.sd_uint8_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -410,7 +429,7 @@ class PredefinedUInt16Value(PredefinedValue):
     def __init__(self, value: core.sd_uint16_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -420,7 +439,7 @@ class PredefinedUInt32Value(PredefinedValue):
     def __init__(self, value: core.sd_uint32_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -430,7 +449,7 @@ class PredefinedUInt64Value(PredefinedValue):
     def __init__(self, value: core.sd_uint64_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._value.value)
 
 
@@ -440,7 +459,7 @@ class PredefinedFloat32Value(PredefinedValue):
     def __init__(self, value: core.sd_float32_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self._value.value:.5g}"
 
 
@@ -450,7 +469,7 @@ class PredefinedFloat64Value(PredefinedValue):
     def __init__(self, value: core.sd_float64_t) -> None:
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self._value.value:.5g}"
 
 
@@ -460,7 +479,7 @@ class ListValue(Value):
     def __init__(self, values: List[Value]) -> None:
         self._values = values
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "(" + ",".join([str(v) for v in self._values]) + ")"
 
 
@@ -470,7 +489,7 @@ class EnumValue(Value):
     def __init__(self, name: str) -> None:
         self._name = name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._name
 
 
@@ -481,14 +500,14 @@ class VariantValue(Value):
         self._name = name
         self._value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._name + "{" + (str(self._value) if self._value is not None else "") + "}"
 
 
 class UntypedVariantConstructorValue(Value):
     """No value to return for untyped variant constructor"""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ""
 
 
@@ -498,7 +517,7 @@ class ImportedValue(Value):
     def __init__(self, bytes_data) -> None:
         self._bytes_data = bytes_data
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             "" if self._bytes_data is None else "".join([f"{by:0>4X}" for by in self._bytes_data])
         )
@@ -508,19 +527,23 @@ ElementKind = core.SdeKind
 
 
 class ElementBase(metaclass=abc.ABCMeta):
+    """Base class for Element."""
+
     def __init__(
         self,
         file: "FileBase",
-        parent: Optional["ElementBase"],
         name: str,
         sd_type: Optional[Type],
-        kind: ElementKind,
+        kind: Optional[ElementKind],
+        group_expr: Optional[str] = None,
+        parent: Optional["ElementBase"] = None,
     ) -> None:
         self._file = file
-        self._parent = parent
         self._name = name
         self._sd_type = sd_type
         self._kind = kind
+        self._group_expr = group_expr
+        self._parent = parent
         self._children_elements = []  # type: List[ElementBase]
 
     @property
@@ -542,12 +565,21 @@ class ElementBase(metaclass=abc.ABCMeta):
         pass
 
     @property
-    def kind(self) -> ElementKind:
+    def kind(self) -> Optional[ElementKind]:
         return self._kind
 
     @kind.setter
     @abc.abstractmethod
     def kind(self, kind: ElementKind) -> None:
+        pass
+
+    @property
+    def group_expr(self) -> Optional[str]:
+        return self._group_expr
+
+    @group_expr.setter
+    @abc.abstractmethod
+    def group_expr(self, group_expr: str) -> None:
         pass
 
     @property
@@ -559,14 +591,18 @@ class ElementBase(metaclass=abc.ABCMeta):
         return self._children_elements
 
     @property
-    def nb_parents(self):
+    def nb_parents(self) -> int:
         if self.parent is None:
             return 0
         return self.parent.nb_parents + 1
 
     @abc.abstractmethod
     def add_child_element(
-        self, name: str, sd_type: Type = None, kind: ElementKind = ElementKind.NONE
+        self,
+        name: str,
+        sd_type: Optional[Type] = None,
+        kind: ElementKind = ElementKind.NONE,
+        group_expr: Optional[str] = "",
     ) -> "ElementBase":
         pass
 
@@ -584,10 +620,10 @@ class ElementBase(metaclass=abc.ABCMeta):
     def append_value(self, py_value: Any) -> None:
         pass
 
-    def append_nones(self, count) -> None:
+    def append_nones_sequence(self, count) -> None:
         pass
 
-    def append_values(self, py_values: List[Any], repeat_factor: Optional[int] = 1) -> None:
+    def append_values_sequence(self, py_values: List[Any], repeat_factor: int = 1) -> None:
         pass
 
     @abc.abstractmethod
@@ -603,8 +639,7 @@ class ElementBase(metaclass=abc.ABCMeta):
         type_str = "" if self.sd_type is None else ": " + str(self.sd_type)
         kind_str = self.kind.name if self.kind != ElementKind.NONE else ""
         s = "{0}{1} {2}{3}: ".format(indent, kind_str, self.name, type_str)
-        for v in self.read_values():
-            s += str(v) + " | "
+        s += " | ".join([str(v) for v in self.read_values()])
         s += "\n"
         for child in self.children_elements:
             s += str(child)
@@ -612,6 +647,8 @@ class ElementBase(metaclass=abc.ABCMeta):
 
 
 class FileBase:
+    """Base class for File."""
+
     def __init__(self) -> None:
         self._elements = []  # type: List[ElementBase]
 
@@ -621,7 +658,11 @@ class FileBase:
 
     @abc.abstractmethod
     def add_element(
-        self, name: str, sd_type: Type = None, kind: ElementKind = ElementKind.NONE
+        self,
+        name: str,
+        sd_type: Type = None,
+        kind: ElementKind = ElementKind.NONE,
+        group_expr: str = "",
     ) -> ElementBase:
         pass
 

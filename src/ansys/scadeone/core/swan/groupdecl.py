@@ -25,7 +25,7 @@ This module contains classes to manipulate group declarations
 and group expressions.
 """
 
-from typing import List
+from typing import List, Optional
 
 import ansys.scadeone.core.swan.common as common
 
@@ -36,6 +36,7 @@ class TypeGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=PR
     def __init__(self, type: common.TypeExpression) -> None:
         super().__init__()
         self._type = type
+        common.SwanItem.set_owner(self, self._type)
 
     @property
     def type(self) -> common.TypeExpression:
@@ -50,6 +51,8 @@ class NamedGroupTypeExpression(common.GroupTypeExpression):  # numpydoc ignore=P
         super().__init__()
         self._label = label
         self._type = type
+        common.SwanItem.set_owner(self, self._type)
+        common.SwanItem.set_owner(self, self._label)
 
     @property
     def label(self) -> common.Identifier:
@@ -79,6 +82,8 @@ class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR
         super().__init__()
         self._positional = positional
         self._named = named
+        common.SwanItem.set_owner(self, self._positional)
+        common.SwanItem.set_owner(self, self._named)
 
     @property
     def positional(self) -> List[common.GroupTypeExpression]:
@@ -104,9 +109,15 @@ class GroupTypeExpressionList(common.GroupTypeExpression):  # numpydoc ignore=PR
 class GroupDecl(common.Declaration):  # numpydoc ignore=PR01
     """Group declaration with an id and a type."""
 
-    def __init__(self, id: common.Identifier, type: common.GroupTypeExpression) -> None:
-        super().__init__(id)
+    def __init__(
+        self,
+        id: common.Identifier,
+        type: common.GroupTypeExpression,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(id, pragmas)
         self._type = type
+        common.SwanItem.set_owner(self, self._type)
 
     @property
     def type(self) -> common.GroupTypeExpression:

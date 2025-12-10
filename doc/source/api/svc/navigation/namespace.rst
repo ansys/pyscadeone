@@ -3,7 +3,7 @@ Navigation using names
 
 Access to a model element by its name is done with namespace-based navigation.
 
-Name objects are:
+Named objects are:
 
 - Global: sensor, constant, type, group, or operator declaration
 - Local: input/output of an operator, a flow defined with **var**.

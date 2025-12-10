@@ -54,6 +54,7 @@ sd_value_iterator_t = ctypes.c_void_p
 sd_value_t = ctypes.c_void_p
 sd_sequence_t = ctypes.c_void_p
 sdf_open_mode_t = ctypes.c_int32
+sd_sequence_iterator_t = ctypes.c_void_p
 
 sd_pfn_vsize_get_bytes_size_t = ctypes.CFUNCTYPE(sd_size_t, ctypes.c_void_p)
 sd_pfn_vsize_to_bytes_t = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.POINTER(sd_byte_t))
@@ -66,6 +67,8 @@ SDT_NONE = SD_ID_INVALID
 
 
 class TypeClass(IntEnum):
+    """Type classes enumeration."""
+
     UNDEFINED = SD_ID_INVALID
     PREDEF = 0
     STRUCT = 1
@@ -76,6 +79,8 @@ class TypeClass(IntEnum):
 
 
 class PredefinedType(IntEnum):
+    """Predefined types enumeration."""
+
     CHAR = 0
     # CHAR16 = 1 # Reserved
     # CHAR32 = 2 # Reserved
@@ -93,6 +98,8 @@ class PredefinedType(IntEnum):
 
 
 class SdeKind(IntEnum):
+    """Simdata element kinds enumeration."""
+
     NONE = SD_ID_INVALID
     SENSOR = 0
     INPUT = 1
@@ -117,6 +124,8 @@ class SdeKind(IntEnum):
 
 
 class DataClass(IntEnum):
+    """Data classes enumeration."""
+
     UNDEFINED = -1
     NONE = 0
     PREDEF = 1
@@ -128,6 +137,8 @@ class DataClass(IntEnum):
 
 
 class FileOpenMode(IntEnum):
+    """File open modes enumeration."""
+
     READ = 0
     CREATE = 1
     EDIT = 2

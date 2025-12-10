@@ -31,7 +31,8 @@ The script can then access the generated code data.
 
 .. note::
     The :py:class:`GeneratedCode` object is accessible using the :py:attr:`FMU_2_Export.codegen` property.
-    From there, you can check if code is generated with the :py:attr:`GeneratedCode.is_code_generated` property.
+    From there, one can check if code is generated with the 
+    :py:attr:`ansys.scadeone.core.svc.generated_code.GeneratedCode.is_code_generated` property.
 
     .. literalinclude:: quad_flight_control-fmu.py
         :lines: 46-48

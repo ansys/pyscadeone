@@ -42,13 +42,15 @@ model = project.model
 # Step 1
 # Get operator
 def quad_fight_control_op_filter(obj: swan.GlobalDeclaration):
-    if isinstance(obj, swan.Operator):
+    if isinstance(obj, swan.OperatorDefinition):
         return str(obj.id) == "QuadFlightControl"
     return False
 
 
 # Get the 'QuadFightControl' operator from model
-quad_flight_control_op = cast(swan.Operator, model.find_declaration(quad_fight_control_op_filter))
+quad_flight_control_op = cast(
+    swan.OperatorDefinition, model.find_declaration(quad_fight_control_op_filter)
+)
 
 # Step 2: Get the diagram of the 'QuadFightControl' operator
 diag = quad_flight_control_op.diagrams[0]
@@ -109,16 +111,27 @@ print("-----------------------------------")
 
 
 def motor_control_op_filter(obj: swan.GlobalDeclaration):
-    if isinstance(obj, swan.Operator):
+    if isinstance(obj, swan.OperatorDefinition):
         return str(obj.id) == "MotorControl"
     return False
 
 
 # Get the 'MotorControl' operator from model
-motor_control_op = cast(swan.Operator, model.find_declaration(motor_control_op_filter))
+motor_control_op = cast(swan.OperatorDefinition, model.find_declaration(motor_control_op_filter))
 
 # Get the diagram of the 'MotorControl' operator
 diag = motor_control_op.diagrams[0]
+
+
+def subdiagrams(diag: swan.Diagram):
+    return [
+        cast(swan.SectionObject, obj).section
+        for obj in diag.objects
+        if isinstance(obj, swan.SectionObject) and isinstance(obj.section, swan.Diagram)
+    ]
+
+
+control_diag = subdiagrams(diag)[1]
 
 
 def input_filter(obj: swan.DiagramObject):
@@ -130,7 +143,7 @@ def input_filter(obj: swan.DiagramObject):
 
 
 # Get the 'attitudeCmd' fields from the diagram (expression blocks)
-attitude_cmd_fields = list(filter(lambda obj: input_filter(obj), diag.objects))
+attitude_cmd_fields = list(filter(lambda obj: input_filter(obj), control_diag.objects))
 
 
 def contains_output(objs):
@@ -155,9 +168,9 @@ print(
 )
 print("-----------------------------------")
 for source in blocks:
-    if isinstance(source.instance, swan.PathIdOpCall):
+    if isinstance(source.instance, swan.NamedInstance):
         print(f"Operator name: {source.instance.path_id}")
-    elif isinstance(source.instance, swan.PrefixOperatorExpression):
+    elif isinstance(source.instance, swan.OperatorExpressionInstance):
         print(f"Operator name: {source.instance.op_expr.operator.path_id}")
         print(f"Instance name: {source.luid}")
     print("-----------------------------------")

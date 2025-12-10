@@ -1,0 +1,39 @@
+-- version swan: 2025.2 graph: 2.1
+node #pragma    3 w
+     1 nl #end
+     #pragma plop #end operator0 (#pragma doc
+                                    this is multiline
+                                  pragma #end i0: int32;)
+  returns (o0: int32;);
+
+node operator1 (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 block ({op_expr%function x => x%op_expr})
+    #pragma diagram {"xy":"H-9075;V-10350","wh":"20000;14000"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-38575;V-10350"} #end)
+    
+    (#2 wire #1 => #0)
+    
+    (automaton $automaton0
+      initial state #3 state0
+      #pragma doc
+      tutu 
+      titi tata 
+      toto #end
+      #pragma diagram {"xy":"h-21050;v0","wh":"21300;12000"} #end :
+      state #4 state1
+      #pragma multiline
+      
+       #end
+      #pragma diagram {"xy":"h16850;v0","wh":"29700;12000"} #end :
+      :1: #3 until 
+      restart #4
+      #pragma diagram {"tp":"h10650;v0|#3 h4133 h4133 h-14850;v0|#4"} #end;
+    #pragma diagram {"xy":"H-5000;V16075","wh":"71400;20000"} #end)
+}
+
+const #pragma newline_err
+       #end const0: int32 = 0;

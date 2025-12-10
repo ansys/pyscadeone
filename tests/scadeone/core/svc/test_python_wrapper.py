@@ -29,25 +29,50 @@ import shutil
 import sys
 import ctypes
 import pytest
-from typing import Union
+from typing import Optional, Union
 
 from ansys.scadeone.core import ScadeOne, cli
 from ansys.scadeone.core.job import Job
-from ansys.scadeone.core.svc.wrapper import PythonWrapper
+from ansys.scadeone.core.svc.pywrapper import PythonWrapper
 
 wrapper_model_path = Path(__file__).parents[4] / "tests/models/wrapper"
 
 default_project_path = "project/project.sproj"
 
-
-@pytest.fixture(scope="module")
-def app():
-    return ScadeOne("C:/Scade One")
+run_cg_jobs = False  # To run the CG jobs before generating the wrapper.
 
 
 @pytest.fixture(scope="module")
-def output_path():
-    return Path(__file__).parents[3] / "wrapper_out"
+def app(scadeone_install_path):
+    return ScadeOne(scadeone_install_path)
+
+
+@pytest.fixture(scope="module")
+def wrapper_out():
+    """Create test_python_wrapper main out directory."""
+    wrapper_out = Path(__file__).parents[3] / "wrapper_out"
+    wrapper_out.mkdir(parents=True, exist_ok=True)
+    return wrapper_out
+
+
+@pytest.fixture
+def output_path(request, wrapper_out):
+    """Inspired by tmp_path fixture in pytest.
+    Create a unique directory for each test function in the wrapper_out directory."""
+    # get the test function name
+    test_func = request.node.originalname
+    nb_chars = len(test_func)
+    # find files with the same prefix in the wrapper_out directory and extract the number
+    suffix_nums = [
+        int(p.stem[nb_chars:])
+        for p in wrapper_out.glob(f"{test_func}*")
+        if p.stem[nb_chars:].isdigit()
+    ]
+    # get max number and create a new directory with the next number
+    max_nb = max(suffix_nums, default=-1) + 1
+    new_path = Path(__file__).parents[3] / "wrapper_out" / f"{test_func}{max_nb}"
+    new_path.mkdir(parents=True, exist_ok=True)
+    return new_path
 
 
 class ModuleUnloader:
@@ -98,8 +123,13 @@ class TestPythonWrapper:
     _kernel32 = None
 
     def _generate_wrapper(
-        self, app: ScadeOne, job_name, wrapper_name, output_path, project_path: str = None
-    ):
+        self,
+        app: ScadeOne,
+        job_name,
+        wrapper_name,
+        output_path,
+        project_path: str = None,
+    ) -> tuple[PythonWrapper, Optional[Job]]:
         """Generate the wrapper code and load the module.
 
         Parameters
@@ -107,28 +137,32 @@ class TestPythonWrapper:
         app : Scade One instance
             The app.
         job_name : str
-            Job name
+            Job name.
         wrapper_name : str
-            Generated wrapper name
+            Generated wrapper name.
         output_path : Path
             Path to the target directory.
         project_path : str, optional
-            Specific project, in `wrapper_model_path` folder, by default None
+            Specific project, in `wrapper_model_path` folder, by default None.
 
         Returns
         -------
-        Job, PythonWrapper
-            Job object and PythonWrapper object.
+        gen : PythonWrapper
+            The PythonWrapper object used to generate the wrapper.
+        cg_job : Job
+            The CG job used to generate the code, None if `run_cg_jobs` is
         """
         if project_path is None:
             project_path = default_project_path
         full_project_path = wrapper_model_path / project_path
         project = app.load_project(str(full_project_path))
         assert project
-        project.load_jobs()
-        cg_job = project.get_job(job_name)
-        result = cg_job.run()
-        assert result.code == 0
+        cg_job = None
+        if run_cg_jobs:
+            project.load_jobs()
+            cg_job = project.get_job(job_name)
+            result = cg_job.run()
+            assert result.code == 0
         _gen = PythonWrapper(
             project=project,
             job=job_name,
@@ -138,7 +172,7 @@ class TestPythonWrapper:
         _gen.generate()
 
         assert self._generation_ok(output_path / wrapper_name)
-        return cg_job, _gen
+        return _gen, cg_job
 
     def _generation_ok(self, target_path: Path) -> bool:
         # Verify that the generation is good or failed.
@@ -153,7 +187,8 @@ class TestPythonWrapper:
                 _rtn = True
         return _rtn
 
-    def _load_wrapper_module(self, wrapper_name: str, gen: PythonWrapper):
+    @staticmethod
+    def _load_wrapper_module(wrapper_name: str, gen: PythonWrapper):
         # Load the wrapper module from the generated file
         # File is found from gen target directory.
         spec = importlib.util.spec_from_file_location(
@@ -170,27 +205,42 @@ class TestPythonWrapper:
         return "_".join(reversed(opt_name.split("::")))
 
     @staticmethod
-    def _remove_generated_files(cg_job: Job, gen: Union[PythonWrapper, Path]) -> None:
-        """Remove the generated files after the test.
+    def _remove_generated_files(gen: Union[PythonWrapper, Path], cg_job: Optional[Job]) -> None:
+        """Remove the generated wrapper files after the test.
 
         Parameters
         ----------
-        cg_job : Job
-            Job where to find code generation files.
         gen : Union[PythonWrapper, Path]
             Where to find the generated files by the Python wrapper. Either a Path
             or a PythonWrapper object, which has a _target_dir() method.
+        cg_job : Job | None
+            Job where to find code generation files. If None, no CG files to be removed.
         """
-        job_path = cg_job.storage.path.parent
-        shutil.rmtree(job_path / "out", ignore_errors=True)
-        for file in job_path.glob("*.json"):
-            file.unlink()
-        target_path = gen._target_dir() if isinstance(gen, PythonWrapper) else gen
-        shutil.rmtree(target_path, ignore_errors=True)
+        if cg_job:
+            job_path = cg_job.storage.path.parent
+            shutil.rmtree(job_path / "out", ignore_errors=True)
+            for file in job_path.glob("*.json"):
+                file.unlink()
+        target_path = gen._target_dir().parent if isinstance(gen, PythonWrapper) else gen
+
+        def cb(f, p, exc):
+            # Call back function to handle errors during removal.
+            skip = True
+            if skip:
+                # no processing.
+                return
+            # https://learn.microsoft.com/en-us/sysinternals/downloads/handle
+            import subprocess
+
+            handle = "handle.exe"  #
+            proc = subprocess.run([handle, str(p)], capture_output=True, text=True)
+            raise RuntimeError(f"Failed to remove {p}.\n{proc.stdout}\n{proc.stderr}")
+
+        shutil.rmtree(target_path, onerror=cb)
 
     def test_wrapper_one_output(self, app, output_path):
         wrapper_name = "one_output_wrapper"
-        cg_job, gen = self._generate_wrapper(app, "CGJob4OneOutput", wrapper_name, output_path)
+        gen, cg_job = self._generate_wrapper(app, "CGJob4OneOutput", wrapper_name, output_path)
 
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
         operator_path_name = "module0::oneOutput"
@@ -204,7 +254,7 @@ class TestPythonWrapper:
         unloader = ModuleUnloader(operator)
         del operator
         del unloader
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
     @pytest.mark.parametrize(
         ("job_name", "wrapper_name"),
@@ -222,9 +272,8 @@ class TestPythonWrapper:
         - inputs: List of the root operator inputs to be tested
         - outputs: List of the expected root operator outputs
         """
-
-        cg_job, gen = self._generate_wrapper(app, job_name, wrapper_name, output_path)
-        self._remove_generated_files(cg_job, gen)
+        gen, cg_job = self._generate_wrapper(app, job_name, wrapper_name, output_path)
+        self._remove_generated_files(gen, cg_job)
 
     @pytest.mark.parametrize(
         ("operator_name", "job_name", "wrapper_name", "inputs", "outputs"),
@@ -244,7 +293,7 @@ class TestPythonWrapper:
         - inputs: List of the root operator inputs to be tested
         - outputs: List of the expected root operator outputs
         """
-        cg_job, gen = self._generate_wrapper(app, job_name, wrapper_name, output_path)
+        gen, cg_job = self._generate_wrapper(app, job_name, wrapper_name, output_path)
 
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
         operator = getattr(wrapper_module, operator_name)()
@@ -258,12 +307,12 @@ class TestPythonWrapper:
         unloader = ModuleUnloader(operator)
         del operator
         del unloader
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
     def test_specific_types(self, app, output_path):
         wrapper_name = "specific_types_wrapper"
         job_name = "CodeGenerationJob0"
-        cg_job, gen = self._generate_wrapper(
+        gen, cg_job = self._generate_wrapper(
             app, job_name, wrapper_name, output_path, "wrapper_types/project.sproj"
         )
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
@@ -283,6 +332,7 @@ class TestPythonWrapper:
         op.inputs.i5 = wrapper_module.tSize_TypesModule.Small
         op.inputs.i6 = True
         op.inputs.i7 = (1, 3.14)
+        op.inputs.i8 = (1, 2)
         op.cycle()
         assert type(op.outputs.o0) is int
         assert type(op.outputs.o1) is int
@@ -294,6 +344,7 @@ class TestPythonWrapper:
         assert type(op.outputs.o7) is wrapper_module.tStruct_module0
         assert type(op.outputs.o7.x) is int
         assert type(op.outputs.o7.y) is float
+        assert type(op.outputs.o8) is tuple
         assert op.outputs.o0 == 10
         assert op.outputs.o1 == -9
         assert op.outputs.o3 == 2.75
@@ -301,6 +352,8 @@ class TestPythonWrapper:
         assert op.outputs.o5 == wrapper_module.tSize_TypesModule.Small
         assert op.outputs.o6 is True
         assert op.outputs.o7 == (1, 3.14)
+        assert op.outputs.o8 == (1, 2)
+
         op.inputs.i7.y = 7.55
         op.cycle()
         assert op.outputs.o7 == wrapper_module.tStruct_module0(1, 7.55)
@@ -310,7 +363,7 @@ class TestPythonWrapper:
         unloader = ModuleUnloader(op)
         del op
         del unloader
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
     @pytest.mark.parametrize(
         ("operator_name", "job_name", "wrapper_name", "sensors_values", "output"),
@@ -329,7 +382,7 @@ class TestPythonWrapper:
         - inputs: List of the root operator inputs to be tested
         - outputs: List of the expected root operator outputs
         """
-        cg_job, gen = self._generate_wrapper(app, job_name, wrapper_name, output_path)
+        gen, cg_job = self._generate_wrapper(app, job_name, wrapper_name, output_path)
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
         operator = getattr(wrapper_module, operator_name)()
         sensors = getattr(wrapper_module, "sensors")
@@ -342,7 +395,7 @@ class TestPythonWrapper:
         unloader = ModuleUnloader(operator)
         del operator
         del unloader
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
     @pytest.mark.parametrize(
         ("job_name", "wrapper_name", "inputs", "outputs"),
@@ -356,7 +409,7 @@ class TestPythonWrapper:
         ],
     )
     def test_multi_roots(self, app, output_path, job_name, wrapper_name, inputs, outputs):
-        cg_job, gen = self._generate_wrapper(app, job_name, wrapper_name, output_path)
+        gen, cg_job = self._generate_wrapper(app, job_name, wrapper_name, output_path)
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
 
         node_name = "node0_module0"
@@ -379,7 +432,7 @@ class TestPythonWrapper:
         del node
         del unloader
 
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
     @pytest.mark.parametrize(
         ("job_name", "wrapper_name", "input_", "output"),
@@ -393,7 +446,7 @@ class TestPythonWrapper:
         ],
     )
     def test_array_type(self, app, output_path, job_name, wrapper_name, input_, output):
-        cg_job, gen = self._generate_wrapper(app, job_name, wrapper_name, output_path)
+        gen, cg_job = self._generate_wrapper(app, job_name, wrapper_name, output_path)
 
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
 
@@ -409,27 +462,27 @@ class TestPythonWrapper:
         del node
         del unloader
 
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
 
-    def test_wrapper_cli(self, app, output_path):
-        # Generate code before running the CLI
+    def test_wrapper_cli(self, scadeone_install_path, app, output_path):
         project_path = wrapper_model_path / default_project_path
         job_name = "CGJob4Func"
         project = app.load_project(project_path)
-        project.load_jobs()
-        cg_job = project.get_job(job_name)
-        result = cg_job.run()
-        assert result.code == 0, "Error in job execution"
 
         wrapper_name = "cli_wrapper"
         project.load_jobs()
+        cg_job = None
+        if run_cg_jobs:
+            cg_job = project.get_job(job_name)
+            result = cg_job.run()
+            assert result.code == 0, "Error in job execution"
 
         old_sys_argv = sys.argv
         sys.argv = [
             "<cmd name>",
             "pycodewrap",
             "--install-dir",
-            "C:/Scade One",
+            scadeone_install_path,
             "-j",
             job_name,
             "-o",
@@ -446,11 +499,11 @@ class TestPythonWrapper:
 
         assert self._generation_ok(output_path / wrapper_name)
 
-        self._remove_generated_files(cg_job, output_path)
+        self._remove_generated_files(output_path, cg_job)
 
     def test_elaboration(self, app, output_path):
         wrapper_name = "elab_wrapper"
-        cg_job, gen = self._generate_wrapper(
+        gen, cg_job = self._generate_wrapper(
             app, "CodeGen", wrapper_name, output_path, "elaboration/elaboration.sproj"
         )
         wrapper_module = self._load_wrapper_module(wrapper_name, gen)
@@ -466,4 +519,76 @@ class TestPythonWrapper:
         unloader = ModuleUnloader(operator)
         del operator
         del unloader
-        self._remove_generated_files(cg_job, gen)
+        self._remove_generated_files(gen, cg_job)
+
+    def test_imported_code_func(self, app, output_path):
+        wrapper_name = "imported_code_func_wrapper"
+        gen, cg_job = self._generate_wrapper(
+            app,
+            "CodeGenerationJob0",
+            wrapper_name,
+            output_path,
+            "imported_codes/textual_func/project.sproj",
+        )
+
+        wrapper_module = self._load_wrapper_module(wrapper_name, gen)
+        operator_path_name = "module0::test_func"
+        operator_name = self._format_name(operator_path_name)
+        operator = getattr(wrapper_module, operator_name)()
+        assert operator_name == "test_func_module0"
+        operator.inputs.i0 = (0, 1, 2, 3)
+        operator.cycle()
+        assert operator.outputs.o0 == (5, 10, 15, 20)
+        # Clean up the generated files
+        unloader = ModuleUnloader(operator)
+        del operator
+        del unloader
+        self._remove_generated_files(gen, cg_job)
+
+    def test_imported_code_node(self, app, output_path):
+        wrapper_name = "imported_code_node_wrapper"
+        gen, cg_job = self._generate_wrapper(
+            app,
+            "CodeGenerationJob0",
+            wrapper_name,
+            output_path,
+            "imported_codes/textual_node/project.sproj",
+        )
+
+        wrapper_module = self._load_wrapper_module(wrapper_name, gen)
+        operator_path_name = "module0::test_node"
+        operator_name = self._format_name(operator_path_name)
+        operator = getattr(wrapper_module, operator_name)()
+        assert operator_name == "test_node_module0"
+        operator.inputs.i0 = (0, 1, 2, 3)
+        operator.cycle()
+        assert operator.outputs.o0 == (0, 10, 20, 30)
+        # Clean up the generated files
+        unloader = ModuleUnloader(operator)
+        del operator
+        del unloader
+        self._remove_generated_files(gen, cg_job)
+
+    def test_imported_code_dependencies(self, app, output_path):
+        wrapper_name = "imported_code_dependencies_wrapper"
+        gen, cg_job = self._generate_wrapper(
+            app,
+            "CodeGenerationJob0",
+            wrapper_name,
+            output_path,
+            "imported_codes/include_dependencies/project.sproj",
+        )
+
+        wrapper_module = self._load_wrapper_module(wrapper_name, gen)
+        operator_path_name = "module0::operator0"
+        operator_name = self._format_name(operator_path_name)
+        operator = getattr(wrapper_module, operator_name)()
+        assert operator_name == "operator0_module0"
+        operator.inputs.i0 = 3
+        operator.cycle()
+        assert operator.outputs.o0 == 9
+        # Clean up the generated files
+        unloader = ModuleUnloader(operator)
+        del operator
+        del unloader
+        self._remove_generated_files(gen, cg_job)

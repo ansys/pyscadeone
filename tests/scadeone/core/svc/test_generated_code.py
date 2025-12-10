@@ -66,14 +66,14 @@ class TestGeneratedCode:
                             assert len(dict_params) == len(params)
                             for p, dp in zip(params, dict_params):
                                 assert p.name == dp.get("name", "")
-                                assert p.pointer == dp.get("pointer", False)
-                                assert p.const == dp.get("const", False)
+                                assert p.is_pointer == dp.get("pointer", False)
+                                assert p.is_const == dp.get("const", False)
                                 assert p.type_name == op._gen_code.get_code_elem(
                                     dp.get("type", 0)
                                 ).get("content", {}).get("name", "")
                                 assert p.type_name in p.signature
-                                assert not p.pointer or "*" in p.signature
-                                assert not p.const or "const" in p.signature
+                                assert not p.is_pointer or "*" in p.signature
+                                assert not p.is_const or "const" in p.signature
 
                             found = True
                             break
@@ -124,7 +124,7 @@ class TestGeneratedCode:
         gc = self._get_gen_code("CodeGen1")
         for op_name in gc.root_operators:
             root_op = gc.get_model_operator(op_name)
-            assert root_op.root
+            assert root_op.is_root
 
     @pytest.mark.parametrize(
         "oper_name", ["", "foo", "oper_misc1", "module0::oper_poly[][T=int32]"]
@@ -151,23 +151,23 @@ class TestGeneratedCode:
             assert False
 
     @pytest.mark.parametrize(
-        ("oper", "watches", "instances", "root", "imported", "expanded", "specialize"),
+        ("oper", "watches", "instances", "is_root", "is_imported", "is_expanded", "is_specialized"),
         [
             ("module0::oper_misc1", 0, 1, True, False, False, False),
             ("module0::oper_poly", 0, 0, False, False, False, False),
         ],
     )
     def test_operator_attributes(
-        self, oper, watches, instances, root, imported, expanded, specialize
+        self, oper, watches, instances, is_root, is_imported, is_expanded, is_specialized
     ):
         gc = self._get_gen_code("CodeGen1")
         op = gc.get_model_operator(oper)
         assert len(op.watches) == watches
         assert len(op.instances) == instances
-        assert op.root == root
-        assert op.imported == imported
-        assert op.expanded == expanded
-        assert op.specialize == specialize
+        assert op.is_root == is_root
+        assert op.is_imported == is_imported
+        assert op.is_expanded == is_expanded
+        assert op.is_specialized == is_specialized
 
     @pytest.mark.parametrize(
         ("job", "oper", "cycle", "init", "reset"),
@@ -275,23 +275,31 @@ class TestGeneratedCode:
             assert False
 
     @pytest.mark.parametrize(
-        ("sensor", "watches", "instances", "root", "imported", "expanded", "specialize"),
+        (
+            "sensor",
+            "watches",
+            "instances",
+            "is_root",
+            "is_imported",
+            "is_expanded",
+            "is_specialized",
+        ),
         [
             ("module0::oper_misc1", 0, 1, True, False, False, False),
             ("module0::oper_poly", 0, 0, False, False, False, False),
         ],
     )
     def test_sensor_attributes(
-        self, sensor, watches, instances, root, imported, expanded, specialize
+        self, sensor, watches, instances, is_root, is_imported, is_expanded, is_specialized
     ):
         gc = self._get_gen_code("CodeGen1")
         op = gc.get_model_operator(sensor)
         assert len(op.watches) == watches
         assert len(op.instances) == instances
-        assert op.root == root
-        assert op.imported == imported
-        assert op.expanded == expanded
-        assert op.specialize == specialize
+        assert op.is_root == is_root
+        assert op.is_imported == is_imported
+        assert op.is_expanded == is_expanded
+        assert op.is_specialized == is_specialized
 
     @pytest.mark.parametrize(
         ("job", "oper"),

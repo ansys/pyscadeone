@@ -25,7 +25,7 @@ from typing import Union
 
 from ansys.scadeone.core.common.storage import SwanStorage
 from ansys.scadeone.core.common.exception import ScadeOneException
-import ansys.scadeone.core.swan as S
+import ansys.scadeone.core.swan as Swan
 
 
 class Parser(ABC):
@@ -59,7 +59,7 @@ class Parser(ABC):
         cls._SwanSource = swan
 
     @abstractmethod
-    def module_body(self, source: SwanStorage) -> S.ModuleBody:
+    def module_body(self, source: SwanStorage) -> Swan.ModuleBody:
         """Parse a Swan module from a SwanStorage object
 
             The *content()* method is called to get the code.
@@ -79,7 +79,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def module_interface(self, source: SwanStorage) -> S.ModuleInterface:
+    def module_interface(self, source: SwanStorage) -> Swan.ModuleInterface:
         """Parse a Swan interface from a SwanStorage object.
 
             The *content()* method is called to get the code.
@@ -99,9 +99,9 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def declaration(self, source: SwanStorage) -> S.Declaration:
+    def declaration(self, source: SwanStorage) -> Swan.Declaration:
         """Parse a Swan declaration:
-          type, const, sensor, group, use, operator (signature or with body).
+          type, const, sensor, group, use, operator (declaration or definition).
 
         Parameters
         ----------
@@ -116,7 +116,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def equation(self, source: SwanStorage) -> S.equations:
+    def equation(self, source: SwanStorage) -> Swan.equations:
         """Parse a Swan equation.
 
         Parameters
@@ -132,7 +132,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def expression(self, source: SwanStorage) -> S.Expression:
+    def expression(self, source: SwanStorage) -> Swan.Expression:
         """Parse a Swan expression
 
         Parameters
@@ -147,7 +147,7 @@ class Parser(ABC):
         """
 
     @abstractmethod
-    def scope_section(self, source: SwanStorage) -> S.ScopeSection:
+    def scope_section(self, source: SwanStorage) -> Swan.ScopeSection:
         """Parse a Swan scope section
 
         Parameters
@@ -163,7 +163,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def op_expr(self, source: SwanStorage) -> S.OperatorExpression:
+    def op_expr(self, source: SwanStorage) -> Swan.OperatorExpression:
         """Parse a Swan operator expression
 
         Parameters
@@ -179,7 +179,9 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def operator_block(self, source: SwanStorage) -> Union[S.OperatorBase, S.OperatorExpression]:
+    def operator_block(
+        self, source: SwanStorage
+    ) -> Union[Swan.OperatorInstance, Swan.OperatorExpression, Swan.OperatorExpressionInstance]:
         """Parse a Swan operator block
 
         *operator_block* ::= *operator* | *op_expr*
@@ -191,13 +193,15 @@ class Parser(ABC):
 
         Returns
         -------
-        Union[S.Operator, S.OperatorExpression]
+        Union[S.OperatorInstance, S.OperatorExpression, S.OperatorExpressionInstance]
             Instance of the *operator* or *op_expr*
         """
         pass
 
     @abstractmethod
-    def operator_decl(self, source: SwanStorage) -> Union[S.Operator, S.Signature]:
+    def operator_decl_or_def(
+        self, source: SwanStorage
+    ) -> Union[Swan.OperatorDefinition, Swan.OperatorDeclaration]:
         """Parse a Swan operator
 
         Parameters
@@ -207,7 +211,7 @@ class Parser(ABC):
 
         Returns
         -------
-        S.Operator|S.Signature
-            Instance of the operator, or its signature
+        S.OperatorDefinition|S.OperatorDeclaration
+            Operator definition or declaration object
         """
         pass

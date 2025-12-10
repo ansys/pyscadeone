@@ -1,0 +1,10 @@
+-- version swan: 2025.2 graph: 2.1 swant: 1.1
+use basic;
+
+_harness #pragma harness pragma #end harness0
+{
+  diagram
+    (#0 block (({op_expr%G \ x: true%op_expr}) \ name: false)
+    #pragma swt under_test #end
+    #pragma diagram {"xy":"H-3250;V-2450","wh":"20000;14000"} #end)
+}

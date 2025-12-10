@@ -7,17 +7,21 @@ Swan model visitor
 
 .. _visitor: https://en.wikipedia.org/wiki/Visitor_pattern
 
-The `visitor`_ pattern allows for a traversal of a data structure without changing the data structure itself.
-Thus, several algorithms can be applied to the same data structure. 
+The Swan model *visitor* implements a pattern to visit each object built from a Swan model. 
+The visitor is responsible for traversing the tree of the built Swan objects. To perform this traversal,
+the visitor implements a method called ``visit``. This method is invoked for each object to be visited. 
+Then, the appropriate ``visit_<SwanClass>`` method is called for the object, and the process is recursively repeated 
+for each property of the object.
 
-The Swan visitor implements that pattern with a class which methods to visit each Swan object. T
-he visitor is therefore responsible for the traversal. The visitor by itself does nothing 
-but traversing the tree. To implement an algorithm, one needs to derive the visitor class and override all 
-or some of the methods.
+The default visitor only traverses the tree without performing any additional operations. To implement an algorithm, 
+one must derive a visitor class and override all or some of the methods.
 
-The advantage of that visitor is that the traversal can be controlled by a derived visitor class,
+This visitor is derived from the `visitor`_ pattern, which allows for the traversal of a data structure. However, 
+unlike the `visitor`_ pattern, where the traversal is performed by the object itself, the Swan model visitor 
+handles the traversal process.
+
+The advantage of the Swan model visitor is that the traversal can be controlled by a derived visitor class,
 instead of the ``accept`` method as in the `visitor`_ pattern.
-
 
 For a complete code example, see :ref:`ref_visitor_example`.
 
@@ -29,7 +33,7 @@ The :py:class:`SwanVisitor` implements the base visitor. It provides:
 * The :py:meth:`SwanVisitor.visit` which is the entry point to start visiting an object.
 * The methods *SwanVisitor.visit_<class_name>(swan_obj: object, owner: object, property: str)*. There
   is one such method for each Swan classes. The :py:meth:`SwanVisitor.visit` method calls the 
-  private :py:meth:`SwanVisitor._visit` method which dispatches the Swan object argument to the
+  private ``SwanVisitor._visit`` method which dispatches the Swan object argument to the
   proper *SwanVisitor.visit_<class_name>* method. Arguments of *SwanVisitor.visit_<class_name>* are:
 
   * *swan_obj*: the visited object.
@@ -81,7 +85,7 @@ a visitor with some meaningful operation.
             super().__init__()
 
 The methods of :py:class:`SwanVisitor` can be overridden as needed. If one wants to perform a systematic
-action while visiting an item, override the :py:meth:`SwanVisitor._visit` method:
+action while visiting an item, override the ``SwanVisitor._visit`` method:
 
 .. code:: python
 
@@ -108,13 +112,13 @@ Override any method for which an action is required. Example for a sensor:
         super().visit_SensorDecl(swan_obj, owner, property)
         # do some post-processing
 
-Or one can take the default code and write specific processing. Example for an operator:
+Or one can take the default code and write specific processing. Example for an operator definition:
 
 .. code:: python
 
-    def visit_Operator(
+    def visit_OperatorDefinition(
         self,
-        swan_obj: swan.Operator,
+        swan_obj: swan.OperatorDefinition,
         owner: Owner,
         owner_property: OwnerProperty
     ) -> None:
@@ -122,12 +126,10 @@ Or one can take the default code and write specific processing. Example for an o
         # for instance, do not explore inputs/outputs, body, ...
         # which stops the traversal.
 
-
 SwanVisitor class
 -----------------
 
 This section describes the methods of the :py:class:`SwanVisitor`.
-
 
 .. py:class:: SwanVisitor
     :canonical: ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor
@@ -138,12 +140,10 @@ This section describes the methods of the :py:class:`SwanVisitor`.
 
     .. automethod:: visit_SwanItem
 
-
     A method is provided for each Swan class. The method name is *visit_<SwanClass>*.
-    For instance, for the :py:class:`Operator` class, the method is *visit_Operator*.
+    For instance, for the :py:class:`OperatorDefinition` class, the method is *visit_OperatorDefinition*.
     The method provides the traversal of the object and its properties. It should be overridden
     for a specific processing. Look at source in `ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor.py`.
-
 
     .. py:method:: visit_<SwanClass>(swan_obj: object, owner: object, property: str) -> None
 

@@ -24,18 +24,20 @@
 # THIS MODULE CONTAINS THE CLASSES FOR TEST HARNESS AND TEST MODULE
 # THIS IS NOT YET FULLY IMPLEMENTED
 
-from typing import Union, List, Optional, Callable
-from pathlib import Path
-
-from ansys.scadeone.core.common.storage import SwanFile
+from typing import Union, List, Optional, Callable, cast
+import ansys.scadeone.core.swan.common as common
 from ansys.scadeone.core.swan.variable import VarDecl
 from ansys.scadeone.core.swan.typedecl import Uint64Type, BoolType
 from ansys.scadeone.core.swan.modules import Module, UseDirective, GlobalDeclaration
 from ansys.scadeone.core.swan.scopes import Scope
-import ansys.scadeone.core.swan.common as common
+from ansys.scadeone.core.swan.diagram import DiagramObject
+from ansys.scadeone.core.svc.swan_creator.module_creator import TestModuleCreator
+from ansys.scadeone.core.svc.swan_creator.harness_creator import TestHarnessDiagramCreator
+from ansys.scadeone.core.swan.operators import OperatorDefinition
+from ansys.scadeone.core.swan.instances import OperatorExpression
 
 
-class Source(common.SwanItem):  # numpydoc ignore=PR01
+class DataSource(OperatorExpression):  # numpydoc ignore=PR01
     """Class representing a source in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -44,11 +46,11 @@ class Source(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def id(self) -> common.Identifier:
-        """Source identifier."""
+        """DataSource key as identifier."""
         return self._id
 
 
-class Oracle(common.SwanItem):  # numpydoc ignore=PR01
+class Oracle(OperatorExpression):  # numpydoc ignore=PR01
     """Class representing an oracle in the harness."""
 
     def __init__(self, id: common.Identifier) -> None:
@@ -57,7 +59,7 @@ class Oracle(common.SwanItem):  # numpydoc ignore=PR01
 
     @property
     def id(self) -> common.Identifier:
-        """Oracle identifier."""
+        """Oracle key as identifier."""
         return self._id
 
 
@@ -80,23 +82,49 @@ class SetSensorEquation(common.Equation):  # numpydoc ignore=PR01
         return self._value
 
 
-class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):  # numpydoc ignore=PR01
+class SetSensorBlock(DiagramObject):  # numpydoc ignore=PR01
+    """Class representing a set sensor block in the harness."""
+
+    def __init__(
+        self,
+        sensor: Union[common.PathIdentifier, common.ProtectedItem],
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+        self._sensor = sensor
+
+    @property
+    def sensor(self) -> Union[common.PathIdentifier, common.ProtectedItem]:
+        """Sensor identifier."""
+        return self._sensor
+
+    @property
+    def is_protected(self) -> bool:
+        """True when sensor is syntactically incorrect and protected."""
+        return isinstance(self.sensor, common.ProtectedItem)
+
+
+class TestHarness(
+    common.Declaration, common.ModuleItem, TestHarnessDiagramCreator
+):  # numpydoc ignore=PR01
     """Test harness definition."""
 
     def __init__(
         self,
         id: common.Identifier,
-        body: Union[Scope, common.Equation, None, Callable],
+        body: Optional[Union[Scope, common.Equation, Callable]],
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        common.Declaration.__init__(self, id)
-        common.PragmaBase.__init__(self, pragmas)
+        common.Declaration.__init__(self, id, pragmas)
         self._body = body
         self._inputs = [VarDecl(common.Identifier("_current_cycle"), type=Uint64Type())]
         self._outputs = [VarDecl(common.Identifier("_stop_condition"), type=BoolType())]
 
     @property
-    def body(self) -> Union[Scope, common.Equation, None]:
+    def body(self) -> Optional[Union[Scope, common.Equation]]:
         """Harness body: a scope, an equation, or None."""
         if isinstance(self._body, Callable):
             body = self._body(self)
@@ -105,40 +133,39 @@ class TestHarness(common.Declaration, common.PragmaBase, common.ModuleItem):  # 
         return self._body
 
 
-class TestModule(Module):  # numpydoc ignore=PR01
+class TestModule(Module, TestModuleCreator):  # numpydoc ignore=PR01
     """Test module definition."""
+
+    __test__ = False  # Disable pytest discovery for this class
 
     def __init__(
         self,
         name: common.PathIdentifier,
         use_directives: Optional[List[UseDirective]] = None,
         declarations: Optional[List[GlobalDeclaration]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__(name, use_directives, declarations)
+        Module.__init__(self, name, use_directives, declarations, pragmas)
 
     @property
     def extension(self) -> str:
         """Returns module extension, with '.' included."""
         return ".swant"
 
+    @property
+    def operator_definitions(self) -> List[OperatorDefinition]:
+        """Return a list of operator definitions."""
+        return [
+            cast(OperatorDefinition, decl)
+            for decl in self.filter_declarations(lambda x: isinstance(x, OperatorDefinition))
+            if decl
+        ]
 
-def load_test_module(module: Path):
-    """Load a test module from a file."""
-    from ansys.scadeone.core.common.logger import LOGGER
-    from ansys.scadeone.core.model.loader import SwanParser
-    from ansys.scadeone.core.common.exception import ScadeOneException
-
-    test = SwanFile(module)
-    if not test.is_test:
-        raise ScadeOneException(f"Model.load_source: unexpected file kind {test.path}.")
-    ast = SwanParser(LOGGER).module_body(test)
-    ast.source = str(test.path)
-    return ast
-
-
-if __name__ == "__main__":
-    # Test the module
-    test = load_test_module(
-        Path(r"C:\Scade One\examples\QuadFlightControl\QuadFlightControl\assets\QuadTest.swant")
-    )
-    print(test)
+    @property
+    def test_harnesses(self) -> List[TestHarness]:
+        """Return a list of test harness."""
+        return [
+            cast(TestHarness, decl)
+            for decl in self.filter_declarations(lambda x: isinstance(x, TestHarness))
+            if decl
+        ]

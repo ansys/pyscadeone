@@ -55,7 +55,7 @@ class TestBuildSystem:
         cfg.targets = [Target("simple", TargetKind.EXECUTABLE)]
         builder = BuildSystem(scadeone_install_path)
         result = builder.build(cfg)
-        assert result.success
+        assert result.is_succeeded
         exe = Path(cfg.working_dir) / "simple.exe"
         assert exe.exists()
 
@@ -66,7 +66,7 @@ class TestBuildSystem:
         cfg.targets = [Target("simple", TargetKind.EXECUTABLE)]
         builder = BuildSystem(scadeone_install_path)
         result = builder.build(cfg)
-        assert not result.success
+        assert not result.is_succeeded
         assert len(result.messages) == 1
         assert "failed to build" in result.messages[0]
 
@@ -77,7 +77,7 @@ class TestBuildSystem:
         cfg.targets = [Target("simple_lib", TargetKind.SHARED_LIBRARY)]
         builder = BuildSystem(scadeone_install_path)
         result = builder.build(cfg)
-        assert result.success
+        assert result.is_succeeded
         lib = Path(cfg.working_dir) / "simple_lib.dll"
         assert lib.exists()
 
@@ -91,6 +91,6 @@ class TestBuildSystem:
         cfg.targets = [Target("module0", TargetKind.SHARED_LIBRARY)]
         builder = BuildSystem(scadeone_install_path)
         result = builder.build(cfg)
-        assert result.success
+        assert result.is_succeeded
         wrapper = Path(cfg.working_dir) / "module0.dll"
         assert wrapper.exists()

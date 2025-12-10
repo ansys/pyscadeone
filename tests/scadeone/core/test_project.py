@@ -27,6 +27,8 @@ from typing import cast
 import pytest
 
 from ansys.scadeone.core import ProjectFile, ScadeOne
+from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.project import ResourceKind
 
 
 class TestProject:
@@ -105,10 +107,37 @@ class TestProject:
             project_path = Path("tests/models/multi_projects/top_level/top_level.sproj").absolute()
             app.new_project(project_path)
 
-    def test_create_project(self):
+    def test_create_project(self, tmp_path):
         app = ScadeOne()
-        project_path = Path(r"C:\project0\project0.sproj")
+        project_path = tmp_path / "project0/project0.sproj"
         project = app.new_project(project_path)
         assert project is not None
         assert project.directory == project_path.parent
         assert project.model is not None
+
+        assert project.resources == []
+        project.add_resource(ResourceKind.HEADER_FILE, "tartanpion\\header.h", exist_check=False)
+        project.add_resource(ResourceKind.SOURCE_FILE, "tartanpion/source.c", exist_check=False)
+        project.add_resource(ResourceKind.SIMULATION_DATA, "simulation_data.sd", "my_key", False)
+
+        with pytest.raises(ScadeOneException):  # non simulation data with key
+            project.add_resource(
+                ResourceKind.HEADER_FILE, "simulation_data.sd", "invalid_key", False
+            )
+        with pytest.raises(ScadeOneException):  # simulation data without key
+            project.add_resource(
+                ResourceKind.SIMULATION_DATA, "simulation_data_2.sd", exist_check=False
+            )
+        with pytest.raises(ScadeOneException):  # resource already in project
+            project.add_resource(ResourceKind.SOURCE_FILE, "tartanpion/source.c", exist_check=False)
+        with pytest.raises(ScadeOneException):  # key already used
+            project.add_resource(
+                ResourceKind.SIMULATION_DATA, "new_simulation_data.sd", "my_key", False
+            )
+        with pytest.raises(ScadeOneException):  # wrong extension file
+            project.add_resource(ResourceKind.SOURCE_FILE, "source_file.cpp", exist_check=False)
+        assert len(project.resources) == 3
+
+        project.save()
+        project_loading = app.load_project(project_path)
+        assert project.resources == project_loading.resources

@@ -2,7 +2,6 @@
 ' Forward
 skinparam groupInheritance 2
 
-Forward *-- ForwardState
 Forward *-- "1..*" ForwardDim
 Forward *-- ForwardBody
 Forward *-- "*" ForwardReturnItem

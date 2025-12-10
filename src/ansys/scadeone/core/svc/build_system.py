@@ -29,6 +29,7 @@ from ansys.scadeone.core.common.dotnet import load_dll
 
 if TYPE_CHECKING:
     import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
+    from System.Collections.Generic import List as NetList  # type:ignore
 
 
 class BuildResult:
@@ -41,19 +42,19 @@ class BuildResult:
     """
 
     def __init__(self, net_result: "Toolkit.BuildResult") -> None:
-        self._success = net_result.Success
+        self._is_succeeded = net_result.Success
         self._messages = [str(m) for m in net_result.Messages]
 
     @property
-    def success(self) -> bool:
-        return self._success
+    def is_succeeded(self) -> bool:
+        return self._is_succeeded
 
     @property
     def messages(self) -> List[str]:
         return self._messages
 
     def __str__(self) -> str:
-        res = "Build " + ("succeeded" if self._success else "failed")
+        res = "Build " + ("succeeded" if self.is_succeeded else "failed")
         if self._messages:
             res += "\nBuild messages: "
             for m in self._messages:
@@ -116,6 +117,8 @@ class BuildSystem:
         Path to the Scade One installation directory.
     """
 
+    _dll_loaded = False
+
     def __init__(self, sone_install_dir: Union[Path, str]) -> None:
         self._result = None
         if not sone_install_dir:
@@ -156,11 +159,14 @@ class BuildSystem:
         return self._result
 
     def _register_build_system_dll(self) -> None:
+        if self._dll_loaded:
+            return
         simulator_dir = self._sone_install_dir / "tools/simulator"
         if not simulator_dir.exists():
             raise ScadeOneException(f"Simulator directory not found: {simulator_dir}")
         references = ["ANSYS.SONE.Build.Toolkit", "System.Collections"]
         load_dll(simulator_dir, references)
+        self._dll_loaded = True
 
 
 class TargetKind(Enum):
@@ -184,7 +190,7 @@ class Target:
         Kind of the target.
     """
 
-    def __init__(self, base_name: str, kind: TargetKind):
+    def __init__(self, base_name: str, kind: TargetKind) -> None:
         self._base_name = base_name
         self._kind = kind
 
@@ -262,9 +268,7 @@ class NetBuildConfig:
         return self._net_config
 
     @staticmethod
-    def _to_net_str_list(
-        py_str_list: List[str],
-    ):  # TODO: fix adding typing return -> NetList[NetString]
+    def _to_net_str_list(py_str_list: List[str]) -> "NetList":
         """Convert a Python list of strings to a .NET list of strings."""
         from System import String as NetString  # type:ignore
         from System.Collections.Generic import List as NetList  # type:ignore

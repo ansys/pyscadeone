@@ -1,0 +1,11 @@
+@startuml 
+' Module hierarchy
+SwanItem <|-- ModuleItem
+SwanItem <|-- HasPragma
+HasPragma <|-- Declaration
+Declaration <|-- OperatorDeclarationDefinitionBase
+ModuleItem <|-- OperatorDeclarationDefinitionBase
+OperatorDeclarationDefinitionBase <|-- OperatorDeclaration
+OperatorDeclarationDefinitionBase <|-- OperatorDefinition
+
+@enduml

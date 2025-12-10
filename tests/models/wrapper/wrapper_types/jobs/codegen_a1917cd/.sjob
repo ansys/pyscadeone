@@ -1,5 +1,5 @@
 {
-  "Version": "2.0",
+  "Version": "2.1",
   "Kind": "CodeGeneration",
   "Properties": {
     "RootDeclarations": [
@@ -10,7 +10,6 @@
     "Expansion": "None",
     "ExpansionExp": "",
     "ExpansionNoExp": "",
-    "ShortCircuitOperators": "False",
     "NameLength": "200",
     "SignificanceLength": "31",
     "KeepAssume": "False",

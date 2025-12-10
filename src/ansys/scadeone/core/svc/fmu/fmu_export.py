@@ -31,12 +31,12 @@
 
 # cSpell: ignore elems oper codegen mvars outdir newl addindent lshlwapi
 
+import platform
 from abc import ABC, abstractmethod
 import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 from typing import List, Optional, Tuple, Union
 import uuid
 import xml.dom.minidom as D
@@ -50,17 +50,35 @@ from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.project import Project
 import ansys.scadeone.core.svc.generated_code as GC
 
+from ansys.scadeone.core.svc.build_system import (
+    BuildConfig,
+    BuildSystem,
+    Target,
+    TargetKind,
+)
+
 script_dir = Path(__file__).parent
 
 CYCLE_FUNCTION_RETURN = "cycle_function_return"
-
-# Model variables
 
 
 class ModelVar:
     """
     Class representing a scalar component of a variable appearing
     in the interface of the FMU.
+
+    Parameters
+    ----------
+    fmu : FMU_Export
+        The FMU export object.
+    sc_path : str
+        The Scade One path.
+    c_path : str
+        The generated C code path.
+    type_elem : dict
+        The type of the variable.
+    var_kind : str
+        The kind of variable: 'input', 'output' or 'sensor'.
     """
 
     def __init__(
@@ -121,7 +139,7 @@ class ModelVar:
                     )
             elif category == "enum":
                 fmu_ty = "Integer"
-            elif category == "typedef":
+            elif category == "imported_type":
                 raise ScadeOneException(
                     f"FMU_Export: Variable {self._sc_path} of type {type_name}: "
                     f"imported types are not supported"
@@ -174,6 +192,17 @@ class ModelVar:
         """
         Return the default value corresponding to FMU type of a given variable.
         Expected types are 'Real', 'Integer' and 'Boolean'.
+
+        Parameters
+        ----------
+        xml : bool, optional
+            If True (default) the returned value is adapted to be used in the XML
+            description of the FMU, otherwise it is adapted to be used in C code.
+
+        Returns
+        -------
+        str
+            The default value as a string.
         """
         if self.type_kind == "Real":
             return "0.0"
@@ -189,10 +218,26 @@ class ModelVar:
         """
         Return the list of paths of scalar variables corresponding
         to the variable named `name` of type `ty` (of type `mapping.C.Type`).
+
+        Parameters
+        ----------
+        sc_path : str
+            The Scade One path.
+        c_path : str
+            The generated C code path.
+        code_type : dict
+            The type of the variable.
+
+        Returns
+        -------
+        List[Tuple[str, str, dict]]
+            The list of tuples (scade_path, code_path, type) for each scalar variable.
         """
         var_list = []
 
-        if code_type["category"] == "array":
+        if not code_type or "category" not in code_type:
+            pass
+        elif code_type["category"] == "array":
             base_type = code_type["elements"]["base_type"]
             for i in range(0, code_type["elements"]["size"]):
                 var_list.extend(
@@ -223,6 +268,20 @@ class ModelVar:
         """
         Return the list of variables corresponding
         to the given model variable (input or output) or sensor.
+
+        Parameters
+        ----------
+        fmu : FMU_Export
+            The FMU export object.
+        v : Union[GC.ModelVariable, GC.ModelSensor]
+            The model variable or sensor.
+        var_kind : str
+            The kind of variable: 'input', 'output' or 'sensor'.
+
+        Returns
+        -------
+        List["ModelVar"]
+            The list of model variables corresponding to the input variable.
         """
         if isinstance(v, GC.ModelVariable):
             sc_path = v.full_name(".")
@@ -240,6 +299,11 @@ class ModelVar:
         """
         Adds the XML element describing this model variable in FMI 2.0
         as a child of `parent`.
+
+        Parameters
+        ----------
+        parent : D.Element
+            The parent XML element.
         """
         d = self._fmu.create_xml_child("ScalarVariable", parent)
         d.setAttribute("causality", self.direction)
@@ -258,8 +322,21 @@ class ModelVar:
             ty.setAttribute("start", self.get_default_value())
 
     def get_context_path(self, fmu_type: str = "") -> str:
-        # Returns the C expression computing the offset of this model variable
-        # in the runtime state.
+        """
+        Returns the C expression computing the offset of this model variable
+        in the runtime state.
+
+        Parameters
+        ----------
+        fmu_type : str, optional
+            The FMU type of the variable.
+            If provided the expression is casted to this type (default is no cast).
+
+        Returns
+        -------
+        str
+            A C expression string.
+        """
         cast = "" if fmu_type == "" else f"(fmi2{fmu_type})"
         path = "" if self._var_kind == "sensor" else "comp->context->"
         return f"{cast}{path}{self._c_path}"
@@ -269,9 +346,14 @@ class FMU_Export(ABC):
     """
     FMU export main base class.
 
-    - project: *Project* object.
-    - job_name: name of the code generation job for the operator to be exported as an FMU.
-    - oper_name: optional operator name (by default it is the root operator of the job if it is
+    Parameters
+    ----------
+    prj : Project
+        The Scade One project.
+    job_name : str
+        The name of the code generation job for the operator to be exported as an FMU.
+    oper_name : str, optional
+        Optional operator name (by default it is the root operator of the job if it is
     unique, if provided it has to be a root operator for the job).
     """
 
@@ -284,6 +366,7 @@ class FMU_Export(ABC):
         self.codegen = GC.GeneratedCode(
             prj, job_name
         )  #: Associated :py:class:`GeneratedCode` object.
+
         if oper_name != "":
             if oper_name not in self.codegen.root_operators:
                 raise ScadeOneException(
@@ -315,23 +398,9 @@ class FMU_Export(ABC):
         # populate model variables
         self._mvars = []
 
-    @staticmethod
-    def call(cmd: List[str], env=None) -> Tuple[int, str]:
-        # Executes `cmd` and outputs its return code.
-        # `cmd` is a list of strings (one for each word in the command line)
-        # `env` is a dictionary of environment variables to be set for the command
-        LOGGER.debug(f"Executing command: {cmd}")
-        try:
-            p = subprocess.run(cmd, capture_output=True, text=True, env=env)
-            return p.returncode, p.stdout + p.stderr
-        except FileNotFoundError:
-            raise ScadeOneException(
-                f"FMU Export: the compiler command '{cmd[0]}' cannot be found."
-                f" Use the 'args' parameter to provide proper path."
-            )
-
     @property
     def oper(self) -> GC.ModelOperator:
+        """Return the *ModelOperator* object."""
         if self._oper is None:
             self._oper = self.codegen.get_model_operator(self.root_operator)
             if not isinstance(self._oper, GC.ModelOperator):
@@ -343,32 +412,45 @@ class FMU_Export(ABC):
 
     @property
     def oper_path(self) -> str:
-        # Returns the Scade One path for the operator exported as FMU.
+        """Returns the Scade One path for the operator exported as FMU."""
         return self.oper.path
 
     @property
     def model_id(self) -> str:
-        # Returns the name identifier of the operator exported as FMU.
+        """Returns the name identifier of the operator exported as FMU."""
         return self.root_operator.replace("::", "_")
 
     @property
     def sensors(self) -> List[GC.ModelSensor]:
+        """Return the *ModelSensor* objects."""
         if self._sensors is None:
             self._sensors = self.codegen.get_model_sensors()
         return self._sensors
 
     @property
     def elaboration_function(self) -> Optional[GC.CFunction]:
-        # Returns the elaboration function of the operator.
+        """Return the elaboration function of the operator."""
         return self.codegen.get_elaboration_function()
 
     def create_xml_child(self, name: str, parent: D.Node) -> D.Element:
-        # Creates an XML child element
+        """Create an XML child element."""
         d = self._doc.createElement(name)
         parent.appendChild(d)
         return d
 
     def get_next_value_reference(self, fmu_ty: str) -> str:
+        """Get the next value reference for a given fmu type.
+
+        Parameters
+        ----------
+        fmu_ty : str
+            The FMU type.
+
+        Returns
+        -------
+        str
+            The next value reference as a string.
+        """
         if fmu_ty in self._value_ref_counter:
             self._value_ref_counter[fmu_ty] += 1
         else:
@@ -376,7 +458,14 @@ class FMU_Export(ABC):
         return str(self._value_ref_counter[fmu_ty])
 
     def _add_period_var(self, parent: D.Node) -> None:
-        # Adds the period variable to the list of variables in the XML description.
+        """
+        Adds the period variable to the list of variables in the XML description.
+
+        Parameters
+        ----------
+        parent : D.Node
+            The parent XML element.
+        """
         d = self.create_xml_child("ScalarVariable", parent)
         d.setAttribute("causality", "parameter")
         d.setAttribute("description", "Period")
@@ -388,10 +477,42 @@ class FMU_Export(ABC):
 
     @abstractmethod
     def generate(self, kind: str, outdir: str, period: float = 0.02):
+        """
+        Generate the FMI 2.0 XML and C file according to SCADE generated code.
+
+        Parameters
+        ----------
+        kind : str
+            The type of generation (e.g., 'model-exchange' or 'co-simulation').
+        outdir : str
+            The output directory for the generated files.
+        period : float, optional
+            The time period for the simulation, by default 0.02
+
+        Raises
+        ------
+        ScadeOneException
+            If the generation process fails due to invalid parameters or execution errors.
+        """
         raise ScadeOneException("abstract method call")
 
     @abstractmethod
     def build(self, with_sources: bool = False, args: Optional[dict] = None):
+        """
+        Build the FMU system from the generated files.
+
+        Parameters
+        ----------
+        with_sources : bool, optional
+            Whether to include source files in the build, by default False
+        args : Optional[dict], optional
+            Additional arguments for the build process, by default None
+
+        Raises
+        ------
+        ScadeOneException
+            If the build process fails due to invalid parameters or execution errors.
+        """
         raise ScadeOneException("abstract method call")
 
 
@@ -399,11 +520,17 @@ class FMU_2_Export(FMU_Export):
     """
     FMU 2.0 export main class.
 
-    - project: *Project* object.
-    - job_name: name of the code generation job for the operator to be exported as an FMU.
-    - oper_name: optional operator name (by default it is the root operator of the job,\
+    Parameters
+    ----------
+    prj : Project
+        The Scade One project.
+    job_name : str
+        The name of the code generation job for the operator to be exported as an FMU.
+    oper_name : str, optional
+        Optional operator name (by default it is the root operator of the job,\
      if provided it has to be a root operator for the job).
-    - max_variables: maximum number on FMI variables (flattened sensors, inputs and outputs) \
+    max_variables : int, optional
+        Maximum number on FMI variables (flattened sensors, inputs and outputs) \
      supported by the export (1000 by default).
     """
 
@@ -414,7 +541,7 @@ class FMU_2_Export(FMU_Export):
         self.max_variables = max_variables
 
     def _generate_xml(self) -> None:
-        # Generates the modelDescription.xml file describing the FMU.
+        """Generates the modelDescription.xml file describing the FMU."""
         self.fmu_xml_file = self.out_dir / "modelDescription.xml"
         LOGGER.info(f" - FMI XML description: {self.fmu_xml_file}")
         self._doc = D.Document()
@@ -461,8 +588,15 @@ class FMU_2_Export(FMU_Export):
             self._doc.writexml(fd, encoding="UTF-8", indent="", addindent="  ", newl="\n")
 
     def _add_fmu_element(self, root: D.Node) -> None:
-        # Adds as a child of root the XML element describing
-        # the FMU kind (model-exchange or co-simulation).
+        """
+        Adds as a child of root the XML element describing
+        the FMU kind (model-exchange or co-simulation).
+
+        Parameters
+        ----------
+        root : D.Node
+            The root XML element.
+        """
         if self._kind_cs:
             d = self.create_xml_child("CoSimulation", root)
             d.setAttribute("modelIdentifier", self.model_id)
@@ -472,7 +606,19 @@ class FMU_2_Export(FMU_Export):
             d.setAttribute("modelIdentifier", self.model_id)
 
     def _generate_var_infos(self, var_type: str) -> Tuple[str, str]:
-        # Generate variable access for FMI getter/setter C functions.
+        """
+        Generate variable access for FMI getter/setter C functions.
+
+        Parameters
+        ----------
+        var_type : str
+            A variable type.
+
+        Returns
+        -------
+        Tuple[str, str]
+            A tuple containing the C statements for the setter and getter functions.
+        """
         idx = 0
         stmts_set = []
         stmts_get = []
@@ -498,7 +644,14 @@ class FMU_2_Export(FMU_Export):
         return "\n".join(stmts_set), "\n".join(stmts_get)
 
     def _generate_var_init(self) -> str:
-        # Generates variable initialization C statements.
+        """
+        Generates variable initialization C statements.
+
+        Returns
+        -------
+        str
+            The C statements as a string.
+        """
         stmts_init = []
         for mv in self._mvars:
             stmts_init.append(
@@ -514,7 +667,7 @@ class FMU_2_Export(FMU_Export):
         return "\n".join(stmts_init)
 
     def _generate_fmu_wrapper(self) -> None:
-        # Generates the FMU wrapper C file from template.
+        """Generates the FMU wrapper C file from template."""
         self._source_dir = self.out_dir / "sources"
 
         if self._source_dir.exists():
@@ -577,7 +730,7 @@ typedef struct {{
             if init_function is not None:
                 call_params = []
                 for param in init_function.parameters:
-                    access = "&" if param.pointer else ""
+                    access = "&" if param.is_pointer else ""
                     call_params.append(f"{access}comp->context->{param.name}")
                 call_init = f"{init_function.name}({', '.join(call_params)});"
             else:
@@ -585,7 +738,7 @@ typedef struct {{
             if reset_function is not None:
                 call_params = []
                 for param in reset_function.parameters:
-                    access = "&" if param.pointer else ""
+                    access = "&" if param.is_pointer else ""
                     call_params.append(f"{access}comp->context->{param.name}")
                 call_reset = f"{reset_function.name}({', '.join(call_params)});"
             else:
@@ -607,8 +760,8 @@ typedef struct {{
 
         call_params = []
         for param in cycle_function.parameters:
-            access = "&" if param.pointer else ""
-            cast = f"({param.signature})" if param.const else ""
+            access = "&" if param.is_pointer else ""
+            cast = f"({param.signature})" if param.is_const else ""
             call_params.append(f"{cast}{access}comp->context->{param.name}")
 
         if return_type is not None:
@@ -664,207 +817,405 @@ typedef struct {{
         with open(self.fmu_c_file, mode="w", encoding="utf-8") as out:
             out.write(content)
 
-    def _build_dll(self, args: dict) -> None:
-        # Creates the FMU dll from Scade One and FMU generated files.
-
-        compiler = args.get("cc", "gcc")
-        arch = args.get("arch", "win64")
-
-        user_sources = args.get("user_sources", [])
+    def _collect_source_files(self) -> None:
+        """
+        Collect the source files (.c and .h) from the generated code directory
+        and copy them in source directory.
+        """
 
         gen_dir = Path(self.codegen.generated_code_dir)
-
-        # check that gen_dir exists and is not empty
         if not gen_dir.exists() or not any(gen_dir.iterdir()):
             raise ScadeOneException(
-                f"FMU Export: job {self._job_name}:"
+                f"FMU export: job {self._job_name}:"
                 f" generated code is missing under '{gen_dir.name}' sub-directory."
             )
 
-        dll_dir = Path("..") / "binaries" / arch
+        generated_files = [f for f in gen_dir.iterdir() if f.suffix in {".c", ".h"}]
+        if not generated_files:
+            raise ScadeOneException(
+                f"FMU Export: No .c or .h files found in the generated code directory '{gen_dir}'."
+            )
 
-        LOGGER.info(f"- Compile and create FMU DLL {Path(dll_dir) / self.model_id}.dll")
+        for f in generated_files:
+            shutil.copy(Path(gen_dir) / f.name, self._source_dir)
 
-        # copy generated files in the source directory
-        LOGGER.debug(f"  copy Scade One CG generated files from {gen_dir} to {self._source_dir}")
-        for f in gen_dir.iterdir():
-            if f.suffix in {".c", ".h"}:
-                shutil.copy(Path(gen_dir) / f.name, self._source_dir)
+        LOGGER.debug(f"Collected generated files: {[str(f) for f in generated_files]}")
 
-        # copy user source files in the source directory
+    @staticmethod
+    def _collect_user_source_files(user_sources: List[Union[str, Path]]) -> List[Path]:
+        """
+        Collect user source files (.c and .h) from the provided directories or files.
+
+        Parameters
+        ----------
+        user_sources : List[Union[str, Path]]
+            A list of user source directories or files.
+
+        Returns
+        -------
+        List[Path]
+            A list of paths to the collected user source files.
+        """
+
+        collected_files = []
+
         for src in user_sources:
             src_path = Path(src)
             if src_path.is_dir():
-                LOGGER.debug(f"  copy user source files from {src_path} to {self._source_dir}")
-                for f in src_path.iterdir():
-                    if f.is_dir():
-                        shutil.copytree(f, self._source_dir / f.name, dirs_exist_ok=True)
-                    else:
-                        shutil.copy(f, self._source_dir)
-            elif src_path.is_file():
-                LOGGER.debug(
-                    f"  copy user source file {src_path.name} from {src_path.parent}'"
-                    f" to {self._source_dir}"
+                LOGGER.debug(f"Collecting user source files from directory: {src_path}")
+                collected_files.extend(
+                    [f.resolve(strict=True) for f in src_path.iterdir() if f.suffix in {".c", ".h"}]
                 )
-                shutil.copy(src_path, self._source_dir)
+            elif src_path.is_file() and src_path.suffix in {".c", ".h"}:
+                LOGGER.debug(f"Collecting user source file: {src_path}")
+                collected_files.append(src_path.resolve(strict=True))
             else:
-                LOGGER.debug(f"  user source {src} not a file or a directory: ignored")
+                LOGGER.debug(f"User source {src} is not a valid file or directory.")
 
-        # copy include files in the source directory
-        LOGGER.debug(
-            f"  copy FMU export includes from {Path(script_dir) / 'includes'} to {self._source_dir}"
-        )
-        shutil.copytree(
-            Path(script_dir) / "includes" / "FMI", self._source_dir / "FMI", dirs_exist_ok=True
-        )
+        if not collected_files:
+            LOGGER.debug("No valid user source files (.c or .h) were found.")
+        else:
+            LOGGER.debug(f"Collected user source files: {[str(f) for f in collected_files]}")
+        return collected_files
 
-        # create swan_config.h from template
-        swan_config = self._source_dir / "swan_config.h"
-        LOGGER.debug("  create swan_config.h from template")
+    @staticmethod
+    def _copy_fmi_folder(dest_dir: Path) -> None:
+        """
+        Copy the FMI folder to the specified destination directory.
 
+        Parameters
+        ----------
+        dest_dir : Path
+            The destination directory where the FMI folder will be copied.
+        """
+
+        fmi_dir = Path(script_dir) / "includes" / "FMI"
+        if not fmi_dir.exists():
+            raise ScadeOneException(f"FMI folder not found at expected location: {fmi_dir}")
+        target_dir = dest_dir / "FMI"
+        LOGGER.debug(f"Copying FMI folder from {fmi_dir} to {target_dir}")
+        shutil.copytree(fmi_dir, target_dir, dirs_exist_ok=True)
+
+    @staticmethod
+    def _collect_include_dirs(cc_opts: List[str]) -> List[Path]:
+        """
+        Collect include directories from compiler options.
+
+        Parameters
+        ----------
+        cc_opts : List[str]
+            List of compiler options.
+
+        Returns
+        -------
+        List[Path]
+            A list of paths to the collected include directories.
+        """
+
+        include_dirs = []
+        for opt in cc_opts:
+            if opt.startswith("-I"):
+                dir_path = opt[2:].strip()
+                if dir_path:
+                    include_dirs.append(Path(dir_path))
+                else:
+                    raise ScadeOneException(f"Invalid include directory specified: {opt}")
+        LOGGER.debug(f"Collected include directories: {[str(d) for d in include_dirs]}")
+        return include_dirs
+
+    @staticmethod
+    def _collect_link_opts(link_opts: List[Union[str, Path]]) -> Tuple[List[Path], List[Path]]:
+        """
+        Collect linker files from link options.
+
+        Parameters
+        ----------
+        link_opts : List[Union[str, Path]]
+            List of linker options or paths (files or directories).
+
+        Returns
+        -------
+        List[Path]
+            A list of paths to the collected linker options, including *.o files.
+        """
+
+        o_files = []
+        link_files = []
+
+        for opt in link_opts:
+            opt_path = Path(opt)
+            if opt_path.is_dir():
+                LOGGER.debug(f"Collecting link files from directory: {opt_path}")
+                # Collect *.o and other link files in the directory
+                for f in opt_path.rglob("*"):
+                    if f.suffix == ".o":
+                        o_files.append(f)
+                    else:
+                        link_files.append(f)
+            elif opt_path.is_file():
+                if opt_path.suffix == ".o":
+                    LOGGER.debug(f"Collecting link option file: {opt_path}")
+                    o_files.append(opt_path)
+                else:
+                    link_files.append(opt_path)
+            else:
+                LOGGER.warning(
+                    f"Link option {opt} is not a valid link file or directory, skipping."
+                )
+        if o_files:
+            LOGGER.debug(f"Collected *.o files: {[str(opt) for opt in o_files]}")
+        if link_files:
+            LOGGER.debug(f"Collected link files: {[str(opt) for opt in link_files]}")
+
+        return o_files, link_files
+
+    @staticmethod
+    def _generate_swan_config(args: dict, dest_dir: Path) -> Path:
+        """
+        Generate the `swan_config.h` file from a template.
+
+        Parameters
+        ----------
+        args : dict
+            Arguments containing `swan_config_begin` and `swan_config_end`.
+        dest_dir : Path
+            The directory where the `swan_config.h` file will be created.
+
+        Returns
+        -------
+        Path
+            The path to the generated `swan_config.h` file.
+        """
+        swan_config = dest_dir / "swan_config.h"
+        LOGGER.debug(f"Creating swan_config.h in {swan_config}")
         environment = jinja2.Environment(
             loader=jinja2.FileSystemLoader(Path(script_dir) / "templates"),
             trim_blocks=True,
             lstrip_blocks=True,
         )
         template = environment.get_template("swan_config_template.h")
-
         content = template.render(
             FMI_HOOK_BEGIN=args.get("swan_config_begin", ""),
             FMI_HOOK_END=args.get("swan_config_end", ""),
         )
-
         with open(swan_config, mode="w", encoding="utf-8") as out:
             out.write(content)
+        return swan_config
 
-        # memorize all C files for compilation
-        c_files = []
-        for fs in self._source_dir.iterdir():
-            if fs.suffix == ".c":
-                c_files.append(fs.name)
+    def _build_fmu(self, args: dict) -> None:
+        """
+        Creates the FMU dll or *.so from Scade One and FMU generated files.
 
-        binaries_dir = Path(self.out_dir) / "binaries"
-        if binaries_dir.exists():
-            shutil.rmtree(binaries_dir)
-        binaries_dir.mkdir()
+        Parameters
+        ----------
+        args : dict
+            A dictionary of arguments for the build process.
+        """
 
-        if compiler == "gcc":
-            # call GCC compiler
-            if arch in ("win32", "linux32"):
-                gcc_arch = "-m32"
-            else:
-                gcc_arch = "-m64"
-            gcc = "gcc"
-            gcc_path = args.get("gcc_path", "")
-            env = None
-            path_sav = os.environ["PATH"]
-            if (
-                gcc_path == ""
-                and self._project.app.install_dir is not None
-                and shutil.which("gcc") is None
-            ):
-                # set gcc_path on version installed with Scade One
-                gcc_path = str(self._project.app.install_dir / "contrib" / "mingw64" / "bin")
-            if gcc_path != "":
-                os.environ["PATH"] = gcc_path + os.pathsep + path_sav
-            cmd_comp = [gcc, "-c", gcc_arch, "-I" + str(Path("..") / "sources")]
-            cmd_comp.extend(args.get("cc_opts", []))
-
-            # create obj directory and compile from it
-            obj_dir = self.out_dir / "objects"
-            if obj_dir.exists():
-                shutil.rmtree(obj_dir)
-            obj_dir.mkdir()
-            os.chdir(obj_dir)
-
-            try:
-                for fc in c_files:
-                    cmd = cmd_comp.copy()
-                    if fc == self.fmu_c_file.name:
-                        cmd.append("-Wall")
-                    cmd.append(str(Path("..") / "sources" / fc))
-                    rc, traceback = FMU_Export.call(cmd, env)
-                    if rc != 0:
-                        msg = f"FMU_Export: Compilation failed for {fc}.\n"
-                        msg += f"command: {cmd}\n"
-                        msg += f"error {rc}:\n{traceback}"
-                        os.chdir(self._start_dir)
-                        raise ScadeOneException(msg)
-
-                cmd_link = [
-                    gcc,
-                    gcc_arch,
-                    "-lshlwapi",
-                    "-Wl,--export-all-symbols",
-                    "-shared",
-                    "-static-libgcc",
-                    "-g",
-                ]
-                cmd_link.extend(args.get("link_opts", []))
-                cmd_link.extend(["-o", str(Path(dll_dir) / (self.model_id + ".dll"))])
-                cmd_link.append("*")
-
-                if not dll_dir.exists():
-                    dll_dir.mkdir()
-
-                rc, traceback = FMU_Export.call(cmd_link, env)
-                if rc != 0:
-                    msg = f"FMU_Export: dll creation failed for {self.model_id}.\n"
-                    msg += f"command: {cmd_link}\n"
-                    msg += f"error {rc}:\n{traceback}"
-                    os.chdir(self._start_dir)
-                    raise ScadeOneException(msg)
-
-            finally:
-                if gcc_path != "":
-                    os.environ["PATH"] = path_sav
-
-                os.chdir(self._start_dir)
+        # Prepare build configuration
+        cfg = BuildConfig()
+        arch = ""
+        if platform.system() == "Windows":
+            arch = "win64" if platform.architecture()[0] == "64bit" else "win32"
+        elif platform.system() == "Linux":
+            arch = "linux64" if platform.architecture()[0] == "64bit" else "linux32"
         else:
+            raise ScadeOneException(f"Unsupported platform: {platform.system()}")
+
+        build_dir = Path(self.out_dir) / "binaries" / arch
+        build_dir.mkdir(parents=True, exist_ok=True)
+        cfg.working_dir = str(build_dir)
+
+        # Collect source files
+        self._collect_source_files()
+        user_sources = args.get("user_sources", [])
+        all_source_files = (
+            list(self._source_dir.iterdir()) + self._collect_user_source_files(user_sources)
+            if user_sources
+            else list(self._source_dir.iterdir())
+        )
+        for f in all_source_files:
+            if f.suffix == ".c":
+                cfg.c_files.append(str(f))
+            elif f.suffix == ".h":
+                cfg.h_files.append(str(f))
+                if str(f.parent) not in cfg.include_dirs:
+                    cfg.include_dirs.append(str(f.parent))
+
+        # Collect FMI files
+        cfg.include_dirs.append(str(Path(script_dir) / "includes" / "FMI"))
+
+        # Generate swan_config.h
+        self._generate_swan_config(args, self._source_dir)
+        cfg.include_dirs.append(str(self._source_dir))
+
+        cfg.targets = [Target(self.model_id, TargetKind.SHARED_LIBRARY)]
+
+        # Collect link files
+        link_opts = args.get("link_opts", [])
+        o_files, link_files = self._collect_link_opts(link_opts)
+        cfg.o_files.extend([str(p) for p in o_files])
+        if link_files:
+            cfg.lib_files.extend([p.name for p in link_files])
+            for link_file in link_files:
+                if link_file.is_dir():
+                    shutil.copytree(link_file, build_dir / link_file.name)
+                elif link_file.is_file():
+                    shutil.copy(link_file, build_dir / link_file.name)
+
+        # Collect include directories from compiler options
+        cc_opts = args.get("cc_opts", [])
+        if cc_opts:
+            if any(opt.startswith("-I") for opt in cc_opts):
+                include_dirs = self._collect_include_dirs(cc_opts)
+                cfg.include_dirs.extend([str(d) for d in include_dirs])
+            else:
+                # To-do: handle other compiler options
+                pass
+
+        # Build system
+        builder = BuildSystem(self._project.app.install_dir)
+        result = builder.build(cfg)
+
+        # Handle build result
+        if not result.is_succeeded:
             raise ScadeOneException(
-                f"FMU_Export: '{compiler}' compiler not supported for this version (only gcc "
-                f"is supported)"
+                f"Error building {'*.dll' if 'win' in arch else '*.so'} file: {result.messages}"
             )
 
-    def _build_zip(self, with_sources: bool):
-        # Creates the FMU zip archive
-        os.chdir(self.out_dir)
-        fmu_filename = Path(self.model_id + ".fmu")
+        if platform.system() == "Linux":
+            # rename the generated .so to have the expected name
+            so_name = build_dir / f"lib{self.model_id}.so"
+            target_name = build_dir / f"{self.model_id}.so"
+            if so_name.exists():
+                shutil.move(so_name, target_name)
+            else:
+                LOGGER.warning(f"File not found: {so_name}, skipping rename.")
 
-        LOGGER.info(f"- Creating FMU zip archive {fmu_filename} under directory {self.out_dir}")
+    def _build_zip(self, with_sources: bool, args: dict) -> None:
+        """
+        Creates the FMU zip archive
+
+        Parameters
+        ----------
+        with_sources : bool
+            True to include the sources in the FMU package.
+        """
+
+        fmu_filename = Path(self.out_dir) / f"{self.model_id}.fmu"
+        if fmu_filename.exists():
+            shutil.rmtree(fmu_filename, ignore_errors=True)
+
+        # Copy user source files
+        user_sources = args.get("user_sources", [])
+        user_files = self._collect_user_source_files(user_sources)
+        for f in user_files:
+            shutil.copy(f, self._source_dir)
+
+        # Copy swan_config.h to source_dir
+        swan_config = self._source_dir / "swan_config.h"
+        if not swan_config.exists():
+            self._generate_swan_config(args, self._source_dir)
+
+        # Copy FMI folder
+        self._copy_fmi_folder(self._source_dir)
+
+        # Copy include directories
+        cc_opts = args.get("cc_opts", [])
+        include_dirs = self._collect_include_dirs(cc_opts)
+        for include_dir in include_dirs:
+            target_dir = self._source_dir / include_dir.name
+            shutil.copytree(include_dir, target_dir, dirs_exist_ok=True)
+
+        # Copy link *.o files to source_dir
+        link_opts = args.get("link_opts", [])
+        o_paths, link_paths = self._collect_link_opts(link_opts)
+        for link_path in link_paths:
+            shutil.copy(link_path, self._source_dir)
+        for o_path in o_paths:
+            shutil.copy(o_path, self._source_dir)
+
+        # Create FMU zip archive
+        fmu_filename = Path(self.out_dir) / f"{self.model_id}.fmu"
+        if fmu_filename.exists():
+            shutil.rmtree(fmu_filename, ignore_errors=True)
+
+        LOGGER.info(f"- Creating FMU zip archive {fmu_filename}")
+
+        binaries_dir = Path(self.out_dir) / "binaries"
+        sources_dir = self._source_dir
 
         try:
-            if fmu_filename.exists():
-                fmu_filename.unlink()
-
             with zipfile.ZipFile(fmu_filename, "w") as fmu:
-                for arch_dir in Path("binaries").iterdir():
-                    fmu.write(Path("binaries") / arch_dir.name / (self.model_id + ".dll"))
-                if with_sources:
-                    for root, _, files in os.walk("sources"):
-                        fmu.write(root)
-                        for f in files:
-                            fmu.write(Path(root) / f)
-                fmu.write("modelDescription.xml")
-                fmu.write(Path(script_dir) / "model.png", "model.png")
+                # Add *.dll/*.so files from binaries directory
+                for arch_dir in binaries_dir.iterdir():
+                    fmu_path = (
+                        binaries_dir / arch_dir.name / f"{self.model_id}.dll"
+                        if platform.system() == "Windows"
+                        else binaries_dir / arch_dir.name / f"{self.model_id}.so"
+                    )
+                    if fmu_path.exists():
+                        LOGGER.info(
+                            f"- Adding {'*.dll file' if platform.system() == 'Windows' else '*.so file'}: {fmu_path}"
+                        )
+                        fmu.write(fmu_path, arcname=f"binaries/{arch_dir.name}/{fmu_path.name}")
+                    else:
+                        LOGGER.debug(f"File not found: {fmu_path}, skipping.")
 
-        finally:
-            os.chdir(self._start_dir)
+                # Add source files if requested
+                if with_sources:
+                    for root, _, files in os.walk(sources_dir):
+                        for file in files:
+                            file_path = Path(root) / file
+                            arcname = f"sources/{file_path.relative_to(sources_dir)}"
+                            LOGGER.debug(f"Adding source file: {file_path} as {arcname}")
+                            fmu.write(file_path, arcname=arcname)
+
+                # Add the model description XML file
+                model_description_path = self.fmu_xml_file
+                if model_description_path.exists():
+                    LOGGER.debug(f"- Adding model description file: {model_description_path}")
+                    fmu.write(model_description_path, arcname="modelDescription.xml")
+
+                # Add optional model image
+                model_image_path = Path(script_dir) / "model.png"
+                if model_image_path.exists():
+                    LOGGER.debug(f"- Adding model image file: {model_image_path}")
+                    fmu.write(model_image_path, arcname="model.png")
+
+        except Exception as e:
+            LOGGER.error(f"Error while creating FMU zip archive: {e}")
+            raise ScadeOneException(f"Failed to create FMU zip archive: {e}")
 
     def generate(self, kind: str, outdir: Union[str, os.PathLike], period: float = 0.02) -> None:
         """
         Generate the FMI 2.0 XML and C file according to SCADE generated code.
 
-        - kind: FMI kind ('ME' for Model Exchange, 'CS' for Co-Simulation).
-        - outdir: directory where the files are generated.
-        - period: execution period in seconds.
+        Parameters
+        ----------
+        kind : str
+            The FMI kind ('ME' for Model Exchange, 'CS' for Co-Simulation).
+        outdir : Union[str, os.PathLike]
+            The output directory where the files are generated.
+        period : float, optional
+            The execution period in seconds (default is 0.02).
         """
 
         def _add_variable(entry: Union[GC.ModelVariable, GC.ModelSensor], var_kind: str) -> None:
+            """
+            Add a variable to the list of model variables.
+
+            Parameters
+            ----------
+            entry : Union[GC.ModelVariable, GC.ModelSensor]
+                The model variable or sensor to add.
+            var_kind : str
+                The kind of variable: 'input', 'output' or 'sensor'.
+            """
             mv = ModelVar.model_vars_of_param(self, entry, var_kind)
             if len(mv) + len(self._mvars) > self.max_variables:
                 raise ScadeOneException(
-                    f"FMU Export: The maximum number of supported model variables "
+                    f"FMU export: The maximum number of supported model variables "
                     f"({self.max_variables}) is reached. Use max_variables parameter of "
                     f"FMU_2_Export class to increase it."
                 )
@@ -897,7 +1248,7 @@ typedef struct {{
             _add_variable(v, "output")
 
         # initialize generator state
-        self.out_dir = Path(outdir)
+        self.out_dir = Path(outdir).absolute()
         if not self.out_dir.exists():
             self.out_dir.mkdir()
         self.default_period = period
@@ -917,32 +1268,27 @@ typedef struct {{
         when code was generated (see method :py:attr:`generate`),
         and its name is the name of the selected operator.
 
-        - *with_sources*: True to keep the sources in the FMU package
-        - *args*: build arguments, provided as a dictionary:
-
-          - *cc*: compiler name (only gcc supported)
-          - *arch*: compiler architecture (only win64 supported)
-          - *gcc_path*: path on the bin directory where gcc is located
-          - *user_sources*: list of user source files or directories (code, includes)
-          - *cc_opts*: list of extra compiler options
-          - *link_opts*: list of extra link (DLL creation) options
-          - *swan_config_begin*: data to insert at the beginning of ``swan_config.h``
-          - *swan_config_end*: data to insert at the end of ``swan_config.h``
-
-        Note for gcc compiler:
-            If the Scade One installation directory is provided when *ScadeOne* class is
-            instantiated, and gcc is not already in the PATH, the gcc from the Scade One
-            installation is used.
+        Parameters
+        ----------
+        with_sources : bool, optional
+            True to keep the sources in the FMU package.
+        args : Optional[dict], optional
+            Build arguments, provided as a dictionary (default is None):
+            - *user_sources*: list of user source files or directories (code, includes)
+            - *cc_opts*: list of extra compiler options
+            - *link_opts*: list of extra link options
+            - *swan_config_begin*: data to insert at the beginning of ``swan_config.h``
+            - *swan_config_end*: data to insert at the end of ``swan_config.h``
         """
 
         LOGGER.info(f"Build the FMU under directory {self.out_dir}")
 
         if not self._generate_ok:
-            raise ScadeOneException("FMU Export: 'generate' method must be called first.")
+            raise ScadeOneException("FMU export: 'generate' method must be called first.")
 
         if args is None:
             args = {}
-        self._build_dll(args)
-        self._build_zip(with_sources)
+        self._build_fmu(args)
+        self._build_zip(with_sources, args)
 
         LOGGER.info("Build of the FMU done.")

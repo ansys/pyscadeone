@@ -58,6 +58,8 @@ class ScadeOneLogger:
         by setting the `logger` attribute."""
         if ScadeOneLogger._Logger is None:
             self._init_logger()
+        if self._Logger is None:
+            raise RuntimeError("Logger is not initialized.")
         return self._Logger
 
     @logger.setter
@@ -72,7 +74,7 @@ class ScadeOneLogger:
             pyscadeone_logger.removeHandler(handler)
         ScadeOneLogger._Logger = logger
 
-    def _init_logger(self):
+    def _init_logger(self) -> None:
         """Set the logger instance.
 
         If the logger instance is not set, create a file logger.
@@ -97,6 +99,11 @@ class ScadeOneLogger:
         # add the handlers to the logger
         logger.addHandler(ch)
         ScadeOneLogger._Logger = logger
+
+    @property
+    def handlers(self):
+        """Return the list of handlers attached to the internal logger."""
+        return self.logger.handlers
 
     def debug(self, msg: str, *args, **kwargs) -> None:
         """Log a message with severity DEBUG on the logger."""

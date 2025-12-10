@@ -16,7 +16,6 @@ A **forward** expression is stored as a :py:class:`Forward` class. The class hie
 
 .. autoclass:: Forward
 
-.. autoclass:: ForwardState
 
 .. autoclass:: ForwardBody
 

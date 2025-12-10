@@ -24,18 +24,21 @@
 This module contains classes for package and interface.
 """
 
-from typing import List, Optional, Union, cast
+from typing import List, Optional, Union, cast, Callable
 from pathlib import Path
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.logger import LOGGER
-from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleCreator
+from ansys.scadeone.core.svc.swan_creator.module_creator import (
+    ModuleInterfaceCreator,
+    ModuleBodyCreator,
+)
 import ansys.scadeone.core.swan.common as common
 
 
 from .globals import ConstDecl, SensorDecl
 from .groupdecl import GroupDecl
-from .operators import Operator, Signature
+from .operators import OperatorDefinition, OperatorDeclaration
 from .typedecl import TypeDecl
 
 
@@ -46,8 +49,6 @@ class GlobalDeclaration(common.ModuleItem):  # numpydoc ignore=PR01
     - constant declaration list
     - sensor declaration list
     - group declarations
-    - user operator declaration (without body, in interface)
-    - user operator definition (with body)
     """
 
     def __init__(self) -> None:
@@ -57,7 +58,7 @@ class GlobalDeclaration(common.ModuleItem):  # numpydoc ignore=PR01
         """Full path of Swan construct."""
         if self.owner is None:
             raise ScadeOneException("No owner")
-        return f"{self.owner.get_full_path()}"
+        return f"{cast(common.SwanItem, self.owner).get_full_path()}"
 
 
 class TypeDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
@@ -116,13 +117,16 @@ class GroupDeclarations(GlobalDeclaration):  # numpydoc ignore=PR01
         return self._groups
 
 
-class UseDirective(common.ModuleItem):  # numpydoc ignore=PR01
+class UseDirective(common.HasPragma, common.ModuleItem):  # numpydoc ignore=PR01
     """Class for **use** directive."""
 
     def __init__(
-        self, path: common.PathIdentifier, alias: Optional[common.Identifier] = None
+        self,
+        path: common.PathIdentifier,
+        alias: Optional[common.Identifier] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__()
+        common.HasPragma.__init__(self, pragmas)
         self._path = path
         self._alias = alias
 
@@ -137,11 +141,16 @@ class UseDirective(common.ModuleItem):  # numpydoc ignore=PR01
         return self._alias
 
 
-class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore=PR01
+class ProtectedDecl(
+    common.ProtectedItem, GlobalDeclaration, common.HasPragma
+):  # numpydoc ignore=PR01
     """Protected declaration."""
 
-    def __init__(self, markup: str, data: str) -> None:
-        super().__init__(data, markup)
+    def __init__(
+        self, markup: str, data: str, pragmas: Optional[List[common.Pragma]] = None
+    ) -> None:
+        common.ProtectedItem.__init__(self, data, markup)
+        common.HasPragma.__init__(self, pragmas)
 
     @property
     def is_type(self) -> bool:
@@ -164,7 +173,7 @@ class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore
         return self.markup == "sensor"
 
     @property
-    def is_user_operator(self) -> bool:
+    def is_operator(self) -> bool:
         """Protected operator declaration.
 
         Note: operator declaration within {text% ... %text} is parsed."""
@@ -174,10 +183,10 @@ class ProtectedDecl(common.ProtectedItem, GlobalDeclaration):  # numpydoc ignore
         """Full path of Swan construct."""
         if self.owner is None:
             raise ScadeOneException("No owner")
-        return f"{self.owner.get_full_path()}::<protected>"
+        return f"{cast(common.SwanItem, self.owner).get_full_path()}::<protected>"
 
 
-class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
+class Module(common.ModuleBase):  # numpydoc ignore=PR01
     """Module base class.
 
     Parameters
@@ -193,10 +202,11 @@ class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
     def __init__(
         self,
         name: common.PathIdentifier,
-        use_directives: List[UseDirective] = None,
-        declarations: List[common.ModuleItem] = None,
+        use_directives: Optional[List[UseDirective]] = None,
+        declarations: Optional[List[common.ModuleItem]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(pragmas)
         self._name = name
         self._uses = use_directives if use_directives else []
         self._declarations = declarations if declarations else []
@@ -215,7 +225,7 @@ class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
         return self._source
 
     @source.setter
-    def source(self, path: str):
+    def source(self, path: str) -> None:
         "Set source of the module"
         self._source = path
 
@@ -258,17 +268,19 @@ class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
             return module_name
         raise ScadeOneException(f"Invalid module path name: {path}")
 
-    def filter_declarations(self, filter_fn) -> List[GlobalDeclaration]:
+    def filter_declarations(
+        self, filter_fn: Callable[[common.ModuleItem], bool]
+    ) -> List[common.ModuleItem]:
         """Return declarations matched by a filter.
 
         Parameters
         ----------
-        filter_fn : function
-            A function of one argument of type GlobalDeclaration, returning True or False.
+        filter_fn : Callable[[common.ModuleItem], bool]
+            A function of one argument of type ModuleItem, returning True or False.
 
         Returns
         -------
-        List[GlobalDeclaration]
+        List[ModuleItem]
             List of matching declarations.
         """
         return list(filter(filter_fn, self.declarations))
@@ -310,31 +322,33 @@ class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
         return groups
 
     @property
-    def signatures(self) -> List[Signature]:
-        """Return a list of signatures."""
+    def operator_declarations(self) -> List[OperatorDeclaration]:
+        """Return a list of operator declarations."""
         return [
-            cast(Signature, signature)
-            for signature in self.filter_declarations(lambda x: isinstance(x, Signature))
-            if signature
+            cast(OperatorDeclaration, declaration)
+            for declaration in self.filter_declarations(
+                lambda x: isinstance(x, OperatorDeclaration)
+            )
+            if declaration
         ]
 
     def get_full_path(self) -> str:
         """Full Swan path of module."""
         return self.name.as_string
 
-    def get_declaration(self, name: str) -> GlobalDeclaration:
-        """Return the type, global, or operator declaration searching by namespace."""
+    def get_declaration(self, name: str) -> Optional[common.Declaration]:
+        """Return the type, sensor, group, constant, or operator declaration searching by namespace."""
         from .namespace import ModuleNamespace
 
         m_ns = ModuleNamespace(self)
         decl = m_ns.get_declaration(name)
-        return cast(GlobalDeclaration, decl) if decl else None
+        return cast(common.Declaration, decl) if decl else None
 
-    def get_use_directive(self, module_name: str) -> Union[UseDirective, None]:
-        """Return the use directive searching by module name or alias name.
+    def get_use_directive(self, module_name: str) -> Optional[UseDirective]:
+        """Return the **use** directive searching by module name or alias name.
 
         Aliases are searched first, the module name is searched if no alias is found.
-        When a module name is searched, use directive with first occurrence is returned.
+        When a module name is searched, **use** directive with first occurrence is returned.
 
         Parameters
         ----------
@@ -356,20 +370,16 @@ class Module(common.ModuleBase, ModuleCreator):  # numpydoc ignore=PR01
                 return use
         return None
 
-    def interface(self) -> "ModuleInterface":
+    def interface(self) -> Optional["ModuleInterface"]:
         """Return the module interface for a module body if it exists."""
         return None
 
-    def body(self) -> "ModuleBody":
+    def body(self) -> Optional["ModuleBody"]:
         """Return the module body for a module interface if it exists."""
         return None
 
-    def harness(self):
-        """Return the test harness if it exists."""
-        return None
 
-
-class ModuleInterface(Module):  # numpydoc ignore=PR01
+class ModuleInterface(Module, ModuleInterfaceCreator):  # numpydoc ignore=PR01
     """Module interface definition."""
 
     def __init__(
@@ -377,33 +387,35 @@ class ModuleInterface(Module):  # numpydoc ignore=PR01
         name: common.PathIdentifier,
         use_directives: Optional[List[UseDirective]] = None,
         declarations: Optional[List[common.ModuleItem]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__(name, use_directives, declarations)
+        super().__init__(name, use_directives, declarations, pragmas)
 
     @property
     def extension(self) -> str:
         """Return module extension, with . included."""
         return ".swani"
 
-    def body(self) -> "ModuleBody":
-        """Return the module body for a module interface if it exists."""
+    def body(self) -> Optional["ModuleBody"]:
+        """Return the module body if it exists."""
         return self.model.get_module_body(self.name.as_string)
 
 
-class ModuleBody(Module):  # numpydoc ignore=PR01
+class ModuleBody(Module, ModuleBodyCreator):  # numpydoc ignore=PR01
     """Module body definition."""
 
     def __init__(
         self,
         name: common.PathIdentifier,
         use_directives: Optional[List[UseDirective]] = None,
-        declarations: Optional[List[GlobalDeclaration]] = None,
+        declarations: Optional[List[common.ModuleItem]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__(name, use_directives, declarations)
+        super().__init__(name, use_directives, declarations, pragmas)
 
         from ansys.scadeone.core.model.loader import SwanParser
 
-        self._parser = SwanParser(LOGGER)
+        self._parser = SwanParser(LOGGER)  # type: ignore # This a connection between Python and DONET
 
     @property
     def extension(self) -> str:
@@ -411,14 +423,14 @@ class ModuleBody(Module):  # numpydoc ignore=PR01
         return ".swan"
 
     @property
-    def operators(self) -> List[Operator]:
-        """Return a list of operators."""
+    def operator_definitions(self) -> List[OperatorDefinition]:
+        """Return a list of operator definitions."""
         return [
-            cast(Operator, decl)
-            for decl in self.filter_declarations(lambda x: isinstance(x, Operator))
+            cast(OperatorDefinition, decl)
+            for decl in self.filter_declarations(lambda x: isinstance(x, OperatorDefinition))
             if decl
         ]
 
-    def interface(self) -> "ModuleInterface":
-        """Return the module interface for a module body if it exists."""
+    def interface(self) -> Optional[ModuleInterface]:
+        """Return the module interface if it exists."""
         return self.model.get_module_interface(self.name.as_string)

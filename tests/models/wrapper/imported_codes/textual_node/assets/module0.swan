@@ -1,0 +1,19 @@
+-- version swan: 2025.2 graph: 2.1
+{text%node operator0 (i0: int32^4)
+      returns (o0: int32^4);%text}
+
+node test_node (i0: int32^4;)
+  returns (o0: int32^4;)
+{
+  diagram
+    (#0 block operator0
+    #pragma diagram {"xy":"H-14950;V-8350","wh":"20000;14000"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-43750;V-8350"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H8550;V-8350"} #end)
+    
+    (#3 wire #1 => #0)
+    (#4 wire #0 => #2
+    #pragma diagram {"wp":"v0|#0 #2"} #end)
+}

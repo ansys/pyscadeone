@@ -1,0 +1,119 @@
+-- version swan: 2025.2 graph: 2.1
+node #pragma cg C:name toto #end op_simple_pragmas (#pragma i0 pragma #end i0: int32;)
+  returns (#pragma o0 pragma #end
+           #pragma another o0 pragma #end o0: int32;)
+{
+}
+
+node operator4 (i0: int32;)
+  returns (o0: int32;)
+{
+}
+
+const #pragma cg C:name myconst #end const0: int32 = 0;
+
+type #pragma cg C:name mytype #end type0 = int32;
+
+sensor #pragma cg C:name mysensor #end sensor0: int32;
+
+group #pragma cg C:name group? #end group0 = (int32, int32);
+
+const 
+
+#pragma   with 2 spaces before #end
+#pragma #toto # #end
+#pragma two spaces at the end   #end pragma_tests: int32 = 0;
+
+node #pragma foo #end {syntax%op_ $$$ simple_blocks%syntax} (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr pre #1
+      where
+        (#1 group)
+    #pragma diagram {"xy":"H-6200;V-6950"} #end)
+    (#2 expr i0
+    #pragma diagram {"xy":"H-20400;V-6950"} #end)
+    (#3 def o0
+    #pragma diagram {"xy":"H11300;V-6950"} #end)
+    (#4 expr [#5]
+      where
+        (#5 group)
+    #pragma diagram {"xy":"H1800;V6650"} #end)
+    (#6 expr #7[0]
+      where
+        (#7 group)
+    #pragma diagram {"xy":"H19400;V6650","wh":"12000;7000"} #end)
+    
+    (#8 wire #2 => #1, #5
+    #pragma diagram {"wp":"#2 h3600[#1, v13600 #5]"} #end)
+    (#9 wire #0 => #3)
+    (#10 wire #4 => #7)
+}
+
+node op_control (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (automaton #4 $automaton0
+      initial state #0 state0
+      #pragma diagram {"xy":"h-24062;v-18700","wh":"18000;17900"} #end :
+      state #1 state1
+      #pragma diagram {"xy":"h24938;v-18700","wh":"12000;17900"} #end :
+      state #2 state2
+      #pragma diagram {"xy":"h224;v15490","wh":"12000;17900"} #end :
+      state #3 state3
+      #pragma diagram {"xy":"h24938;v15490","wh":"12000;17900"} #end :
+      :1: #0 until if (true)
+        :1: if (true)
+        restart #1 end
+      #pragma diagram {"tp":"h9000;v-200|#0 h5000 h5000 h-2000;v0|h1938;v-18900 h2000;v0 h5000 h5000 h-6000;v-200|#1"} #end;
+      :1: #1 until if (true)
+        :1: if (true)
+          :1: if (true)
+          restart #2
+          :2: else 
+          resume #3 end end
+      #pragma diagram {"tp":"h-6000;v8118|#1 h-893 h-893 h2000;v-1168|h14260;v-9415 h-2000;v-651 h-167 h-167 h-167 h-1089 h-1089;v1818 v1818 v333 v333 h0;v-2000|h9581;v-3430[h-2000;v-136 h-167 h-167 h-167 h-3428 h-3428;v4053 v4053 v667 v667 h0;v-8950|#2, h2000;v364 h167 h167 h167 h6428 h6428;v3803 v3803 v667 v667 h0;v-8950|#3]"} #end;
+    #pragma requirement req-068 #end
+    #pragma doc Simple automaton implementing req-068 #end
+    #pragma diagram {"xy":"H-22055;V7366","wh":"74125;63300"} #end)
+}
+
+node activates (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (activate #0 $ActivateIf0
+      if {syntax%%syntax}
+      then
+        {
+          diagram
+            (var
+                x0;)
+        #pragma diagram {"xy":"h0;v-10500","wh":"51000;20000"} #end
+        }
+      else
+        {
+        #pragma diagram {"xy":"h0;v13359","wh":"51000;20000"} #end
+        }
+    #pragma diagram {"xy":"H13650;V27750","wh":"51000;49719"} #end)
+}
+
+node subdiagram (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (diagram $Diagram0
+       (#0 block operator4 <<{syntax%/*size*/%syntax}>> 
+       #pragma diagram {"xy":"h650;v-75","wh":"25400;15400"} #end)
+     #pragma doc This is a subdiagram #end
+     #pragma requirement Req-114 #end
+     #pragma diagram {"xy":"H-160600;V-74775","wh":"64800;39750"} #end)
+}
+
+const 
+#pragma hi there #end
+#pragma ######end #end check_end : int32 = 0;
+
+#pragma basic #end

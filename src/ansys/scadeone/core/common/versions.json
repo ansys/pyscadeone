@@ -1,7 +1,7 @@
 {
     "swan": {
         "description": "Swan language version",
-        "version": "2025.1"
+        "version": "2025.2"
     },
     "swant": {
         "description": "Swan Test Harness",
@@ -9,11 +9,11 @@
     },
     "graph": {
         "description": "Graphical information format",
-        "version": "2.0"
+        "version": "2.1"
     },
     "simdata": {
         "description": "Simulation data format",
-        "version": "1.1"
+        "version": "1.2"
     },
     "test_results": {
         "description": "Test results format",
@@ -25,7 +25,7 @@
     },
     "sjob": {
         "description": "Project jobs",
-        "version": "2.1"
+        "version": "2.2"
     },
     "wrapper": {
         "description": "PyScadeOne Wrapper",

@@ -1,0 +1,17 @@
+{
+  "JobsOrder": [
+    "jobs\\codegen_4b98d3b\\.sjob",
+    "jobs\\codegen_97149b9\\.sjob",
+    "jobs\\codegen_9ab2afc\\.sjob",
+    "jobs\\codegen_b1b4d63\\.sjob",
+    "jobs\\codegen_bdc2a3a\\.sjob",
+    "jobs\\codegen_cdd305f\\.sjob",
+    "jobs\\codegen_d94d7ca\\.sjob",
+    "jobs\\codegen_f7a1025\\.sjob",
+    "jobs\\codegen_nok\\.sjob",
+    "jobs\\simu_d01ddb2\\.sjob"
+  ],
+  "ModulesOrder": [
+    "assets\\module0.swan"
+  ]
+}

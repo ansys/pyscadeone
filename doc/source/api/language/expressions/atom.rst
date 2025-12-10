@@ -24,9 +24,6 @@ Literal
 
 .. autoclass:: Literal
 
-.. autoclass:: LiteralKind
-
-
 Patterns
 --------
 

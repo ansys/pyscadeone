@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 """
-This example demonstrates the use of the FMU export (see: :ref:`FMU Export`).
+This example demonstrates the use of the FMU export (see: :ref:`FMU export`).
 """
 
 from pathlib import Path

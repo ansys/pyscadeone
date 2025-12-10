@@ -47,7 +47,7 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.signatures[0]
+        op0 = body.operator_declarations[0]
         op0_in1 = op0.add_input("in1", "int32")
         op0_out1 = op0.add_output("out1", "int32")
         assert len(op0.inputs) == 2
@@ -75,8 +75,8 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.operators[0]
-        op1 = body.signatures[0]
+        op0 = body.operator_definitions[0]
+        op1 = body.operator_declarations[0]
         diag = op0.add_diagram()
         diag.add_block(op1)
         assert len(op0.diagrams[0].objects) == 1
@@ -95,7 +95,7 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.operators[0]
+        op0 = body.operator_definitions[0]
         out0 = op0.outputs[0]
         assert isinstance(out0, swan.VarDecl)
         diag = op0.add_diagram()
@@ -116,7 +116,7 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.operators[0]
+        op0 = body.operator_definitions[0]
         in0 = op0.inputs[0]
         assert isinstance(in0, swan.VarDecl)
         diag = op0.add_diagram()
@@ -139,10 +139,10 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.operators[0]
+        op0 = body.operator_definitions[0]
         in0 = op0.inputs[0]
         assert isinstance(in0, swan.VarDecl)
-        op1 = body.signatures[0]
+        op1 = body.operator_declarations[0]
         diag = op0.add_diagram()
         diag.add_block(op1)
         diag.add_expr_block(in0)
@@ -168,10 +168,10 @@ class TestOperator:
             "module0",
         )
         body = parser.module_body(code)
-        op0 = body.operators[0]
+        op0 = body.operator_definitions[0]
         in0 = op0.inputs[0]
         assert isinstance(in0, swan.VarDecl)
-        op1 = body.signatures[0]
+        op1 = body.operator_declarations[0]
         diag = op0.add_diagram()
         diag.add_block(op1)
         diag.add_expr_block(in0)

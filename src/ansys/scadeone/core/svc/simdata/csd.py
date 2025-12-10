@@ -23,6 +23,7 @@
 # cSpell: ignore vsize ndarray
 
 import abc
+import numbers
 from typing import Tuple, Optional, Any, List
 
 from ansys.scadeone.core.common.exception import ScadeOneException
@@ -31,7 +32,9 @@ import ansys.scadeone.core.svc.simdata.core.dll_wrap as dll_wrap
 import ansys.scadeone.core.svc.simdata.defs as defs
 
 
-class _SdFactory:
+class SimDataFactory:
+    """SimData factory class."""
+
     @classmethod
     def load_type(cls, type_id: int) -> Optional[defs.Type]:
         # Predefined type => return it
@@ -95,7 +98,8 @@ class _SdFactory:
         elem_type_id = dll_wrap.sde_get_type(elem_id)
         elem_type = cls.load_type(elem_type_id)
         elem_kind = defs.ElementKind(dll_wrap.sde_get_kind(elem_id))
-        elem = Element(file, elem_id, parent, elem_name, elem_type, elem_kind)
+        elem_group_expr = dll_wrap.sde_get_group_expr(elem_id)
+        elem = Element(file, elem_id, elem_name, elem_type, elem_kind, elem_group_expr, parent)
         return elem
 
     @classmethod
@@ -103,32 +107,70 @@ class _SdFactory:
         if py_value is None:
             return dll_wrap.sdd_value_create_none()
         if isinstance(sd_type, defs.PredefinedType):
-            if sd_type.kind == defs.PredefinedTypeKind.CHAR:
-                return dll_wrap.sdd_value_create_predef_char(py_value)
-            elif sd_type.kind == defs.PredefinedTypeKind.BOOL:
+            if sd_type.kind == defs.PredefinedTypeKind.BOOL:
+                if not isinstance(py_value, bool):
+                    raise ScadeOneException(f"invalid bool value: {py_value}")
                 return dll_wrap.sdd_value_create_predef_bool(py_value)
-            elif sd_type.kind == defs.PredefinedTypeKind.INT8:
-                return dll_wrap.sdd_value_create_predef_int8(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.INT16:
-                return dll_wrap.sdd_value_create_predef_int16(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.INT32:
-                return dll_wrap.sdd_value_create_predef_int32(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.INT64:
-                return dll_wrap.sdd_value_create_predef_int64(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.UINT8:
-                return dll_wrap.sdd_value_create_predef_uint8(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.UINT16:
-                return dll_wrap.sdd_value_create_predef_uint16(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.UINT32:
-                return dll_wrap.sdd_value_create_predef_uint32(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.UINT64:
-                return dll_wrap.sdd_value_create_predef_uint64(int(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.FLOAT32:
-                return dll_wrap.sdd_value_create_predef_float32(float(py_value))
-            elif sd_type.kind == defs.PredefinedTypeKind.FLOAT64:
-                return dll_wrap.sdd_value_create_predef_float64(float(py_value))
-            else:
-                return None
+            if isinstance(py_value, bool):
+                raise ScadeOneException(
+                    f"unexpected bool value for non boolean element: {py_value}"
+                )
+            match sd_type.kind:
+                case defs.PredefinedTypeKind.INT8:
+                    if not (isinstance(py_value, numbers.Integral) and -128 <= py_value <= 127):
+                        raise ScadeOneException(f"invalid int8 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_int8(int(py_value))
+                case defs.PredefinedTypeKind.UINT8:
+                    if not (isinstance(py_value, numbers.Integral) and 0 <= py_value <= 255):
+                        raise ScadeOneException(f"invalid uint8 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_uint8(int(py_value))
+                case defs.PredefinedTypeKind.INT16:
+                    if not (isinstance(py_value, numbers.Integral) and -32768 <= py_value <= 32767):
+                        raise ScadeOneException(f"invalid int16 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_int16(int(py_value))
+                case defs.PredefinedTypeKind.UINT16:
+                    if not (isinstance(py_value, numbers.Integral) and 0 <= py_value <= 65535):
+                        raise ScadeOneException(f"invalid uint16 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_uint16(int(py_value))
+                case defs.PredefinedTypeKind.INT32:
+                    if not (
+                        isinstance(py_value, numbers.Integral)
+                        and -2147483648 <= py_value <= 2147483647
+                    ):
+                        raise ScadeOneException(f"invalid int32 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_int32(int(py_value))
+                case defs.PredefinedTypeKind.UINT32:
+                    if not (isinstance(py_value, numbers.Integral) and 0 <= py_value <= 4294967295):
+                        raise ScadeOneException(f"invalid uint32 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_uint32(int(py_value))
+                case defs.PredefinedTypeKind.INT64:
+                    if not (
+                        isinstance(py_value, numbers.Integral)
+                        and -9223372036854775808 <= py_value <= 9223372036854775807
+                    ):
+                        raise ScadeOneException(f"invalid int64 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_int64(int(py_value))
+                case defs.PredefinedTypeKind.UINT64:
+                    if not (
+                        isinstance(py_value, numbers.Integral)
+                        and 0 <= py_value <= 18446744073709551615
+                    ):
+                        raise ScadeOneException(f"invalid uint64 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_uint64(int(py_value))
+                case defs.PredefinedTypeKind.FLOAT32:
+                    if not isinstance(py_value, numbers.Real):
+                        raise ScadeOneException(f"invalid float32 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_float32(float(py_value))
+                case defs.PredefinedTypeKind.FLOAT64:
+                    if not isinstance(py_value, numbers.Real):
+                        raise ScadeOneException(f"invalid float64 value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_float64(float(py_value))
+                case defs.PredefinedTypeKind.CHAR:
+                    if not isinstance(py_value, str) or len(py_value) != 1:
+                        raise ScadeOneException(f"invalid char value: {py_value}")
+                    return dll_wrap.sdd_value_create_predef_char(py_value)
+                case _:
+                    return None
         elif isinstance(sd_type, defs.StructType):
             if not isinstance(py_value, (list, tuple)) or len(py_value) != len(sd_type.fields):
                 return None
@@ -290,19 +332,20 @@ class Element(defs.ElementBase):
         self,
         file: defs.FileBase,
         elem_id: int,
-        parent: Optional[defs.ElementBase],
         name: str,
         sd_type: Optional[defs.Type],
         kind: defs.ElementKind,
+        group_expr: Optional[str],
+        parent: Optional[defs.ElementBase],
     ) -> None:
-        super().__init__(file, parent, name, sd_type, kind)
+        super().__init__(file, name, sd_type, kind, group_expr, parent)
         self._elem_id = elem_id
         # read children elements
         children_elements_ids = dll_wrap.sde_get_children(self._elem_id)
         if children_elements_ids is None:
             raise ScadeOneException('cannot read children elements for "{0}"'.format(self._name))
         for child_id in children_elements_ids:
-            self._children_elements.append(_SdFactory.load_element(file, self, child_id))
+            self._children_elements.append(SimDataFactory.load_element(file, self, child_id))
 
     @property
     def elem_id(self) -> int:
@@ -311,9 +354,7 @@ class Element(defs.ElementBase):
     @defs.ElementBase.name.setter
     def name(self, name: str) -> None:
         if dll_wrap.sde_set_name(self._elem_id, name) != core.SD_ERR_NONE:
-            raise ScadeOneException(
-                "cannot set element name for element with id {0}".format(self._elem_id)
-            )
+            raise ScadeOneException("cannot set name for element with id {0}".format(self._elem_id))
         self._name = name
 
     @defs.ElementBase.sd_type.setter
@@ -322,21 +363,29 @@ class Element(defs.ElementBase):
             dll_wrap.sde_set_type(self._elem_id, sd_type.type_id if sd_type else core.SDT_NONE)
             != core.SD_ERR_NONE
         ):
-            raise ScadeOneException(
-                "cannot set element type for element with id {0}".format(self._elem_id)
-            )
+            raise ScadeOneException("cannot set type for element with id {0}".format(self._elem_id))
         self._sd_type = sd_type
 
     @defs.ElementBase.kind.setter
     def kind(self, kind: defs.ElementKind) -> None:
         if dll_wrap.sde_set_kind(self._elem_id, core.SdeKind(kind)) != core.SD_ERR_NONE:
-            raise ScadeOneException(
-                "cannot set element kind for element with id {0}".format(self._elem_id)
-            )
+            raise ScadeOneException("cannot set kind for element with id {0}".format(self._elem_id))
         self._kind = kind
 
+    @defs.ElementBase.group_expr.setter
+    def group_expr(self, group_expr: str) -> None:
+        if dll_wrap.sde_set_group_expr(self._elem_id, group_expr) != core.SD_ERR_NONE:
+            raise ScadeOneException(
+                "cannot set group_expr for element with id {0}".format(self._elem_id)
+            )
+        self._group_expr = group_expr
+
     def add_child_element(
-        self, name: str, sd_type: defs.Type = None, kind: defs.ElementKind = defs.ElementKind.NONE
+        self,
+        name: str,
+        sd_type: Optional[defs.Type] = None,
+        kind: defs.ElementKind = defs.ElementKind.NONE,
+        group_expr: Optional[str] = "",
     ) -> defs.ElementBase:
         """Add a child to element
 
@@ -348,6 +397,8 @@ class Element(defs.ElementBase):
             child element type
         kind : ElementKind, optional
             child element kind
+        group_expr : str, optional
+            child element group expression
 
         Returns
         -------
@@ -355,9 +406,13 @@ class Element(defs.ElementBase):
             Created child element
         """
         elem_id = dll_wrap.sde_create(
-            self._elem_id, name, sd_type.type_id if sd_type else core.SDT_NONE, core.SdeKind(kind)
+            self._elem_id,
+            name,
+            sd_type.type_id if sd_type else core.SDT_NONE,
+            core.SdeKind(kind),
+            group_expr,
         )
-        elem = Element(self._file, elem_id, self, name, sd_type, kind)
+        elem = Element(self._file, elem_id, name, sd_type, kind, group_expr, self)
         self._children_elements.append(elem)
         return elem
 
@@ -372,17 +427,20 @@ class Element(defs.ElementBase):
         Raises
         ------
         ScadeOneException
-            child could not be removed
+            child is not an element, was not found or could not be removed
         """
+        if not isinstance(element, Element):
+            raise ScadeOneException(
+                "element to remove must be of Element type, got {0}".format(type(element))
+            )
+        if element not in self._children_elements:
+            raise ScadeOneException("element to remove is not a child of {0}".format(element.name))
         if dll_wrap.sde_remove(element.elem_id) != core.SD_ERR_NONE:
             raise ScadeOneException("cannot remove element with id {0}".format(element.elem_id))
         self._children_elements.remove(element)
 
     def append_value(self, py_value: Any) -> None:
         """Add a value to an element or appends to the last sequence of values if any.
-        This method shall NOT be used to add a single value after a multiple cycles sequence
-        as it would also be repeated alongside the previous sequence.
-        Prefer using append_values([py_value]) instead in such case.
 
         Parameters
         ----------
@@ -394,16 +452,27 @@ class Element(defs.ElementBase):
         ScadeOneException
             value is invalid or could not be added
         """
-        csd_value = _SdFactory.build_core_sd_value(py_value, self.sd_type)
-        if csd_value is None:
-            raise ScadeOneException(f"invalid value: {py_value}")
-        ret = dll_wrap.sdd_append_value(self._elem_id, csd_value)
-        dll_wrap.sdd_value_close(csd_value)
-        if ret != core.SD_ERR_NONE:
-            raise ScadeOneException("cannot append value")
 
-    def append_nones(self, count: int) -> None:
-        """Add a sequence of none values to an element (undefined cycle values)
+        # Get the last sequence
+        sequence = self.get_last_sequence()
+
+        # An existing sequence
+        if sequence and dll_wrap.sdd_sequence_get_repeat_factor(sequence) > 1:
+            # Append the value to the last sequence
+            self.append_values_sequence([py_value])
+        else:
+            csd_value = SimDataFactory.build_core_sd_value(py_value, self.sd_type)
+            if csd_value is None:
+                raise ScadeOneException(f"invalid value: {py_value}")
+            ret = dll_wrap.sdd_append_value(self._elem_id, csd_value)
+            dll_wrap.sdd_value_close(csd_value)
+            if ret != core.SD_ERR_NONE:
+                raise ScadeOneException("cannot append value")
+        if sequence:
+            dll_wrap.sdd_sequence_close(sequence)
+
+    def append_nones_sequence(self, count: int) -> None:
+        """Create and append a sequence of 'none'
 
         Parameters
         ----------
@@ -413,8 +482,10 @@ class Element(defs.ElementBase):
         Raises
         ------
         ScadeOneException
-            cannot create or append nones sequence
+            invalid count, cannot create or append nones sequence
         """
+        if not dll_wrap.fits_in_c_size_t(count):
+            raise ScadeOneException(f"count does not fit c_size_t: {count}")
         sequence = dll_wrap.sdd_sequence_create_nones(count)
         if not sequence:
             raise ScadeOneException("cannot create nones sequence")
@@ -423,8 +494,8 @@ class Element(defs.ElementBase):
         if ret != core.SD_ERR_NONE:
             raise ScadeOneException("cannot append nones sequence")
 
-    def append_values(self, py_values: List[Any], repeat_factor: Optional[int] = 1) -> None:
-        """Create a new sequence of one or multiple values.
+    def append_values_sequence(self, py_values: List[Any], repeat_factor: int = 1) -> None:
+        """Create and append a new sequence of 'values' with repeat factor.
         Do not use repeat factor for array and structure types.
         Do not use this for structure or array types that already have any value,
         use append_value() instead in such case.
@@ -433,7 +504,7 @@ class Element(defs.ElementBase):
         ----------
         py_values : List[Any]
             list of value(s) to add
-        repeat_factor : Optional[int], optional
+        repeat_factor : int, optional
             number of times to add, by default 1 (no repeat), do not use with non scalar values
 
         Raises
@@ -442,7 +513,7 @@ class Element(defs.ElementBase):
             Invalid repeat, none contained in values, invalid values, cannot create or append
             values sequence, used repeat factor for array or structure types
         """
-        if repeat_factor < 1:
+        if not isinstance(repeat_factor, int) or repeat_factor < 1:
             raise ScadeOneException("invalid repeat factor")
         if isinstance(self.sd_type, defs.StructType) or isinstance(self.sd_type, defs.ArrayType):
             if repeat_factor > 1:
@@ -453,7 +524,7 @@ class Element(defs.ElementBase):
         for py_value in py_values:
             if py_value is None:
                 raise ScadeOneException("values sequence cannot contain 'none'")
-            csd_value = _SdFactory.build_core_sd_value(py_value, self.sd_type)
+            csd_value = SimDataFactory.build_core_sd_value(py_value, self.sd_type)
             if csd_value is None:
                 raise ScadeOneException(f"invalid value: {py_value} from {py_values}")
             csd_values.append(csd_value)
@@ -466,6 +537,19 @@ class Element(defs.ElementBase):
         dll_wrap.sdd_sequence_close(sequence)
         if ret != core.SD_ERR_NONE:
             raise ScadeOneException("cannot append values sequence")
+
+    def get_last_sequence(self) -> Optional[core.sd_sequence_t]:
+        """Get the last sequence"""
+        sequence = None
+        if value_iter := dll_wrap.sdd_sequence_iter_create(self._elem_id):
+            for _ in range(core.SD_SIZE_NONE):
+                if tmp := dll_wrap.sdd_sequence_iter_get_sequence(value_iter):
+                    if sequence:
+                        dll_wrap.sdd_sequence_close(sequence)
+                    sequence = tmp
+                else:
+                    break
+        return sequence
 
     def read_values(
         self, start: Optional[int] = None, n: Optional[int] = None
@@ -483,7 +567,18 @@ class Element(defs.ElementBase):
         ------
         Iterator[Value]
             each value read
+
+        Raises
+        ------
+        ScadeOneException
+            invalid number of values to read, cannot seek element index
         """
+        if n is None:
+            n = core.SD_SIZE_NONE
+        elif not dll_wrap.fits_in_c_size_t(n, True):
+            raise ScadeOneException(
+                f"invalid number of values to read: {n} (must be a positive integer)"
+            )
         value_iter = dll_wrap.sdd_value_iter_create(self._elem_id)
         if value_iter:
             if start:
@@ -493,14 +588,12 @@ class Element(defs.ElementBase):
                             start, self._elem_id
                         )
                     )
-            if n is None:
-                n = core.SD_SIZE_NONE
 
             for i in range(0, n):
                 csd_value = dll_wrap.sdd_value_iter_get_value(value_iter)
                 if csd_value is None:
                     break
-                yield _SdFactory.load_sd_value(csd_value)
+                yield SimDataFactory.load_sd_value(csd_value)
                 dll_wrap.sdd_value_close(csd_value)
             dll_wrap.sdd_value_iter_close(value_iter)
 
@@ -532,10 +625,14 @@ class File(defs.FileBase):
         if elements_ids is None:
             raise ScadeOneException("cannot read root elements")
         for elem_id in elements_ids:
-            self._elements.append(_SdFactory.load_element(self, None, elem_id))
+            self._elements.append(SimDataFactory.load_element(self, None, elem_id))
 
     def add_element(
-        self, name: str, sd_type: defs.Type = None, kind: defs.ElementKind = defs.ElementKind.NONE
+        self,
+        name: str,
+        sd_type: defs.Type = None,
+        kind: defs.ElementKind = defs.ElementKind.NONE,
+        group_expr: str = "",
     ) -> defs.ElementBase:
         """Create and add an element to file
 
@@ -547,6 +644,8 @@ class File(defs.FileBase):
             type of element
         kind : ElementKind, optional
             kind of element
+        group_expr : str, optional
+            group expression of element
 
         Returns
         -------
@@ -555,9 +654,13 @@ class File(defs.FileBase):
         """
 
         elem_id = dll_wrap.sde_create(
-            self._file_id, name, sd_type.type_id if sd_type else core.SDT_NONE, core.SdeKind(kind)
+            self._file_id,
+            name,
+            sd_type.type_id if sd_type else core.SDT_NONE,
+            core.SdeKind(kind),
+            group_expr,
         )
-        elem = _SdFactory.load_element(self, None, elem_id)
+        elem = Element(self, elem_id, name, sd_type, kind, group_expr, None)
         self._elements.append(elem)
         return elem
 
@@ -572,8 +675,14 @@ class File(defs.FileBase):
         Raises
         ------
         ScadeOneException
-            element could not be found or deleted
+            element of wrong type or could not be found or deleted
         """
+        if not isinstance(element, Element):
+            raise ScadeOneException(
+                "element to remove must be of Element type, got {0}".format(type(element))
+            )
+        if element not in self._elements:
+            raise ScadeOneException("element {0} was not found".format(element.name))
         if dll_wrap.sde_remove(element.elem_id) != core.SD_ERR_NONE:
             raise ScadeOneException("cannot remove element with id {0}".format(element.elem_id))
         self._elements.remove(element)
@@ -760,10 +869,12 @@ def create_array_type(base_type: defs.Type, dims: List[int], name: str = "") -> 
     Raises
     ------
     ScadeOneException
-        array type could not be created, argument error or none type passed
+        incorrect dimensions, array type could not be created, argument error or none type passed
     """
     if base_type is None:
         raise ScadeOneException("cannot create array type. Base type shall not be None")
+    if not dll_wrap.fits_in_c_size_t(dims):
+        raise ScadeOneException(f"dimensions do not fit c_size_t: {dims}")
     if (
         not isinstance(base_type, defs.Type)
         or not isinstance(dims, list)
@@ -799,7 +910,11 @@ def create_enum_type(values: List[str], name: str = "") -> defs.EnumType:
         could not create enumeration type, create a value of passed argument
         or invalid arguments in creation
     """
-    if len(values) == 0 or not all(isinstance(arg, str) for arg in values):
+    if (
+        not isinstance(values, list)
+        or len(values) == 0
+        or not all(isinstance(arg, str) for arg in values)
+    ):
         raise ScadeOneException("argument type error in creation of enum type")
 
     enum_type_id = dll_wrap.sdt_enum_create(defs.Int64.type_id)

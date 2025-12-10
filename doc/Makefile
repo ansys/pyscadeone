@@ -33,3 +33,9 @@ svg:
 	@$(PLANTUML) -version | head -1
 	@$(PLANTUML) -splash -tsvg  "$(SOURCEDIR)/**/*.puml"
 	@echo "Done"
+
+png:
+	@echo "Generating SVG files from PlantUML files"
+	@$(PLANTUML) -version | head -1
+	@$(PLANTUML) -splash -tpng  "$(SOURCEDIR)/**/*.puml"
+	@echo "Done"

@@ -1,0 +1,267 @@
+{
+  "$schema" : "cg-map-schema.json",
+  "version" : "0.1",
+  "model" : [
+    [ "predefined_type", { "id" : 6, "name" : "bool" } ],
+    [ "predefined_type", { "id" : 7, "name" : "char" } ],
+    [ "predefined_type", { "id" : 8, "name" : "int8" } ],
+    [ "predefined_type", { "id" : 9, "name" : "int16" } ],
+    [ "predefined_type", { "id" : 10, "name" : "int32" } ],
+    [ "predefined_type", { "id" : 11, "name" : "int64" } ],
+    [ "predefined_type", { "id" : 12, "name" : "uint8" } ],
+    [ "predefined_type", { "id" : 13, "name" : "uint16" } ],
+    [ "predefined_type", { "id" : 14, "name" : "uint32" } ],
+    [ "predefined_type", { "id" : 15, "name" : "uint64" } ],
+    [ "predefined_type", { "id" : 16, "name" : "float32" } ],
+    [ "predefined_type", { "id" : 17, "name" : "float64" } ],
+    [
+      "operator",
+      {
+        "id" : 20,
+        "path" : "module0::test_node",
+        "inputs" : [ { "id" : 23, "name" : "i0" } ],
+        "outputs" : [ { "id" : 24, "name" : "o0" } ],
+        "root" : true,
+        "instances" : [ [ "operator", { "id" : 31, "path" : "#0:", "operator" : 19 } ] ]
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 19,
+        "path" : "module0::operator0",
+        "inputs" : [ { "id" : 21, "name" : "i0" } ],
+        "outputs" : [ { "id" : 22, "name" : "o0" } ],
+        "imported" : true
+      }
+    ],
+    [ "elaboration", { "id" : 0 } ]
+  ],
+  "code" : [
+    {
+      "interface_file" : "test_node_module0.h",
+      "implementation_file" : "test_node_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 160, "name" : "SWAN_test_node_module0_H_" } ],
+        [
+          "struct",
+          {
+            "id" : 152,
+            "name" : "outC_test_node_module0",
+            "fields" : [ { "id" : 153, "name" : "Ctx_operator01", "type" : 142 } ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 20,
+            "name" : "test_node_module0",
+            "parameters" : [
+              { "id" : 23, "name" : "i0", "type" : 115, "pointer" : true, "const" : true },
+              { "id" : 24, "name" : "o0", "type" : 115, "pointer" : true },
+              { "id" : 155, "name" : "outC", "type" : 152, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 156,
+            "name" : "test_node_reset_module0",
+            "parameters" : [
+              { "id" : 157, "name" : "outC", "type" : 152, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 158,
+            "name" : "test_node_init_module0",
+            "parameters" : [
+              { "id" : 159, "name" : "outC", "type" : 152, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "operator0_module0.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "macro", { "id" : 150, "name" : "SWAN_operator0_module0_H_" } ],
+        [ "struct", { "id" : 142, "name" : "outC_operator0_module0" } ],
+        [
+          "function",
+          {
+            "id" : 19,
+            "name" : "operator0_module0",
+            "parameters" : [
+              { "id" : 21, "name" : "i0", "type" : 115, "pointer" : true, "const" : true },
+              { "id" : 22, "name" : "o0", "type" : 115, "pointer" : true },
+              { "id" : 144, "name" : "outC", "type" : 142, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 145,
+            "name" : "operator0_reset_module0",
+            "parameters" : [
+              { "id" : 146, "name" : "outC", "type" : 142, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 147,
+            "name" : "operator0_init_module0",
+            "parameters" : [
+              { "id" : 148, "name" : "outC", "type" : 142, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_types.h",
+      "implementation_file" : "swan_types.c",
+      "declarations" : [
+        [ "macro", { "id" : 84, "name" : "SWAN_TYPES_H_" } ],
+        [
+          "array",
+          {
+            "id" : 115,
+            "name" : "array_int32_4",
+            "base_type" : 69,
+            "size" : 4,
+            "copy" : 116,
+            "equality" : 117,
+            "equality_use" : "swan_use_array_int32_4"
+          }
+        ],
+        [ "macro", { "id" : 116, "name" : "swan_cp_array_int32_4" } ],
+        [
+          "function",
+          {
+            "id" : 117,
+            "name" : "swan_eq_array_int32_4",
+            "return_type" : 113,
+            "parameters" : [
+              {
+                "id" : 163,
+                "name" : "swan_c1",
+                "type" : 115,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 164,
+                "name" : "swan_c2",
+                "type" : 115,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_consts.h",
+      "implementation_file" : "swan_consts.c",
+      "declarations" : [ [ "macro", { "id" : 83, "name" : "SWAN_CONSTS_H_" } ] ]
+    },
+    {
+      "interface_file" : "swan_sensors.h",
+      "declarations" : [ [ "macro", { "id" : 82, "name" : "SWAN_SENSORS_H_" } ] ]
+    },
+    {
+      "interface_file" : "swan_config.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "predefined_type", { "id" : 67, "name" : "swan_int8" } ],
+        [ "predefined_type", { "id" : 68, "name" : "swan_int16" } ],
+        [ "predefined_type", { "id" : 69, "name" : "swan_int32" } ],
+        [ "predefined_type", { "id" : 70, "name" : "swan_int64" } ],
+        [ "predefined_type", { "id" : 71, "name" : "swan_uint8" } ],
+        [ "predefined_type", { "id" : 72, "name" : "swan_uint16" } ],
+        [ "predefined_type", { "id" : 73, "name" : "swan_uint32" } ],
+        [ "predefined_type", { "id" : 74, "name" : "swan_uint64" } ],
+        [ "predefined_type", { "id" : 75, "name" : "swan_size" } ],
+        [ "predefined_type", { "id" : 76, "name" : "swan_float32" } ],
+        [ "predefined_type", { "id" : 77, "name" : "swan_float64" } ],
+        [ "macro", { "id" : 93, "name" : "swan_incr" } ],
+        [ "macro", { "id" : 94, "name" : "swan_cond" } ],
+        [ "macro", { "id" : 95, "name" : "swan_not" } ],
+        [ "macro", { "id" : 96, "name" : "swan_xor" } ],
+        [ "macro", { "id" : 97, "name" : "swan_or" } ],
+        [ "macro", { "id" : 98, "name" : "swan_and" } ],
+        [ "macro", { "id" : 99, "name" : "swan_index" } ],
+        [ "macro", { "id" : 100, "name" : "swan_diff" } ],
+        [ "macro", { "id" : 101, "name" : "swan_eq" } ],
+        [ "macro", { "id" : 102, "name" : "swan_assign_union" } ],
+        [ "macro", { "id" : 103, "name" : "swan_assign_array" } ],
+        [ "macro", { "id" : 104, "name" : "swan_assign_struct" } ],
+        [ "macro", { "id" : 105, "name" : "swan_assign" } ],
+        [ "macro", { "id" : 108, "name" : "swan_guarantee" } ],
+        [ "macro", { "id" : 109, "name" : "swan_assume" } ],
+        [ "macro", { "id" : 110, "name" : "swan_assert" } ],
+        [ "macro", { "id" : 111, "name" : "swan_false" } ],
+        [ "macro", { "id" : 112, "name" : "swan_true" } ],
+        [ "predefined_type", { "id" : 113, "name" : "swan_bool" } ],
+        [ "predefined_type", { "id" : 114, "name" : "swan_char" } ],
+        [ "macro", { "id" : 119, "name" : "swan_lit_int8" } ],
+        [ "macro", { "id" : 120, "name" : "swan_lit_int16" } ],
+        [ "macro", { "id" : 121, "name" : "swan_lit_int32" } ],
+        [ "macro", { "id" : 122, "name" : "swan_lit_int64" } ],
+        [ "macro", { "id" : 123, "name" : "swan_lsl_uint8" } ],
+        [ "macro", { "id" : 124, "name" : "swan_lnot_uint8" } ],
+        [ "macro", { "id" : 125, "name" : "swan_lit_uint8" } ],
+        [ "macro", { "id" : 126, "name" : "swan_lsl_uint16" } ],
+        [ "macro", { "id" : 127, "name" : "swan_lnot_uint16" } ],
+        [ "macro", { "id" : 128, "name" : "swan_lit_uint16" } ],
+        [ "macro", { "id" : 129, "name" : "swan_lsl_uint32" } ],
+        [ "macro", { "id" : 130, "name" : "swan_lnot_uint32" } ],
+        [ "macro", { "id" : 131, "name" : "swan_lit_uint32" } ],
+        [ "macro", { "id" : 132, "name" : "swan_lsl_uint64" } ],
+        [ "macro", { "id" : 133, "name" : "swan_lnot_uint64" } ],
+        [ "macro", { "id" : 134, "name" : "swan_lit_uint64" } ],
+        [ "macro", { "id" : 135, "name" : "swan_lit_size" } ],
+        [ "macro", { "id" : 136, "name" : "swan_lit_float32" } ],
+        [ "macro", { "id" : 137, "name" : "swan_lit_float64" } ],
+        [ "macro", { "id" : 138, "name" : "swan_diff_char" } ],
+        [ "macro", { "id" : 139, "name" : "swan_eq_char" } ],
+        [ "macro", { "id" : 140, "name" : "swan_lit_char" } ]
+      ]
+    }
+  ],
+  "mapping" : [
+    { "model_id" : 6, "code_id" : 113 },
+    { "model_id" : 7, "code_id" : 114 },
+    { "model_id" : 8, "code_id" : 67 },
+    { "model_id" : 9, "code_id" : 68 },
+    { "model_id" : 10, "code_id" : 69 },
+    { "model_id" : 11, "code_id" : 70 },
+    { "model_id" : 12, "code_id" : 71 },
+    { "model_id" : 13, "code_id" : 72 },
+    { "model_id" : 14, "code_id" : 73 },
+    { "model_id" : 15, "code_id" : 74 },
+    { "model_id" : 16, "code_id" : 76 },
+    { "model_id" : 17, "code_id" : 77 },
+    { "model_id" : 19, "code_id" : 19, "role" : "CycleMethod" },
+    { "model_id" : 19, "code_id" : 142, "role" : "ContextType" },
+    { "model_id" : 19, "code_id" : 145, "role" : "ResetMethod" },
+    { "model_id" : 19, "code_id" : 147, "role" : "InitMethod" },
+    { "model_id" : 20, "code_id" : 20, "role" : "CycleMethod" },
+    { "model_id" : 20, "code_id" : 152, "role" : "ContextType" },
+    { "model_id" : 20, "code_id" : 156, "role" : "ResetMethod" },
+    { "model_id" : 20, "code_id" : 158, "role" : "InitMethod" },
+    { "model_id" : 21, "code_id" : 21 },
+    { "model_id" : 22, "code_id" : 22 },
+    { "model_id" : 23, "code_id" : 23 },
+    { "model_id" : 24, "code_id" : 24 }
+  ]
+}

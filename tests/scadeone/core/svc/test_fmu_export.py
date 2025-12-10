@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
 from pathlib import Path
 import shutil
 import zipfile
+import platform
 
 from fmpy import validation as fmpy_validation
 import pytest
@@ -109,7 +109,7 @@ class TestFMUExport:
             assert False
         except ScadeOneException as error:
             assert (
-                error.args[0] == "FMU Export: The maximum number of supported model variables "
+                error.args[0] == "FMU export: The maximum number of supported model variables "
                 f"({max}) is reached. Use max_variables parameter of "
                 f"FMU_2_Export class to increase it."
             )
@@ -152,53 +152,53 @@ class TestFMUExport:
             fmu.build()
             assert False
         except ScadeOneException as error:
-            assert error.args[0] == "FMU Export: 'generate' method must be called first."
+            assert error.args[0] == "FMU export: 'generate' method must be called first."
 
     @pytest.mark.parametrize(
-        ("job", "root", "kind", "with_sources", "arch", "default_path", "keep_outdir", "sources"),
+        ("job", "root", "kind", "with_sources", "keep_outdir", "sources", "link_opts"),
         [
-            ("CodeGenForFMU", "", "ME", False, "", True, 0, []),
-            ("CodeGenForFMU", "", "CS", False, "", False, 0, []),
-            ("CodeGenForFMU", "", "ME", True, "", True, 0, []),
-            ("CodeGenForFMU", "", "CS", True, "", True, 0, []),
-            ("CodeGen1", "", "ME", False, "", True, 0, []),
-            ("CodeGen2", "module0::oper_misc2", "ME", False, "", True, 1, ["foo"]),
-            ("CodeGen2", "module0::oper_misc2", "ME", False, "", True, 2, []),
+            ("CodeGenForFMU", "", "ME", False, 0, [], []),
+            ("CodeGenForFMU", "", "CS", False, 0, [], []),
+            ("CodeGenForFMU", "", "ME", True, 0, [], []),
+            ("CodeGenForFMU", "", "CS", True, 0, [], []),
+            ("CodeGen1", "", "ME", False, 0, [], []),
+            ("CodeGen2", "module0::oper_misc2", "ME", False, 1, ["foo"], []),
+            ("CodeGen2", "module0::oper_misc2", "ME", False, 2, [], []),
             (
                 "CodeGenImportedFunc",
                 "",
                 "ME",
                 False,
-                "",
-                True,
                 0,
                 ["tests/models/test_codegen/imported_code/oper_imp_func_module0.c"],
+                [
+                    "tests/models/test_codegen/imported_code/link_obj_module0.o",
+                    "tests/models/test_codegen/imported_code/libstatic.a",
+                ],
             ),
             (
                 "CodeGenImportedNode",
                 "",
                 "ME",
                 False,
-                "",
-                True,
                 0,
                 ["tests/models/test_codegen/imported_code"],
+                [],
             ),
             (
                 "CodeGenImportedNode",
                 "",
                 "ME",
                 False,
-                "",
-                True,
                 0,
                 [
                     "tests/models/test_codegen/imported_code/oper_imp_func_module0.c",
                     "tests/models/test_codegen/imported_code/oper_imp_node_module0.c",
                     "tests/models/test_codegen/imported_code/oper_imp_node_module0.h",
                 ],
+                [],
             ),
-            ("CodeGenNoOutput", "", "ME", False, "", True, 0, []),
+            ("CodeGenNoOutput", "", "ME", False, 0, [], []),
         ],
     )
     def test_build(
@@ -207,25 +207,17 @@ class TestFMUExport:
         root,
         kind,
         with_sources,
-        arch,
-        default_path,
         keep_outdir,
         sources,
+        link_opts,
         scadeone_install_path,
+        tmp_path,
     ):
-        basegen = Path(__file__).parent / "test_fmu_data"
+        basegen = tmp_path / "test_fmu_data"
         basegen.mkdir(exist_ok=True)
         out_dir = basegen / f"test_FMU_{kind}"
         args = {}
-        if arch != "":
-            args["arch"] = arch
-
-        if default_path:
-            app = ScadeOne(scadeone_install_path)
-        else:
-            gcc_path = Path(scadeone_install_path) / "contrib" / "mingw64" / "bin"
-            args["gcc_path"] = str(gcc_path)
-            app = ScadeOne()
+        app = ScadeOne(scadeone_install_path)
 
         prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
         try:
@@ -235,6 +227,8 @@ class TestFMUExport:
             fmu.generate(kind, out_dir)
             if len(sources):
                 args["user_sources"] = sources
+            if len(link_opts):
+                args["link_opts"] = link_opts
             fmu.build(with_sources, args)
             assert (out_dir / (fmu.model_id + ".fmu")).exists()
             # unzip fmu and check that it corresponds to generated files
@@ -246,8 +240,13 @@ class TestFMUExport:
                 zip_ref.extractall(extract_dir)
             assert (extract_dir / "modelDescription.xml").exists()
             assert (extract_dir / "model.png").exists()
-            for item in (extract_dir / "binaries").iterdir():
-                assert item.is_dir() and (item / (fmu.model_id + ".dll")).exists()
+
+            if platform.system() == "Windows":
+                for item in (extract_dir / "binaries").iterdir():
+                    assert item.is_dir() and (item / (fmu.model_id + ".dll")).exists()
+            else:
+                for item in (extract_dir / "binaries").iterdir():
+                    assert item.is_dir() and (item / (f"{fmu.model_id}.so")).exists()
             if with_sources:
 
                 def list_files_recursively(directory):
@@ -264,7 +263,7 @@ class TestFMUExport:
             shutil.rmtree(str(extract_dir))
         except ScadeOneException as error:
             if (
-                error.args[0] == "FMU Export: the compiler command gcc cannot be found."
+                error.args[0] == "FMU export: the compiler command gcc cannot be found."
                 " Use the 'args' parameter to provide proper path."
             ):
                 print(
@@ -273,42 +272,5 @@ class TestFMUExport:
                 )
             assert False
         finally:
-            shutil.rmtree(basegen, True)
-
-    @pytest.mark.parametrize("compiler", ["", "my_compiler"])
-    def test_build_wrong_cc(self, compiler):
-        kind = "ME"
-        basegen = Path(__file__).parent / "test_fmu_data"
-        basegen.mkdir(exist_ok=True)
-        out_dir = basegen / f"test_FMU_{kind}"
-        args = {"cc": compiler}
-        sav_path = os.environ["PATH"]
-
-        app = ScadeOne("wrong_sone_path")
-        prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
-        try:
-            if out_dir.exists():
-                shutil.rmtree(out_dir)
-            fmu = FMU_2_Export(prj, "CodeGenForFMU")
-            fmu.generate(kind, out_dir)
-            if compiler == "":
-                # clear path to check that default gcc is not found
-                os.environ["PATH"] = ""
-                fmu.build()
-            else:
-                fmu.build(args=args)
-            assert False
-        except ScadeOneException as error:
-            if compiler == "":
-                assert error.args[0] == (
-                    "FMU Export: the compiler command 'gcc' cannot be found."
-                    " Use the 'args' parameter to provide proper path."
-                )
-            else:
-                assert error.args[0] == (
-                    f"FMU_Export: '{compiler}' compiler not supported for this version (only gcc is supported)"
-                )
-        finally:
-            shutil.rmtree(basegen, True)
-            if compiler == "":
-                os.environ["PATH"] = sav_path
+            # shutil.rmtree(basegen, True)
+            pass

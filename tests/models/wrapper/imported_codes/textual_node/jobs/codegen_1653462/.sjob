@@ -1,0 +1,25 @@
+{
+  "Version": "2.2",
+  "Kind": "CodeGeneration",
+  "Properties": {
+    "RootDeclarations": [
+      "module0::test_node"
+    ],
+    "Name": "CodeGenerationJob0",
+    "CustomArguments": "",
+    "Expansion": "None",
+    "ExpansionExp": "",
+    "ExpansionNoExp": "",
+    "NameLength": "200",
+    "SignificanceLength": "31",
+    "KeepAssume": "False",
+    "GlobalsPrefix": "",
+    "UseMacros": "False",
+    "StaticLocals": "False",
+    "Probes": "False",
+    "RootInterfaceAsGlobals": "False"
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

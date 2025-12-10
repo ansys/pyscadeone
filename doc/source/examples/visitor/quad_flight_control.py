@@ -78,7 +78,7 @@ app.logger.logger.setLevel(logging.ERROR)
 class ReferenceVisitor(SwanVisitor):
     def __init__(self) -> None:
         super().__init__()
-        self._current_op: swan.Operator = None
+        self._current_op: swan.OperatorDefinition = None
         self._called = {}
         self._callers = {}
 
@@ -90,16 +90,16 @@ class ReferenceVisitor(SwanVisitor):
         """Information for called operator 'name'"""
         return self._called.get(name, None)
 
-    def visit_Operator(
-        self, swan_obj: swan.Operator, owner: Owner, property: OwnerProperty
+    def visit_OperatorDefinition(
+        self, swan_obj: swan.OperatorDefinition, owner: Owner, property: OwnerProperty
     ) -> None:
         self._current_op = swan_obj
         self._callers[swan_obj.get_full_path()] = {}
-        super().visit_Operator(swan_obj, owner, property)
+        super().visit_OperatorDefinition(swan_obj, owner, property)
         self._current_op = None
 
     def visit_PathIdOpCall(
-        self, swan_obj: swan.PathIdOpCall, owner: OwnerProperty, property: OwnerProperty
+        self, swan_obj: swan.NamedInstance, owner: OwnerProperty, property: OwnerProperty
     ) -> None:
         if self._current_op is None:
             return
@@ -108,7 +108,7 @@ class ReferenceVisitor(SwanVisitor):
         if op is None:
             logger.debug(f"Declaration of {name} not found")
             return
-        self._add_reference(cast(swan.Operator, op).get_full_path())
+        self._add_reference(cast(swan.OperatorDefinition, op).get_full_path())
 
     def _add_reference(self, called_operator):
         """Add information for 'called_operator' with

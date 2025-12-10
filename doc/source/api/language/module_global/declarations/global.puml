@@ -1,0 +1,23 @@
+@startuml
+skinparam groupInheritance 3
+HasPragama <|-- Declaration
+ConstDecl --|> Declaration
+TypeDecl --|> Declaration
+SensorDecl --|> Declaration
+GroupDecl --|> Declaration
+VarDecl --|> Declaration
+note bottom of VarDecl
+Used for var, input,\n
+output declarations
+end note
+
+GlobalDeclaration <|-- ConstDeclarations 
+GlobalDeclaration <|-- TypeDeclarations 
+GlobalDeclaration <|-- SensorDeclarations 
+GlobalDeclaration <|-- GroupDeclarations 
+
+ConstDeclarations *-- ConstDecl
+TypeDeclarations *-- TypeDecl
+SensorDeclarations *-- SensorDecl
+GroupDeclarations *-- GroupDecl
+@enduml

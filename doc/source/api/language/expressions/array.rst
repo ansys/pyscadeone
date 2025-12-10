@@ -1,3 +1,5 @@
+.. _ref_array_operations:
+
 Array
 =====
 
@@ -14,7 +16,7 @@ the syntax given in the Scade One documentation.
     * - **^** (Repetition)
       - :py:class:`ArrayRepetition`
     * - **@** (Concatenation)
-      - See :ref:`ref_bin_expr` and :ref:`ref_n_ary_expr`
+      - :py:class:`ArrayConcatExpr`  / :py:class:`NAryOperator` with ``NaryOp.Concat`` operator
     * - **[_]** (Array constructor)
       - :py:class:`ArrayConstructor`
     * - **.[i]** (Projection)
@@ -22,17 +24,17 @@ the syntax given in the Scade One documentation.
     * - **.[_] default _** (Projection with default)
       - :py:class:`ProjectionWithDefault`
     * - **flatten** 
-      - See `Other Array Operations`_
+      - :py:class:`FlattenOperator` 
     * - **reverse** 
-      - See `Other Array Operations`_
+      - :py:class:`ReverseOperator`
     * - **_[i..j]** (Slice)
       - :py:class:`Slice`
     * - **transpose**
-      - See `Other Array Operations`_
-    * - **_ with[_]** (Functional update)
+      - :py:class:`TransposeOperator`
+    * - **_ with [_]** (Functional update)
       - See :doc:`update`    
     * - **pack**
-      - See `Other Array Operations`_
+      - :py:class:`PackOperator`
      
 .. figure:: array_operations.svg
   
@@ -50,21 +52,13 @@ Array operations
 
 .. autoclass:: ProjectionWithDefault
 
-Other array operations
-----------------------
+.. autoclass:: ArrayConcatExpr
 
-Arrays support the **flatten**, **reverse**, **pack**, and **transpose** operations.
+.. autoclass:: ReverseOperator
 
-Operations are implemented by the :py:class:`PrefixPrimitive` with
-an enumeration to select the proper operation.
+.. autoclass:: PackOperator
 
-**transpose** is associated with the :py:class:`Transpose`
-(derives from :py:class:`PrefixPrimitive`) to handle the
-operation parameters.
+.. autoclass:: FlattenOperator
 
+.. autoclass:: TransposeOperator
 
-.. autoclass:: PrefixPrimitive
-
-.. autoclass:: PrefixPrimitiveKind
-
-.. autoclass:: Transpose

@@ -73,7 +73,9 @@ jobs:
   commenter:
     runs-on: ubuntu-latest
     permissions:
+      # Adding read permission to avoid "Resource not accessible by integration" error
       contents: read
+      # Adding write permission to allow commenting on PRs
       pull-requests: write
     steps:
     - name: Suggest to add labels
@@ -95,7 +97,9 @@ jobs:
     name: "Create changelog fragment"
     needs: [labeler]
     permissions:
+      # Adding write permission to allow pushing changelog fragments
       contents: write
+      # Adding write permission to allow creating PRs
       pull-requests: write
     runs-on: ubuntu-latest
     steps:

@@ -10,10 +10,8 @@ on:
       - sync/*
   workflow_dispatch:
 permissions:
-  # Adding read permission to contents to allow checking out the code
-  contents: read
-  # Adding read permission to pull-requests to allow checking PR details
-  pull-requests: read
+  contents: read # Adding read permission to contents to allow checking out the code
+  pull-requests: read # Adding read permission to pull-requests to allow checking PR details
 
 env:
   MAIN_PYTHON_VERSION: '3.10'
@@ -33,10 +31,8 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     permissions:
-      # Adding write permission to contents to allow pushing to gh-pages
-      contents: write
-      # Adding write permission to pull-requests to allow creating PRs
-      pull-requests: write
+      contents: write # Adding write permission to contents to allow pushing to gh-pages
+      pull-requests: write # Adding write permission to pull-requests to allow creating PRs
     steps:
       - uses: ansys/actions/doc-deploy-changelog@v10
         with:
@@ -113,10 +109,8 @@ jobs:
     # Deploy development only when merging or pushing to the 'main' branch
     runs-on: ubuntu-latest
     permissions:
-      # Adding write permission to contents to allow pushing to gh-pages
-      contents: write
-      # Adding write permission to pull-requests to allow creating PRs
-      pull-requests: write
+      contents: write # Adding write permission to contents to allow pushing to gh-pages
+      pull-requests: write # Adding write permission to pull-requests to allow creating PRs
     needs: [build-library]
     if: github.ref == 'refs/heads/main'
     steps:
@@ -133,10 +127,8 @@ jobs:
     # Deploy documentation for PRs, deletes at closure
     runs-on: ubuntu-latest
     permissions:
-      # Adding write permission to contents to allow pushing to gh-pages
-      contents: write
-      # Adding write permission to pull-requests to allow creating PRs
-      pull-requests: write
+      contents: write # Adding write permission to contents to allow pushing to gh-pages
+      pull-requests: write # Adding write permission to pull-requests to allow creating PRs
     needs: doc-build
     if: always() && (needs.doc-build.result == 'success' || needs.doc-build.result == 'skipped')
     steps:
@@ -155,10 +147,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      # Adding write permission to id-token to allow publishing to PyPI
-      id-token: write
-      # Adding write permission to contents to allow creating releases
-      contents: write
+      id-token: write # Adding write permission to id-token to allow publishing to PyPI
+      contents: write # Adding write permission to contents to allow creating releases
     steps:
     
       # Not working yet since PyScadeOne does not have PDF documentation
@@ -187,10 +177,8 @@ jobs:
     # Deploy release documentation when creating a new tag
     runs-on: ubuntu-latest
     permissions:
-      # Adding write permission to contents to allow pushing to gh-pages
-      contents: write
-      # Adding write permission to pull-requests to allow creating PRs
-      pull-requests: write
+      contents: write # Adding write permission to contents to allow pushing to gh-pages
+      pull-requests: write # Adding write permission to pull-requests to allow creating PRs
     needs: [release]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:

@@ -71,6 +71,7 @@ jobs:
         labels: bug
 
   commenter:
+    name: "Suggest to add labels"
     runs-on: ubuntu-latest
     permissions:
       contents: read # Adding read permission to avoid "Resource not accessible by integration" error

@@ -31,10 +31,8 @@ jobs:
     name: Set labels
     needs: [label-syncer]
     permissions:
-      contents: read
-      # Adding read permission to allow checking out the code
-      pull-requests: write
-      # Adding write permission to allow applying labels to PRs
+      contents: read # Adding write permission to allow applying labels to PRs
+      pull-requests: write # Adding read permission to allow checking out the code
     runs-on: ubuntu-latest
     steps:
 

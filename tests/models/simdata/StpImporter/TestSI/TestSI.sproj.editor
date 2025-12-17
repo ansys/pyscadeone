@@ -1,9 +1,0 @@
-{
-  "JobsOrder": [
-    "jobs\\testexec_817a768\\.sjob",
-    "jobs\\simu_c44eaed\\.sjob"
-  ],
-  "ModulesOrder": [
-    "assets\\TestSI.swant"
-  ]
-}

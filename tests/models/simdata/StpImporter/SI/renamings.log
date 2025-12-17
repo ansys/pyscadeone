@@ -1,8 +1,0 @@
-sensor S is now StpImporter::S
-type CMY is now StpImporter::CMY
-constant Minus3 is now StpImporter::Minus3
-node OP is now StpImporter::OP
-constant P1::C is now P1::P1::C
-sensor P1::IS is now P1::P1::IS
-type P1::CMYArray is now P1::P1::CMYArray
-node P1::Op is now P1::P1::Op

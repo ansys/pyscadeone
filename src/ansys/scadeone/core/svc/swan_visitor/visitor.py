@@ -19,10 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# AUTOMATICALLY GENERATED FILE DO NOT EDIT OR MAKE A COPY OF IT
 
 # pylint: disable=too-many-lines, pointless-statement, invalid-name
 from abc import ABC
-from typing import Any, Optional
+from typing import Any, Optional, Union
+from enum import Enum
 
 from ansys.scadeone.core import swan
 
@@ -33,7 +35,13 @@ OwnerProperty = Optional[str]
 
 
 class SwanVisitor(ABC):
-    """Visitor for Swan classes. This class must be derived."""
+    """Base class for visiting Swan elements
+
+    Provides a generic ``_visit`` method that delegates to
+    type-specific ``visit_<ElementType>`` methods.
+
+    Subclass this visitor and override the relevant ``visit_<ElementType>`` methods
+    to customize the behavior for specific elements."""
 
     @staticmethod
     def _is_builtin(obj: Any) -> bool:
@@ -42,13 +50,13 @@ class SwanVisitor(ABC):
         return type(obj).__name__ in ("str", "int", "bool", "float")
 
     def visit(self, swan_obj: swan.SwanItem) -> None:
-        """Entry point. After creation of an instance of
+        """Default visitor main method. After creation of an instance of
         a SwanVisitor, this method must be called on a Swan object instance."""
         self._visit(swan_obj, None, None)
 
     def _visit(
         self,
-        swan_obj: swan.SwanItem,
+        swan_obj: Union[swan.SwanItem, Enum],
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
@@ -57,21 +65,26 @@ class SwanVisitor(ABC):
 
         Parameters
         ----------
-        swan_obj : swan.SwanItem
+        swan_obj : Union[swan.SwanItem, Enum]
             Visited Swan object.
         owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
+            Owner of the swan_obj, 'None' for the root visited object.
         owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
+            Owner property name to know the visit context, 'None' for the root visited object.
         """
         try:
             class_name = swan_obj.__class__.__name__
             fn = getattr(self, f"visit_{class_name}")
         except AttributeError:
-            raise AttributeError(f"{self.__class__.__name__}: no visitor for {type(swan_obj)}")
+            msg = f"{self.__class__.__name__}: no visitor for {type(swan_obj)}"
+            if owner:
+                msg += f" owned by {type(owner)}"
+            if owner_property:
+                msg += f" in property '{owner_property}'"
+            raise AttributeError(msg)
         fn(swan_obj, owner, owner_property)
 
-    # Following methods must be overridden
+    # Following methods should be overridden
 
     def visit_builtin(
         self,
@@ -79,8 +92,7 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Called when visiting a builtin value: `str`, `bool`, `int` or `float`.
-        Override this method."""
+        """Default visitor for builtin value of type `str`, `bool`, `int` or `float`."""
         pass
 
     def visit_SwanItem(
@@ -89,23 +101,55 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Visit of the base class for every Swan constructs.
-        Override this method."""
+        """Default visitor method for every Swan construct."""
         pass
 
-    # Class visitors
+    def visit_HasPragma(
+        self,
+        swan_obj: swan.HasPragma,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default visitor method for classes with pragmas."""
+        self.visit_SwanItem(swan_obj, owner, owner_property)
+        for pragma in swan_obj.pragmas:
+            self.visit_Pragma(pragma, swan_obj, "pragmas")
+
+    def visit_Pragma(
+        self,
+        swan_obj: swan.Pragma,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default Pragma visitor method."""
+        pass
+
+    # Classes visitors
+
     def visit_ActivateClock(
         self,
         swan_obj: swan.ActivateClock,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateClock visitor function. Should be overridden."""
+        """Default ActivateClock visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.clock, swan_obj, "clock")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.clock,
+            swan_obj,
+            "clock",
+        )
 
     def visit_ActivateEvery(
         self,
@@ -113,14 +157,34 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateEvery visitor function. Should be overridden."""
+        """Default ActivateEvery visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.condition, swan_obj, "condition")
-        self.visit_builtin(swan_obj.is_last, swan_obj, "is_last")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.condition,
+            swan_obj,
+            "condition",
+        )
+        self.visit_builtin(
+            swan_obj.is_last,
+            swan_obj,
+            "is_last",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_ActivateIf(
         self,
@@ -128,11 +192,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateIf visitor function. Should be overridden."""
+        """Default ActivateIf visitor method."""
         # Visit base class(es)
-        self.visit_DefByCase(swan_obj, owner, owner_property)
+        self.visit_DefByCase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.if_activation, swan_obj, "if_activation")
+        self._visit(
+            swan_obj.if_activation,
+            swan_obj,
+            "if_activation",
+        )
 
     def visit_ActivateIfBlock(
         self,
@@ -140,9 +212,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateIfBlock visitor function. Should be overridden."""
+        """Default ActivateIfBlock visitor method."""
         # Visit base class(es)
-        self.visit_DefByCaseBlockBase(swan_obj, owner, owner_property)
+        self.visit_DefByCaseBlockBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ActivateWhen(
         self,
@@ -150,13 +226,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateWhen visitor function. Should be overridden."""
+        """Default ActivateWhen visitor method."""
         # Visit base class(es)
-        self.visit_DefByCase(swan_obj, owner, owner_property)
+        self.visit_DefByCase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.condition, swan_obj, "condition")
+        self._visit(
+            swan_obj.condition,
+            swan_obj,
+            "condition",
+        )
         for item in swan_obj.branches:
-            self._visit(item, swan_obj, "branches")
+            self._visit(
+                item,
+                swan_obj,
+                "branches",
+            )
 
     def visit_ActivateWhenBlock(
         self,
@@ -164,9 +252,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateWhenBlock visitor function. Should be overridden."""
+        """Default ActivateWhenBlock visitor method."""
         # Visit base class(es)
-        self.visit_DefByCaseBlockBase(swan_obj, owner, owner_property)
+        self.visit_DefByCaseBlockBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ActivateWhenBranch(
         self,
@@ -174,15 +266,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ActivateWhenBranch visitor function. Should be overridden."""
+        """Default ActivateWhenBranch visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.pattern, swan_obj, "pattern")
-        if isinstance(swan_obj.data_def, swan.Equation):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
-        elif isinstance(swan_obj.data_def, swan.Scope):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
+        self._visit(
+            swan_obj.pattern,
+            swan_obj,
+            "pattern",
+        )
+        self._visit(
+            swan_obj.data_def,
+            swan_obj,
+            "data_def",
+        )  # isinstance(swan_obj.data_def, [swan.Equation, swan.Scope])
 
     def visit_AnonymousOperatorWithDataDefinition(
         self,
@@ -190,19 +291,36 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """AnonymousOperatorWithDataDefinition visitor function. Should be overridden."""
+        """Default AnonymousOperatorWithDataDefinition visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.is_node, swan_obj, "is_node")
+        self.visit_builtin(
+            swan_obj.is_node,
+            swan_obj,
+            "is_node",
+        )
         for item in swan_obj.inputs:
-            self._visit(item, swan_obj, "inputs")
+            self._visit(
+                item,
+                swan_obj,
+                "inputs",
+            )
         for item in swan_obj.outputs:
-            self._visit(item, swan_obj, "outputs")
-        if isinstance(swan_obj.data_def, swan.Equation):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
-        elif isinstance(swan_obj.data_def, swan.Scope):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
+            self._visit(
+                item,
+                swan_obj,
+                "outputs",
+            )
+        self._visit(
+            swan_obj.data_def,
+            swan_obj,
+            "data_def",
+        )  # isinstance(swan_obj.data_def, [swan.Equation, swan.Scope])
 
     def visit_AnonymousOperatorWithExpression(
         self,
@@ -210,16 +328,50 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """AnonymousOperatorWithExpression visitor function. Should be overridden."""
+        """Default AnonymousOperatorWithExpression visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.is_node, swan_obj, "is_node")
+        self.visit_builtin(
+            swan_obj.is_node,
+            swan_obj,
+            "is_node",
+        )
         for item in swan_obj.params:
-            self._visit(item, swan_obj, "params")
+            self._visit(
+                item,
+                swan_obj,
+                "params",
+            )
         for item in swan_obj.sections:
-            self._visit(item, swan_obj, "sections")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+            self._visit(
+                item,
+                swan_obj,
+                "sections",
+            )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+
+    def visit_ArrayConcatExpr(
+        self,
+        swan_obj: swan.ArrayConcatExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ArrayConcatExpr visitor method."""
+        # Visit base class(es)
+        self.visit_BinaryExpr(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ArrayConstructor(
         self,
@@ -227,11 +379,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ArrayConstructor visitor function. Should be overridden."""
+        """Default ArrayConstructor visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.group, swan_obj, "group")
+        self._visit(
+            swan_obj.group,
+            swan_obj,
+            "group",
+        )
 
     def visit_ArrayProjection(
         self,
@@ -239,12 +399,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ArrayProjection visitor function. Should be overridden."""
+        """Default ArrayProjection visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.index, swan_obj, "index")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.index,
+            swan_obj,
+            "index",
+        )
 
     def visit_ArrayRepetition(
         self,
@@ -252,12 +424,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ArrayRepetition visitor function. Should be overridden."""
+        """Default ArrayRepetition visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.size, swan_obj, "size")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.size,
+            swan_obj,
+            "size",
+        )
 
     def visit_ArrayTypeExpression(
         self,
@@ -265,31 +449,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ArrayTypeExpression visitor function. Should be overridden."""
+        """Default ArrayTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
-        self._visit(swan_obj.size, swan_obj, "size")
-
-    def visit_Arrow(
-        self,
-        swan_obj: swan.Arrow,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Arrow visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        # Visit properties
-        if swan_obj.guard is not None:
-            self._visit(swan_obj.guard, swan_obj, "guard")
-        if swan_obj.action is not None:
-            self._visit(swan_obj.action, swan_obj, "action")
-        if swan_obj.target is not None:
-            self._visit(swan_obj.target, swan_obj, "target")
-        if swan_obj.fork is not None:
-            self._visit(swan_obj.fork, swan_obj, "fork")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
+        self._visit(
+            swan_obj.size,
+            swan_obj,
+            "size",
+        )
 
     def visit_AssertSection(
         self,
@@ -297,12 +474,59 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """AssertSection visitor function. Should be overridden."""
+        """Default AssertSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
+        self.visit_AssertionBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_Assertion(
+        self,
+        swan_obj: swan.Assertion,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default Assertion visitor method."""
+        # Visit base class(es)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.luid,
+            swan_obj,
+            "luid",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+
+    def visit_AssertionBase(
+        self,
+        swan_obj: swan.AssertionBase,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default AssertionBase visitor method."""
+        # Visit base class(es)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.assertions:
-            self._visit(item, swan_obj, "assertions")
+            self._visit(
+                item,
+                swan_obj,
+                "assertions",
+            )
 
     def visit_AssumeSection(
         self,
@@ -310,12 +534,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """AssumeSection visitor function. Should be overridden."""
+        """Default AssumeSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
-        # Visit properties
-        for item in swan_obj.hypotheses:
-            self._visit(item, swan_obj, "hypotheses")
+        self.visit_AssertionBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Bar(
         self,
@@ -323,12 +548,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Bar visitor function. Should be overridden."""
+        """Default Bar visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
-        # Visit properties
-        if swan_obj.operation is not None:
-            self._visit(swan_obj.operation, swan_obj, "operation")
+        self.visit_GroupBlock(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_BinaryExpr(
         self,
@@ -336,13 +562,29 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """BinaryExpr visitor function. Should be overridden."""
+        """Default BinaryExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.left, swan_obj, "left")
-        self._visit(swan_obj.right, swan_obj, "right")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.left,
+            swan_obj,
+            "left",
+        )
+        self._visit(
+            swan_obj.right,
+            swan_obj,
+            "right",
+        )
 
     def visit_BinaryOp(
         self,
@@ -382,16 +624,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Block visitor function. Should be overridden."""
+        """Default Block visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.instance, swan.OperatorBase):
-            self._visit(swan_obj.instance, swan_obj, "instance")
-        elif isinstance(swan_obj.instance, swan.OperatorExpression):
-            self._visit(swan_obj.instance, swan_obj, "instance")
-        elif isinstance(swan_obj.instance, swan.ProtectedItem):
-            self._visit(swan_obj.instance, swan_obj, "instance")
+        self._visit(
+            swan_obj.instance,
+            swan_obj,
+            "instance",
+        )  # isinstance(swan_obj.instance, [swan.OperatorInstance, swan.OperatorExpression, swan.ProtectedItem])
 
     def visit_BoolPattern(
         self,
@@ -399,11 +644,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """BoolPattern visitor function. Should be overridden."""
+        """Default BoolPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
     def visit_BoolType(
         self,
@@ -411,9 +664,55 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """BoolType visitor function. Should be overridden."""
+        """Default BoolType visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_BooleanLiteral(
+        self,
+        swan_obj: swan.BooleanLiteral,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default BooleanLiteral visitor method."""
+        # Visit base class(es)
+        self.visit_Literal(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_ByName(
+        self,
+        swan_obj: swan.ByName,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ByName visitor method."""
+        # Visit base class(es)
+        self.visit_GroupBlock(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_ByPos(
+        self,
+        swan_obj: swan.ByPos,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ByPos visitor method."""
+        # Visit base class(es)
+        self.visit_GroupBlock(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_CaseBranch(
         self,
@@ -421,12 +720,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """CaseBranch visitor function. Should be overridden."""
+        """Default CaseBranch visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.pattern, swan_obj, "pattern")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.pattern,
+            swan_obj,
+            "pattern",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_CaseExpr(
         self,
@@ -434,13 +745,39 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """CaseExpr visitor function. Should be overridden."""
+        """Default CaseExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
         for item in swan_obj.branches:
-            self._visit(item, swan_obj, "branches")
+            self._visit(
+                item,
+                swan_obj,
+                "branches",
+            )
+
+    def visit_CharLiteral(
+        self,
+        swan_obj: swan.CharLiteral,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default CharLiteral visitor method."""
+        # Visit base class(es)
+        self.visit_Literal(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_CharPattern(
         self,
@@ -448,11 +785,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """CharPattern visitor function. Should be overridden."""
+        """Default CharPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
     def visit_CharType(
         self,
@@ -460,9 +805,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """CharType visitor function. Should be overridden."""
+        """Default CharType visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ClockExpr(
         self,
@@ -470,15 +819,50 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ClockExpr visitor function. Should be overridden."""
+        """Default ClockExpr visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
-        if swan_obj.is_not is not None:
-            self.visit_builtin(swan_obj.is_not, swan_obj, "is_not")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
+        self.visit_builtin(
+            swan_obj.is_not,
+            swan_obj,
+            "is_not",
+        )
         if swan_obj.pattern is not None:
-            self._visit(swan_obj.pattern, swan_obj, "pattern")
+            self._visit(
+                swan_obj.pattern,
+                swan_obj,
+                "pattern",
+            )
+
+    def visit_Concat(
+        self,
+        swan_obj: swan.Concat,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default Concat visitor method."""
+        # Visit base class(es)
+        self.visit_GroupBlock(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.group,
+            swan_obj,
+            "group",
+        )
 
     def visit_Connection(
         self,
@@ -486,14 +870,26 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Connection visitor function. Should be overridden."""
+        """Default Connection visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.port is not None:
-            self._visit(swan_obj.port, swan_obj, "port")
+            self._visit(
+                swan_obj.port,
+                swan_obj,
+                "port",
+            )
         if swan_obj.adaptation is not None:
-            self._visit(swan_obj.adaptation, swan_obj, "adaptation")
+            self._visit(
+                swan_obj.adaptation,
+                swan_obj,
+                "adaptation",
+            )
 
     def visit_ConstDecl(
         self,
@@ -501,14 +897,26 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ConstDecl visitor function. Should be overridden."""
+        """Default ConstDecl visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.type is not None:
-            self._visit(swan_obj.type, swan_obj, "type")
+            self._visit(
+                swan_obj.type,
+                swan_obj,
+                "type",
+            )
         if swan_obj.value is not None:
-            self._visit(swan_obj.value, swan_obj, "value")
+            self._visit(
+                swan_obj.value,
+                swan_obj,
+                "value",
+            )
 
     def visit_ConstDeclarations(
         self,
@@ -516,12 +924,40 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ConstDeclarations visitor function. Should be overridden."""
+        """Default ConstDeclarations visitor method."""
         # Visit base class(es)
-        self.visit_GlobalDeclaration(swan_obj, owner, owner_property)
+        self.visit_GlobalDeclaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.constants:
-            self._visit(item, swan_obj, "constants")
+            self._visit(
+                item,
+                swan_obj,
+                "constants",
+            )
+
+    def visit_DataSource(
+        self,
+        swan_obj: swan.DataSource,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default DataSource visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
 
     def visit_Declaration(
         self,
@@ -529,11 +965,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Declaration visitor function. Should be overridden."""
+        """Default Declaration visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
 
     def visit_DefBlock(
         self,
@@ -541,14 +985,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """DefBlock visitor function. Should be overridden."""
+        """Default DefBlock visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.lhs, swan.EquationLHS):
-            self._visit(swan_obj.lhs, swan_obj, "lhs")
-        elif isinstance(swan_obj.lhs, swan.ProtectedItem):
-            self._visit(swan_obj.lhs, swan_obj, "lhs")
+        self._visit(
+            swan_obj.lhs,
+            swan_obj,
+            "lhs",
+        )  # isinstance(swan_obj.lhs, [swan.EquationLHS, swan.ProtectedItem])
 
     def visit_DefByCase(
         self,
@@ -556,15 +1005,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """DefByCase visitor function. Should be overridden."""
+        """Default DefByCase visitor method."""
         # Visit base class(es)
-        self.visit_Equation(swan_obj, owner, owner_property)
+        self.visit_Equation(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.lhs is not None:
-            self._visit(swan_obj.lhs, swan_obj, "lhs")
-        if swan_obj.name is not None:
-            self._visit(swan_obj.name, swan_obj, "name")
-        self.visit_builtin(swan_obj.is_equation, swan_obj, "is_equation")
+            self._visit(
+                swan_obj.lhs,
+                swan_obj,
+                "lhs",
+            )
+        if swan_obj.lunum is not None:
+            self._visit(
+                swan_obj.lunum,
+                swan_obj,
+                "lunum",
+            )
+        if swan_obj.luid is not None:
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
 
     def visit_DefByCaseBlockBase(
         self,
@@ -572,11 +1038,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """DefByCaseBlockBase visitor function. Should be overridden."""
+        """Default DefByCaseBlockBase visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.def_by_case, swan_obj, "def_by_case")
+        self._visit(
+            swan_obj.def_by_case,
+            swan_obj,
+            "def_by_case",
+        )
 
     def visit_DefaultPattern(
         self,
@@ -584,9 +1058,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """DefaultPattern visitor function. Should be overridden."""
+        """Default DefaultPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Diagram(
         self,
@@ -594,12 +1072,26 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Diagram visitor function. Should be overridden."""
+        """Default Diagram visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
+        if swan_obj.luid is not None:
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
         for item in swan_obj.objects:
-            self._visit(item, swan_obj, "objects")
+            self._visit(
+                item,
+                swan_obj,
+                "objects",
+            )
 
     def visit_DiagramObject(
         self,
@@ -607,18 +1099,33 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """DiagramObject visitor function. Should be overridden."""
+        """Default DiagramObject visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.lunum is not None:
-            self._visit(swan_obj.lunum, swan_obj, "lunum")
+            self._visit(
+                swan_obj.lunum,
+                swan_obj,
+                "lunum",
+            )
         if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
         if swan_obj.locals is not None:
             for item in swan_obj.locals:
-                self._visit(item, swan_obj, "locals")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "locals",
+                )
 
     def visit_EmissionBody(
         self,
@@ -626,16 +1133,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """EmissionBody visitor function. Should be overridden."""
+        """Default EmissionBody visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.flows:
-            self._visit(item, swan_obj, "flows")
+            self._visit(
+                item,
+                swan_obj,
+                "flows",
+            )
         if swan_obj.condition is not None:
-            self._visit(swan_obj.condition, swan_obj, "condition")
+            self._visit(
+                swan_obj.condition,
+                swan_obj,
+                "condition",
+            )
         if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
 
     def visit_EmitSection(
         self,
@@ -643,12 +1166,40 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """EmitSection visitor function. Should be overridden."""
+        """Default EmitSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.emissions:
-            self._visit(item, swan_obj, "emissions")
+            self._visit(
+                item,
+                swan_obj,
+                "emissions",
+            )
+
+    def visit_EnumTag(
+        self,
+        swan_obj: swan.EnumTag,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default EnumTag visitor method."""
+        # Visit base class(es)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
 
     def visit_EnumTypeDefinition(
         self,
@@ -656,12 +1207,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """EnumTypeDefinition visitor function. Should be overridden."""
+        """Default EnumTypeDefinition visitor method."""
         # Visit base class(es)
-        self.visit_TypeDefinition(swan_obj, owner, owner_property)
+        self.visit_TypeDefinition(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.tags:
-            self._visit(item, swan_obj, "tags")
+            self._visit(
+                item,
+                swan_obj,
+                "tags",
+            )
 
     def visit_Equation(
         self,
@@ -669,9 +1228,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Equation visitor function. Should be overridden."""
+        """Default Equation visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_EquationLHS(
         self,
@@ -679,14 +1242,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """EquationLHS visitor function. Should be overridden."""
+        """Default EquationLHS visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.lhs_items:
-            self._visit(item, swan_obj, "lhs_items")
-        if swan_obj.is_partial_lhs is not None:
-            self.visit_builtin(swan_obj.is_partial_lhs, swan_obj, "is_partial_lhs")
+            self._visit(
+                item,
+                swan_obj,
+                "lhs_items",
+            )
+        self.visit_builtin(
+            swan_obj.is_partial_lhs,
+            swan_obj,
+            "is_partial_lhs",
+        )
 
     def visit_ExprBlock(
         self,
@@ -694,11 +1268,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ExprBlock visitor function. Should be overridden."""
+        """Default ExprBlock visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_ExprEquation(
         self,
@@ -706,14 +1288,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ExprEquation visitor function. Should be overridden."""
+        """Default ExprEquation visitor method."""
         # Visit base class(es)
-        self.visit_Equation(swan_obj, owner, owner_property)
+        self.visit_Equation(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.lhs, swan_obj, "lhs")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.lhs,
+            swan_obj,
+            "lhs",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
         if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
 
     def visit_ExprTypeDefinition(
         self,
@@ -721,11 +1319,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ExprTypeDefinition visitor function. Should be overridden."""
+        """Default ExprTypeDefinition visitor method."""
         # Visit base class(es)
-        self.visit_TypeDefinition(swan_obj, owner, owner_property)
+        self.visit_TypeDefinition(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_Expression(
         self,
@@ -733,9 +1339,27 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Expression visitor function. Should be overridden."""
+        """Default Expression visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_FlattenOperator(
+        self,
+        swan_obj: swan.FlattenOperator,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default FlattenOperator visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Float32Type(
         self,
@@ -743,9 +1367,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Float32Type visitor function. Should be overridden."""
+        """Default Float32Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Float64Type(
         self,
@@ -753,9 +1381,27 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Float64Type visitor function. Should be overridden."""
+        """Default Float64Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_FloatLiteral(
+        self,
+        swan_obj: swan.FloatLiteral,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default FloatLiteral visitor method."""
+        # Visit base class(es)
+        self.visit_Literal(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Fork(
         self,
@@ -763,67 +1409,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Fork visitor function. Should be overridden."""
+        """Default Fork visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-
-    def visit_ForkPriorityList(
-        self,
-        swan_obj: swan.ForkPriorityList,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """ForkPriorityList visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_Fork(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        for item in swan_obj.prio_forks:
-            self._visit(item, swan_obj, "prio_forks")
-
-    def visit_ForkTree(
-        self,
-        swan_obj: swan.ForkTree,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """ForkTree visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_Fork(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.if_arrow, swan_obj, "if_arrow")
-        if swan_obj.elsif_arrows is not None:
-            for item in swan_obj.elsif_arrows:
-                self._visit(item, swan_obj, "elsif_arrows")
-        if swan_obj.else_arrow is not None:
-            self._visit(swan_obj.else_arrow, swan_obj, "else_arrow")
-
-    def visit_ForkWithPriority(
-        self,
-        swan_obj: swan.ForkWithPriority,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """ForkWithPriority visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        # Visit properties
-        if swan_obj.priority is not None:
-            self._visit(swan_obj.priority, swan_obj, "priority")
-        self._visit(swan_obj.arrow, swan_obj, "arrow")
-        self.visit_builtin(swan_obj.is_if_arrow, swan_obj, "is_if_arrow")
-
-    def visit_FormalProperty(
-        self,
-        swan_obj: swan.FormalProperty,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """FormalProperty visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.luid, swan_obj, "luid")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        for item in swan_obj.transitions:
+            self._visit(
+                item,
+                swan_obj,
+                "transitions",
+            )
 
     def visit_Forward(
         self,
@@ -831,18 +1430,43 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Forward visitor function. Should be overridden."""
+        """Default Forward visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.state, swan_obj, "state")
+        if swan_obj.restart is not None:
+            self.visit_builtin(
+                swan_obj.restart,
+                swan_obj,
+                "restart",
+            )
         for item in swan_obj.dimensions:
-            self._visit(item, swan_obj, "dimensions")
-        self._visit(swan_obj.body, swan_obj, "body")
+            self._visit(
+                item,
+                swan_obj,
+                "dimensions",
+            )
+        self._visit(
+            swan_obj.body,
+            swan_obj,
+            "body",
+        )
         for item in swan_obj.returns:
-            self._visit(item, swan_obj, "returns")
+            self._visit(
+                item,
+                swan_obj,
+                "returns",
+            )
         if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
 
     def visit_ForwardArrayClause(
         self,
@@ -850,14 +1474,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardArrayClause visitor function. Should be overridden."""
+        """Default ForwardArrayClause visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.return_clause, swan.ForwardItemClause):
-            self._visit(swan_obj.return_clause, swan_obj, "return_clause")
-        elif isinstance(swan_obj.return_clause, swan.ForwardArrayClause):
-            self._visit(swan_obj.return_clause, swan_obj, "return_clause")
+        self._visit(
+            swan_obj.return_clause,
+            swan_obj,
+            "return_clause",
+        )  # isinstance(swan_obj.return_clause, [swan.ForwardItemClause, swan.ForwardArrayClause])
 
     def visit_ForwardBody(
         self,
@@ -865,16 +1494,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardBody visitor function. Should be overridden."""
+        """Default ForwardBody visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.body:
-            self._visit(item, swan_obj, "body")
+            self._visit(
+                item,
+                swan_obj,
+                "body",
+            )
         if swan_obj.unless_expr is not None:
-            self._visit(swan_obj.unless_expr, swan_obj, "unless_expr")
+            self._visit(
+                swan_obj.unless_expr,
+                swan_obj,
+                "unless_expr",
+            )
         if swan_obj.until_expr is not None:
-            self._visit(swan_obj.until_expr, swan_obj, "until_expr")
+            self._visit(
+                swan_obj.until_expr,
+                swan_obj,
+                "until_expr",
+            )
 
     def visit_ForwardDim(
         self,
@@ -882,19 +1527,39 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardDim visitor function. Should be overridden."""
+        """Default ForwardDim visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.expr is not None:
-            self._visit(swan_obj.expr, swan_obj, "expr")
+            self._visit(
+                swan_obj.expr,
+                swan_obj,
+                "expr",
+            )
         if swan_obj.dim_id is not None:
-            self._visit(swan_obj.dim_id, swan_obj, "dim_id")
+            self._visit(
+                swan_obj.dim_id,
+                swan_obj,
+                "dim_id",
+            )
         if swan_obj.elems is not None:
             for item in swan_obj.elems:
-                self._visit(item, swan_obj, "elems")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "elems",
+                )
         if swan_obj.protected is not None:
-            self.visit_builtin(swan_obj.protected, swan_obj, "protected")
+            self.visit_builtin(
+                swan_obj.protected,
+                swan_obj,
+                "protected",
+            )
 
     def visit_ForwardElement(
         self,
@@ -902,12 +1567,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardElement visitor function. Should be overridden."""
+        """Default ForwardElement visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.lhs, swan_obj, "lhs")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.lhs,
+            swan_obj,
+            "lhs",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_ForwardItemClause(
         self,
@@ -915,13 +1592,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardItemClause visitor function. Should be overridden."""
+        """Default ForwardItemClause visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
         if swan_obj.last_default is not None:
-            self._visit(swan_obj.last_default, swan_obj, "last_default")
+            self._visit(
+                swan_obj.last_default,
+                swan_obj,
+                "last_default",
+            )
 
     def visit_ForwardLHS(
         self,
@@ -929,14 +1618,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardLHS visitor function. Should be overridden."""
+        """Default ForwardLHS visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.lhs, swan.Identifier):
-            self._visit(swan_obj.lhs, swan_obj, "lhs")
-        elif isinstance(swan_obj.lhs, swan.ForwardLHS):
-            self._visit(swan_obj.lhs, swan_obj, "lhs")
+        self._visit(
+            swan_obj.lhs,
+            swan_obj,
+            "lhs",
+        )  # isinstance(swan_obj.lhs, [swan.Identifier, swan.ForwardLHS])
 
     def visit_ForwardLastDefault(
         self,
@@ -944,16 +1638,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardLastDefault visitor function. Should be overridden."""
+        """Default ForwardLastDefault visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.last is not None:
-            self._visit(swan_obj.last, swan_obj, "last")
+            self._visit(
+                swan_obj.last,
+                swan_obj,
+                "last",
+            )
         if swan_obj.default is not None:
-            self._visit(swan_obj.default, swan_obj, "default")
+            self._visit(
+                swan_obj.default,
+                swan_obj,
+                "default",
+            )
         if swan_obj.shared is not None:
-            self._visit(swan_obj.shared, swan_obj, "shared")
+            self._visit(
+                swan_obj.shared,
+                swan_obj,
+                "shared",
+            )
 
     def visit_ForwardReturnArrayClause(
         self,
@@ -961,13 +1671,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardReturnArrayClause visitor function. Should be overridden."""
+        """Default ForwardReturnArrayClause visitor method."""
         # Visit base class(es)
-        self.visit_ForwardReturnItem(swan_obj, owner, owner_property)
+        self.visit_ForwardReturnItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.array_clause, swan_obj, "array_clause")
+        self._visit(
+            swan_obj.array_clause,
+            swan_obj,
+            "array_clause",
+        )
         if swan_obj.return_id is not None:
-            self._visit(swan_obj.return_id, swan_obj, "return_id")
+            self._visit(
+                swan_obj.return_id,
+                swan_obj,
+                "return_id",
+            )
 
     def visit_ForwardReturnItem(
         self,
@@ -975,9 +1697,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardReturnItem visitor function. Should be overridden."""
+        """Default ForwardReturnItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ForwardReturnItemClause(
         self,
@@ -985,24 +1711,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ForwardReturnItemClause visitor function. Should be overridden."""
+        """Default ForwardReturnItemClause visitor method."""
         # Visit base class(es)
-        self.visit_ForwardReturnItem(swan_obj, owner, owner_property)
+        self.visit_ForwardReturnItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.item_clause, swan_obj, "item_clause")
-
-    def visit_ForwardState(
-        self,
-        swan_obj: swan.ForwardState,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ):
-        """ForwardState visitor function. Should be overridden."""
-        # Enum values:
-        # Nothing
-        # Restart
-        # Resume
-        pass
+        self._visit(
+            swan_obj.item_clause,
+            swan_obj,
+            "item_clause",
+        )
 
     def visit_FunctionalUpdate(
         self,
@@ -1010,13 +1731,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """FunctionalUpdate visitor function. Should be overridden."""
+        """Default FunctionalUpdate visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self.visit_builtin(
+            swan_obj.is_starred,
+            swan_obj,
+            "is_starred",
+        )
         for item in swan_obj.modifiers:
-            self._visit(item, swan_obj, "modifiers")
+            self._visit(
+                item,
+                swan_obj,
+                "modifiers",
+            )
 
     def visit_GlobalDeclaration(
         self,
@@ -1024,9 +1762,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GlobalDeclaration visitor function. Should be overridden."""
+        """Default GlobalDeclaration visitor method."""
         # Visit base class(es)
-        self.visit_ModuleItem(swan_obj, owner, owner_property)
+        self.visit_ModuleItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Group(
         self,
@@ -1034,12 +1776,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Group visitor function. Should be overridden."""
+        """Default Group visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.items:
-            self._visit(item, swan_obj, "items")
+            self._visit(
+                item,
+                swan_obj,
+                "items",
+            )
 
     def visit_GroupAdaptation(
         self,
@@ -1047,12 +1797,34 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupAdaptation visitor function. Should be overridden."""
+        """Default GroupAdaptation visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.renamings:
-            self._visit(item, swan_obj, "renamings")
+            self._visit(
+                item,
+                swan_obj,
+                "renamings",
+            )
+
+    def visit_GroupBlock(
+        self,
+        swan_obj: swan.GroupBlock,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default GroupBlock visitor method."""
+        # Visit base class(es)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_GroupConstructor(
         self,
@@ -1060,11 +1832,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupConstructor visitor function. Should be overridden."""
+        """Default GroupConstructor visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.group, swan_obj, "group")
+        self._visit(
+            swan_obj.group,
+            swan_obj,
+            "group",
+        )
 
     def visit_GroupDecl(
         self,
@@ -1072,11 +1852,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupDecl visitor function. Should be overridden."""
+        """Default GroupDecl visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_GroupDeclarations(
         self,
@@ -1084,12 +1872,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupDeclarations visitor function. Should be overridden."""
+        """Default GroupDeclarations visitor method."""
         # Visit base class(es)
-        self.visit_GlobalDeclaration(swan_obj, owner, owner_property)
+        self.visit_GlobalDeclaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.groups:
-            self._visit(item, swan_obj, "groups")
+            self._visit(
+                item,
+                swan_obj,
+                "groups",
+            )
 
     def visit_GroupItem(
         self,
@@ -1097,13 +1893,39 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupItem visitor function. Should be overridden."""
+        """Default GroupItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
         if swan_obj.label is not None:
-            self._visit(swan_obj.label, swan_obj, "label")
+            self._visit(
+                swan_obj.label,
+                swan_obj,
+                "label",
+            )
+
+    def visit_GroupNormalize(
+        self,
+        swan_obj: swan.GroupNormalize,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default GroupNormalize visitor method."""
+        # Visit base class(es)
+        self.visit_GroupBlock(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_GroupOperation(
         self,
@@ -1125,12 +1947,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupProjection visitor function. Should be overridden."""
+        """Default GroupProjection visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.adaptation, swan_obj, "adaptation")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.adaptation,
+            swan_obj,
+            "adaptation",
+        )
 
     def visit_GroupRenaming(
         self,
@@ -1138,19 +1972,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupRenaming visitor function. Should be overridden."""
+        """Default GroupRenaming visitor method."""
         # Visit base class(es)
-        self.visit_GroupRenamingBase(swan_obj, owner, owner_property)
+        self.visit_GroupRenamingBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.source, swan.Identifier):
-            self._visit(swan_obj.source, swan_obj, "source")
-        elif isinstance(swan_obj.source, swan.Literal):
-            self._visit(swan_obj.source, swan_obj, "source")
-
+        self._visit(
+            swan_obj.source,
+            swan_obj,
+            "source",
+        )  # isinstance(swan_obj.source, [swan.Identifier, swan.Literal])
         if swan_obj.renaming is not None:
-            self._visit(swan_obj.renaming, swan_obj, "renaming")
-        if swan_obj.is_shortcut is not None:
-            self.visit_builtin(swan_obj.is_shortcut, swan_obj, "is_shortcut")
+            self._visit(
+                swan_obj.renaming,
+                swan_obj,
+                "renaming",
+            )
+        self.visit_builtin(
+            swan_obj.is_shortcut,
+            swan_obj,
+            "is_shortcut",
+        )
 
     def visit_GroupRenamingBase(
         self,
@@ -1158,9 +2003,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupRenamingBase visitor function. Should be overridden."""
+        """Default GroupRenamingBase visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_GroupTypeExpression(
         self,
@@ -1168,9 +2017,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupTypeExpression visitor function. Should be overridden."""
+        """Default GroupTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_GroupTypeExpressionList(
         self,
@@ -1178,14 +2031,26 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GroupTypeExpressionList visitor function. Should be overridden."""
+        """Default GroupTypeExpressionList visitor method."""
         # Visit base class(es)
-        self.visit_GroupTypeExpression(swan_obj, owner, owner_property)
+        self.visit_GroupTypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.positional:
-            self._visit(item, swan_obj, "positional")
+            self._visit(
+                item,
+                swan_obj,
+                "positional",
+            )
         for item in swan_obj.named:
-            self._visit(item, swan_obj, "named")
+            self._visit(
+                item,
+                swan_obj,
+                "named",
+            )
 
     def visit_GuaranteeSection(
         self,
@@ -1193,12 +2058,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """GuaranteeSection visitor function. Should be overridden."""
+        """Default GuaranteeSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
-        # Visit properties
-        for item in swan_obj.guarantees:
-            self._visit(item, swan_obj, "guarantees")
+        self.visit_AssertionBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Identifier(
         self,
@@ -1206,16 +2072,29 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Identifier visitor function. Should be overridden."""
+        """Default Identifier visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
-        if swan_obj.comment is not None:
-            self.visit_builtin(swan_obj.comment, swan_obj, "comment")
-        if swan_obj.is_name is not None:
-            self.visit_builtin(swan_obj.is_name, swan_obj, "is_name")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
+        self.visit_builtin(
+            swan_obj.comment,
+            swan_obj,
+            "comment",
+        )
+        self.visit_builtin(
+            swan_obj.is_name,
+            swan_obj,
+            "is_name",
+        )
 
     def visit_IfActivation(
         self,
@@ -1223,12 +2102,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfActivation visitor function. Should be overridden."""
+        """Default IfActivation visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.branches:
-            self._visit(item, swan_obj, "branches")
+            self._visit(
+                item,
+                swan_obj,
+                "branches",
+            )
 
     def visit_IfActivationBranch(
         self,
@@ -1236,13 +2123,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfActivationBranch visitor function. Should be overridden."""
+        """Default IfActivationBranch visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.condition is not None:
-            self._visit(swan_obj.condition, swan_obj, "condition")
-        self._visit(swan_obj.branch, swan_obj, "branch")
+            self._visit(
+                swan_obj.condition,
+                swan_obj,
+                "condition",
+            )
+        self._visit(
+            swan_obj.branch,
+            swan_obj,
+            "branch",
+        )
 
     def visit_IfteBranch(
         self,
@@ -1250,9 +2149,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfteBranch visitor function. Should be overridden."""
+        """Default IfteBranch visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_IfteDataDef(
         self,
@@ -1260,14 +2163,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfteDataDef visitor function. Should be overridden."""
+        """Default IfteDataDef visitor method."""
         # Visit base class(es)
-        self.visit_IfteBranch(swan_obj, owner, owner_property)
+        self.visit_IfteBranch(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.data_def, swan.Equation):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
-        elif isinstance(swan_obj.data_def, swan.Scope):
-            self._visit(swan_obj.data_def, swan_obj, "data_def")
+        self._visit(
+            swan_obj.data_def,
+            swan_obj,
+            "data_def",
+        )  # isinstance(swan_obj.data_def, [swan.Equation, swan.Scope])
 
     def visit_IfteExpr(
         self,
@@ -1275,13 +2183,29 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfteExpr visitor function. Should be overridden."""
+        """Default IfteExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.cond_expr, swan_obj, "cond_expr")
-        self._visit(swan_obj.then_expr, swan_obj, "then_expr")
-        self._visit(swan_obj.else_expr, swan_obj, "else_expr")
+        self._visit(
+            swan_obj.cond_expr,
+            swan_obj,
+            "cond_expr",
+        )
+        self._visit(
+            swan_obj.then_expr,
+            swan_obj,
+            "then_expr",
+        )
+        self._visit(
+            swan_obj.else_expr,
+            swan_obj,
+            "else_expr",
+        )
 
     def visit_IfteIfActivation(
         self,
@@ -1289,11 +2213,33 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IfteIfActivation visitor function. Should be overridden."""
+        """Default IfteIfActivation visitor method."""
         # Visit base class(es)
-        self.visit_IfteBranch(swan_obj, owner, owner_property)
+        self.visit_IfteBranch(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.if_activation, swan_obj, "if_activation")
+        self._visit(
+            swan_obj.if_activation,
+            swan_obj,
+            "if_activation",
+        )
+
+    def visit_InitialValueExpr(
+        self,
+        swan_obj: swan.InitialValueExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default InitialValueExpr visitor method."""
+        # Visit base class(es)
+        self.visit_BinaryExpr(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Int16Type(
         self,
@@ -1301,9 +2247,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Int16Type visitor function. Should be overridden."""
+        """Default Int16Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Int32Type(
         self,
@@ -1311,9 +2261,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Int32Type visitor function. Should be overridden."""
+        """Default Int32Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Int64Type(
         self,
@@ -1321,9 +2275,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Int64Type visitor function. Should be overridden."""
+        """Default Int64Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Int8Type(
         self,
@@ -1331,9 +2289,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Int8Type visitor function. Should be overridden."""
+        """Default Int8Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_IntPattern(
         self,
@@ -1341,13 +2303,38 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """IntPattern visitor function. Should be overridden."""
+        """Default IntPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
-        if swan_obj.is_minus is not None:
-            self.visit_builtin(swan_obj.is_minus, swan_obj, "is_minus")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
+        self.visit_builtin(
+            swan_obj.is_minus,
+            swan_obj,
+            "is_minus",
+        )
+
+    def visit_IntegerLiteral(
+        self,
+        swan_obj: swan.IntegerLiteral,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default IntegerLiteral visitor method."""
+        # Visit base class(es)
+        self.visit_Literal(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Iterator(
         self,
@@ -1355,12 +2342,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Iterator visitor function. Should be overridden."""
+        """Default Iterator visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.kind, swan_obj, "kind")
-        self._visit(swan_obj.operator, swan_obj, "operator")
+        self._visit(
+            swan_obj.kind,
+            swan_obj,
+            "kind",
+        )
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )  # isinstance(swan_obj.operator, [swan.OperatorInstance, swan.ProtectedOpExpr])
 
     def visit_IteratorKind(
         self,
@@ -1384,14 +2383,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """LHSItem visitor function. Should be overridden."""
+        """Default LHSItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.id, swan.Identifier):
-            self._visit(swan_obj.id, swan_obj, "id")
-        elif SwanVisitor._is_builtin(swan_obj.id):
-            self.visit_builtin(swan_obj.id, swan_obj, "id")
+        if swan_obj.id is not None:
+            self._visit(
+                swan_obj.id,
+                swan_obj,
+                "id",
+            )
 
     def visit_LabelOrIndex(
         self,
@@ -1399,14 +2404,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """LabelOrIndex visitor function. Should be overridden."""
+        """Default LabelOrIndex visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.value, swan.Identifier):
-            self._visit(swan_obj.value, swan_obj, "value")
-        elif isinstance(swan_obj.value, swan.Expression):
-            self._visit(swan_obj.value, swan_obj, "value")
+        self._visit(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )  # isinstance(swan_obj.value, [swan.Identifier, swan.Expression])
 
     def visit_LastExpr(
         self,
@@ -1414,11 +2424,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """LastExpr visitor function. Should be overridden."""
+        """Default LastExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
 
     def visit_LetSection(
         self,
@@ -1426,12 +2444,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """LetSection visitor function. Should be overridden."""
+        """Default LetSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.equations:
-            self._visit(item, swan_obj, "equations")
+            self._visit(
+                item,
+                swan_obj,
+                "equations",
+            )
 
     def visit_Literal(
         self,
@@ -1439,25 +2465,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Literal visitor function. Should be overridden."""
+        """Default Literal visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
-
-    def visit_LiteralKind(
-        self,
-        swan_obj: swan.LiteralKind,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ):
-        """LiteralKind visitor function. Should be overridden."""
-        # Enum values:
-        # Bool
-        # Char
-        # Numeric
-        # Error
-        pass
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
     def visit_Luid(
         self,
@@ -1465,11 +2485,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Luid visitor function. Should be overridden."""
+        """Default Luid visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
     def visit_Lunum(
         self,
@@ -1477,11 +2505,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Lunum visitor function. Should be overridden."""
+        """Default Lunum visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.value, swan_obj, "value")
+        self.visit_builtin(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
     def visit_Merge(
         self,
@@ -1489,12 +2525,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Merge visitor function. Should be overridden."""
+        """Default Merge visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.params:
-            self._visit(item, swan_obj, "params")
+            self._visit(
+                item,
+                swan_obj,
+                "params",
+            )
 
     def visit_Modifier(
         self,
@@ -1502,17 +2546,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Modifier visitor function. Should be overridden."""
+        """Default Modifier visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if isinstance(swan_obj.modifier, list):
             for item in swan_obj.modifier:
-                self._visit(item, swan_obj, "modifier")
-        elif SwanVisitor._is_builtin(swan_obj.modifier):
-            self.visit_builtin(swan_obj.modifier, swan_obj, "modifier")
-
-        self._visit(swan_obj.expr, swan_obj, "expr")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "modifier",
+                )
+        else:  # SwanVisitor._is_builtin(swan_obj.modifier)
+            self.visit_builtin(
+                swan_obj.modifier,
+                swan_obj,
+                "modifier",
+            )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_Module(
         self,
@@ -1520,15 +2579,33 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Module visitor function. Should be overridden."""
+        """Default Module visitor method."""
         # Visit base class(es)
-        self.visit_ModuleBase(swan_obj, owner, owner_property)
+        self.visit_ModuleBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.name, swan_obj, "name")
-        for item in swan_obj.use_directives:
-            self._visit(item, swan_obj, "use_directives")
-        for item in swan_obj.declarations:
-            self._visit(item, swan_obj, "declarations")
+        self._visit(
+            swan_obj.name,
+            swan_obj,
+            "name",
+        )
+        if swan_obj.use_directives is not None:
+            for item in swan_obj.use_directives:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "use_directives",
+                )
+        if swan_obj.declarations is not None:
+            for item in swan_obj.declarations:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "declarations",
+                )
 
     def visit_ModuleBase(
         self,
@@ -1536,9 +2613,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ModuleBase visitor function. Should be overridden."""
+        """Default ModuleBase visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ModuleBody(
         self,
@@ -1546,9 +2627,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ModuleBody visitor function. Should be overridden."""
+        """Default ModuleBody visitor method."""
         # Visit base class(es)
-        self.visit_Module(swan_obj, owner, owner_property)
+        self.visit_Module(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ModuleInterface(
         self,
@@ -1556,9 +2641,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ModuleInterface visitor function. Should be overridden."""
+        """Default ModuleInterface visitor method."""
         # Visit base class(es)
-        self.visit_Module(swan_obj, owner, owner_property)
+        self.visit_Module(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ModuleItem(
         self,
@@ -1566,9 +2655,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ModuleItem visitor function. Should be overridden."""
+        """Default ModuleItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_NAryOperator(
         self,
@@ -1576,11 +2669,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """NAryOperator visitor function. Should be overridden."""
+        """Default NAryOperator visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
 
     def visit_NamedGroupTypeExpression(
         self,
@@ -1588,12 +2689,44 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """NamedGroupTypeExpression visitor function. Should be overridden."""
+        """Default NamedGroupTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_GroupTypeExpression(swan_obj, owner, owner_property)
+        self.visit_GroupTypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.label, swan_obj, "label")
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.label,
+            swan_obj,
+            "label",
+        )
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
+
+    def visit_NamedInstance(
+        self,
+        swan_obj: swan.NamedInstance,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default NamedInstance visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.path_id,
+            swan_obj,
+            "path_id",
+        )
 
     def visit_NaryOp(
         self,
@@ -1610,6 +2743,7 @@ class SwanVisitor(ABC):
         # And
         # Or
         # Xor
+        # Lxor
         # Concat
         pass
 
@@ -1619,12 +2753,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """NumericCast visitor function. Should be overridden."""
+        """Default NumericCast visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_NumericKind(
         self,
@@ -1641,33 +2787,102 @@ class SwanVisitor(ABC):
         # Float
         pass
 
-    def visit_Operator(
+    def visit_OperatorDeclaration(
         self,
-        swan_obj: swan.Operator,
+        swan_obj: swan.OperatorDeclaration,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Operator visitor function. Should be overridden."""
+        """Default OperatorDeclaration visitor method."""
         # Visit base class(es)
-        self.visit_OperatorSignatureBase(swan_obj, owner, owner_property)
-        # Visit properties
-        if isinstance(swan_obj.body, swan.Scope):
-            self._visit(swan_obj.body, swan_obj, "body")
-        elif isinstance(swan_obj.body, swan.Equation):
-            self._visit(swan_obj.body, swan_obj, "body")
+        self.visit_OperatorDeclarationDefinitionBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
-    def visit_OperatorBase(
+    def visit_OperatorDeclarationDefinitionBase(
         self,
-        swan_obj: swan.OperatorBase,
+        swan_obj: swan.OperatorDeclarationDefinitionBase,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """OperatorBase visitor function. Should be overridden."""
+        """Default OperatorDeclarationDefinitionBase visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ModuleItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        for item in swan_obj.sizes:
-            self._visit(item, swan_obj, "sizes")
+        self.visit_builtin(
+            swan_obj.is_inlined,
+            swan_obj,
+            "is_inlined",
+        )
+        self.visit_builtin(
+            swan_obj.is_node,
+            swan_obj,
+            "is_node",
+        )
+        for item in swan_obj.inputs:
+            self._visit(
+                item,
+                swan_obj,
+                "inputs",
+            )
+        for item in swan_obj.outputs:
+            self._visit(
+                item,
+                swan_obj,
+                "outputs",
+            )
+        if swan_obj.size_parameters is not None:
+            for item in swan_obj.size_parameters:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "size_parameters",
+                )
+        if swan_obj.type_constraints is not None:
+            for item in swan_obj.type_constraints:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "type_constraints",
+                )
+        if swan_obj.specialization is not None:
+            self._visit(
+                swan_obj.specialization,
+                swan_obj,
+                "specialization",
+            )
+
+    def visit_OperatorDefinition(
+        self,
+        swan_obj: swan.OperatorDefinition,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default OperatorDefinition visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorDeclarationDefinitionBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        if swan_obj.body is not None:
+            self._visit(
+                swan_obj.body,
+                swan_obj,
+                "body",
+            )  # isinstance(swan_obj.body, [swan.Scope, swan.Equation])
 
     def visit_OperatorExpression(
         self,
@@ -1675,9 +2890,33 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """OperatorExpression visitor function. Should be overridden."""
+        """Default OperatorExpression visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_OperatorExpressionInstance(
+        self,
+        swan_obj: swan.OperatorExpressionInstance,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default OperatorExpressionInstance visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.op_expr,
+            swan_obj,
+            "op_expr",
+        )
 
     def visit_OperatorInstance(
         self,
@@ -1685,43 +2924,51 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """OperatorInstance visitor function. Should be overridden."""
+        """Default OperatorInstance visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.params, swan_obj, "params")
-        if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
+        for item in swan_obj.sizes:
+            self._visit(
+                item,
+                swan_obj,
+                "sizes",
+            )
 
-    def visit_OperatorSignatureBase(
+    def visit_OperatorInstanceApplication(
         self,
-        swan_obj: swan.OperatorSignatureBase,
+        swan_obj: swan.OperatorInstanceApplication,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """OperatorSignatureBase visitor function. Should be overridden."""
+        """Default OperatorInstanceApplication visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
-        self.visit_ModuleItem(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.is_inlined, swan_obj, "is_inlined")
-        self.visit_builtin(swan_obj.is_node, swan_obj, "is_node")
-        for item in swan_obj.inputs:
-            self._visit(item, swan_obj, "inputs")
-        for item in swan_obj.outputs:
-            self._visit(item, swan_obj, "outputs")
-        if swan_obj.sizes is not None:
-            for item in swan_obj.sizes:
-                self._visit(item, swan_obj, "sizes")
-        if swan_obj.constraints is not None:
-            for item in swan_obj.constraints:
-                self._visit(item, swan_obj, "constraints")
-        if swan_obj.specialization is not None:
-            self._visit(swan_obj.specialization, swan_obj, "specialization")
-        if swan_obj.pragmas is not None:
-            for item in swan_obj.pragmas:
-                self._visit(item, swan_obj, "pragmas")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.params,
+            swan_obj,
+            "params",
+        )
+        if swan_obj.luid is not None:
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
 
     def visit_OptGroupItem(
         self,
@@ -1729,12 +2976,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """OptGroupItem visitor function. Should be overridden."""
+        """Default OptGroupItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.item is not None:
-            self._visit(swan_obj.item, swan_obj, "item")
+            self._visit(
+                swan_obj.item,
+                swan_obj,
+                "item",
+            )
 
     def visit_Oracle(
         self,
@@ -1742,25 +2997,59 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Oracle visitor function. Should be overridden."""
+        """Default Oracle visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
 
-    def visit_Partial(
+    def visit_PackOperator(
         self,
-        swan_obj: swan.Partial,
+        swan_obj: swan.PackOperator,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Partial visitor function. Should be overridden."""
+        """Default PackOperator visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+
+    def visit_PartialOperator(
+        self,
+        swan_obj: swan.PartialOperator,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default PartialOperator visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
         for item in swan_obj.partial_group:
-            self._visit(item, swan_obj, "partial_group")
+            self._visit(
+                item,
+                swan_obj,
+                "partial_group",
+            )
 
     def visit_PathIdExpr(
         self,
@@ -1768,24 +3057,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PathIdExpr visitor function. Should be overridden."""
+        """Default PathIdExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.path_id, swan_obj, "path_id")
-
-    def visit_PathIdOpCall(
-        self,
-        swan_obj: swan.PathIdOpCall,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """PathIdOpCall visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_OperatorBase(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.path_id, swan_obj, "path_id")
+        self._visit(
+            swan_obj.path_id,
+            swan_obj,
+            "path_id",
+        )
 
     def visit_PathIdPattern(
         self,
@@ -1793,11 +3077,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PathIdPattern visitor function. Should be overridden."""
+        """Default PathIdPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.path_id, swan_obj, "path_id")
+        self._visit(
+            swan_obj.path_id,
+            swan_obj,
+            "path_id",
+        )
 
     def visit_PathIdentifier(
         self,
@@ -1805,15 +3097,27 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PathIdentifier visitor function. Should be overridden."""
+        """Default PathIdentifier visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if isinstance(swan_obj.path_id, list):
             for item in swan_obj.path_id:
-                self._visit(item, swan_obj, "path_id")
-        elif SwanVisitor._is_builtin(swan_obj.path_id):
-            self.visit_builtin(swan_obj.path_id, swan_obj, "path_id")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "path_id",
+                )
+        else:  # SwanVisitor._is_builtin(swan_obj.path_id)
+            self.visit_builtin(
+                swan_obj.path_id,
+                swan_obj,
+                "path_id",
+            )
 
     def visit_Pattern(
         self,
@@ -1821,9 +3125,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Pattern visitor function. Should be overridden."""
+        """Default Pattern visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_PortExpr(
         self,
@@ -1831,38 +3139,74 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PortExpr visitor function. Should be overridden."""
+        """Default PortExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.lunum is not None:
-            self._visit(swan_obj.lunum, swan_obj, "lunum")
+            self._visit(
+                swan_obj.lunum,
+                swan_obj,
+                "lunum",
+            )
         if swan_obj.luid is not None:
-            self._visit(swan_obj.luid, swan_obj, "luid")
-        if swan_obj.is_self is not None:
-            self.visit_builtin(swan_obj.is_self, swan_obj, "is_self")
+            self._visit(
+                swan_obj.luid,
+                swan_obj,
+                "luid",
+            )
+        self.visit_builtin(
+            swan_obj.is_self,
+            swan_obj,
+            "is_self",
+        )
 
-    def visit_Pragma(
+    def visit_PragmaKey(
         self,
-        swan_obj: swan.Pragma,
+        swan_obj: swan.PragmaKey,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ):
+        """PragmaKey visitor function. Should be overridden."""
+        # Enum values:
+        # SWT
+        # CG
+        # DIAGRAM
+        # REQUIREMENT
+        # DOC
+        pass
+
+    def visit_PreExpr(
+        self,
+        swan_obj: swan.PreExpr,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Pragma visitor function. Should be overridden."""
-        # Visit properties
-        self.visit_builtin(swan_obj.pragma, swan_obj, "pragma")
+        """Default PreExpr visitor method."""
+        # Visit base class(es)
+        self.visit_UnaryExpr(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
-    def visit_PragmaBase(
+    def visit_PreWithInitialValueExpr(
         self,
-        swan_obj: swan.PragmaBase,
+        swan_obj: swan.PreWithInitialValueExpr,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PragmaBase visitor function. Should be overridden."""
-        # Visit properties
-        if swan_obj.pragmas is not None:
-            for item in swan_obj.pragmas:
-                self._visit(item, swan_obj, "pragmas")
+        """Default PreWithInitialValueExpr visitor method."""
+        # Visit base class(es)
+        self.visit_BinaryExpr(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_PredefinedType(
         self,
@@ -1870,47 +3214,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """PredefinedType visitor function. Should be overridden."""
+        """Default PredefinedType visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
-
-    def visit_PrefixOperatorExpression(
-        self,
-        swan_obj: swan.PrefixOperatorExpression,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """PrefixOperatorExpression visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_OperatorBase(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.op_expr, swan_obj, "op_expr")
-
-    def visit_PrefixPrimitive(
-        self,
-        swan_obj: swan.PrefixPrimitive,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """PrefixPrimitive visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_OperatorBase(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.kind, swan_obj, "kind")
-
-    def visit_PrefixPrimitiveKind(
-        self,
-        swan_obj: swan.PrefixPrimitiveKind,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ):
-        """PrefixPrimitiveKind visitor function. Should be overridden."""
-        # Enum values:
-        # Flatten
-        # Pack
-        # Reverse
-        # Transpose
-        pass
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProjectionWithDefault(
         self,
@@ -1918,14 +3228,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProjectionWithDefault visitor function. Should be overridden."""
+        """Default ProjectionWithDefault visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
         for item in swan_obj.indices:
-            self._visit(item, swan_obj, "indices")
-        self._visit(swan_obj.default, swan_obj, "default")
+            self._visit(
+                item,
+                swan_obj,
+                "indices",
+            )
+        self._visit(
+            swan_obj.default,
+            swan_obj,
+            "default",
+        )
 
     def visit_ProtectedDecl(
         self,
@@ -1933,10 +3259,23 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedDecl visitor function. Should be overridden."""
+        """Default ProtectedDecl visitor method."""
         # Visit base class(es)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
-        self.visit_GlobalDeclaration(swan_obj, owner, owner_property)
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_GlobalDeclaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedExpr(
         self,
@@ -1944,10 +3283,18 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedExpr visitor function. Should be overridden."""
+        """Default ProtectedExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedForwardReturnItem(
         self,
@@ -1955,10 +3302,18 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedForwardReturnItem visitor function. Should be overridden."""
+        """Default ProtectedForwardReturnItem visitor method."""
         # Visit base class(es)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
-        self.visit_ForwardReturnItem(swan_obj, owner, owner_property)
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ForwardReturnItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedGroupRenaming(
         self,
@@ -1966,10 +3321,18 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedGroupRenaming visitor function. Should be overridden."""
+        """Default ProtectedGroupRenaming visitor method."""
         # Visit base class(es)
-        self.visit_GroupRenamingBase(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_GroupRenamingBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedItem(
         self,
@@ -1977,13 +3340,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedItem visitor function. Should be overridden."""
+        """Default ProtectedItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self.visit_builtin(swan_obj.data, swan_obj, "data")
-        if swan_obj.markup is not None:
-            self.visit_builtin(swan_obj.markup, swan_obj, "markup")
+        self.visit_builtin(
+            swan_obj.data,
+            swan_obj,
+            "data",
+        )
+        self.visit_builtin(
+            swan_obj.markup,
+            swan_obj,
+            "markup",
+        )
 
     def visit_ProtectedOpExpr(
         self,
@@ -1991,10 +3365,18 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedOpExpr visitor function. Should be overridden."""
+        """Default ProtectedOpExpr visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedPattern(
         self,
@@ -2002,10 +3384,18 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedPattern visitor function. Should be overridden."""
+        """Default ProtectedPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedSection(
         self,
@@ -2013,21 +3403,37 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedSection visitor function. Should be overridden."""
+        """Default ProtectedSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
-    def visit_ProtectedTypeExpr(
+    def visit_ProtectedTypeExpression(
         self,
-        swan_obj: swan.ProtectedTypeExpr,
+        swan_obj: swan.ProtectedTypeExpression,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedTypeExpr visitor function. Should be overridden."""
+        """Default ProtectedTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_ProtectedVariable(
         self,
@@ -2035,23 +3441,62 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ProtectedVariable visitor function. Should be overridden."""
+        """Default ProtectedVariable visitor method."""
         # Visit base class(es)
-        self.visit_Variable(swan_obj, owner, owner_property)
-        self.visit_ProtectedItem(swan_obj, owner, owner_property)
+        self.visit_Variable(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ProtectedItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
-    def visit_Restart(
+    def visit_RestartOperator(
         self,
-        swan_obj: swan.Restart,
+        swan_obj: swan.RestartOperator,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Restart visitor function. Should be overridden."""
+        """Default RestartOperator visitor method."""
         # Visit base class(es)
-        self.visit_OperatorExpression(swan_obj, owner, owner_property)
+        self.visit_OperatorExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.condition, swan_obj, "condition")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.condition,
+            swan_obj,
+            "condition",
+        )
+
+    def visit_ReverseOperator(
+        self,
+        swan_obj: swan.ReverseOperator,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ReverseOperator visitor method."""
+        # Visit base class(es)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Scope(
         self,
@@ -2059,14 +3504,21 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Scope visitor function. Should be overridden."""
+        """Default Scope visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.sections is not None:
             for item in swan_obj.sections:
-                self._visit(item, swan_obj, "sections")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "sections",
+                )
 
     def visit_ScopeSection(
         self,
@@ -2074,21 +3526,33 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """ScopeSection visitor function. Should be overridden."""
+        """Default ScopeSection visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
-    def visit_SectionBlock(
+    def visit_SectionObject(
         self,
-        swan_obj: swan.SectionBlock,
+        swan_obj: swan.SectionObject,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """SectionBlock visitor function. Should be overridden."""
+        """Default SectionObject visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.section, swan_obj, "section")
+        self._visit(
+            swan_obj.section,
+            swan_obj,
+            "section",
+        )
 
     def visit_SensorDecl(
         self,
@@ -2096,11 +3560,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """SensorDecl visitor function. Should be overridden."""
+        """Default SensorDecl visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_SensorDeclarations(
         self,
@@ -2108,12 +3580,40 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """SensorDeclarations visitor function. Should be overridden."""
+        """Default SensorDeclarations visitor method."""
         # Visit base class(es)
-        self.visit_GlobalDeclaration(swan_obj, owner, owner_property)
+        self.visit_GlobalDeclaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.sensors:
-            self._visit(item, swan_obj, "sensors")
+            self._visit(
+                item,
+                swan_obj,
+                "sensors",
+            )
+
+    def visit_SetSensorBlock(
+        self,
+        swan_obj: swan.SetSensorBlock,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default SetSensorBlock visitor method."""
+        # Visit base class(es)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.sensor,
+            swan_obj,
+            "sensor",
+        )  # isinstance(swan_obj.sensor, [swan.PathIdentifier, swan.ProtectedItem])
 
     def visit_SetSensorEquation(
         self,
@@ -2121,22 +3621,38 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """SetSensorEquation visitor function. Should be overridden."""
+        """Default SetSensorEquation visitor method."""
         # Visit base class(es)
-        self.visit_Equation(swan_obj, owner, owner_property)
+        self.visit_Equation(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.sensor, swan_obj, "sensor")
-        self._visit(swan_obj.value, swan_obj, "value")
+        self._visit(
+            swan_obj.sensor,
+            swan_obj,
+            "sensor",
+        )
+        self._visit(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
 
-    def visit_Signature(
+    def visit_SizeParameter(
         self,
-        swan_obj: swan.Signature,
+        swan_obj: swan.SizeParameter,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Signature visitor function. Should be overridden."""
+        """Default SizeParameter visitor method."""
         # Visit base class(es)
-        self.visit_OperatorSignatureBase(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_SizedTypeExpression(
         self,
@@ -2144,12 +3660,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """SizedTypeExpression visitor function. Should be overridden."""
+        """Default SizedTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.size, swan_obj, "size")
-        self.visit_builtin(swan_obj.is_signed, swan_obj, "is_signed")
+        self._visit(
+            swan_obj.size,
+            swan_obj,
+            "size",
+        )
+        self.visit_builtin(
+            swan_obj.is_signed,
+            swan_obj,
+            "is_signed",
+        )
 
     def visit_Slice(
         self,
@@ -2157,25 +3685,29 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Slice visitor function. Should be overridden."""
+        """Default Slice visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.start, swan_obj, "start")
-        self._visit(swan_obj.end, swan_obj, "end")
-
-    def visit_Source(
-        self,
-        swan_obj: swan.Source,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Source visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.start,
+            swan_obj,
+            "start",
+        )
+        self._visit(
+            swan_obj.end,
+            swan_obj,
+            "end",
+        )
 
     def visit_State(
         self,
@@ -2183,26 +3715,51 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """State visitor function. Should be overridden."""
+        """Default State visitor method."""
         # Visit base class(es)
-        self.visit_StateMachineItem(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
+        self.visit_StateMachineItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.id is not None:
-            self._visit(swan_obj.id, swan_obj, "id")
+            self._visit(
+                swan_obj.id,
+                swan_obj,
+                "id",
+            )
         if swan_obj.lunum is not None:
-            self._visit(swan_obj.lunum, swan_obj, "lunum")
-        if swan_obj.strong_transitions is not None:
-            for item in swan_obj.strong_transitions:
-                self._visit(item, swan_obj, "strong_transitions")
-        if swan_obj.sections is not None:
-            for item in swan_obj.sections:
-                self._visit(item, swan_obj, "sections")
-        if swan_obj.weak_transitions is not None:
-            for item in swan_obj.weak_transitions:
-                self._visit(item, swan_obj, "weak_transitions")
-        if swan_obj.is_initial is not None:
-            self.visit_builtin(swan_obj.is_initial, swan_obj, "is_initial")
+            self._visit(
+                swan_obj.lunum,
+                swan_obj,
+                "lunum",
+            )
+        if swan_obj.in_state_strong_transition_decls is not None:
+            for item in swan_obj.in_state_strong_transition_decls:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "in_state_strong_transition_decls",
+                )
+        if swan_obj.body is not None:
+            self._visit(
+                swan_obj.body,
+                swan_obj,
+                "body",
+            )
+        if swan_obj.in_state_weak_transition_decls is not None:
+            for item in swan_obj.in_state_weak_transition_decls:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "in_state_weak_transition_decls",
+                )
+        self.visit_builtin(
+            swan_obj.is_initial,
+            swan_obj,
+            "is_initial",
+        )
 
     def visit_StateMachine(
         self,
@@ -2210,13 +3767,21 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StateMachine visitor function. Should be overridden."""
+        """Default StateMachine visitor method."""
         # Visit base class(es)
-        self.visit_DefByCase(swan_obj, owner, owner_property)
+        self.visit_DefByCase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.items is not None:
             for item in swan_obj.items:
-                self._visit(item, swan_obj, "items")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "items",
+                )
 
     def visit_StateMachineBlock(
         self,
@@ -2224,9 +3789,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StateMachineBlock visitor function. Should be overridden."""
+        """Default StateMachineBlock visitor method."""
         # Visit base class(es)
-        self.visit_DefByCaseBlockBase(swan_obj, owner, owner_property)
+        self.visit_DefByCaseBlockBase(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_StateMachineItem(
         self,
@@ -2234,9 +3803,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StateMachineItem visitor function. Should be overridden."""
+        """Default StateMachineItem visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_StateRef(
         self,
@@ -2244,14 +3817,26 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StateRef visitor function. Should be overridden."""
+        """Default StateRef visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if swan_obj.lunum is not None:
-            self._visit(swan_obj.lunum, swan_obj, "lunum")
         if swan_obj.id is not None:
-            self._visit(swan_obj.id, swan_obj, "id")
+            self._visit(
+                swan_obj.id,
+                swan_obj,
+                "id",
+            )
+        if swan_obj.lunum is not None:
+            self._visit(
+                swan_obj.lunum,
+                swan_obj,
+                "lunum",
+            )
 
     def visit_StructConstructor(
         self,
@@ -2259,13 +3844,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StructConstructor visitor function. Should be overridden."""
+        """Default StructConstructor visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.group, swan_obj, "group")
+        self._visit(
+            swan_obj.group,
+            swan_obj,
+            "group",
+        )
         if swan_obj.type is not None:
-            self._visit(swan_obj.type, swan_obj, "type")
+            self._visit(
+                swan_obj.type,
+                swan_obj,
+                "type",
+            )
 
     def visit_StructDestructor(
         self,
@@ -2273,12 +3870,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StructDestructor visitor function. Should be overridden."""
+        """Default StructDestructor visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.group, swan_obj, "group")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.group_id,
+            swan_obj,
+            "group_id",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_StructField(
         self,
@@ -2286,12 +3895,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StructField visitor function. Should be overridden."""
+        """Default StructField visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_StructProjection(
         self,
@@ -2299,12 +3920,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StructProjection visitor function. Should be overridden."""
+        """Default StructProjection visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.label, swan_obj, "label")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.label,
+            swan_obj,
+            "label",
+        )
 
     def visit_StructTypeDefinition(
         self,
@@ -2312,26 +3945,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """StructTypeDefinition visitor function. Should be overridden."""
+        """Default StructTypeDefinition visitor method."""
         # Visit base class(es)
-        self.visit_TypeDefinition(swan_obj, owner, owner_property)
+        self.visit_TypeDefinition(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.fields:
-            self._visit(item, swan_obj, "fields")
-
-    def visit_Target(
-        self,
-        swan_obj: swan.Target,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Target visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.target, swan_obj, "target")
-        if swan_obj.is_resume is not None:
-            self.visit_builtin(swan_obj.is_resume, swan_obj, "is_resume")
+            self._visit(
+                item,
+                swan_obj,
+                "fields",
+            )
 
     def visit_TestHarness(
         self,
@@ -2339,16 +3966,25 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TestHarness visitor function. Should be overridden."""
+        """Default TestHarness visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
-        self.visit_ModuleItem(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ModuleItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if isinstance(swan_obj.body, swan.Scope):
-            self._visit(swan_obj.body, swan_obj, "body")
-        elif isinstance(swan_obj.body, swan.Equation):
-            self._visit(swan_obj.body, swan_obj, "body")
+        if swan_obj.body is not None:
+            self._visit(
+                swan_obj.body,
+                swan_obj,
+                "body",
+            )  # isinstance(swan_obj.body, [swan.Scope, swan.Equation])
 
     def visit_TestModule(
         self,
@@ -2356,9 +3992,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TestModule visitor function. Should be overridden."""
+        """Default TestModule visitor method."""
         # Visit base class(es)
-        self.visit_Module(swan_obj, owner, owner_property)
+        self.visit_Module(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Transition(
         self,
@@ -2366,44 +4006,81 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Transition visitor function. Should be overridden."""
+        """Default Transition visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
-        self.visit_PragmaBase(swan_obj, owner, owner_property)
-        # Visit properties
-        self._visit(swan_obj.arrow, swan_obj, "arrow")
-
-    def visit_TransitionDecl(
-        self,
-        swan_obj: swan.TransitionDecl,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """TransitionDecl visitor function. Should be overridden."""
-        # Visit base class(es)
-        self.visit_StateMachineItem(swan_obj, owner, owner_property)
+        self.visit_StateMachineItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.priority is not None:
-            self._visit(swan_obj.priority, swan_obj, "priority")
-        self._visit(swan_obj.transition, swan_obj, "transition")
-        self.visit_builtin(swan_obj.is_strong, swan_obj, "is_strong")
-        self._visit(swan_obj.state_ref, swan_obj, "state_ref")
+            self._visit(
+                swan_obj.priority,
+                swan_obj,
+                "priority",
+            )
+        self.visit_builtin(
+            swan_obj.is_strong,
+            swan_obj,
+            "is_strong",
+        )
+        if swan_obj.guard is not None:
+            self._visit(
+                swan_obj.guard,
+                swan_obj,
+                "guard",
+            )
+        if swan_obj.action is not None:
+            self._visit(
+                swan_obj.action,
+                swan_obj,
+                "action",
+            )
+        self._visit(
+            swan_obj.target,
+            swan_obj,
+            "target",
+        )  # isinstance(swan_obj.target, [swan.StateRef, swan.Fork])
+        if swan_obj.source is not None:
+            self._visit(
+                swan_obj.source,
+                swan_obj,
+                "source",
+            )
+        self.visit_builtin(
+            swan_obj.is_resume,
+            swan_obj,
+            "is_resume",
+        )
 
-    def visit_Transpose(
+    def visit_TransposeOperator(
         self,
-        swan_obj: swan.Transpose,
+        swan_obj: swan.TransposeOperator,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Transpose visitor function. Should be overridden."""
+        """Default TransposeOperator visitor method."""
         # Visit base class(es)
-        self.visit_PrefixPrimitive(swan_obj, owner, owner_property)
+        self.visit_OperatorInstance(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if isinstance(swan_obj.params, list):
             for item in swan_obj.params:
-                self.visit_builtin(item, swan_obj, "params")
-        elif SwanVisitor._is_builtin(swan_obj.params):
-            self.visit_builtin(swan_obj.params, swan_obj, "params")
+                self.visit_builtin(
+                    item,
+                    swan_obj,
+                    "params",
+                )
+        else:  # SwanVisitor._is_builtin(swan_obj.params)
+            self.visit_builtin(
+                swan_obj.params,
+                swan_obj,
+                "params",
+            )
 
     def visit_TypeConstraint(
         self,
@@ -2411,17 +4088,32 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeConstraint visitor function. Should be overridden."""
+        """Default TypeConstraint visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if isinstance(swan_obj.type_vars, list):
             for item in swan_obj.type_vars:
-                self._visit(item, swan_obj, "type_vars")
-        elif SwanVisitor._is_builtin(swan_obj.type_vars):
-            self.visit_builtin(swan_obj.type_vars, swan_obj, "type_vars")
-
-        self._visit(swan_obj.kind, swan_obj, "kind")
+                self._visit(
+                    item,
+                    swan_obj,
+                    "type_vars",
+                )
+        else:  # SwanVisitor._is_builtin(swan_obj.type_vars)
+            self.visit_builtin(
+                swan_obj.type_vars,
+                swan_obj,
+                "type_vars",
+            )
+        self._visit(
+            swan_obj.kind,
+            swan_obj,
+            "kind",
+        )
 
     def visit_TypeDecl(
         self,
@@ -2429,12 +4121,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeDecl visitor function. Should be overridden."""
+        """Default TypeDecl visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         if swan_obj.definition is not None:
-            self._visit(swan_obj.definition, swan_obj, "definition")
+            self._visit(
+                swan_obj.definition,
+                swan_obj,
+                "definition",
+            )
 
     def visit_TypeDeclarations(
         self,
@@ -2442,12 +4142,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeDeclarations visitor function. Should be overridden."""
+        """Default TypeDeclarations visitor method."""
         # Visit base class(es)
-        self.visit_GlobalDeclaration(swan_obj, owner, owner_property)
+        self.visit_GlobalDeclaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.types:
-            self._visit(item, swan_obj, "types")
+            self._visit(
+                item,
+                swan_obj,
+                "types",
+            )
 
     def visit_TypeDefinition(
         self,
@@ -2455,9 +4163,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeDefinition visitor function. Should be overridden."""
+        """Default TypeDefinition visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_TypeExpression(
         self,
@@ -2465,9 +4177,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeExpression visitor function. Should be overridden."""
+        """Default TypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_TypeGroupTypeExpression(
         self,
@@ -2475,11 +4191,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeGroupTypeExpression visitor function. Should be overridden."""
+        """Default TypeGroupTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_GroupTypeExpression(swan_obj, owner, owner_property)
+        self.visit_GroupTypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_TypeReferenceExpression(
         self,
@@ -2487,11 +4211,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """TypeReferenceExpression visitor function. Should be overridden."""
+        """Default TypeReferenceExpression visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.alias, swan_obj, "alias")
+        self._visit(
+            swan_obj.alias,
+            swan_obj,
+            "alias",
+        )
 
     def visit_Uint16Type(
         self,
@@ -2499,9 +4231,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Uint16Type visitor function. Should be overridden."""
+        """Default Uint16Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Uint32Type(
         self,
@@ -2509,9 +4245,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Uint32Type visitor function. Should be overridden."""
+        """Default Uint32Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Uint64Type(
         self,
@@ -2519,9 +4259,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Uint64Type visitor function. Should be overridden."""
+        """Default Uint64Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_Uint8Type(
         self,
@@ -2529,9 +4273,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Uint8Type visitor function. Should be overridden."""
+        """Default Uint8Type visitor method."""
         # Visit base class(es)
-        self.visit_PredefinedType(swan_obj, owner, owner_property)
+        self.visit_PredefinedType(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_UnaryExpr(
         self,
@@ -2539,12 +4287,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """UnaryExpr visitor function. Should be overridden."""
+        """Default UnaryExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(
+            swan_obj.operator,
+            swan_obj,
+            "operator",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_UnaryOp(
         self,
@@ -2559,6 +4319,7 @@ class SwanVisitor(ABC):
         # Lnot
         # Not
         # Pre
+        # Bang
         pass
 
     def visit_UnderscorePattern(
@@ -2567,9 +4328,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """UnderscorePattern visitor function. Should be overridden."""
+        """Default UnderscorePattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_UseDirective(
         self,
@@ -2577,13 +4342,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """UseDirective visitor function. Should be overridden."""
+        """Default UseDirective visitor method."""
         # Visit base class(es)
-        self.visit_ModuleItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_ModuleItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.path, swan_obj, "path")
+        self._visit(
+            swan_obj.path,
+            swan_obj,
+            "path",
+        )
         if swan_obj.alias is not None:
-            self._visit(swan_obj.alias, swan_obj, "alias")
+            self._visit(
+                swan_obj.alias,
+                swan_obj,
+                "alias",
+            )
 
     def visit_VarDecl(
         self,
@@ -2591,23 +4373,59 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VarDecl visitor function. Should be overridden."""
+        """Default VarDecl visitor method."""
         # Visit base class(es)
-        self.visit_Declaration(swan_obj, owner, owner_property)
-        self.visit_Variable(swan_obj, owner, owner_property)
+        self.visit_Declaration(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        self.visit_Variable(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        if swan_obj.is_clock is not None:
-            self.visit_builtin(swan_obj.is_clock, swan_obj, "is_clock")
-        if swan_obj.is_probe is not None:
-            self.visit_builtin(swan_obj.is_probe, swan_obj, "is_probe")
+        self.visit_builtin(
+            swan_obj.is_clock,
+            swan_obj,
+            "is_clock",
+        )
+        self.visit_builtin(
+            swan_obj.is_starred,
+            swan_obj,
+            "is_starred",
+        )
+        if swan_obj.at is not None:
+            self._visit(
+                swan_obj.at,
+                swan_obj,
+                "at",
+            )
         if swan_obj.type is not None:
-            self._visit(swan_obj.type, swan_obj, "type")
+            self._visit(
+                swan_obj.type,
+                swan_obj,
+                "type",
+            )
         if swan_obj.when is not None:
-            self._visit(swan_obj.when, swan_obj, "when")
+            self._visit(
+                swan_obj.when,
+                swan_obj,
+                "when",
+            )
         if swan_obj.default is not None:
-            self._visit(swan_obj.default, swan_obj, "default")
+            self._visit(
+                swan_obj.default,
+                swan_obj,
+                "default",
+            )
         if swan_obj.last is not None:
-            self._visit(swan_obj.last, swan_obj, "last")
+            self._visit(
+                swan_obj.last,
+                swan_obj,
+                "last",
+            )
 
     def visit_VarSection(
         self,
@@ -2615,12 +4433,20 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VarSection visitor function. Should be overridden."""
+        """Default VarSection visitor method."""
         # Visit base class(es)
-        self.visit_ScopeSection(swan_obj, owner, owner_property)
+        self.visit_ScopeSection(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.var_decls:
-            self._visit(item, swan_obj, "var_decls")
+            self._visit(
+                item,
+                swan_obj,
+                "var_decls",
+            )
 
     def visit_Variable(
         self,
@@ -2628,9 +4454,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Variable visitor function. Should be overridden."""
+        """Default Variable visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_VariableTypeExpression(
         self,
@@ -2638,23 +4468,39 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariableTypeExpression visitor function. Should be overridden."""
+        """Default VariableTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_TypeExpression(swan_obj, owner, owner_property)
+        self.visit_TypeExpression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.name, swan_obj, "name")
+        self._visit(
+            swan_obj.name,
+            swan_obj,
+            "name",
+        )
 
-    def visit_VariantComponent(
+    def visit_VariantConstructor(
         self,
-        swan_obj: swan.VariantComponent,
+        swan_obj: swan.VariantConstructor,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantComponent visitor function. Should be overridden."""
+        """Default VariantConstructor visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(swan_obj, owner, owner_property)
+        self.visit_HasPragma(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.tag, swan_obj, "tag")
+        self._visit(
+            swan_obj.tag,
+            swan_obj,
+            "tag",
+        )
 
     def visit_VariantPattern(
         self,
@@ -2662,15 +4508,30 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantPattern visitor function. Should be overridden."""
+        """Default VariantPattern visitor method."""
         # Visit base class(es)
-        self.visit_Pattern(swan_obj, owner, owner_property)
+        self.visit_Pattern(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.path_id, swan_obj, "path_id")
+        self._visit(
+            swan_obj.path_id,
+            swan_obj,
+            "path_id",
+        )
         if swan_obj.captured is not None:
-            self._visit(swan_obj.captured, swan_obj, "captured")
-        if swan_obj.underscore is not None:
-            self.visit_builtin(swan_obj.underscore, swan_obj, "underscore")
+            self._visit(
+                swan_obj.captured,
+                swan_obj,
+                "captured",
+            )
+        self.visit_builtin(
+            swan_obj.is_underscore,
+            swan_obj,
+            "is_underscore",
+        )
 
     def visit_VariantSimple(
         self,
@@ -2678,9 +4539,13 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantSimple visitor function. Should be overridden."""
+        """Default VariantSimple visitor method."""
         # Visit base class(es)
-        self.visit_VariantComponent(swan_obj, owner, owner_property)
+        self.visit_VariantConstructor(
+            swan_obj,
+            owner,
+            owner_property,
+        )
 
     def visit_VariantStruct(
         self,
@@ -2688,12 +4553,19 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantStruct visitor function. Should be overridden."""
+        """Default VariantStruct visitor method."""
         # Visit base class(es)
-        self.visit_VariantComponent(swan_obj, owner, owner_property)
+        self.visit_VariantConstructor(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        for item in swan_obj.fields:
-            self._visit(item, swan_obj, "fields")
+        self._visit(
+            swan_obj.structure_type,
+            swan_obj,
+            "structure_type",
+        )
 
     def visit_VariantTypeDefinition(
         self,
@@ -2701,24 +4573,40 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantTypeDefinition visitor function. Should be overridden."""
+        """Default VariantTypeDefinition visitor method."""
         # Visit base class(es)
-        self.visit_TypeDefinition(swan_obj, owner, owner_property)
+        self.visit_TypeDefinition(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         for item in swan_obj.tags:
-            self._visit(item, swan_obj, "tags")
+            self._visit(
+                item,
+                swan_obj,
+                "tags",
+            )
 
-    def visit_VariantTypeExpr(
+    def visit_VariantTypeExpression(
         self,
-        swan_obj: swan.VariantTypeExpr,
+        swan_obj: swan.VariantTypeExpression,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantTypeExpr visitor function. Should be overridden."""
+        """Default VariantTypeExpression visitor method."""
         # Visit base class(es)
-        self.visit_VariantComponent(swan_obj, owner, owner_property)
+        self.visit_VariantConstructor(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.type, swan_obj, "type")
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_VariantValue(
         self,
@@ -2726,12 +4614,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """VariantValue visitor function. Should be overridden."""
+        """Default VariantValue visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.tag, swan_obj, "tag")
-        self._visit(swan_obj.group, swan_obj, "group")
+        self._visit(
+            swan_obj.tag,
+            swan_obj,
+            "tag",
+        )
+        self._visit(
+            swan_obj.group,
+            swan_obj,
+            "group",
+        )
 
     def visit_WhenClockExpr(
         self,
@@ -2739,12 +4639,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """WhenClockExpr visitor function. Should be overridden."""
+        """Default WhenClockExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.clock, swan_obj, "clock")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.clock,
+            swan_obj,
+            "clock",
+        )
 
     def visit_WhenMatchExpr(
         self,
@@ -2752,12 +4664,24 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """WhenMatchExpr visitor function. Should be overridden."""
+        """Default WhenMatchExpr visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.when, swan_obj, "when")
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.when,
+            swan_obj,
+            "when",
+        )
 
     def visit_Window(
         self,
@@ -2765,13 +4689,29 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Window visitor function. Should be overridden."""
+        """Default Window visitor method."""
         # Visit base class(es)
-        self.visit_Expression(swan_obj, owner, owner_property)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.size, swan_obj, "size")
-        self._visit(swan_obj.init, swan_obj, "init")
-        self._visit(swan_obj.params, swan_obj, "params")
+        self._visit(
+            swan_obj.size,
+            swan_obj,
+            "size",
+        )
+        self._visit(
+            swan_obj.init,
+            swan_obj,
+            "init",
+        )
+        self._visit(
+            swan_obj.params,
+            swan_obj,
+            "params",
+        )
 
     def visit_Wire(
         self,
@@ -2779,10 +4719,22 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Wire visitor function. Should be overridden."""
+        """Default Wire visitor method."""
         # Visit base class(es)
-        self.visit_DiagramObject(swan_obj, owner, owner_property)
+        self.visit_DiagramObject(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
-        self._visit(swan_obj.source, swan_obj, "source")
+        self._visit(
+            swan_obj.source,
+            swan_obj,
+            "source",
+        )
         for item in swan_obj.targets:
-            self._visit(item, swan_obj, "targets")
+            self._visit(
+                item,
+                swan_obj,
+                "targets",
+            )

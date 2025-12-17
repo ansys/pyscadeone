@@ -29,14 +29,14 @@ from ansys.scadeone.core.svc.swan_creator import ScadeOneFactory
 class TestModelCreator:
     def test_create_invalid_module_by_name(self):
         with pytest.raises(swan.ScadeOneException):
-            ScadeOneFactory().module.create_module("module$")
+            ScadeOneFactory().module.create_module_body("module$")
 
     def test_create_invalid_module_by_path(self):
         with pytest.raises(swan.ScadeOneException):
-            ScadeOneFactory().module.create_module("module::$")
+            ScadeOneFactory().module.create_module_body("module::$")
 
-    def test_create_module(self):
-        module = ScadeOneFactory().module.create_module("module")
+    def test_create_module_body(self):
+        module = ScadeOneFactory().module.create_module_body("module")
         assert module is not None
         assert swan.swan_to_str(module.name) == "module"
 
@@ -46,6 +46,11 @@ class TestModelCreator:
         assert swan.swan_to_str(module.name) == "module"
 
     def test_create_module_namespace(self):
-        module = ScadeOneFactory().module.create_module("lib::submodule::module")
+        module = ScadeOneFactory().module.create_module_body("lib::submodule::module")
         assert module is not None
         assert swan.swan_to_str(module.name) == "lib::submodule::module"
+
+    def test_create_test_module(self):
+        test_module = ScadeOneFactory().module.create_test_module("test_module")
+        assert test_module is not None
+        assert swan.swan_to_str(test_module.name) == "test_module"

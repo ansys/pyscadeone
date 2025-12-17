@@ -21,10 +21,12 @@
 # SOFTWARE.
 
 import logging
+import platform
 
 import pytest
-
-import ansys.scadeone.core.swan as S
+from ansys.scadeone.core import ScadeOne
+import ansys.scadeone.core.swan as Swan
+from ansys.scadeone.core.model.model import SwanParser
 
 
 # Unit test logger => './unit_tests.log'
@@ -44,9 +46,16 @@ def cc_project():
 
 
 # scadeone "installation" path for tests
+# Note: on linux, one can install Scade One somewhere and create a symbolic link
+# with "ln -s <my location> /usr/local/lib/ScadeOne"
 @pytest.fixture(scope="session")
 def scadeone_install_path():
-    return "C:/Scade One"
+    return "C:/Scade One" if platform.system() == "Windows" else "/usr/local/lib/ScadeOne"
+
+
+@pytest.fixture(scope="session")
+def app(scadeone_install_path):
+    return ScadeOne(scadeone_install_path)
 
 
 #######################################
@@ -68,7 +77,7 @@ def make_identifier():
         if reset:
             count["ctr"] = 0
         count["ctr"] += 1
-        return S.Identifier(f"ID{count['ctr']}")
+        return Swan.Identifier(f"ID{count['ctr']}")
 
     return _make_identifier
 
@@ -81,7 +90,7 @@ def make_identifier():
 @pytest.fixture
 def make_path_identifier(make_identifier):
     def _make_path_identifier(reset=False):
-        return S.PathIdentifier([make_identifier(reset), make_identifier(), make_identifier()])
+        return Swan.PathIdentifier([make_identifier(reset), make_identifier(), make_identifier()])
 
     return _make_path_identifier
 
@@ -95,10 +104,10 @@ def make_path_identifier(make_identifier):
 def make_simple_type():
     def _make_simple_type(type_name):
         if type_name == "int":
-            return S.Int32Type()
+            return Swan.Int32Type()
         elif type_name == "float":
-            return S.Float32Type()
-        return S.BoolType()
+            return Swan.Float32Type()
+        return Swan.BoolType()
 
     return _make_simple_type
 
@@ -106,8 +115,8 @@ def make_simple_type():
 # Create the type expression: {a: int8}
 @pytest.fixture
 def make_boxed_int8():
-    f = S.StructField(S.Identifier("a"), S.Int8Type())
-    return S.StructTypeDefinition([f])
+    f = Swan.StructField(Swan.Identifier("a"), Swan.Int8Type())
+    return Swan.StructTypeDefinition([f])
 
 
 # Create a type variable 'T1, 'T2, ...
@@ -118,7 +127,7 @@ def make_type_var():
     def _make_type_var():
         count["ctr"] += 1
 
-        return S.VariableTypeExpression(S.Identifier(f"T{count['ctr']}", is_name=True))
+        return Swan.VariableTypeExpression(Swan.Identifier(f"T{count['ctr']}", is_name=True))
 
     return _make_type_var
 
@@ -131,9 +140,9 @@ def make_type_var():
 @pytest.fixture
 def make_var_decl(make_identifier, make_boxed_int8, make_simple_type):
     def _make_var_decl(as_bool=True):
-        return S.VarDecl(
+        return Swan.VarDecl(
             make_identifier(),
-            type=S.TypeGroupTypeExpression(
+            type=Swan.TypeGroupTypeExpression(
                 make_simple_type("bool") if as_bool else make_boxed_int8
             ),
         )
@@ -147,9 +156,9 @@ def make_lhs(make_identifier):
     def _make_lhs(count, reset=False):
         lhs = []
         for i in range(0, count):
-            lhs.append(S.LHSItem(make_identifier(reset)))
+            lhs.append(Swan.LHSItem(make_identifier(reset)))
             reset = False
-        return S.EquationLHS(lhs)
+        return Swan.EquationLHS(lhs)
 
     return _make_lhs
 
@@ -157,9 +166,14 @@ def make_lhs(make_identifier):
 @pytest.fixture
 def make_let(make_lhs, make_path_identifier):
     def _make_let(reset=False):
-        expr = S.PathIdExpr(make_path_identifier())
-        eq1 = S.ExprEquation(make_lhs(1, reset=reset), expr)
-        eq2 = S.ExprEquation(make_lhs(1), expr)
-        return S.LetSection([eq1, eq2])
+        expr = Swan.PathIdExpr(make_path_identifier())
+        eq1 = Swan.ExprEquation(make_lhs(1, reset=reset), expr)
+        eq2 = Swan.ExprEquation(make_lhs(1), expr)
+        return Swan.LetSection([eq1, eq2])
 
     return _make_let
+
+
+@pytest.fixture
+def swan_parser() -> SwanParser:
+    return SwanParser(logger=logging.getLogger("test_logger"))

@@ -3,38 +3,53 @@ Operator instance
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-An :py:class:`OperatorInstance` object is an :py:class:`Expression` object 
+An :py:class:`OperatorInstanceApplication` object is an :py:class:`Expression` object 
 representing an operator instance call, the called operator being represented 
-by an instance of the top-level class :py:class:`OperatorBase`
+by an instance of the top-level class :py:class:`OperatorInstance`
+
+A **block** can refer to an operator instance or an operator expression.
 
 .. figure:: instance.svg
 
   Operator instance class diagram
 
 
-Higher-order operations (operations using an operator as parameter) are 
-represented by instances of the :py:class:`OperatorExpression` class.
-
-.. figure:: instance_ho.svg
-  
-  Operator higher-order class diagram
-
-
-
-.. autoclass:: OperatorBase
+Note: array-related operations are described in the :ref:`ref_array_operations` section.
 
 Operator instance application
 -----------------------------
 
+.. autoclass:: OperatorInstanceApplication
+
+
+Operator instance base class
+----------------------------
 
 .. autoclass:: OperatorInstance
+
 
 
 Named operator instance
 -----------------------
 
-.. autoclass:: PathIdOpCall
+.. autoclass:: NamedInstance
 
+
+Operator expressions
+--------------------
+
+The :py:class:`OperatorExpression` class is used to represent an operator
+expression. The :py:class:`OperatorExpressionInstance` class is used to represent an operator
+expression instance, which corresponds to the syntax "*( operator_expression )*".
+
+.. figure:: op_expr.svg
+
+  Operator expression class diagram
+
+
+.. autoclass:: OperatorExpression
+
+.. autoclass:: OperatorExpressionInstance
 
 Anonymous operator instance
 ---------------------------
@@ -46,6 +61,13 @@ Anonymous operator instance
 
 Higher-order operator instance
 ------------------------------
+
+Higher-order operations (operations using an operator as parameter) are 
+represented by instances of the :py:class:`OperatorExpression` class.
+
+.. figure:: instance_ho.svg
+  
+  Operator higher-order class diagram
 
 .. list-table:: Higher-order operators 
     :header-rows: 1
@@ -75,13 +97,13 @@ Activate
 Restart
 ^^^^^^^
 
-.. autoclass:: Restart
+.. autoclass:: RestartOperator
 
 
 Partial operator instance
 -------------------------
 
-.. autoclass:: Partial
+.. autoclass:: PartialOperator
 
 .. autoclass:: OptGroupItem
 
@@ -92,13 +114,8 @@ N-ary operator instance
 N-ary operator instances are implemented as specific expressions. See :ref:`ref_n_ary_expr` section.
 
 
-Operator Expressions
---------------------
-
-.. autoclass:: OperatorExpression
-
-.. autoclass:: PrefixOperatorExpression
-
+Protected operator expression
+-----------------------------
 
 This class is used when an operator expression is syntactically
 incorrect and was protected by the serialization process.

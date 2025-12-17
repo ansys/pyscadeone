@@ -22,12 +22,12 @@ is used to manage Scade One projects.
 Projects are used by :py:class:`ScadeOne` objects, and projects have a link to 
 the application. To deal with the cross-links, we use the :py:class:`IProject` interface.
 
-.. See *How to avoid bidirectional class and module dependencies*  `softwareengineering.stackexchange.com <https://softwareengineering.stackexchange.com/questions/369146/how-to-avoid-bidirectional-class-and-module-dependencies>`_ 
+
 
 .. autoclass:: IProject
 
 .. autoclass:: Project
-   :exclude-members: add_module, add_module_interface
+   :exclude-members: add_module_body, add_module_interface, add_resource, add_dependency, remove_dependency
 
 
 Project items
@@ -50,6 +50,21 @@ Swan code
 .. autoclass:: SwanFile
    :inherited-members:
 
-.. rubric:: Footnotes
 
+.. _ref_resources:
 
+Resources
+~~~~~~~~~
+
+.. currentmodule:: ansys.scadeone.core.project
+
+A project can also use :py:class:`Resource` files. Resource are categorized in 3 different :py:class:`ResourceKind`,
+each supports one file format:
+
+- Header: **.h** files
+- Source: **.c** files
+- Simulation data: **.sd** files
+
+.. autoclass:: Resource
+
+.. autoclass:: ResourceKind

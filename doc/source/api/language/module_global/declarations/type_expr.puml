@@ -1,0 +1,16 @@
+@startuml
+' TypeExpression
+skinparam groupInheritance 1
+left to right direction
+TypeExpression <|-- PredefinedType
+note right of PredefinedType
+Base class for BoolType, Int32Type, ...
+classes.
+end note
+TypeExpression <|-- SizedTypeExpression
+TypeExpression <|-- TypeReferenceExpression
+
+TypeExpression <|-- VariableTypeExpression
+TypeExpression <|-- ArrayTypeExpression
+TypeExpression <|-- ProtectedTypeExpression
+@enduml

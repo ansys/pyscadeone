@@ -32,7 +32,7 @@ from ansys.scadeone.core.common.storage import SwanString
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as swan
 from ansys.scadeone.core.svc.swan_creator import ScadeOneFactory
-from ansys.scadeone.core.swan import Operator
+from ansys.scadeone.core.swan import OperatorDefinition
 
 
 @pytest.fixture
@@ -59,23 +59,23 @@ def operator(parser):
         "module0",
     )
     body = parser.module_body(code)
-    return body.signatures[0]
+    return body.operator_declarations[0]
 
 
 class TestDiagram:
     def test_add_block(self, model, operator):
-        module = ScadeOneFactory().module.create_module("m0")
+        module = ScadeOneFactory().module.create_module_body("m0")
         model.add_body(module)
         module.use("module0")
-        op = module.add_operator("op")
+        op = module.add_operator_definition("op")
         diag = op.add_diagram()
         diag.add_block(operator)
         assert len(diag.objects) == 1
 
     def test_add_block_error(self, model, operator):
-        module = ScadeOneFactory().module.create_module("m0")
+        module = ScadeOneFactory().module.create_module_body("m0")
         model.add_body(module)
-        op = module.add_operator("op")
+        op = module.add_operator_definition("op")
         diag = op.add_diagram()
         with pytest.raises(ScadeOneException) as excinfo:
             diag.add_block(operator)
@@ -84,8 +84,8 @@ class TestDiagram:
         )
 
     def test_add_def_block(self, operator):
-        module = ScadeOneFactory().module.create_module("m0")
-        op = module.add_operator("op")
+        module = ScadeOneFactory().module.create_module_body("m0")
+        op = module.add_operator_definition("op")
         diag = op.add_diagram()
         diag.add_def_block(operator.outputs[0])
         assert len(diag.objects) == 1
@@ -120,7 +120,7 @@ class TestDiagNav:
     @pytest.fixture(scope="session")
     def regulation(self, model):
         def regulation_filter(obj: swan.GlobalDeclaration):
-            if isinstance(obj, swan.Operator):
+            if isinstance(obj, swan.OperatorDefinition):
                 return swan.swan_to_str(obj.id) == "Regulation"
             return False
 
@@ -246,7 +246,7 @@ class TestDiagNav:
         )
         body = parser.module_body(code)
         op = body.declarations[0]
-        assert isinstance(op, Operator)
+        assert isinstance(op, OperatorDefinition)
         diagram = list(op.diagrams)[0]
         assert len(diagram.objects) == 14
 
@@ -307,7 +307,7 @@ class TestDiagNav:
             "test_root1",
         )
         body = parser.module_body(code)
-        op = [op for op in body.operators if str(op.id) == "root1"][0]
+        op = [op for op in body.operator_definitions if str(op.id) == "root1"][0]
         d = op.diagrams[0]
         for o in d.objects:
             if isinstance(o, swan.DefBlock):
@@ -335,7 +335,7 @@ class TestDiagNav:
             "test_root1",
         )
         body = parser.module_body(code)
-        op = [op for op in body.operators if str(op.id) == "root2"][0]
+        op = [op for op in body.operator_definitions if str(op.id) == "root2"][0]
         d = op.diagrams[0]
         for o in d.objects:
             if isinstance(o, swan.Block) and str(o.instance.path_id) == "consumer2":

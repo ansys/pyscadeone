@@ -1,4 +1,4 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2025.1 graph: 2.0
 type t_struct1 = {a: int8, b: float32};
 
 type t_enum1 = enum { value1, value2};
@@ -181,7 +181,7 @@ function oper_for_fmu (i0: int32;
         (#96 group)
     #pragma diagram {"xy":"H38943;V31320"} #end)
     (#97 block ({op_expr%or%op_expr})
-               #pragma diagram {"xy":"H101634;V25102","wh":"43075;24471"} #end)
+    #pragma diagram {"xy":"H101634;V25102","wh":"43075;24471"} #end)
     (#13 expr sensor_struct
     #pragma diagram {"xy":"H9943;V87375","wh":"18000;3200"} #end)
     (#106 expr i3
@@ -300,7 +300,7 @@ function oper_for_fmu (i0: int32;
     (#139 wire #137 => #138)
     
     (var
-        #pragma cg probe #end  my_probe: int32;)
+        #pragma cg probe #end my_probe: int32;)
 }
 
 node oper_misc1 (i0: int32;
@@ -313,7 +313,7 @@ node oper_misc1 (i0: int32;
     (#1 expr i0
     #pragma diagram {"xy":"H-66400;V-17850"} #end)
     (#2 block oper_misc2
-              #pragma diagram {"xy":"H-43350;V-17850","wh":"21500;14000"} #end)
+    #pragma diagram {"xy":"H-43350;V-17850","wh":"21500;14000"} #end)
     (#5 expr #6 + #7
       where
         (#6 group)
@@ -340,7 +340,7 @@ function oper_misc2 (i0: int32;)
     (#1 def o0
     #pragma diagram {"xy":"H-19600;V-14550"} #end)
     (#2 block oper_poly
-              #pragma diagram {"xy":"H-63800;V-14550","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H-63800;V-14550","wh":"20000;14000"} #end)
     
     (#3 wire #0 => #2)
     (#4 wire #2 => #1
@@ -360,19 +360,34 @@ function oper_poly (i0: 'T;)
 }
 
 function oper_test_imp_func (i0: int32^4;)
-  returns (o0: int32^4;)
+  returns (o0: int32^4;
+           o1 : int32^4 ;
+           o2 : int32^4;)
 {
   diagram
     (#0 expr i0
-    #pragma diagram {"xy":"H-55650;V-9350"} #end)
+    #pragma diagram {"xy":"H-65150;V-12750"} #end)
     (#2 def o0
     #pragma diagram {"xy":"H16750;V-9350"} #end)
     (#1 block oper_imp_func
-              #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
+    (#5 block link_obj
+    #pragma diagram {"xy":"H-25550;V11700","wh":"20000;14000"} #end)
+    (#6 def o1
+    #pragma diagram {"xy":"H16750;V12700"} #end)
+    (#8 block static_lib
+    #pragma diagram {"xy":"H-25550;V31325","wh":"20000;14000"} #end)
+    (#9 def o2
+    #pragma diagram {"xy":"H16750;V29125"} #end)
     
     (#3 wire #1 => #2
     #pragma diagram {"wp":"v-1000|#1 #2"} #end)
-    (#4 wire #0 => #1)
+    (#4 wire #0 => #1, #5, #8
+    #pragma diagram {"wp":"#0 h8900[h10800[#1, v24450 #5], v44075 #8]"} #end)
+    (#7 wire #5 => #6
+    #pragma diagram {"wp":"v1000|#5 #6"} #end)
+    (#10 wire #8 => #9
+    #pragma diagram {"wp":"v-2200|#8 #9"} #end)
 }
 
 node oper_test_imp_node (i0: int32^4;)
@@ -385,9 +400,9 @@ node oper_test_imp_node (i0: int32^4;)
     (#2 def o0
     #pragma diagram {"xy":"H16750;V-9350"} #end)
     (#1 block oper_imp_func
-              #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H-25550;V-8350","wh":"20000;14000"} #end)
     (#5 block oper_imp_node
-              #pragma diagram {"xy":"H-25550;V9300","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H-25550;V9300","wh":"20000;14000"} #end)
     (#6 def o1
     #pragma diagram {"xy":"H16750;V11400"} #end)
     
@@ -428,3 +443,9 @@ function op_imptype (i0: t_imp;)
       }%text}
 
 type t_array1 = t_struct1^4;
+
+{text%function link_obj (i1:int32^4;)
+      returns (o1:int32^4;);%text}
+
+{text%function static_lib (i1:int32^4;)
+      returns (o1:int32^4;);%text}

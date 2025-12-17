@@ -88,6 +88,11 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
     e_d.add_child_element("f")
     e_c.add_child_element("g")
 
+    iGroup1 = f.add_element("iGroup1", group_expr="m1::group1")
+    iGroup1_1 = iGroup1.add_child_element(".(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    iGroup1_b_1 = iGroup1.add_child_element(".(.b.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    iGroup1_b_2 = iGroup1.add_child_element(".(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+
     # append values to elements:
     clock3 = False
     v_enum = "RED"
@@ -157,7 +162,10 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
         e_variant2.append_value(v_variant2)
         e_imported1.append_value(Imported(i + 20, i + 21))
         e_imported2.append_value(v_imported2)
-    e_sequences.append_values([1, 2], 2)
-    e_sequences.append_nones(3)
-    e_sequences.append_values([3, 4], 3)
+    e_sequences.append_values_sequence([1, 2], 2)
+    e_sequences.append_nones_sequence(3)
+    e_sequences.append_values_sequence([3, 4], 3)
+    iGroup1_1.append_values_sequence([11, 11, 11, 12, 13, 14])
+    iGroup1_b_1.append_values_sequence([21, 21, 21, 22, 23, 24])
+    iGroup1_b_2.append_values_sequence([22, 22, 22, 23, 24, 25])
     f.close()

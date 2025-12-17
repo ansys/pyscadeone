@@ -37,14 +37,12 @@ class ScadeOneFactory:
 
     _instance = None
 
-    def __init__(self) -> None:
-        self.project = ProjectFactory()
-        self.module = ModuleFactory()
-        self.decl = DeclarationFactory()
-        self.operator = OperatorFactory()
-        self.diagram = DiagramFactory()
-
     def __new__(cls, *args, **kwargs) -> "ScadeOneFactory":
         if not cls._instance:
             cls._instance = super(ScadeOneFactory, cls).__new__(cls)
+            cls.project = ProjectFactory()
+            cls.module = ModuleFactory()
+            cls.decl = DeclarationFactory()
+            cls.operator = OperatorFactory()
+            cls.diagram = DiagramFactory()
         return cls._instance

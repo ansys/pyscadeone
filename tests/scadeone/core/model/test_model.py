@@ -28,7 +28,7 @@ import pytest
 from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.model import Model
 from ansys.scadeone.core.model.loader import SwanParser
-import ansys.scadeone.core.swan as S
+import ansys.scadeone.core.swan as Swan
 
 
 @pytest.fixture
@@ -45,29 +45,29 @@ def parser(unit_test_logger):
 
 class TestModel:
     def test_model_creation(self, model: Model):
-        assert not model.all_modules_loaded
+        assert not model.is_all_modules_loaded
 
     def test_type_count(self, model: Model):
-        def filter(obj: S.GlobalDeclaration):
-            return isinstance(obj, S.TypeDeclarations)
+        def filter(obj: Swan.GlobalDeclaration):
+            return isinstance(obj, Swan.TypeDeclarations)
 
         types = model.filter_declarations(filter)
         assert len(list(types)) == 5
-        assert model.all_modules_loaded
+        assert model.is_all_modules_loaded
 
     def test_find_regulation(self, model: Model):
-        def filter(obj: S.GlobalDeclaration):
-            if isinstance(obj, S.Operator):
+        def filter(obj: Swan.GlobalDeclaration):
+            if isinstance(obj, Swan.OperatorDefinition):
                 return str(obj.id) == "Regulation"
             return False
 
         decl = model.find_declaration(filter)
         assert decl is not None
         # DOES NOTHING AT RUNTIME, BUT TYPING KNOWS
-        op = cast(S.Operator, decl)
-        first = cast(S.VarDecl, op.inputs[0])
+        op = cast(Swan.OperatorDefinition, decl)
+        first = cast(Swan.VarDecl, op.inputs[0])
         assert str(first.id) == "CruiseSpeed"
-        assert model.all_modules_loaded
+        assert model.is_all_modules_loaded
 
     def test_path(self, model: Model):
         types = list(model.types)

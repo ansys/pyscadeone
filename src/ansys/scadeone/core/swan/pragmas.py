@@ -19,124 +19,254 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 from enum import Enum, auto
-from functools import cached_property
 import json
 import re
-from typing import TYPE_CHECKING, List, Optional, Union, cast
-
+from typing import List, Optional, Union, Dict, cast
+from functools import cache
 from lark import Lark, Transformer
 
-if TYPE_CHECKING:
-    from ansys.scadeone.core.swan import Lunum
+from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.swan.common import Pragma, Lunum, PragmaKey
 
 
-class PragmaBase:
-    """Base class for objects with pragmas."""
+class CGPragmaKind(Enum):
+    """Kind of pragma for Swan CG."""
 
-    def __init__(self, pragmas: Optional[List["Pragma"]] = None) -> None:
-        self._pragmas = pragmas if pragmas else []
+    #: Probe pragma for local variables ("probe")
+    PROBE = auto()
+    #: Keep pragma ("keep")
+    KEEP = auto()
+    #: Default state pragma ("default")
+    DEFAULT = auto()
+    #: C pragma for constants ("C:const")
+    CONST = auto()
+    #: C: pragma for scalar values ("C:scalar")
+    SCALAR = auto()
+    #: C pragma for names ("C:name ID")
+    NAME = auto()
+    #: C pragma for enum values ("C:enum_val value")
+    ENUM_VALUE = auto()
+    #: C pragma for type initializers ("C:initializer ID")
+    INITIALIZER = auto()
+    #: Unknown pragma.
+    UNKNOWN = auto()
 
-    @property
-    def pragmas(self) -> List["Pragma"]:
-        """List of pragmas."""
-        return self._pragmas
+    @classmethod
+    @cache
+    def _get_string_map(cls) -> Dict[str, "CGPragmaKind"]:
+        """Returns map string => CGPragmaKind."""
+        return {
+            "probe": cls.PROBE,
+            "keep": cls.KEEP,
+            "default": cls.DEFAULT,
+            "C:const": cls.CONST,
+            "C:scalar": cls.SCALAR,
+            "C:name": cls.NAME,
+            "C:enum_val": cls.ENUM_VALUE,
+            "C:initializer": cls.INITIALIZER,
+        }
 
-    def pragmas_str(self) -> str:
-        """Return a string with all pragmas."""
-        pragmas = " ".join(str(p) for p in self.pragmas)
-        return pragmas
+    @classmethod
+    @cache
+    def _get_enum_map(cls) -> Dict["CGPragmaKind", str]:
+        """Returns map string => CGPragmaKind."""
+        return {kind: string for string, kind in cls._get_string_map().items()}
 
-
-class Pragma:
-    """Pragma structure."""
-
-    def __init__(self, pragma: str) -> None:
-        self._pragma = pragma
-
-    @property
-    def pragma(self) -> str:
-        """Return full pragma string."""
-        return self._pragma
-
-    @cached_property
-    def diagram(self) -> "DiagramPragma":
-        """Return the pragma diagram."""
-        parser = PragmaParser()
-        parser.parse(self._pragma)
-        return parser.diagram
-
-    @staticmethod
-    def filter(pragmas: List["Pragma"], key: str, with_key: bool = True) -> List["Pragma"]:
-        """Filters a list of pragmas with/without a given key.
+    @classmethod
+    def from_string(cls, kind_str: str) -> Optional["CGPragmaKind"]:
+        """
+        Return the CGPragmaKind from a string.
 
         Parameters
         ----------
-        pragmas : List[Pragma]
-            List of pragmas.
-        key : str
-            Key to filter.
-        with_key : bool, optional
-            If True, return pragmas with the given key, otherwise without the key, by default True.
+        kind_str : str
+            The string given.
 
         Returns
         -------
-        List[Pragma]
-            List of pragmas with the given key.
+        Optional[CGPragmaKind]
+            The corresponding CGPragmaKind if found, otherwise None.
         """
-        res = []
-        for p in pragmas:
-            m = PragmaParser.extract(p.pragma)
-            if m and (with_key == (m[0] == key)):
-                res.append(p)
-        return res
+        return cls._get_string_map().get(kind_str, None)
+
+    @classmethod
+    def to_string(cls, kind: "CGPragmaKind") -> Optional[str]:
+        """
+        Return the string representation of a CGPragmaKind.
+
+        Parameters
+        ----------
+        kind : CGPragmaKind
+            The CGPragmaKind to convert.
+
+        Returns
+        -------
+        Optional[str]
+            The string representation of the CGPragmaKind if found, otherwise None.
+        """
+        if kind_str := cls._get_enum_map().get(kind, None):
+            return kind_str
+        return None
 
     def __str__(self) -> str:
-        return self._pragma
+        """Return the string representation of the CGPragmaKind."""
+        _kind_str = self.to_string(self)
+        return _kind_str if _kind_str else ""
 
 
-class DiagramPragma:
+class TestPragmaKind(Enum):
+    """Kind of pragma for Under Test."""
+
+    #: Under Test pragma ("under_test")
+    UNDER_TEST = "under_test"
+
+    def __str__(self) -> str:
+        """Return the string representation of the TestPragmaKind."""
+        return self.value
+
+    # TODO: Some Test pragma kinds are not yet implemented (e.g. data_source in VTOLDisplay.swan)
+    # In this case, we return the string.
+    @classmethod
+    def from_string(cls, kind: str) -> Union["TestPragmaKind", str]:
+        """
+        Return the TestPragmaKind from a string.
+
+        Parameters
+        ----------
+        kind : str
+            The string given.
+
+        Returns
+        -------
+        Union[TestPragmaKind, str]
+            The corresponding TestPragmaKind if found, otherwise the original string.
+        """
+        for enum_kind in cls:
+            if enum_kind.value == kind:
+                return enum_kind
+        return kind
+
+
+class CGPragma(Pragma):
+    """Pragma for Swan code generator."""
+
+    CGPragmaRE = re.compile((r"(?P<kind>[\w:]+)(?:\s+(?P<value>.*))?"))
+
+    def __init__(self, data: str) -> None:
+        super().__init__(PragmaKey.CG, data)
+        m = self.CGPragmaRE.match(data)
+        if not m:
+            raise ScadeOneException(f"Invalid CG pragma format: {data}")
+        self._kind = CGPragmaKind.from_string(m["kind"])
+        if self._kind is None:
+            self._value = data
+        else:
+            self._value = m["value"] if m["value"] else None
+
+    @property
+    def kind(self) -> CGPragmaKind:
+        """Return the pragma kind.
+
+        According to the kind call the appropriate method to get the value if any."""
+        return cast(CGPragmaKind, self._kind)
+
+    def get_enum_value(self) -> Optional[str]:
+        """Return the enum value if the pragma is an enum value."""
+        if self.kind != CGPragmaKind.ENUM_VALUE:
+            return None
+        return self._value
+
+    def get_initializer(self) -> Optional[str]:
+        """Return the initializer if the pragma is an initializer."""
+        if self.kind != CGPragmaKind.INITIALIZER:
+            return None
+        return self._value
+
+    def get_name(self) -> Optional[str]:
+        """Return the name if the pragma is a name."""
+        if self.kind != CGPragmaKind.NAME:
+            return None
+        return self._value
+
+
+class TestPragma(Pragma):
+    """Pragma used to mark an instance operator as being under test in a test harness."""
+
+    def __init__(self, kind: TestPragmaKind | str) -> None:
+        super().__init__(PragmaKey.SWT)
+        self._kind = kind
+
+    @property
+    def kind(self) -> TestPragmaKind | str:
+        """Return the pragma kind.
+
+        According to the kind call the appropriate method to get the value if any."""
+        return self._kind
+
+
+# ==========================
+# Classes for diagram pragma
+# ==========================
+class DiagramPragma(Pragma):
     """The diagram information of a graphical object."""
 
     def __init__(self) -> None:
+        super().__init__(PragmaKey.DIAGRAM)
         self._coordinates = None
         self._size = None
         self._direction = None
         self._orientation = None
-        self._wire_info = None
-        self._arrow_info = None
+        self._wire_path_info = None
+        self._transition_path_info = None
+        self._is_detached = False
 
     @property
-    def coordinates(self) -> "Coordinates":
+    def coordinates(self) -> Optional["Coordinates"]:
         """Return the diagram coordinates."""
         return self._coordinates
 
     @property
-    def size(self) -> "Size":
+    def size(self) -> Optional["Size"]:
         """Return the diagram size."""
         return self._size
 
     @property
-    def direction(self) -> "Direction":
+    def direction(self) -> Optional["Direction"]:
         """Return the diagram direction."""
         return self._direction
 
     @property
-    def orientation(self) -> "Orientation":
+    def default_direction(self) -> "Direction":
+        """Return the default diagram direction (North-East)."""
+        return Direction(DirectionType.NORTH_EAST)
+
+    @property
+    def orientation(self) -> Optional["Orientation"]:
         """Return the diagram orientation."""
         return self._orientation
 
     @property
-    def wire_info(self) -> "PathInfo":
+    def wire_path_info(self) -> Optional["PathInfo"]:
         """Return the diagram wire info."""
-        return self._wire_info
+        return self._wire_path_info
 
     @property
-    def arrow_info(self) -> "PathInfo":
+    def transition_path_info(self) -> Optional["PathInfo"]:
         """Return the diagram arrow info."""
-        return self._arrow_info
+        return self._transition_path_info
 
-    def __str__(self):
+    @property
+    def is_detached(self) -> bool:
+        """Return whether the diagram is *detached* (content not displayed)."""
+        return self._is_detached
+
+    @property
+    def data(self) -> str:
+        """Return a string representation of a property given."""
+        if self._is_detached:
+            return "detached"
         params = []
         if self._coordinates:
             params.append(f'"xy":"{self._coordinates}"')
@@ -146,13 +276,520 @@ class DiagramPragma:
             params.append(f'"dir":"{self._direction}"')
         if self._orientation:
             params.append(f'"orient":"{self._orientation}"')
-        if self._wire_info:
-            params.append(f'"wp":"{self._wire_info}"')
-        if self._arrow_info:
-            params.append(f'"tp":"{self._arrow_info}"')
-        if len(params) == 0:
-            return ""
+        if self._wire_path_info:
+            params.append(f'"wp":"{self._wire_path_info}"')
+        if self._transition_path_info:
+            params.append(f'"tp":"{self._transition_path_info}"')
         return f"{{{','.join(params)}}}"
+
+
+class Position(Enum):
+    """Position of a coordinate.
+
+    .. code-block:: ebnf
+
+        xy = ("H" | "h")x ";" ("V" | "v")y
+
+    - :code:`H`, :code:`V`: Absolute position
+    - :code:`h`, :code:`v`: Relative position
+    """
+
+    #: Absolute position.
+    ABSOLUTE = auto()
+
+    #: Relative position.
+    RELATIVE = auto()
+
+
+class Coordinate:
+    """*Coordinate* defines a horizontal (*x*) or vertical (*y*) position of a graphical object.
+
+    *Coordinate* is defined as:
+
+    .. code-block:: ebnf
+
+        xy = ("H" | "h")x ";" ("V" | "v")y
+
+    - :code:`("H" | "h")` or :code:`("V" | "v")`: Absolute or relative position (see :py:class:`Position`)
+    - :code:`x` or :code:`y`: Coordinate value
+
+    The relative coordinate values are computed from:
+
+    - the center of the parent block
+    - wire and transition: the center of the source/target, or the previous coordinate
+    """
+
+    def __init__(self, position: Position, value: int) -> None:
+        self._position = position
+        self._value = value
+
+    @property
+    def position(self) -> Position:
+        """Return the coordinate position (absolute or relative)."""
+        return self._position
+
+    @property
+    def value(self) -> int:
+        """Return the coordinate value."""
+        return self._value
+
+    def __str__(self) -> str:
+        """Return the string representation of Coordinate."""
+        return f"{self._position.name}:{self._value}"
+
+
+class Coordinates:
+    """*Coordinates* define a horizontal (*x*) and a vertical (*y*) position of a graphical object.
+
+    *Coordinates* are specified as:
+
+    .. code-block:: ebnf
+
+        xy = COORD ";" COORD
+
+    where:
+
+    - :code:`COORD`: Coordinate *x* or *y* (see :py:class:`Coordinate`)
+
+    *Coordinates* are used to define the position of the diagram object, states or Active if/when blocks.
+    """
+
+    def __init__(self, x: Optional[Coordinate] = None, y: Optional[Coordinate] = None) -> None:
+        self._x = x
+        self._y = y
+
+    @property
+    def x(self) -> Union[Coordinate, None]:
+        """Return the *x* coordinate."""
+        return self._x
+
+    @property
+    def y(self) -> Union[Coordinate, None]:
+        """Return the *y* coordinate."""
+        return self._y
+
+    def __str__(self) -> str:
+        """Return the string representation of Coordinates."""
+        coordinates = []
+        if self._x:
+            position_str = "H" if self._x.position == Position.ABSOLUTE else "h"
+            coordinates.append(f"{position_str}{self._x.value}")
+        if self._y:
+            position_str = "V" if self._y.position == Position.ABSOLUTE else "v"
+            coordinates.append(f"{position_str}{self._y.value}")
+        if len(coordinates) == 0:
+            return ""
+        return ";".join(coordinates)
+
+
+class Size:
+    """Size of a graphical object.
+
+    Size is defined as
+
+    .. code-block:: ebnf
+
+        wh = width ";" height
+
+    where:
+
+    - :code:`width`: Width value
+    - :code:`height`: Height value
+
+    Size is used to define the size of the diagram object,
+    states, active if/when blocks or automaton. If omitted, the default size of the object is used.
+    """
+
+    def __init__(self, width: int, height: int) -> None:
+        self._width = width
+        self._height = height
+
+    @property
+    def width(self) -> int:
+        """Return the object width."""
+        return self._width
+
+    @property
+    def height(self) -> int:
+        """Return the object height."""
+        return self._height
+
+    def __str__(self) -> str:
+        """Return the string representation of Size."""
+        return f"{self._width};{self._height}"
+
+
+class DirectionType(Enum):
+    """The direction value of a diagram object.
+
+    The direction value is defined as
+
+    .. code-block:: ebnf
+
+        dir_val = ne|nw|es|en|se|sw|ws|wn
+
+    where:
+
+    - :code:`ne`: North-East
+    - :code:`nw`: North-West
+    - :code:`es`: East-South
+    - :code:`en`: East-North
+    - :code:`se`: South-East
+    - :code:`sw`: South-West
+    - :code:`ws`: West-South
+    - :code:`wn`: West-North
+
+    The direction value is read as: the first direction is at the top of the graphical object,
+    and the second direction is the right side of the graphical object.
+
+    The default direction is North-East:
+        - West corresponding to inputs,
+        - East corresponding to outputs.
+    """
+
+    #: North-East direction. Default direction (inputs are on the left, outputs are on the right).
+    NORTH_EAST = "ne"
+
+    #: North-West direction. From the default direction, a horizontal flip is applied,
+    #: or a 180° rotation and a vertical flip are applied
+    #: (inputs are on the right and outputs are on the left).
+    NORTH_WEST = "nw"
+
+    #: East-South direction. From the default direction, a 90° left rotation is applied
+    #: (inputs are at the bottom and outputs are at the top).
+    EAST_SOUTH = "es"
+
+    #: East-North direction. From the default direction, a 90° left rotation and a horizontal flip are applied
+    #: (inputs are at the bottom and outputs are at the top).
+    EAST_NORTH = "en"
+
+    #: South east direction. From the default direction, a vertical flip is applied
+    #: (inputs are on the left and outputs are on the right).
+    SOUTH_EAST = "se"
+
+    #: South-West direction. From the default direction, a 180° rotation is applied
+    #: (inputs are on the right and outputs are on the left).
+    SOUTH_WEST = "sw"
+
+    #: West-South direction. From the default direction, a 90° right rotation and a horizontal flip are applied
+    #: (inputs are at the top and outputs are at the bottom).
+    WEST_SOUTH = "ws"
+
+    #: West-North direction. From the default direction a 90° right rotation is applied
+    #: (inputs are at the top and outputs are at the bottom).
+    WEST_NORTH = "wn"
+
+
+class Direction:
+    """The direction of the diagram object.
+
+    *Direction* is defined as
+
+    .. code-block:: ebnf
+
+        dir = dir_val
+
+    where :code:`dir_val` is defined in :py:class:`DirectionType`.
+
+    *Direction* is used to define the direction of predefined operator and block with text (Expr, Def, Instance, Equation).
+    """
+
+    def __init__(self, value: DirectionType) -> None:
+        self._value = value
+
+    @property
+    def value(self) -> DirectionType:
+        """Return the direction value."""
+        return self._value
+
+    def __str__(self) -> str:
+        """Return the string representation of Direction."""
+        return self._value.value
+
+
+class OrientationType(Enum):
+    """Text content orientation value.
+
+    The orientation value is defined as:
+
+    .. code-block:: ebnf
+
+        orient_val = "H"|"V"
+
+    where:
+
+    - :code:`H`: Horizontal orientation
+    - :code:`V`: Vertical orientation
+    """
+
+    #: Horizontal orientation.
+    HORIZONTAL = "H"
+
+    #: Vertical orientation.
+    VERTICAL = "V"
+
+
+class Orientation:
+    """Text content orientation.
+
+    *Orientation* is defined as
+
+    .. code-block:: ebnf
+
+        orient = orient_val
+
+    where :code:`orient_val` is defined in :py:class:`OrientationType`.
+
+    *Orientation* is used to define the text content orientation of the diagram object.
+    """
+
+    def __init__(self, value: OrientationType) -> None:
+        self._value = value
+
+    @property
+    def value(self) -> OrientationType:
+        """Return the orientation value."""
+        return self._value
+
+    def __str__(self) -> str:
+        """Return the string representation of Orientation."""
+        if self._value is None:
+            return ""
+        return self._value.value
+
+
+class PathInfo:
+    """The wire or transition path between two objects.
+    The path is defined by a list of moves.
+
+    The wire and transition paths are defined as:
+
+    - Wire
+
+    .. code-block:: ebnf
+
+        wp = path_info
+
+    - Transition
+
+    .. code-block:: ebnf
+
+        tp = path_info
+
+    where:
+
+    .. code-block:: ebnf
+
+        path_info = path_anchor path
+
+    :code:`path_anchor` is defined in :py:class:`PathAnchor`.
+
+    :code:`path` is defined in :py:class:`PathPart`.
+    """
+
+    def __init__(self, path_anchor: "PathAnchor", path: "PathPart") -> None:
+        self._path_anchor = path_anchor
+        self._path = path
+
+    @property
+    def path_anchor(self) -> "PathAnchor":
+        """Return the wire anchor."""
+        return self._path_anchor
+
+    @property
+    def path(self) -> "PathPart":
+        """Return the path."""
+        return self._path
+
+    def __str__(self) -> str:
+        """Return the string representation of PathInfo."""
+        return f"{self._path_anchor} {self._path}"
+
+
+class PathAnchor:
+    """*Path anchor* is the starting or ending point of a path.
+
+    *Path anchor* is defined as:
+
+    .. code-block:: ebnf
+
+        path_anchor = LUNUM
+            | COORD '|' LUNUM (* connection to a group-related block *)
+            | coordinates '|' LUNUM (* coordinates of a starting/ending point of a transition for a state *)
+            | coordinates (* unconnected point as a pair of COORD. *)
+
+    where:
+
+    - :code:`LUNUM`: The graphical object identifier (see :py:class:`Lunum`)
+    - :code:`COORD`: Coordinate *x* or *y* (see :py:class:`Coordinate`)
+    - :code:`coordinates`: Coordinates (*x*;*y*) (see :py:class:`Coordinates`)
+    """
+
+    def __init__(
+        self,
+        lunum: Optional["Lunum"] = None,
+        coordinates: Optional[Coordinates] = None,
+    ) -> None:
+        self._lunum = lunum
+        self._coordinates = coordinates
+
+    @property
+    def lunum(self) -> Optional["Lunum"]:
+        """Return the LUNUM."""
+        return self._lunum
+
+    @property
+    def coordinates(self) -> Optional[Coordinates]:
+        """Return the coordinates."""
+        return self._coordinates
+
+    def __str__(self) -> str:
+        """Return the string representation of PathAnchor."""
+        wire_anchor = []
+        if self._coordinates:
+            wire_anchor.append(str(self._coordinates))
+        if self._lunum:
+            wire_anchor.append(str(self._lunum))
+        if len(wire_anchor) == 0:
+            return ""
+        return "|".join(wire_anchor)
+
+
+class Move:
+    """This class manages the *moves* along wire and transition paths.
+
+    A *move* is defined as:
+
+    .. code-block:: ebnf
+
+        move_coordinates = COORD | coordinates
+
+    for a *move* along a wire path and a transition path, and is defined as:
+
+    .. code-block:: ebnf
+
+        move_and_fork_coordinates = (COORD | coordinates) '|' coordinates
+
+    for a *move* along a transition path with a fork. The coordinates before the pipe symbol ('|')
+    represent the move, and the coordinates after the pipe symbol represent the fork point.
+    """
+
+    def __init__(
+        self,
+        coordinates: "Coordinates",
+        fork_coordinates: Optional[Coordinates] = None,
+    ) -> None:
+        self._coordinates = coordinates
+        self._fork_coordinates = fork_coordinates
+
+    @property
+    def coordinates(self) -> "Coordinates":
+        """Return the coordinates."""
+        return self._coordinates
+
+    @property
+    def fork_coordinates(self) -> Optional[Coordinates]:
+        """Return the fork coordinates. Only applies to transitions."""
+        return self._fork_coordinates
+
+    def __str__(self) -> str:
+        """Return the string representation of Move."""
+        if not self._fork_coordinates:
+            return str(self._coordinates)
+        return f"{self._coordinates}|{self._fork_coordinates}"
+
+
+class PathPart:
+    """The PathPart represents a segment of a path after the anchor or in branch.
+
+    The path part is defined as:
+
+    .. code-block:: ebnf
+
+        path = {move} path_anchor
+             | {move} branch
+
+    *{move}* means zero or more moves.
+    where:
+
+    - :code:`move` is defined in :py:class:`Move`
+    - :code:`path_anchor` is defined in :py:class:`PathAnchor`
+    - :code:`branch` is defined in :py:class:`Branch`
+    """
+
+    def __init__(
+        self,
+        moves: Optional[List[Move]] = None,
+        path_anchor: Optional[PathAnchor] = None,
+        branches: Optional["Branches"] = None,
+    ) -> None:
+        self._moves = moves
+        self._path_anchor = path_anchor
+        self._branches = branches
+
+    @property
+    def moves(self) -> Optional[List[Move]]:
+        """Return the moves."""
+        return self._moves
+
+    @property
+    def path_anchor(self) -> Optional[PathAnchor]:
+        """Return the wire anchor."""
+        return self._path_anchor
+
+    @property
+    def branches(self) -> Union["Branches", None]:
+        """Return the branch."""
+        return self._branches
+
+    def __str__(self) -> str:
+        """Return the string representation of PathPart."""
+        path = " ".join(str(move) for move in self.moves) if self.moves else ""
+        if self._path_anchor:
+            if path:
+                path += " "
+            path += str(self._path_anchor)
+        if self._branches:
+            path += str(self._branches)
+        return path
+
+
+class Branches:
+    """Branch is the graphic path followed by the wire or transition when there are multiple paths.
+
+    Branch is defined as:
+
+    .. code-block:: ebnf
+
+        branch = '[' path_list ']';
+        path_list = path
+                  | path_list ',' path
+
+    where:
+
+    - :code:`path`: path part (see :py:class:`PathPart`)
+    """
+
+    def __init__(self, path_list: List[PathPart]) -> None:
+        self._path_list = path_list
+
+    @property
+    def path_list(self) -> List[PathPart]:
+        """Return the path list."""
+        return self._path_list
+
+    def __str__(self) -> str:
+        """Return the string representation of Branches."""
+        path_list_str = [str(path) for path in self.path_list]
+        if len(path_list_str) == 0:
+            return ""
+        list_str = ", ".join(path_list_str)
+        return f"[{list_str}]"
+
+
+# ==========================
+# Classes for pragma parsing
+# ==========================
 
 
 def _create_parser(grammar: str, start: str, transformer: Transformer) -> Lark:
@@ -160,83 +797,22 @@ def _create_parser(grammar: str, start: str, transformer: Transformer) -> Lark:
     return Lark(grammar, start=start, parser="lalr", transformer=transformer)
 
 
-class PragmaParser:
-    """Parser for pragma.
-
-    This is the list of supported pragmas:
-    - diagram
-    """
-
-    PragmaRE = re.compile(r"#pragma\s+(?P<key>\w+)\s(?P<val>.*)#end", re.DOTALL)
-    _instance = None
-
-    def __init__(self) -> None:
-        self._diagram = None
-
-    def __new__(cls, *args, **kwargs) -> "PragmaParser":
-        if not cls._instance:
-            cls._instance = super(PragmaParser, cls).__new__(cls)
-        return cls._instance
-
-    @property
-    def diagram(self) -> "DiagramPragma":
-        """Return the diagram pragma."""
-        return self._diagram
-
-    def parse(self, pragma: str) -> None:
-        """Parse pragma.
-        This is the list of supported pragmas:
-        - diagram
-
-        Parameters
-        ----------
-            pragma : str
-                Pragma string defined in SO-SRS-001 V2.1, section 1.2.5, [S1-203]
-        """
-        if not pragma:
-            return
-        pragma_tuple = self.extract(pragma)
-        if not pragma_tuple:
-            return
-        key, value = pragma_tuple
-        if key == "diagram":
-            self._diagram = DiagramPragmaParser().parse(value)
-            if self._diagram and not self._diagram.direction:
-                self._diagram._direction = Direction(DirectionType.NORTH_EAST)
-
-    @staticmethod
-    def extract(pragma: str) -> Union[tuple[str, str], None]:
-        """Extract pragma information as a tuple
-        if pragma is valid, namely: #pragma key value#end.
-
-        Returns
-        -------
-            tuple | None
-                The Tuple (*pragma name*, *pragma value*) if pragma is valid, None else.
-        """
-        m = PragmaParser.PragmaRE.match(pragma)
-        if not m:
-            return None
-        return m["key"], m["val"].strip()
+# Diagram-related parser
 
 
 class DiagramPragmaParser:
-    """Parser for diagram pragma.
-    The different parsers implement SO-SRS-001 V2.1, section 5.5: Graphical Information
-    """
+    """Parser for diagram pragma."""
 
     _instance = None
-
-    def __init__(self) -> None:
-        self._coordinates_parser = self._create_coordinate_parser()
-        self._size_parser = self._create_size_parser()
-        self._direction_parser = self._create_direction_parser()
-        self._orientation_parser = self._create_orientation_parser()
-        self._path_info_parser = self._create_path_info_parser()
 
     def __new__(cls, *args, **kwargs) -> "DiagramPragmaParser":
         if not cls._instance:
             cls._instance = super(DiagramPragmaParser, cls).__new__(cls)
+            cls._instance._coordinates_parser = cls._create_coordinate_parser()
+            cls._instance._size_parser = cls._create_size_parser()
+            cls._instance._direction_parser = cls._create_direction_parser()
+            cls._instance._orientation_parser = cls._create_orientation_parser()
+            cls._instance._path_info_parser = cls._create_path_info_parser()
         return cls._instance
 
     @staticmethod
@@ -351,13 +927,13 @@ class DiagramPragmaParser:
     @staticmethod
     def _create_path_info_parser() -> Lark:
         """Create the parser for path info.
-        Path info is defined as "w_anchor path" where:
+        Path info is defined as "path_anchor path" where:
 
-        - w_anchor: LUNUM
+        - path_anchor: LUNUM
                     | COORD '|' LUNUM
                     | coordinates '|' LUNUM
                     | coordinates
-        - path: moves w_anchor
+        - path: moves path_anchor
                 | moves branch
         - moves: /* empty */
                 | moves move
@@ -375,14 +951,14 @@ class DiagramPragmaParser:
             A path info parser.
         """
         grammar = r"""
-                    path_info: w_anchor path
-                    w_anchor: LUNUM
+                    path_info: path_anchor path
+                    path_anchor: LUNUM
                         | (x | y | coordinates) "|" LUNUM
                         | coordinates
-                    path: move* w_anchor | move* branch
+                    path: move* path_anchor | move* branch
                     coordinates: x ";" y
-                    x: absolute_horizontal | relative_horizontal SIGNED_INT
-                    y: absolute_vertical | relative_vertical SIGNED_INT
+                    x: (absolute_horizontal | relative_horizontal) SIGNED_INT
+                    y: (absolute_vertical | relative_vertical) SIGNED_INT
                     absolute_horizontal: "H"
                     relative_horizontal: "h"
                     absolute_vertical: "V"
@@ -405,30 +981,40 @@ class DiagramPragmaParser:
 
         Parameters
         ----------
-            params : str
-                Pragma diagram parameters.
-                This is a string that contains a JSON expression with the following properties:
+        params : str
+            Pragma diagram parameters.
+            This is a string that contains either a JSON expression with the following properties:
 
-                - "xy": Coordinates
-                - "wh": Size
-                - "dir": Direction
-                - "orient": Orientation
-                - "wp": Wire path
-                - "tp": Arrow path
+            - "xy": Coordinates
+            - "wh": Size
+            - "dir": Direction
+            - "orient": Orientation
+            - "wp": Wire path
+            - "tp": Transition path
+
+            or a string that contains "detached" to indicate that the diagram content
+            should not be displayed.
 
             Each property's value is parsed by the corresponding parser.
 
         Returns
         -------
-            DiagramPragma | None
-                The parsed pragma diagram or None if params is empty.
+        DiagramPragma | None
+            The parsed pragma diagram or None if params is empty.
         """
         if not params:
             return None
-        params = json.loads(params)
+        # Check if params is "detached"
+        if params == "detached":
+            pragma_diag = DiagramPragma()
+            pragma_diag._is_detached = True
+            return pragma_diag
+        # otherwise, parse the JSON expression
+        try:
+            params = json.loads(params)
+        except json.JSONDecodeError:
+            return None
         if not isinstance(params, dict):
-            from ansys.scadeone.core import ScadeOneException
-
             raise ScadeOneException(f"Pragma diagram must be a dictionary: {params}")
         pragma_diag = DiagramPragma()
         if "xy" in params:
@@ -444,9 +1030,11 @@ class DiagramPragmaParser:
                 Orientation, self._orientation_parser.parse(params["orient"])
             )
         if "wp" in params:
-            pragma_diag._wire_info = cast(PathInfo, self._path_info_parser.parse(params["wp"]))
+            pragma_diag._wire_path_info = cast(PathInfo, self._path_info_parser.parse(params["wp"]))
         if "tp" in params:
-            pragma_diag._arrow_info = cast(PathInfo, self._path_info_parser.parse(params["tp"]))
+            pragma_diag._transition_path_info = cast(
+                PathInfo, self._path_info_parser.parse(params["tp"])
+            )
         return pragma_diag
 
 
@@ -473,7 +1061,7 @@ class CoordinateTransformer(Transformer):
         return Coordinates(items[0], items[1])
 
     @staticmethod
-    def x(items) -> "Coordinate":
+    def x(items) -> Coordinate:
         """Return the *x* coordinate.
 
         Parameters
@@ -491,7 +1079,7 @@ class CoordinateTransformer(Transformer):
         return Coordinate(items[0], items[1])
 
     @staticmethod
-    def y(items) -> "Coordinate":
+    def y(items) -> Coordinate:
         """Return the *y* coordinate.
 
         Parameters
@@ -938,7 +1526,7 @@ class PathInfoTransformer(Transformer):
         return PathInfo(items[0], items[1])
 
     @staticmethod
-    def w_anchor(items) -> "WireAnchor":
+    def path_anchor(items) -> "PathAnchor":
         """Return the wire anchor.
 
         Parameters
@@ -950,7 +1538,7 @@ class PathInfoTransformer(Transformer):
 
         Returns
         -------
-        WireAnchor
+        PathAnchor
             The object wire anchor.
         """
         from ansys.scadeone.core.swan import Lunum
@@ -967,10 +1555,10 @@ class PathInfoTransformer(Transformer):
                     coordinates = Coordinates(None, item[1])
             elif isinstance(item, Coordinates):
                 coordinates = item
-        return WireAnchor(lunum, coordinates)
+        return PathAnchor(lunum, coordinates)
 
     @staticmethod
-    def path(items) -> "WirePath":
+    def path(items) -> "PathPart":
         """Return the wire path.
 
         Parameters
@@ -983,22 +1571,13 @@ class PathInfoTransformer(Transformer):
 
         Returns
         -------
-        WirePath
+        PathPart
             The object wire path.
         """
-        moves = None
-        w_anchor = None
-        branch = None
-        for item in items:
-            if isinstance(item, Move):
-                if not moves:
-                    moves = []
-                moves.append(item)
-            if isinstance(item, WireAnchor):
-                w_anchor = item
-            if isinstance(item, Branch):
-                branch = item
-        return WirePath(moves, w_anchor, branch)
+        moves = items[:-1] if isinstance(items[0], Move) else None
+        path_anchor = items[-1] if isinstance(items[-1], PathAnchor) else None
+        branches = items[-1] if isinstance(items[-1], Branches) else None
+        return PathPart(moves, path_anchor, branches)
 
     @staticmethod
     def coordinates(items) -> "Coordinates":
@@ -1019,7 +1598,7 @@ class PathInfoTransformer(Transformer):
         return Coordinates(items[0][1], items[1][1])
 
     @staticmethod
-    def x(items) -> tuple[str, "Coordinate"]:
+    def x(items) -> tuple[str, Coordinate]:
         """Return the *x* coordinate.
 
         Parameters
@@ -1037,7 +1616,7 @@ class PathInfoTransformer(Transformer):
         return "x", Coordinate(items[0], items[1].value)
 
     @staticmethod
-    def y(items) -> tuple[str, "Coordinate"]:
+    def y(items) -> tuple[str, Coordinate]:
         """Return the *y* coordinate.
 
         Parameters
@@ -1141,21 +1720,22 @@ class PathInfoTransformer(Transformer):
         Move
             The object move.
         """
-        move_coordinates = None
         if isinstance(items[0], tuple):
+            # simple COORD
             if items[0][0] == "x":
                 coordinates = Coordinates(items[0][1], None)
             else:
                 coordinates = Coordinates(None, items[0][1])
-            move_coordinates = MoveCoordinates(coordinates)
+            return Move(coordinates)
         elif isinstance(items[0], Coordinates):
-            move_coordinates = MoveCoordinates(items[0])
-        elif isinstance(items[0], MoveCoordinates):
-            move_coordinates = items[0]
-        return Move(move_coordinates)
+            # coordinates
+            return Move(items[0])
+        elif isinstance(items[0], Move):
+            # fork coordinates
+            return items[0]
 
     @staticmethod
-    def fork_coordinates(items) -> "MoveCoordinates":
+    def fork_coordinates(items) -> "Move":
         """Return the coordinates with fork coordinates.
 
         fork_coordinates: (x | y | coordinates) '|' coordinates
@@ -1166,11 +1746,16 @@ class PathInfoTransformer(Transformer):
             List of items. This list only contains two items:
             - The coordinates
             - The fork coordinates
+
+        Returns
+        -------
+        Move
+            The object move with fork coordinates.
         """
-        return MoveCoordinates(items[0], items[1])
+        return Move(items[0], items[1])
 
     @staticmethod
-    def branch(items) -> "Branch":
+    def branch(items) -> "Branches":
         """Return the branch.
 
         branch: '[' path_list ']'
@@ -1186,10 +1771,10 @@ class PathInfoTransformer(Transformer):
         Branch
             The object branch.
         """
-        return Branch(items[0])
+        return Branches(items[0])
 
     @staticmethod
-    def path_list(items) -> List["WirePath"]:
+    def path_list(items) -> List["PathPart"]:
         """Return the path list.
 
         path_list: (path ',')* path
@@ -1201,7 +1786,7 @@ class PathInfoTransformer(Transformer):
 
         Returns
         -------
-        List[WirePath]
+        List[PathPart]
             The object path list.
         """
         return items
@@ -1241,531 +1826,134 @@ class PathInfoTransformer(Transformer):
         return item.value
 
 
-class Coordinates:
-    """*Coordinates* define a horizontal (*x*) and a vertical (*y*) position of a graphical object.
+class DocumentationPragma(Pragma):
+    """Documentation pragma."""
 
-    *Coordinates* are specified as:
+    def __init__(self, data: str) -> None:
+        super().__init__(PragmaKey.DOC, data)
 
-    .. code-block:: ebnf
+    @property
+    def text(self) -> str:
+        """Return the documentation text.
 
-        xy = COORD ";" COORD
+        Returns
+        -------
+        str
+            The documentation text.
+        """
+        return cast(str, self._data)
 
-    where:
 
-    - :code:`COORD`: Coordinate *x* or *y* (see :py:class:`Coordinate`)
+class TraceabilityPragma(Pragma):
+    """Traceability pragma."""
 
-    *Coordinates* are used to define the position of the diagram object, states or Active if/when blocks.
+    def __init__(self, data: str) -> None:
+        super().__init__(PragmaKey.REQUIREMENT, data)
+
+    @property
+    def reference(self) -> str:
+        """Return the traceability reference.
+
+        Returns
+        -------
+        str
+            The traceability reference.
+        """
+        return cast(str, self._data)
+
+
+# ==========================
+# General pragma parser
+# ==========================
+class PragmaParser:
+    """Parser for pragma.
+
+    This is the list of supported pragmas:
+    - diagram
     """
 
-    def __init__(self, x: Optional["Coordinate"] = None, y: Optional["Coordinate"] = None) -> None:
-        self._x = x
-        self._y = y
-
-    @property
-    def x(self) -> Union["Coordinate", None]:
-        """Return the *x* coordinate."""
-        return self._x
-
-    @property
-    def y(self) -> Union["Coordinate", None]:
-        """Return the *y* coordinate."""
-        return self._y
-
-    def __str__(self) -> str:
-        coordinates = []
-        if self._x:
-            position_str = "H" if self._x.position == Position.ABSOLUTE else "h"
-            coordinates.append(f"{position_str}{self._x.value}")
-        if self._y:
-            position_str = "V" if self._y.position == Position.ABSOLUTE else "v"
-            coordinates.append(f"{position_str}{self._y.value}")
-        if len(coordinates) == 0:
-            return ""
-        return ";".join(coordinates)
-
-
-class Coordinate:
-    """*Coordinate* defines a horizontal (*x*) or vertical (*y*) position of a graphical object.
-
-    *Coordinate* is defined as:
-
-    .. code-block:: ebnf
-
-        xy = ("H" | "h")x ";" ("V" | "v")y
-
-    - :code:`("H" | "h")` or :code:`("V" | "v")`: Absolute or relative position (see :py:class:`Position`)
-    - :code:`x` or :code:`y`: Coordinate value
-
-    The relative coordinate values are computed from:
-
-    - the center of the parent block
-    - wire and transition: the center of the source/target, or the previous coordinate
-    """
-
-    def __init__(self, position: "Position", value: int) -> None:
-        self._position = position
-        self._value = value
-
-    @property
-    def position(self) -> "Position":
-        """Return the coordinate position (absolute or relative)."""
-        return self._position
-
-    @property
-    def value(self) -> int:
-        """Return the coordinate value."""
-        return self._value
-
-    def __str__(self):
-        return f"{self._position.name}:{self._value}"
-
-
-class Position(Enum):
-    """Position of a coordinate.
-
-    .. code-block:: ebnf
-
-        xy = ("H" | "h")x ";" ("V" | "v")y
-
-    - :code:`H`, :code:`V`: Absolute position
-    - :code:`h`, :code:`v`: Relative position
-    """
-
-    #: Absolute position.
-    ABSOLUTE = auto()
-
-    #: Relative position.
-    RELATIVE = auto()
-
-
-class Size:
-    """Size of a graphical object.
-
-    Size is defined as
-
-    .. code-block:: ebnf
-
-        wh = width ";" height
-
-    where:
-
-    - :code:`width`: Width value
-    - :code:`height`: Height value
-
-    Size is used to define the size of the diagram object,
-    states, active if/when blocks or automaton.
-    """
-
-    def __init__(self, width: int, height: int) -> None:
-        self._width = width
-        self._height = height
-
-    @property
-    def width(self) -> int:
-        """Return the object width."""
-        return self._width
-
-    @property
-    def height(self) -> int:
-        """Return the object height."""
-        return self._height
-
-    def __str__(self):
-        return f"{self._width};{self._height}"
-
-
-class Direction:
-    """The direction of the diagram object.
-
-    *Direction* is defined as
-
-    .. code-block:: ebnf
-
-        dir = dir_val
-
-    where :code:`dir_val` is defined in :py:class:`DirectionType`.
-
-    *Direction* is used to define the direction of predefined operator and block with text (Expr, Def, Instance, Equation).
-    """
-
-    def __init__(self, value: "DirectionType") -> None:
-        self._value = value
-
-    @property
-    def value(self) -> "DirectionType":
-        """Return the direction value."""
-        return self._value
-
-    def __str__(self):
-        return self._value.value
-
-
-class DirectionType(Enum):
-    """The direction value of a diagram object.
-
-    The direction value is defined as
-
-    .. code-block:: ebnf
-
-        dir_val = ne|nw|es|en|se|sw|ws|wn
-
-    where:
-
-    - :code:`ne`: North-East
-    - :code:`nw`: North-West
-    - :code:`es`: East-South
-    - :code:`en`: East-North
-    - :code:`se`: South-East
-    - :code:`sw`: South-West
-    - :code:`ws`: West-South
-    - :code:`wn`: West-North
-
-    The direction value is read as: the first direction is at the top of the graphical object,
-    and the second direction is the right side of the graphical object.
-
-    The default direction is North-East:
-        - West corresponding to inputs,
-        - East corresponding to outputs.
-    """
-
-    #: North-East direction. Default direction (inputs are on the left, outputs are on the right).
-    NORTH_EAST = "ne"
-
-    #: North-West direction. From the default direction, a horizontal flip is applied,
-    #: or a 180° rotation and a vertical flip are applied
-    #: (inputs are on the right and outputs are on the left).
-    NORTH_WEST = "nw"
-
-    #: East-South direction. From the default direction, a 90° left rotation is applied
-    #: (inputs are at the bottom and outputs are at the top).
-    EAST_SOUTH = "es"
-
-    #: East-North direction. From the default direction, a 90° left rotation and a horizontal flip are applied
-    #: (inputs are at the bottom and outputs are at the top).
-    EAST_NORTH = "en"
-
-    #: South east direction. From the default direction, a vertical flip is applied
-    #: (inputs are on the left and outputs are on the right).
-    SOUTH_EAST = "se"
-
-    #: South-West direction. From the default direction, a 180° rotation is applied
-    #: (inputs are on the right and outputs are on the left).
-    SOUTH_WEST = "sw"
-
-    #: West-South direction. From the default direction, a 90° right rotation and a horizontal flip are applied
-    #: (inputs are at the top and outputs are at the bottom).
-    WEST_SOUTH = "ws"
-
-    #: West-North direction. From the default direction a 90° right rotation is applied
-    #: (inputs are at the top and outputs are at the bottom).
-    WEST_NORTH = "wn"
-
-
-class Orientation:
-    """Text content orientation.
-
-    *Orientation* is defined as
-
-    .. code-block:: ebnf
-
-        orient = orient_val
-
-    where :code:`orient_val` is defined in :py:class:`OrientationType`.
-
-    *Orientation* is used to define the text content orientation of the diagram object.
-    """
-
-    def __init__(self, value: "OrientationType") -> None:
-        self._value = value
-
-    @property
-    def value(self) -> "OrientationType":
-        """Return the orientation value."""
-        return self._value
-
-    def __str__(self):
-        if self._value is None:
-            return ""
-        return self._value.value
-
-
-class OrientationType(Enum):
-    """Text content orientation value.
-
-    The orientation value is defined as:
-
-    .. code-block:: ebnf
-
-        orient_val = "H"|"V"
-
-    where:
-
-    - :code:`H`: Horizontal orientation
-    - :code:`V`: Vertical orientation
-    """
-
-    #: Horizontal orientation.
-    HORIZONTAL = "H"
-
-    #: Vertical orientation.
-    VERTICAL = "V"
-
-
-class PathInfo:
-    """The wire or transition path between two objects.
-    The path is defined by a list of moves.
-
-    The wire and transition paths are defined as:
-
-    - Wire
-
-    .. code-block:: ebnf
-
-        wp = path_info
-
-    - Transition
-
-    .. code-block:: ebnf
-
-        tp = path_info
-
-    where:
-
-    .. code-block:: ebnf
-
-        path_info = w_anchor path
-
-    :code:`w_anchor` is defined in :py:class:`WireAnchor`.
-
-    :code:`path` is defined in :py:class:`WirePath`.
-    """
-
-    def __init__(self, w_anchor: "WireAnchor", path: "WirePath") -> None:
-        self._w_anchor = w_anchor
-        self._path = path
-
-    @property
-    def w_anchor(self) -> "WireAnchor":
-        """Return the wire anchor."""
-        return self._w_anchor
-
-    @property
-    def path(self) -> "WirePath":
-        """Return the path."""
-        return self._path
-
-    def __str__(self):
-        return f"{self._w_anchor} {self._path}"
-
-
-class WireAnchor:
-    """*Wire anchor* is the starting or ending point of a path.
-
-    *Wire anchor* is defined as:
-
-    .. code-block:: ebnf
-
-        w_anchor = LUNUM
-            | COORD '|' LUNUM (* connection to a group-related block *)
-            | coordinates '|' LUNUM (* coordinates of a starting/ending point of a transition for a state *)
-            | coordinates (* unconnected point as a pair of COORD. *)
-
-    where:
-
-    - :code:`LUNUM`: The graphical object identifier (see :py:class:`Lunum`)
-    - :code:`COORD`: Coordinate *x* or *y* (see :py:class:`Coordinate`)
-    - :code:`coordinates`: Coordinates (*x*;*y*) (see :py:class:`Coordinates`)
-    """
-
-    def __init__(
-        self,
-        lunum: Optional["Lunum"] = None,
-        coordinates: Optional["Coordinates"] = None,
-    ) -> None:
-        self._lunum = lunum
-        self._coordinates = coordinates
-
-    @property
-    def lunum(self) -> "Lunum":
-        """Return the LUNUM."""
-        return self._lunum
-
-    @property
-    def coordinates(self) -> Union["Coordinates", None]:
-        """Return the coordinates."""
-        return self._coordinates
-
-    def __str__(self):
-        wire_anchor = []
-        if self._coordinates:
-            wire_anchor.append(str(self._coordinates))
-        if self._lunum:
-            wire_anchor.append(str(self._lunum))
-        if len(wire_anchor) == 0:
-            return ""
-        return "|".join(wire_anchor)
-
-
-class WirePath:
-    """The wire path structure.
-
-    Wire path is defined as:
-
-    .. code-block:: ebnf
-
-        path = {move} w_anchor
-                | {move} branch
-
-    *{move}* means zero or more moves.
-    where:
-
-    - :code:`move` is defined in :py:class:`Move`
-    - :code:`w_anchor` is defined in :py:class:`WireAnchor`
-    - :code:`branch` is defined in :py:class:`Branch`
-    """
-
-    def __init__(
-        self,
-        moves: Optional[List["Move"]] = None,
-        w_anchor: Optional["WireAnchor"] = None,
-        branch: Optional["Branch"] = None,
-    ) -> None:
-        self._moves = moves
-        self._w_anchor = w_anchor
-        self._branch = branch
-
-    @property
-    def moves(self) -> Union[List["Move"], None]:
-        """Return the moves."""
-        return self._moves
-
-    @property
-    def w_anchor(self) -> Union["WireAnchor", None]:
-        """Return the wire anchor."""
-        return self._w_anchor
-
-    @property
-    def branch(self) -> Union["Branch", None]:
-        """Return the branch."""
-        return self._branch
-
-    def __str__(self) -> str:
-        branch_str = []
-        if self._moves:
-            for move in self._moves:
-                branch_str.append(str(move))
-        if self._w_anchor:
-            branch_str.append(str(self._w_anchor))
-        if self._branch:
-            branch_str.append(str(self._branch))
-        if len(branch_str) == 0:
-            return ""
-        return " ".join(branch_str)
-
-
-class Move:
-    """Movement of a wire or transition.
-
-    Move is defined as:
-
-    .. Code-block:: ebnf
-
-        Move = move_coordinates
-
-    Where:
-
-    - :code:`move_coordinates`: Move coordinates (see :py:class:`MoveCoordinates`)
-    """
-
-    def __init__(self, coordinates: Optional["MoveCoordinates"] = None) -> None:
-        self._coordinates = coordinates
-
-    @property
-    def coordinates(self) -> Union["MoveCoordinates", None]:
-        """Return the coordinates."""
-        return self._coordinates
-
-    def __str__(self) -> str:
-        if not self._coordinates:
-            return ""
-        return str(self._coordinates)
-
-
-class MoveCoordinates:
-    """*Move coordinates* manages the movement among coordinates of wires and transitions.
-
-    *Wire coordinates* are defined as:
-
-    .. code-block:: ebnf
-
-        wire_coordinates = COORD | coordinates
-
-    and *transition coordinates* are defined as:
-
-    .. code-block:: ebnf
-
-        transition_coordinates = (COORD | coordinates) '|' coordinates
-
-    Thus, joining both definitions, *move coordinates* is defined as:
-
-    .. code-block:: ebnf
-
-        move_coordinates = (COORD | coordinates) '|' coordinates
-    """
-
-    def __init__(
-        self,
-        coordinates: "Coordinates",
-        fork_coordinates: Optional["Coordinates"] = None,
-    ) -> None:
-        self._coordinates = coordinates
-        self._fork_coordinates = fork_coordinates
-
-    @property
-    def coordinates(self) -> "Coordinates":
-        """Return the coordinates."""
-        return self._coordinates
-
-    @property
-    def fork_coordinates(self) -> Union["Coordinates", None]:
-        """Return the fork coordinates. Only applies to transitions."""
-        return self._fork_coordinates
-
-    def __str__(self):
-        if not self._fork_coordinates:
-            return str(self._coordinates)
-        return f"{self._coordinates}|{self._fork_coordinates}"
-
-
-class Branch:
-    """Branch is the graphic path followed by the wire or transition.
-
-    Branch is defined as:
-
-    .. code-block:: ebnf
-
-        branch = '[' path_list ']';
-        path_list = path
-            | path_list ',' path
-
-    where:
-
-    - :code:`path`: Wire path (see :py:class:`WirePath`)
-    """
-
-    def __init__(self, path_list: List["WirePath"]) -> None:
-        self._path_list = path_list
-
-    @property
-    def path_list(self) -> List["WirePath"]:
-        """Return the path list."""
-        return self._path_list
-
-    def __str__(self):
-        path_list_str = []
-        for path in self._path_list:
-            path_list_str.append(str(path))
-        if len(path_list_str) == 0:
-            return ""
-        list_str = ", ".join(path_list_str)
-        return f"[{list_str}]"
+    PragmaRE = re.compile(r"^#pragma(?P<content>.*)#end$", re.DOTALL)
+    PragmaContentRE = re.compile(r"^(?P<key>\s*\S+)(?P<val>.*?)$", re.DOTALL)
+    _instance = None
+
+    def __new__(cls, *args, **kwargs) -> "PragmaParser":
+        if not cls._instance:
+            cls._instance = super(PragmaParser, cls).__new__(cls)
+        return cls._instance
+
+    def parse(self, pragma: str) -> Optional[Pragma]:
+        """Parse pragma.
+
+        Parameters
+        ----------
+        pragma : str
+            Pragma string defined in SO-SRS-001 V2.1, section 1.2.5, [S1-203]
+
+        Returns
+        -------
+        Pragma | None
+            The parsed pragma or None if the pragma is not valid or not supported.
+        """
+        if not pragma:
+            return None
+
+        pragma_tuple = self.extract(pragma)
+        if not pragma_tuple:
+            return None
+        raw_key, value = pragma_tuple
+        key = PragmaKey.from_string(raw_key.strip())
+        if key == PragmaKey.DIAGRAM:
+            if diagram_pragma := DiagramPragmaParser().parse(value):
+                return diagram_pragma
+            return Pragma(PragmaKey.DIAGRAM, value)
+        if key == PragmaKey.CG:
+            return CGPragma(value.strip())
+        if key == PragmaKey.SWT:
+            return TestPragma(TestPragmaKind.from_string(value.strip()))
+        if key == PragmaKey.DOC:
+            return DocumentationPragma(value)
+        if key == PragmaKey.REQUIREMENT:
+            return TraceabilityPragma(value)
+        return Pragma(raw_key, value)
+
+    @staticmethod
+    def extract(pragma: str) -> Union[tuple[str, str], None]:
+        """Extract pragma information as a tuple
+        if pragma is valid, namely: #pragma key value? #end.
+
+        Fist white space before the key and the value is removed, as the last before the #end.
+
+        Parameters
+        ----------
+        pragma : str
+            Pragma information string.
+
+        Returns
+        -------
+        tuple | None
+            The Tuple (*pragma name*, *pragma value*) if pragma is valid, None else.
+        """
+        #  get the pragma content
+        m = PragmaParser.PragmaRE.match(pragma)
+        if not m:
+            return None
+        content = m["content"]
+        # get the pragma key and value
+        m = PragmaParser.PragmaContentRE.match(content)
+        if not m:
+            # pragma without key and value,
+            if content and content[0] == " ":
+                content = content[1:]
+            if content and content[-1] == " ":
+                content = content[:-1]
+            return content, ""
+        val = m["val"]
+        # strip leading and trailing spaces if any
+        if val and val[0] == " ":
+            val = val[1:]
+        if val and val[-1] == " ":
+            val = val[:-1]
+        key = m["key"]
+        if key and key[0] == " ":
+            key = key[1:]
+        return key, val

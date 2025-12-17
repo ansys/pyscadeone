@@ -1,4 +1,4 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2025.2 graph: 2.1
 function function0 (i0: int32;
                     i1 : float32;)
   returns (o0: int32;

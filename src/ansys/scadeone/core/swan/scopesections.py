@@ -28,14 +28,13 @@ This module contains the classes for:
 - emit section
 - assume section
 - guaranteed section
+- assert section
 """
 
 from typing import List, Optional, Union
 
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
-
-from .variable import VarDecl
 
 
 class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
@@ -60,13 +59,13 @@ class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
 
     **var** {{*var_decl* ;}} section."""
 
-    def __init__(self, var_decls: List[VarDecl]) -> None:
+    def __init__(self, var_decls: List[common.Variable]) -> None:
         super().__init__()
         self._var_decls = var_decls
         common.SwanItem.set_owner(self, var_decls)
 
     @property
-    def var_decls(self) -> List[VarDecl]:
+    def var_decls(self) -> List[common.Variable]:
         """Declared variables."""
         return self._var_decls
 
@@ -121,11 +120,13 @@ class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
         return self._emissions
 
 
-class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
-    """Assume or Guarantee expression."""
+class Assertion(common.HasPragma):  # numpydoc ignore=PR01
+    """Assume, assert or guarantee expression."""
 
-    def __init__(self, luid: common.Luid, expr: common.Expression) -> None:
-        super().__init__()
+    def __init__(
+        self, luid: common.Luid, expr: common.Expression, pragmas: Optional[List[common.Pragma]]
+    ) -> None:
+        super().__init__(pragmas)
         self._luid = luid
         self._expr = expr
 
@@ -140,52 +141,45 @@ class FormalProperty(common.SwanItem):  # numpydoc ignore=PR01
         return self._expr
 
 
-class AssertSection(scopes.ScopeSection):  # numpydoc ignore=PR01
-    """Implements Assert section:
+class AssertionBase(scopes.ScopeSection):  # numpydoc ignore=PR01
+    """Base class for Assume, Assert and Guarantee sections."""
 
-    **assert** {{LUID: *expr* ;}}"""
-
-    def __init__(self, assertions: List[FormalProperty]) -> None:
+    def __init__(self, assertions: List[Assertion]) -> None:
         super().__init__()
         self._assertions = assertions
         common.SwanItem.set_owner(self, assertions)
 
     @property
-    def assertions(self) -> List[FormalProperty]:
-        """Hypotheses of Assert."""
+    def assertions(self) -> List[Assertion]:
+        """Assertions of Assume or Assert or Guarantee."""
         return self._assertions
 
 
-class AssumeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
+class AssertSection(AssertionBase):  # numpydoc ignore=PR01
+    """Implements Assert section:
+
+    **assert** {{LUID: *expr* ;}}"""
+
+    def __init__(self, assertions: List[Assertion]) -> None:
+        super().__init__(assertions)
+
+
+class AssumeSection(AssertionBase):  # numpydoc ignore=PR01
     """Implements Assume section:
 
     **assume** {{LUID: *expr* ;}}"""
 
-    def __init__(self, hypotheses: List[FormalProperty]) -> None:
-        super().__init__()
-        self._hypotheses = hypotheses
-        common.SwanItem.set_owner(self, hypotheses)
-
-    @property
-    def hypotheses(self) -> List[FormalProperty]:
-        """Hypotheses of Assume."""
-        return self._hypotheses
+    def __init__(self, assertions: List[Assertion]) -> None:
+        super().__init__(assertions)
 
 
-class GuaranteeSection(scopes.ScopeSection):  # numpydoc ignore=PR01
+class GuaranteeSection(AssertionBase):  # numpydoc ignore=PR01
     """Implements Guarantee section:
 
     **guarantee** {{LUID: *expr* ;}}"""
 
-    def __init__(self, guarantees: List[FormalProperty]) -> None:
-        super().__init__()
-        self._guarantees = guarantees
-        common.SwanItem.set_owner(self, guarantees)
-
-    @property
-    def guarantees(self) -> List[FormalProperty]:
-        """Guarantees of Guarantee."""
-        return self._guarantees
+    def __init__(self, assertions: List[Assertion]) -> None:
+        super().__init__(assertions)
 
 
 class ProtectedSection(scopes.ScopeSection, common.ProtectedItem):  # numpydoc ignore=PR01

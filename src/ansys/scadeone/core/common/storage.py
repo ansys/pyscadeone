@@ -34,7 +34,7 @@ from abc import ABC, abstractmethod
 import json
 from pathlib import Path
 import re
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.versioning import FormatVersions
@@ -76,7 +76,7 @@ class Storage(ABC):
         pass
 
     @abstractmethod
-    def set_content(self, data: str) -> str:
+    def set_content(self, data: str) -> None:
         """Sets content of the source."""
         pass
 
@@ -107,7 +107,7 @@ class FileStorage(Storage):
             return content
         raise ScadeOneException(f"FileStorage.content(): no such file: {self.path}.")
 
-    def set_content(self, data: str) -> str:
+    def set_content(self, data: str) -> None:
         """Sets content and write it to underlying file."""
         self.path.write_text(data)
 
@@ -127,7 +127,7 @@ class StringStorage(Storage):
         """Content of string."""
         return self._text
 
-    def set_content(self, data: str) -> str:
+    def set_content(self, data: str) -> None:
         """Set content of the file."""
         self._text = data
 
@@ -141,17 +141,17 @@ class JSONStorage(object):
         self._json = None
 
     @property
-    def json(self):
+    def json(self) -> dict:
         """JSON content.
         Any modification is propagated to the underlying JSON object."""
-        return self._json
+        return self._json if self._json is not None else {}
 
     @json.setter
-    def json(self, json_data):
+    def json(self, json_data: dict) -> None:
         """Update JSON content"""
         self._json = json_data
 
-    def load(self, **kw):
+    def load(self, **kw) -> "JSONStorage":
         """Loads content of JSON data into json property and returns `self`.
 
         See `json.loads() <https://docs.python.org/3/library/json.html>`_
@@ -160,7 +160,7 @@ class JSONStorage(object):
         self.json = json.loads(self._asset.content(), **kw)
         return self
 
-    def dump(self, **kw):
+    def dump(self, **kw) -> "JSONStorage":
         """Uses `self.json` to update storage content and returns self.
 
         See `json.dumps() <https://docs.python.org/3/library/json.html>`_
@@ -172,7 +172,7 @@ class JSONStorage(object):
 
     def exists(self) -> bool:
         """True when a source exists."""
-        pass
+        return self._asset.exists()
 
 
 # Swan related storage
@@ -186,6 +186,7 @@ class SwanStorage(ABC):
         super().__init__(**kwargs)
 
     @property
+    @abstractmethod
     def name(self) -> str:
         """Name for module or interface."""
         pass
@@ -207,7 +208,8 @@ class SwanStorage(ABC):
         Returns
         -------
         Union[dict, None]
-            Either the version information as a dictionary, or None if no version found.
+            Either the version information as a dictionary,
+            or None if no version found.
         """
         m = re.match(r"^--\s*version\s+(?P<ver>.*)$", source, re.MULTILINE)
         if m:
@@ -220,7 +222,7 @@ class SwanStorage(ABC):
             return infos
         return None
 
-    def check_swan_version(self):
+    def check_swan_version(self) -> bool:
         """Check Swan version information.
 
         Raises
@@ -229,15 +231,19 @@ class SwanStorage(ABC):
             When version information is missing or invalid.
         """
         version = self.version
-        if version is None:
-            raise ScadeOneException("No version information found.")
-        for k in ("swan", "graph"):
-            if k not in version:
-                raise ScadeOneException(f"Missing version information for {k}.")
-            FormatVersions.check(k, version[k])
-        return version
 
-    def check_swant_version(self):
+        if version is None:
+            return False
+        try:
+            for k in ("swan", "graph"):
+                if k not in version:
+                    raise ScadeOneException(f"Missing {k} tag for version")
+                FormatVersions.check(k, version[k])
+        except ScadeOneException:
+            return False
+        return True
+
+    def check_swant_version(self) -> bool:
         """Check Swan test harness version information.
 
         Raises
@@ -245,11 +251,16 @@ class SwanStorage(ABC):
         ScadeOneException
             When version information is missing or invalid.
         """
-        version = self.check_swan_version()
-        if "swant" not in version:
-            raise ScadeOneException("Missing version information for swant.")
-        FormatVersions.check("swant", version["swant"])
-        return version
+        if not self.check_swan_version():
+            return False
+        try:
+            version = cast(dict[str, str], self.version)
+            if "swant" not in version:
+                raise ScadeOneException("Missing swant for version")
+            FormatVersions.check("swant", version["swant"])
+        except ScadeOneException:
+            return False
+        return True
 
 
 class SwanFile(FileStorage, SwanStorage):
@@ -287,7 +298,7 @@ class SwanFile(FileStorage, SwanStorage):
     def version(self) -> Union[dict, None]:
         """Swan version information."""
         try:
-            with self.path.open() as fd:
+            with self.path.open(encoding="utf-8") as fd:
                 return self.extract_version(fd.readline())
         except:  # noqa: E722
             return None
@@ -315,7 +326,7 @@ class SwanString(StringStorage, SwanStorage):
         return self._name
 
     @property
-    def source(self) -> str:
+    def source(self) -> str:  # type: ignore[override]
         """Source string."""
         return f"string:<{self.content()}>"
 
@@ -333,7 +344,7 @@ class ProjectStorage(JSONStorage):
     """Base class for project storage."""
 
     def __init__(self, **kwargs) -> None:
-        super().__init__(asset=self, **kwargs)
+        super().__init__(asset=cast(Storage, self), **kwargs)
 
 
 class ProjectFile(FileStorage, ProjectStorage):
@@ -351,7 +362,7 @@ class JobStorage(JSONStorage):
     """Base class for job asset."""
 
     def __init__(self, **kwargs) -> None:
-        super().__init__(asset=self, **kwargs)
+        super().__init__(asset=cast(Storage, self), **kwargs)
 
 
 class JobFile(FileStorage, JobStorage):

@@ -7,5 +7,6 @@
 ## Individual Contributors
 
 * [Carlos Ernesto Gomez Cardenas](https://github.com/carlosegomezc)
-* [Nicolas Dervaux](https://github.com/jimjones)
-* [Van Toan Dao](https://github.com/jackjohnson)
+* [Nicolas Dervaux](https://github.com/nicolasdervaux)
+* [Van Toan Dao](https://github.com/vantoandao)
+* [Vivien Tran Ba]

@@ -22,14 +22,13 @@
 # SOFTWARE.
 
 """
-This module contains the classes for operator and signature (operator
-without body)
+This module contains the classes for operator declarations and definitions.
 """
 
 from typing import Callable, List, Optional, Union, cast
 
 from ansys.scadeone.core.svc.swan_creator.operator_creator import (
-    SignatureCreator,
+    OperatorDeclarationCreator,
     OperatorCreator,
 )
 import ansys.scadeone.core.swan.common as common
@@ -80,8 +79,21 @@ class TypeConstraint(common.SwanItem):  # numpydoc ignore=PR01
         return self._kind
 
 
-class OperatorSignatureBase(common.Declaration, common.ModuleItem):  # numpydoc ignore=PR01
-    """Base class for Operator and Signature, gathering all interface details."""
+class SizeParameter(common.Declaration):  # numpydoc ignore=PR01
+    """Size parameter declaration, used in operator declarations and definitions."""
+
+    def __init__(
+        self, id: common.Identifier, pragmas: Optional[List[common.Pragma]] = None
+    ) -> None:
+        common.Declaration.__init__(self, id, pragmas)
+        self._id = id
+        self.set_owner(self, self._id)
+
+
+class OperatorDeclarationDefinitionBase(
+    common.Declaration, common.ModuleItem
+):  # numpydoc ignore=PR01
+    """Base class for OperatorDeclaration and OperatorDefinition, gathering all interface details."""
 
     def __init__(
         self,
@@ -90,21 +102,25 @@ class OperatorSignatureBase(common.Declaration, common.ModuleItem):  # numpydoc 
         is_node: bool,
         inputs: List[common.Variable],
         outputs: List[common.Variable],
-        sizes: Optional[List[common.Identifier]] = None,
-        constraints: Optional[List[TypeConstraint]] = None,
+        size_parameters: Optional[List[SizeParameter]] = None,
+        type_constraints: Optional[List[TypeConstraint]] = None,
         specialization: Optional[common.PathIdentifier] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        common.Declaration.__init__(self, id)
+        common.Declaration.__init__(self, id, pragmas)
         self._is_node = is_node
         self._is_inlined = is_inlined
         self._inputs = inputs
         self._outputs = outputs
-        self._sizes = sizes if sizes else []
-        self._constraints = constraints if constraints else []
+        self._size_parameters = size_parameters if size_parameters else []
+        self._type_constraints = type_constraints if type_constraints else []
         self._specialization = specialization
-        self._pragmas = pragmas if pragmas else []
-        for children in (self._inputs, self._outputs, self._sizes, self._constraints):
+        for children in (
+            self._inputs,
+            self._outputs,
+            self._size_parameters,
+            self._type_constraints,
+        ):
             self.set_owner(self, children)
         self._is_text = False
 
@@ -129,24 +145,19 @@ class OperatorSignatureBase(common.Declaration, common.ModuleItem):  # numpydoc 
         return self._outputs
 
     @property
-    def sizes(self) -> List[common.Identifier]:
-        """Return sizes as a list."""
-        return self._sizes
+    def size_parameters(self) -> List[SizeParameter]:
+        """Return size parameters as a list."""
+        return self._size_parameters
 
     @property
-    def constraints(self) -> List[TypeConstraint]:
-        """Return constraints as a list."""
-        return self._constraints
+    def type_constraints(self) -> List[TypeConstraint]:
+        """Return type constraints as a list."""
+        return self._type_constraints
 
     @property
     def specialization(self) -> Union[common.PathIdentifier, None]:
         """Return specialization path_id or None."""
         return self._specialization
-
-    @property
-    def pragmas(self) -> List[common.Pragma]:
-        """Return pragmas as a list."""
-        return self._pragmas
 
     @property
     def is_text(self) -> bool:
@@ -157,12 +168,12 @@ class OperatorSignatureBase(common.Declaration, common.ModuleItem):  # numpydoc 
         return self._is_text
 
     @is_text.setter
-    def is_text(self, text_flag: bool):
+    def is_text(self, text_flag: bool) -> None:
         self._is_text = text_flag
 
 
-class Signature(OperatorSignatureBase, SignatureCreator):
-    """Operator interface definition.
+class OperatorDeclaration(OperatorDeclarationDefinitionBase, OperatorDeclarationCreator):
+    """Operator declaration definition.
 
     Used in module body or interface.
     """
@@ -174,29 +185,29 @@ class Signature(OperatorSignatureBase, SignatureCreator):
         is_node: bool,
         inputs: List[common.Variable],
         outputs: List[common.Variable],
-        sizes: Optional[List[common.Identifier]] = None,
-        constraints: Optional[List[TypeConstraint]] = None,
+        size_parameters: Optional[List[SizeParameter]] = None,
+        type_constraints: Optional[List[TypeConstraint]] = None,
         specialization: Optional[common.PathIdentifier] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        OperatorSignatureBase.__init__(
+        OperatorDeclarationDefinitionBase.__init__(
             self,
             id,
             is_inlined,
             is_node,
             inputs,
             outputs,
-            sizes,
-            constraints,
+            size_parameters,
+            type_constraints,
             specialization,
             pragmas,
         )
 
 
-class Operator(OperatorSignatureBase, OperatorCreator):
+class OperatorDefinition(OperatorDeclarationDefinitionBase, OperatorCreator):
     """Operator definition, with a body.
 
-    Used in modules. The body may be empty.
+    Used in module body. The body may be empty.
     """
 
     def __init__(
@@ -206,28 +217,28 @@ class Operator(OperatorSignatureBase, OperatorCreator):
         is_node: bool,
         inputs: List[common.Variable],
         outputs: List[common.Variable],
-        body: Union[Scope, common.Equation, Callable] = None,
-        sizes: Optional[List[common.Identifier]] = None,
-        constraints: Optional[List[TypeConstraint]] = None,
+        body: Optional[Union[Scope, common.Equation, Callable]] = None,
+        size_parameters: Optional[List[SizeParameter]] = None,
+        type_constraints: Optional[List[TypeConstraint]] = None,
         specialization: Optional[common.PathIdentifier] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        OperatorSignatureBase.__init__(
+        OperatorDeclarationDefinitionBase.__init__(
             self,
             id,
             is_inlined,
             is_node,
             inputs,
             outputs,
-            sizes,
-            constraints,
+            size_parameters,
+            type_constraints,
             specialization,
             pragmas,
         )
         self._body = body
 
     @property
-    def body(self) -> Union[Scope, common.Equation, None]:
+    def body(self) -> Optional[Union[Scope, common.Equation]]:
         """Operator body: a scope, an equation, or None."""
         if isinstance(self._body, Callable):
             body = self._body(self)
@@ -250,8 +261,9 @@ class Operator(OperatorSignatureBase, OperatorCreator):
         """Return a list of diagram declarations."""
         if not self.has_body or self.is_equation_body:
             return []
+        body = cast(Scope, self.body)
         return [
             cast(Diagram, diag)
-            for diag in filter(lambda x: isinstance(x, Diagram), self.body.sections)
+            for diag in filter(lambda x: isinstance(x, Diagram), body.sections)
             if diag
         ]

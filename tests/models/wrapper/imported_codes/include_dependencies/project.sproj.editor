@@ -1,0 +1,8 @@
+{
+  "JobsOrder": [
+    "jobs\\codegen_b4dabe7\\.sjob"
+  ],
+  "ModulesOrder": [
+    "assets\\module0.swan"
+  ]
+}

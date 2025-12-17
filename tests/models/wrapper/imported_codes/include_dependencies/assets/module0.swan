@@ -1,0 +1,21 @@
+-- version swan: 2025.2 graph: 2.1
+use Math::Common;
+
+function operator0 (i0: float32;)
+  returns (o0: float32;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-70350;V-10550"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H-11350;V-14050"} #end)
+    (#3 expr 2._f32
+    #pragma diagram {"xy":"H-71350;V-17550","wh":"10000;3200"} #end)
+    (#2 block Common::Pow
+    #pragma diagram {"xy":"H-40850;V-14050","wh":"20000;14000"} #end)
+    
+    (#4 wire #2 => #1
+    #pragma diagram {"wp":"v0|#2 #1"} #end)
+    (#5 wire #3 => #2 .(y))
+    (#6 wire #0 => #2 .(x))
+}

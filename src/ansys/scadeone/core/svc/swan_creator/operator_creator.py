@@ -33,29 +33,29 @@ if TYPE_CHECKING:
 
 
 class OperatorFactory:
+    """Factory class for creating operators."""
+
     _instance = None
-
-    def __init__(self) -> None:
-        from ansys.scadeone.core.model.loader import SwanParser
-
-        self._parser = SwanParser(LOGGER)
 
     def __new__(cls, *args, **kwargs) -> "OperatorFactory":
         if not cls._instance:
             cls._instance = super(OperatorFactory, cls).__new__(cls)
+            from ansys.scadeone.core.model.loader import SwanParser
+
+            cls._instance._parser = SwanParser(LOGGER)
         return cls._instance
 
     def create_variable(
         self,
         name: Optional[str] = None,
         var_type: Union[str, "swan.Declaration"] = None,
-        is_clock: Optional[bool] = False,
-        is_probe: Optional[bool] = False,
+        is_clock: bool = False,
+        is_probe: bool = False,
         when: Optional[str] = None,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,
-        is_input: Optional[bool] = None,
+        is_input: bool = None,
         module: Optional["swan.Module"] = None,
     ) -> "swan.VarDecl":
         """Create a variable.
@@ -63,7 +63,7 @@ class OperatorFactory:
         from ansys.scadeone.core.swan import (
             Declaration,
             Identifier,
-            Signature,
+            OperatorDeclaration,
             VarDecl,
             PathIdentifier,
         )
@@ -96,7 +96,7 @@ class OperatorFactory:
         else:
             swan_code = f"function temp_op({declaration}) returns (o0: int32);"
         op_str = SwanString(swan_code, "new_op")
-        op = cast(Signature, self._parser.operator_decl(op_str))
+        op = cast(OperatorDeclaration, self._parser.operator_decl_or_def(op_str))
         if not op:
             raise ScadeOneException("Invalid operator declaration")
         if is_input is False:
@@ -108,64 +108,66 @@ class OperatorFactory:
         return var
 
     @staticmethod
-    def create_signature(
+    def create_operator_declaration(
         name: Union[List["swan.Identifier"], str],
         is_node: bool = True,
         is_inline: bool = False,
-    ) -> "swan.Signature":
-        """Create a signature."""
-        from ansys.scadeone.core.swan import Identifier, Signature
+    ) -> "swan.OperatorDeclaration":
+        """Create an operator declaration."""
+        from ansys.scadeone.core.swan import Identifier, OperatorDeclaration
 
         id = Identifier(name)
         if not id.is_valid:
             raise ScadeOneException(f"Invalid module name: {name}")
-        return Signature(id, is_inline, is_node, [], [])
+        return OperatorDeclaration(id, is_inline, is_node, [], [])
 
     @staticmethod
-    def create_operator(
+    def create_operator_definition(
         name: Union[List["swan.Identifier"], str],
         is_node: bool = True,
         is_inline: bool = False,
-    ) -> "swan.Operator":
-        """Create an operator."""
-        from ansys.scadeone.core.swan import Identifier, Operator
+    ) -> "swan.OperatorDefinition":
+        """Create an operator definition."""
+        from ansys.scadeone.core.swan import Identifier, OperatorDefinition
 
         id = Identifier(name)  # noqa
         if not id.is_valid:
             raise ScadeOneException(f"Invalid module name: {name}")
-        return Operator(id, is_inline, is_node, [], [])
+        return OperatorDefinition(id, is_inline, is_node, [], [])
 
 
 class OperatorAdder:
+    """Class for adding inputs and outputs to operators."""
+
     @staticmethod
-    def add_input(operator: "swan.Signature", variable: "swan.Variable") -> None:
+    def add_input(operator: "swan.OperatorDeclaration", variable: "swan.Variable") -> None:
         """Add an input to the operator."""
         variable._is_input = True
         operator.inputs.append(variable)
         variable._owner = operator
 
     @staticmethod
-    def add_output(operator: "swan.Signature", variable: "swan.Variable") -> None:
-        """Add an output to the operator."""
+    def add_output(operator: "swan.OperatorDeclaration", variable: "swan.Variable") -> None:
+        """Add an output to the operator declaration."""
         variable._is_output = True
         operator.outputs.append(variable)
         variable._owner = operator
 
 
-class SignatureCreator(ABC):
+class OperatorDeclarationCreator(ABC):
+    """Class for OperatorDeclaration or OperatorDefinition interface creation."""
+
     def _add_variable(
         self,
         name: Optional[str] = None,
         var_type: Union[str, "swan.Declaration"] = None,
-        is_clock: Optional[bool] = False,
-        is_probe: Optional[bool] = False,
-        when: Optional[str] = None,
+        is_probe: bool = False,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,
-        is_input: Optional[bool] = None,
+        is_input: bool = None,
     ) -> "swan.VarDecl":
-        """Add an input to the operator.
+        """Add an input to the operator declaration.
         Input can be defined by name, type, ... or by a text declaration.
 
         Parameters
@@ -175,12 +177,8 @@ class SignatureCreator(ABC):
         var_type: str or Declaration
             Variable type.
             It could be a text declaration or a Declaration object.
-        is_clock: bool
-            Clock variable.
         is_probe: bool
             Probe variable.
-        when: str
-            When condition.
         default: str
             Default value.
         last: str
@@ -193,16 +191,16 @@ class SignatureCreator(ABC):
         VarDecl
             Variable object.
         """
-        from ansys.scadeone.core.swan.operators import OperatorSignatureBase
+        from ansys.scadeone.core.swan.operators import OperatorDeclarationDefinitionBase
 
-        if not isinstance(self, OperatorSignatureBase):
-            raise ScadeOneException("SignatureCreator: expecting Operator or Signature object")
+        if not isinstance(self, OperatorDeclarationDefinitionBase):
+            raise ScadeOneException(
+                "OperatorDeclarationCreator: expecting OperatorDeclaration or OperatorDefinition object"
+            )
         var = OperatorFactory().create_variable(
             name=name,
             var_type=var_type,
-            is_clock=is_clock,
             is_probe=is_probe,
-            when=when,
             default=default,
             last=last,
             declaration=declaration,
@@ -215,14 +213,12 @@ class SignatureCreator(ABC):
         self,
         name: Optional[str] = None,
         input_type: Union[str, "swan.Declaration"] = None,
-        is_clock: Optional[bool] = False,
-        is_probe: Optional[bool] = False,
-        when: Optional[str] = None,
+        is_probe: bool = False,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,
     ) -> "swan.VarDecl":
-        """Add an input to the operator.
+        """Add an input to the operator declaration.
         Input can be defined by name, type, ... or by a text declaration.
 
         Parameters
@@ -232,12 +228,8 @@ class SignatureCreator(ABC):
         input type: str or Declaration
             Input type.
             It could be a text declaration or a Declaration object.
-        is_clock: bool
-            Clock variable.
         is_probe: bool
             Probe variable.
-        when: str
-            When condition.
         default: str
             Default value.
         last: str
@@ -253,9 +245,7 @@ class SignatureCreator(ABC):
         var = self._add_variable(
             name=name,
             var_type=input_type,
-            is_clock=is_clock,
             is_probe=is_probe,
-            when=when,
             default=default,
             last=last,
             declaration=declaration,
@@ -268,14 +258,12 @@ class SignatureCreator(ABC):
         self,
         name: Optional[str] = None,
         output_type: Union[str, "swan.Declaration"] = None,
-        is_clock: Optional[bool] = False,
-        is_probe: Optional[bool] = False,
-        when: Optional[str] = None,
+        is_probe: bool = False,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,
     ) -> "swan.VarDecl":
-        """Add an output to the operator signature.
+        """Add an output to the operator declaration.
         Output can be defined by name, type, ... or by a text declaration.
 
         Parameters
@@ -285,12 +273,8 @@ class SignatureCreator(ABC):
         output_type: str or Declaration
             Output type.
             It could be a text declaration or a Declaration object.
-        is_clock: bool
-            Clock variable.
         is_probe: bool
             Probe variable.
-        when: str
-            When condition.
         default: str
             Default value.
         last: str
@@ -306,9 +290,7 @@ class SignatureCreator(ABC):
         var = self._add_variable(
             name=name,
             var_type=output_type,
-            is_clock=is_clock,
             is_probe=is_probe,
-            when=when,
             default=default,
             last=last,
             declaration=declaration,
@@ -318,19 +300,23 @@ class SignatureCreator(ABC):
         return var
 
 
-class OperatorCreator(SignatureCreator):
+class OperatorCreator(OperatorDeclarationCreator):
+    """Class for OperatorDefinition creation."""
+
     def add_diagram(self) -> "swan.Diagram":
-        """Add a diagram to the operator.
+        """Add a diagram to the operator definition.
 
         Returns
         -------
         Diagram
             Diagram object.
         """
-        from ansys.scadeone.core.swan import Diagram, Operator, Scope
+        from ansys.scadeone.core.swan import Diagram, OperatorDefinition, Scope, TestHarness
 
-        if not isinstance(self, Operator):
-            raise ScadeOneException("OperatorCreator must be used with an Operator object")
+        if not isinstance(self, (OperatorDefinition, TestHarness)):
+            raise ScadeOneException(
+                "OperatorCreator must be used with an OperatorDefinition object or Harness object."
+            )
         diag = Diagram()
         if not self.body or not self.body.sections:
             scope = Scope([diag])

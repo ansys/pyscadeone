@@ -26,10 +26,11 @@ This module contains the classes for variable declarations:
 - ProtectedVariable, for syntactically incorrect variable definition
 """
 
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import ansys.scadeone.core.swan.common as common
 from ansys.scadeone.core.swan.expressions import ClockExpr
+from ansys.scadeone.core.swan.pragmas import CGPragma, CGPragmaKind
 
 
 class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
@@ -38,22 +39,30 @@ class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
     def __init__(
         self,
         id: common.Identifier,
-        is_clock: Optional[bool] = False,
-        is_probe: Optional[bool] = False,
+        is_clock: bool = False,
+        is_starred: bool = False,
+        at: Optional[common.Identifier] = None,
         type: Optional[common.GroupTypeExpression] = None,
         when: Optional[ClockExpr] = None,
         default: Optional[common.Expression] = None,
         last: Optional[common.Expression] = None,
+        pragmas: Optional[list[common.Pragma]] = None,
     ) -> None:
-        common.Declaration.__init__(self, id)
+        common.Declaration.__init__(self, id, pragmas)
         self._is_clock = is_clock
-        self._is_probe = is_probe
+        self._is_starred = is_starred
+        self._at = at
         self._type = type
         self._when = when
         self._default = default
         self._last = last
         self._is_input = False
         self._is_output = False
+        common.SwanItem.set_owner(self, self._type)
+        common.SwanItem.set_owner(self, self._when)
+        common.SwanItem.set_owner(self, self._default)
+        common.SwanItem.set_owner(self, self._last)
+        common.SwanItem.set_owner(self, self._at)
 
     @property
     def is_clock(self) -> bool:
@@ -61,9 +70,20 @@ class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
         return self._is_clock
 
     @property
+    def is_starred(self) -> bool:
+        """True when consumption is allowed for the input variable. Note: *is_input* must be True."""
+        return self._is_starred
+
+    @property
+    def at(self) -> Optional[common.Identifier]:
+        """Memory constrained output. Name of the memory place. Note: *is_output* must be True."""
+        return self._at
+
+    @property
     def is_probe(self) -> bool:
         """True when variable is a probe."""
-        return self._is_probe
+        # probe pragma can be added or removed at any time, so we always check pragmas
+        return any(isinstance(p, CGPragma) and p.kind == CGPragmaKind.PROBE for p in self.pragmas)
 
     @property
     def type(self) -> Union[common.GroupTypeExpression, None]:
@@ -109,8 +129,11 @@ class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
         return not self.is_input and not self.is_output
 
 
-class ProtectedVariable(common.Variable, common.ProtectedItem):  # numpydoc ignore=PR01
+class ProtectedVariable(
+    common.Variable, common.ProtectedItem, common.HasPragma
+):  # numpydoc ignore=PR01
     """Protected variable definition as a string."""
 
-    def __init__(self, data: str) -> None:
+    def __init__(self, data: str, pragmas: List[common.Pragma] = None) -> None:
         common.ProtectedItem.__init__(self, data, common.Markup.Var)
+        common.HasPragma.__init__(self, pragmas)

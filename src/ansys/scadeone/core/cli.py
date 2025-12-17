@@ -25,12 +25,25 @@ import logging
 from pathlib import Path
 import sys
 
-from ansys.scadeone.core import ScadeOne, ScadeOneException, full_version
+from ansys.scadeone.core import ScadeOne, ScadeOneException, version_info
 from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.common.versioning import FormatVersions
 from ansys.scadeone.core.svc.fmu import FMU_2_Export
 
 # cSpell: ignore outdir, oper
+
+sys.stdout.reconfigure(encoding="utf-8")
+
+
+def print_banner() -> None:
+    version = f"{version_info.major}.{version_info.minor}.{version_info.patch}"
+    build = f" - Build {version_info.build}" if version_info.build else ""
+    build += " - Prerelease" if version_info.pre_release else ""
+
+    banner = f"""Ansys Scade One - PyScadeOne - Version {version}{build}
+Copyright © 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+"""
+    print(banner)
 
 
 def show_formats() -> bool:
@@ -74,7 +87,7 @@ def fmu_export_command(args) -> bool:
 
 
 def python_wrapper_command(args) -> bool:
-    from ansys.scadeone.core.svc.wrapper.python_wrapper import PythonWrapper
+    from ansys.scadeone.core.svc.pywrapper.python_wrapper import PythonWrapper
 
     print(
         f"Generate Python wrapper for project {args.project}",
@@ -110,6 +123,8 @@ def python_wrapper_command(args) -> bool:
 
 def view_sd_command(args) -> bool:
     import ansys.scadeone.core.svc.simdata as sd
+    from ansys.scadeone.core.svc.simdata.core.dll_wrap import sdf_open, sdf_dump, sdf_close
+    from ansys.scadeone.core.svc.simdata.core import FileOpenMode
 
     if args.sd:
         sd_path = Path(args.sd)
@@ -120,6 +135,19 @@ def view_sd_command(args) -> bool:
         print(sd_fd)
         sd_fd.close()
         return True
+
+    if args.sd_dump:
+        sd_path = Path(args.sd_dump)
+        if not sd_path.exists():
+            print(f"File not found: {sd_path}")
+            return False
+        sd_fd = sdf_open(str(sd_path), FileOpenMode.READ)
+        if sdf_dump(sd_fd) != 0:
+            print(f"Failed to dump simulation data file: {sd_path}")
+            return False
+        sdf_close(sd_fd)
+        return True
+
     return False
 
 
@@ -127,6 +155,7 @@ def main() -> bool:
     """Scade One Python command line.
 
     Returns True if the command line is executed successfully."""
+    print_banner()
     parser = argparse.ArgumentParser(
         prog="pyscadeone",
         description="Scade One Python library command line tool",
@@ -137,7 +166,7 @@ def main() -> bool:
     parser.add_argument(
         "--version",
         action="version",
-        version=full_version,
+        version="",
         help="%(prog)s version",
     )
     parser.add_argument(
@@ -174,10 +203,7 @@ def main() -> bool:
         help="Generated Code job name",
     )
     fmu_parser.add_argument(
-        "-inst",
-        "--install_dir",
-        type=Path,
-        help="Scade One installation directory",
+        "-inst", "--install_dir", type=Path, help="Scade One installation directory", required=True
     )
     fmu_parser.add_argument(
         "-op",
@@ -230,13 +256,10 @@ def main() -> bool:
         help=(
             """\
             Build arguments. Use one -args argument per key. Supported keys are:
-            cc: compiler name (only gcc supported),
-            arch: compiler architecture (only win64 supported),
-            gcc_path: path on the bin directory where gcc is located,
             user_sources: list (comma separated) of user source files and directories
             (code, includes),
             cc_opts: list (comma separated) of extra compiler options,
-            link_opt: list (comma separated) of extra link (dll creation) options,
+            link_opts: list (comma separated) of extra link options,
             swan_config_begin: data to insert at the beginning of swan_config.h,
             swan_config_end: data to insert at the end of swan_config.h."""
         ),
@@ -277,6 +300,12 @@ def main() -> bool:
         "--show",
         help="Show content of a simulation data file",
         dest="sd",
+    )
+    sd_parser.set_defaults(func=view_sd_command)
+    sd_parser.add_argument(
+        "--dump",
+        help="Content of a simulation data file in dump format for debugging",
+        dest="sd_dump",
     )
     sd_parser.set_defaults(func=view_sd_command)
 

@@ -27,7 +27,7 @@ from __future__ import annotations
 import ctypes
 from pathlib import Path
 import platform
-from typing import List, Tuple, Optional, Any, Union
+from typing import List, NoReturn, Tuple, Optional, Any, Type, Union
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.svc.simdata.core as core
@@ -50,12 +50,22 @@ else:
     SWAN_SD_CDLL = None
 
 
-def arch_64_error(*args):
-    raise ScadeOneException("Simdata module is only compatible with 64 bit architecture")
+def fits_in_c_size_t(value: Union[int, list[int]], exclude_zero: bool = False) -> bool:
+    lower_limit = 1 if exclude_zero else 0
+    upper_limit = core.sd_size_t(-1).value
+    if isinstance(value, list):
+        return all(isinstance(elt, int) and lower_limit <= elt <= upper_limit for elt in value)
+    return isinstance(value, int) and lower_limit <= value <= upper_limit
 
 
-def wrap_function(lib, func_name, argtypes, restype):
-    """Wrapping ctypes functions"""
+def arch_64_error(*args) -> NoReturn:
+    raise ScadeOneException("Simdata module is only compatible with 64-bit architecture.")
+
+
+def wrap_function(
+    lib: ctypes.CDLL, func_name: str, argtypes: List[Type], restype: Type
+) -> ctypes._CFuncPtr:
+    """Wrapping ctypes functions."""
 
     if not IS_ARCH_64:
         return arch_64_error
@@ -208,7 +218,7 @@ sdt_imported_is_variable_size_wrap = wrap_function(
 sde_create_wrap = wrap_function(
     SWAN_SD_CDLL,
     "sde_create",
-    [core.sd_id_t, ctypes.c_char_p, core.sd_id_t, core.sde_kind_t],
+    [core.sd_id_t, ctypes.c_char_p, core.sd_id_t, core.sde_kind_t, ctypes.c_char_p],
     core.sd_id_t,
 )
 
@@ -239,6 +249,9 @@ sde_get_children_wrap = wrap_function(
 sde_get_name_wrap = wrap_function(SWAN_SD_CDLL, "sde_get_name", [core.sd_id_t], ctypes.c_char_p)
 sde_get_type_wrap = wrap_function(SWAN_SD_CDLL, "sde_get_type", [core.sd_id_t], core.sd_id_t)
 sde_get_kind_wrap = wrap_function(SWAN_SD_CDLL, "sde_get_kind", [core.sd_id_t], core.sde_kind_t)
+sde_get_group_expr_wrap = wrap_function(
+    SWAN_SD_CDLL, "sde_get_group_expr", [core.sd_id_t], ctypes.c_char_p
+)
 sde_set_name_wrap = wrap_function(
     SWAN_SD_CDLL, "sde_set_name", [core.sd_id_t, ctypes.c_char_p], core.sd_err_t
 )
@@ -247,6 +260,9 @@ sde_set_type_wrap = wrap_function(
 )
 sde_set_kind_wrap = wrap_function(
     SWAN_SD_CDLL, "sde_set_kind", [core.sd_id_t, core.sde_kind_t], core.sd_err_t
+)
+sde_set_group_expr_wrap = wrap_function(
+    SWAN_SD_CDLL, "sde_set_group_expr", [core.sd_id_t, ctypes.c_char_p], core.sd_err_t
 )
 sde_remove_wrap = wrap_function(SWAN_SD_CDLL, "sde_remove", [core.sd_id_t], core.sd_err_t)
 
@@ -315,10 +331,12 @@ sdd_value_iter_clear_values_wrap = wrap_function(
 sdd_value_iter_close_wrap = wrap_function(
     SWAN_SD_CDLL, "sdd_value_iter_close", [core.sd_value_iterator_t], None
 )
-
-# 'sequence iterator' object = an iterator on element sequences ('sequence' objects)
-# TODO
-
+sdd_sequence_iter_create_wrap = wrap_function(
+    SWAN_SD_CDLL, "sdd_sequence_iter_create", [core.sd_id_t], core.sd_sequence_iterator_t
+)
+sdd_sequence_iter_get_sequence_wrap = wrap_function(
+    SWAN_SD_CDLL, "sdd_sequence_iter_get_sequence", [core.sd_value_iterator_t], core.sd_sequence_t
+)
 sdd_value_create_none_wrap = wrap_function(
     SWAN_SD_CDLL, "sdd_value_create_none", [], core.sd_value_t
 )
@@ -479,7 +497,9 @@ sdd_sequence_create_values_wrap = wrap_function(
 sdd_sequence_close_wrap = wrap_function(
     SWAN_SD_CDLL, "sdd_sequence_close", [core.sd_sequence_t], None
 )
-
+sdd_sequence_get_repeat_factor_wrap = wrap_function(
+    SWAN_SD_CDLL, "sdd_sequence_get_repeat_factor", [core.sd_sequence_t], core.sd_size_t
+)
 
 ###########################################################################
 # file operations
@@ -496,6 +516,7 @@ def sdf_get_version(file_id: int) -> str:
 
 
 def sdf_dump(file_id: int) -> int:
+    "Returns 0 on success, non-zero on error."
     return sdf_dump_wrap(file_id)
 
 
@@ -535,7 +556,7 @@ def sdt_get_name(type_id: int) -> str:
     return b_name.decode("utf-8") if b_name is not None else ""
 
 
-def sdt_set_name(type_id: int, name: str):
+def sdt_set_name(type_id: int, name: str) -> int:
     b_name = name.encode("utf-8")
     return sdt_set_name_wrap(type_id, b_name)
 
@@ -572,7 +593,7 @@ def sdt_struct_get_field_type(struct_id: int, field_idx: int) -> int:
 # - array
 
 
-def sdt_array_create(base_type_id: int, n_dims: int, dims: List[int]):
+def sdt_array_create(base_type_id: int, n_dims: int, dims: List[int]) -> int:
     dims_array_type = core.sd_size_t * len(dims)
     dims_array = dims_array_type(*dims)
     return sdt_array_create_wrap(base_type_id, n_dims, dims_array)
@@ -705,9 +726,10 @@ def sdt_imported_is_variable_size(imported_id: int) -> bool:
 # - create element
 
 
-def sde_create(file_id: int, name: str, type_id: int, kind: core.SdeKind) -> int:
+def sde_create(file_id: int, name: str, type_id: int, kind: core.SdeKind, group_expr: str) -> int:
     b_name = name.encode("utf-8")
-    return sde_create_wrap(file_id, b_name, type_id, kind.value)
+    b_group_expr = group_expr.encode("utf-8")
+    return sde_create_wrap(file_id, b_name, type_id, kind.value, b_group_expr)
 
 
 # - find element in tree
@@ -770,7 +792,12 @@ def sde_get_kind(elem_id: int) -> core.SdeKind:
     return core.SdeKind(kind)
 
 
-def sde_set_name(elem_id: int, name: str):
+def sde_get_group_expr(elem_id: int) -> str:
+    b_group_expr = sde_get_group_expr_wrap(elem_id)
+    return b_group_expr.decode("utf-8")
+
+
+def sde_set_name(elem_id: int, name: str) -> int:
     b_name = name.encode("utf-8")
     return sde_set_name_wrap(elem_id, b_name)
 
@@ -781,6 +808,11 @@ def sde_set_type(elem_id: int, type_id: int) -> int:
 
 def sde_set_kind(elem_id: int, kind: core.SdeKind) -> int:
     return sde_set_kind_wrap(elem_id, kind.value)
+
+
+def sde_set_group_expr(elem_id: int, group_expr: str) -> int:
+    b_group_expr = group_expr.encode("utf-8")
+    return sde_set_group_expr_wrap(elem_id, b_group_expr)
 
 
 def sde_remove(elem_id: int) -> int:
@@ -873,7 +905,17 @@ def sdd_value_iter_close(iterator: core.sd_value_iterator_t) -> None:
 
 
 # 'sequence iterator' object = an iterator on element sequences ('sequence' objects)
-# TODO
+
+
+def sdd_sequence_iter_create(elem_id: int) -> core.sd_sequence_iterator_t:
+    return sdd_sequence_iter_create_wrap(elem_id)
+
+
+def sdd_sequence_iter_get_sequence(
+    iterator: core.sd_sequence_iterator_t,
+) -> Optional[core.sd_sequence_t]:
+    return sdd_sequence_iter_get_sequence_wrap(iterator)
+
 
 # - 'value' constructors
 
@@ -1101,7 +1143,7 @@ def sdd_value_get_imported_size(value: core.sd_value_t) -> int:
     return sdd_value_get_imported_size_wrap(value)
 
 
-def sdd_value_get_imported_value(value: core.sd_value_t):
+def sdd_value_get_imported_value(value: core.sd_value_t) -> Optional[ctypes.Array[core.sd_byte_t]]:
     size = sdd_value_get_imported_size(value)
     bytes_data = (core.sd_byte_t * size)()
     err = sdd_value_get_imported_value_wrap(value, bytes_data)
@@ -1112,6 +1154,8 @@ def sdd_value_get_imported_value(value: core.sd_value_t):
 
 
 # - 'sequence' constructors
+
+
 def sdd_sequence_create_nones(count: int) -> Optional[core.sd_sequence_t]:
     return sdd_sequence_create_nones_wrap(count)
 
@@ -1131,3 +1175,10 @@ def sdd_sequence_create_values(
 
 def sdd_sequence_close(sequence: core.sd_sequence_t) -> None:
     sdd_sequence_close_wrap(sequence)
+
+
+# - 'sequence' accessors
+
+
+def sdd_sequence_get_repeat_factor(sequence: core.sd_sequence_t) -> int:
+    return sdd_sequence_get_repeat_factor_wrap(sequence)

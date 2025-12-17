@@ -31,21 +31,25 @@ from ansys.scadeone.core.common.exception import ScadeOneException
 if TYPE_CHECKING:
     from ansys.scadeone.core.project import Project
     from ansys.scadeone.core.scadeone import ScadeOne
-    from ansys.scadeone.core.swan.modules import Module, ModuleInterface
+    from ansys.scadeone.core.swan.modules import ModuleBody, Module, ModuleInterface
+    from ansys.scadeone.core.swan.harness import TestModule
 
 
 class ProjectFactory:
+    """Project factory class."""
+
     @staticmethod
     def create_project(app: "IScadeOne", storage: ProjectStorage) -> "Project":
         """Create a project."""
         from ansys.scadeone.core.project import Project
 
-        project = Project(app, storage)
-        project.is_new = True
+        project = Project(app, storage, is_new=True)
         return project
 
 
 class ProjectAdder:
+    """Class for adding projects."""
+
     @staticmethod
     def add_project(app: "ScadeOne", project: "Project") -> None:
         """Add a project to the application."""
@@ -53,6 +57,8 @@ class ProjectAdder:
 
 
 class ProjectCreator(ABC):
+    """Project creator abstract class."""
+
     @staticmethod
     def _set_module_source(project: "Project", module: "Module") -> None:
         project_dir = project.directory
@@ -62,8 +68,8 @@ class ProjectCreator(ABC):
         module_path = project_dir / "assets" / swan_file_name
         module.source = str(module_path)
 
-    def add_module(self, name: str) -> "Module":
-        """Add a module to the project.
+    def add_module_body(self, name: str) -> "ModuleBody":
+        """Create a module body and add it to the model.
 
         Parameters
         ----------
@@ -77,13 +83,14 @@ class ProjectCreator(ABC):
         """
         from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
 
-        module = ModuleFactory.create_module(name)
+        module = ModuleFactory.create_module_body(name)
         ModuleAdder.add_module(self.model, module)
         ProjectCreator._set_module_source(cast("Project", self), module)
         return module
 
     def add_module_interface(self, name: str) -> "ModuleInterface":
-        """Add a module interface to the model.
+        """Create a module interface and add it to the model.
+
 
         Parameters
         ----------
@@ -98,6 +105,26 @@ class ProjectCreator(ABC):
         from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
 
         module = ModuleFactory.create_module_interface(name)
+        ModuleAdder.add_module(self.model, module)
+        ProjectCreator._set_module_source(cast("Project", self), module)
+        return module
+
+    def add_test_module(self, name: str) -> "TestModule":
+        """Create a test module and add it to the model.
+
+        Parameters
+        ----------
+        name: str
+            Module name.
+
+        Returns
+        -------
+        TestModule
+            TestModule object.
+        """
+        from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
+
+        module = ModuleFactory.create_test_module(name)
         ModuleAdder.add_module(self.model, module)
         ProjectCreator._set_module_source(cast("Project", self), module)
         return module

@@ -24,7 +24,14 @@
 from typing import Union
 from ansys.scadeone.core.common.storage import JobStorage
 from ansys.scadeone.core.interfaces import IProject
-from ansys.scadeone.core.job import CodeGenerationJob, Job, JobType, SimulationJob, TestExecutionJob
+from ansys.scadeone.core.job import (
+    CodeGenerationJob,
+    Job,
+    JobType,
+    SimulationJob,
+    TestExecutionJob,
+    ModelCheckJob,
+)
 
 
 class JobFactory:
@@ -54,12 +61,14 @@ class JobFactory:
         json = job_storage.json
         name = json["Properties"]["Name"]
         job = None
-        if json["Kind"] == str(JobType.CODEGEN):
+        if json["Kind"] == str(JobType.CODE_GENERATION):
             job = CodeGenerationJob(name, sproj, json, job_storage)
-        elif json["Kind"] == str(JobType.SIMU):
+        elif json["Kind"] == str(JobType.SIMULATION):
             job = SimulationJob(name, sproj, json, job_storage)
-        elif json["Kind"] == str(JobType.TESTEXEC):
+        elif json["Kind"] == str(JobType.TEST_EXECUTION):
             job = TestExecutionJob(name, sproj, json, job_storage)
+        elif json["Kind"] == str(JobType.MODEL_CHECK):
+            job = ModelCheckJob(name, sproj, json, job_storage)
         return job
 
     @staticmethod
@@ -85,12 +94,14 @@ class JobFactory:
         ScadeOneException
             No valid job kind provided
         """
-        if kind == JobType.CODEGEN:
+        if kind == JobType.CODE_GENERATION:
             job = CodeGenerationJob(name, sproj)
-        elif kind == JobType.SIMU:
+        elif kind == JobType.SIMULATION:
             job = SimulationJob(name, sproj)
-        elif kind == JobType.TESTEXEC:
+        elif kind == JobType.TEST_EXECUTION:
             job = TestExecutionJob(name, sproj)
+        elif kind == JobType.MODEL_CHECK:
+            job = ModelCheckJob(name, sproj)
         else:
             from ansys.scadeone.core import ScadeOneException
 

@@ -32,11 +32,11 @@ import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
 
 from .equations import ActivateIf, ActivateWhen, DefByCase, EquationLHS, StateMachine
-from .expressions import GroupAdaptation, PortExpr
-from .instances import OperatorBase, OperatorExpression
+from .expressions import GroupAdaptation, PortExpr, Group
+from .instances import OperatorInstance, OperatorExpression
 
 
-class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
+class DiagramObject(common.HasPragma):  # numpydoc ignore=PR01
     """Base class for diagram objects.
 
     *object* ::= ( [[ *lunum* ]] [[ *luid* ]] *description* [[ *local_objects* ]] )
@@ -61,8 +61,7 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
         locals: Optional[List["DiagramObject"]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        common.SwanItem.__init__(self)
-        common.PragmaBase.__init__(self, pragmas)
+        super().__init__(pragmas)
         self._lunum = lunum
         self._luid = luid
         self._locals = locals if locals else []
@@ -115,14 +114,22 @@ class DiagramObject(common.SwanItem, common.PragmaBase):  # numpydoc ignore=PR01
 class Diagram(scopes.ScopeSection, DiagramCreator):  # numpydoc ignore=PR01
     """Class for a **diagram** construct."""
 
-    def __init__(self, objects: List[DiagramObject] = None) -> None:
+    def __init__(
+        self, luid: Optional[common.Luid] = None, objects: List[DiagramObject] = None
+    ) -> None:
         super().__init__()
         if objects is None:
             self._objects = []
         else:
             self._objects = objects
+        self._luid = luid
         self._diag_nav = None
         common.SwanItem.set_owner(self, objects)
+
+    @property
+    def luid(self) -> Optional[common.Luid]:
+        """Luid of diagram."""
+        return self._luid
 
     @property
     def objects(self) -> List[DiagramObject]:
@@ -206,7 +213,6 @@ class DefBlock(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._lhs = lhs
-        self._is_protected = isinstance(lhs, str)
 
     @property
     def lhs(self) -> Union[EquationLHS, common.ProtectedItem]:
@@ -216,7 +222,7 @@ class DefBlock(DiagramObject):  # numpydoc ignore=PR01
     @property
     def is_protected(self) -> bool:
         """True when definition is syntactically incorrect and protected."""
-        return self._is_protected
+        return isinstance(self.lhs, common.ProtectedItem)
 
 
 class Block(DiagramObject):  # numpydoc ignore=PR01
@@ -232,7 +238,7 @@ class Block(DiagramObject):  # numpydoc ignore=PR01
 
     def __init__(
         self,
-        instance: Union[OperatorBase, OperatorExpression, common.ProtectedItem],
+        instance: Union[OperatorInstance, OperatorExpression, common.ProtectedItem],
         lunum: Optional[common.Lunum] = None,
         luid: Optional[common.Luid] = None,
         locals: Optional[List[DiagramObject]] = None,
@@ -242,7 +248,7 @@ class Block(DiagramObject):  # numpydoc ignore=PR01
         self._instance = instance
 
     @property
-    def instance(self) -> Union[OperatorBase, OperatorExpression, common.ProtectedItem]:
+    def instance(self) -> Union[OperatorInstance, OperatorExpression, common.ProtectedItem]:
         """Called instance as an Operator, or an OperatorExpression or a protected string."""
         return self._instance
 
@@ -296,7 +302,7 @@ class Connection(common.SwanItem):  # numpydoc ignore=PR01
 class Wire(DiagramObject):  # numpydoc ignore=PR01
     """Wire definition:
 
-    - *object* ::= ( [[ *lunum* ]] *description* [[ *local_objects* ]] )
+    - *object* ::= ( [[ *lunum* ]] [[ *luid* ]]  *description* [[ *local_objects* ]] )
     - *description* ::= **wire** *connection* => *connection* {{ , *connection* }}
 
     A **wire** *must* have a least one target.
@@ -307,10 +313,11 @@ class Wire(DiagramObject):  # numpydoc ignore=PR01
         source: Connection,
         targets: List[Connection],
         lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
         locals: Optional[List[DiagramObject]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__(lunum, None, locals, pragmas)
+        super().__init__(lunum, luid, locals, pragmas)
         self._source = source
         self._targets = targets
 
@@ -353,7 +360,7 @@ class GroupOperation(Enum):  # numpydoc ignore=PR01
     Normalize = auto()
 
     @staticmethod
-    def to_str(value: "GroupOperation"):
+    def to_str(value: "GroupOperation") -> str:
         """Group Enum to string."""
         if value == GroupOperation.NoOp:
             return ""
@@ -362,32 +369,99 @@ class GroupOperation(Enum):  # numpydoc ignore=PR01
         return value.name.lower()
 
 
-class Bar(DiagramObject):  # numpydoc ignore=PR01
-    """Bar (group/ungroup constructor block):
+class GroupBlock(DiagramObject):
+    """Base class for all group operation blocks."""
 
-    - *object* ::= ( [[ *lunum* ]] *description* [[ *local_objects* ]] )
-    - *description* ::= **group** [[*group_operation*]]
-    - *group_operation* ::= () | **byname** | **bypos**
+    def __init__(
+        self,
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+
+
+class Bar(GroupBlock):  # numpydoc ignore=PR01
+    """Represent the "bar" graphical block (group/ungroup constructor block):
+
+    - *object* ::= ( [[ *lunum* ]] [[ *luid* ]] **group**)
     """
 
     def __init__(
         self,
-        operation: Optional[GroupOperation] = GroupOperation.NoOp,
         lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
         locals: Optional[List[DiagramObject]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
-        super().__init__(lunum, None, locals, pragmas)
-        self._operation = operation
+        super().__init__(lunum, luid, locals, pragmas)
+
+
+class Concat(GroupBlock):  # numpydoc ignore=PR01
+    """Represent the "concat" graphical block (group/ungroup constructor block):
+
+    - *object* ::= ( [[ *lunum* ]] [[ *luid* ]] **group** )
+    """
+
+    def __init__(
+        self,
+        group: Group,
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+        self._group = group
 
     @property
-    def operation(self) -> GroupOperation:
-        """Group operation."""
-        return self._operation
+    def group(self) -> Group:
+        """Group object."""
+        return self._group
 
 
-class SectionBlock(DiagramObject):  # numpydoc ignore=PR01
-    """Section block definition:
+class ByPos(GroupBlock):
+    """Represents a group block with 'ByPos' operation."""
+
+    def __init__(
+        self,
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+
+
+class ByName(GroupBlock):
+    """Represents a group block with 'ByName' operation."""
+
+    def __init__(
+        self,
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+
+
+class GroupNormalize(GroupBlock):
+    """Represents a group block with 'GroupNormalize' operation."""
+
+    def __init__(
+        self,
+        lunum: Optional[common.Lunum] = None,
+        luid: Optional[common.Luid] = None,
+        locals: Optional[List[DiagramObject]] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(lunum, luid, locals, pragmas)
+
+
+class SectionObject(DiagramObject):  # numpydoc ignore=PR01
+    """Section object definition:
 
     - *object* ::= ( *description* [[ *local_objects* ]] )
     - *description* ::= *scope_section*
@@ -411,13 +485,13 @@ class SectionBlock(DiagramObject):  # numpydoc ignore=PR01
 
     @property
     def sources(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
-        """This method must not be called for a SectionBlock"""
-        raise ScadeOneException("SectionBlock.sources() call")
+        """This method must not be called for a SectionObject"""
+        raise ScadeOneException("SectionObject.sources() call")
 
     @property
     def targets(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
-        """This method must not be called for a SectionBlock"""
-        raise ScadeOneException("SectionBlock.targets() call")
+        """This method must not be called for a SectionObject"""
+        raise ScadeOneException("SectionObject.targets() call")
 
 
 class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
@@ -445,10 +519,6 @@ class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
     def def_by_case(self) -> DefByCase:
         """Def-by-case object."""
         return self._def_by_case
-
-    def __getattr__(self, name: str):
-        """Proxy to the DefByCase object."""
-        return getattr(self._def_by_case, name)
 
     @property
     def sources(self) -> List[tuple["DiagramObject", Optional[GroupAdaptation]]]:
@@ -554,7 +624,7 @@ class DiagramNavigation:
         self._wires_of_source = defaultdict(list)
         self._diagram = diagram
 
-    def get_block(self, lunum: common.Lunum) -> Block:
+    def get_block(self, lunum: common.Lunum) -> DiagramObject:
         """Getting specific block."""
         return self._block_table[lunum.value]
 
@@ -678,11 +748,11 @@ class DiagramNavigation:
             targets.extend(self.get_wire_targets(wire))
         return targets
 
-    def consolidate(self):
+    def consolidate(self) -> None:
         """Retrieve wire sources, wire targets and blocks from the Diagram Object."""
 
-        def explore_object(obj: DiagramObject):
-            if isinstance(obj, (SectionBlock, DefByCaseBlockBase)):
+        def explore_object(obj: DiagramObject) -> None:
+            if isinstance(obj, (SectionObject, DefByCaseBlockBase)):
                 return
             if isinstance(obj, Wire):
                 # process targets

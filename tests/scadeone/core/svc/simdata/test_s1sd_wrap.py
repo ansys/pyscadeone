@@ -330,33 +330,38 @@ def test_all_functions():
     assert dll_wrap.sdt_set_name(vsize_imported_type_id, "p1::tVSizeImported") == core.SD_ERR_NONE
 
     # create elements
-    sStruct_id = dll_wrap.sde_create(file_id, "M::Sensor1", struct_type_id, core.SdeKind.SENSOR)
-    root_op_id = dll_wrap.sde_create(file_id, "R::Root", core.SDT_NONE, core.SdeKind.OPERATOR)
+    sStruct_id = dll_wrap.sde_create(file_id, "M::Sensor1", struct_type_id, core.SdeKind.SENSOR, "")
+    root_op_id = dll_wrap.sde_create(file_id, "R::Root", core.SDT_NONE, core.SdeKind.OPERATOR, "")
     assert root_op_id != core.SD_ID_INVALID
-    iStruct_id = dll_wrap.sde_create(root_op_id, "iStruct", struct_type_id, core.SdeKind.INPUT)
-    iArray_id = dll_wrap.sde_create(root_op_id, "iArray", array_type_id, core.SdeKind.INPUT)
-    iEnum_id = dll_wrap.sde_create(root_op_id, "iEnum", enum_type_id, core.SdeKind.INPUT)
+    iStruct_id = dll_wrap.sde_create(root_op_id, "iStruct", struct_type_id, core.SdeKind.INPUT, "")
+    iArray_id = dll_wrap.sde_create(root_op_id, "iArray", array_type_id, core.SdeKind.INPUT, "")
+    iEnum_id = dll_wrap.sde_create(root_op_id, "iEnum", enum_type_id, core.SdeKind.INPUT, "")
     iFloat32_id = dll_wrap.sde_create(
-        root_op_id, "iFloat32", core.PredefinedType.FLOAT32.value, core.SdeKind.INPUT
+        root_op_id, "iFloat32", core.PredefinedType.FLOAT32.value, core.SdeKind.INPUT, ""
     )
-    iVariant_id = dll_wrap.sde_create(root_op_id, "iVariant", variant_type_2_id, core.SdeKind.INPUT)
+    iVariant_id = dll_wrap.sde_create(
+        root_op_id, "iVariant", variant_type_2_id, core.SdeKind.INPUT, ""
+    )
     iImported_id = dll_wrap.sde_create(
-        root_op_id, "iImported", imported_type_id, core.SdeKind.INPUT
+        root_op_id, "iImported", imported_type_id, core.SdeKind.INPUT, ""
     )
     iVSizeImported_id = dll_wrap.sde_create(
-        root_op_id, "iVSizeImported", vsize_imported_type_id, core.SdeKind.INPUT
+        root_op_id, "iVSizeImported", vsize_imported_type_id, core.SdeKind.INPUT, ""
     )
-    iGroup_id = dll_wrap.sde_create(root_op_id, "iGroup", core.SDT_NONE, core.SdeKind.INPUT)
+    iGroup_id = dll_wrap.sde_create(root_op_id, "iGroup", core.SDT_NONE, core.SdeKind.INPUT, "")
     iGroupItem1Float32_id = dll_wrap.sde_create(
-        iGroup_id, ".(.1)", core.PredefinedType.FLOAT32.value, core.SdeKind.GROUP_ITEM
+        iGroup_id, ".(.1)", core.PredefinedType.FLOAT32.value, core.SdeKind.GROUP_ITEM, ""
     )
     iGroupItem2Enum_id = dll_wrap.sde_create(
-        iGroup_id, ".(.name.1)", enum_type_id, core.SdeKind.GROUP_ITEM
+        iGroup_id, ".(.name.1)", enum_type_id, core.SdeKind.GROUP_ITEM, ""
     )
-    inst_id = dll_wrap.sde_create(root_op_id, "(OpInst#1)", core.SDT_NONE, core.SdeKind.INSTANCE)
+    inst_id = dll_wrap.sde_create(
+        root_op_id, "(OpInst#1)", core.SDT_NONE, core.SdeKind.INSTANCE, ""
+    )
     pChar_id = dll_wrap.sde_create(
-        inst_id, "Probe1", core.PredefinedType.CHAR.value, core.SdeKind.PROBE
+        inst_id, "Probe1", core.PredefinedType.CHAR.value, core.SdeKind.PROBE, ""
     )
+    assert dll_wrap.sde_set_group_expr(iStruct_id, "(int32, dummy:bool)") == core.SD_ERR_NONE
 
     # append values
     NB_CYCLES = 10
@@ -492,6 +497,7 @@ def test_all_functions():
     iStruct_id = dll_wrap.sde_get_child(root_op_id, 0)
     assert dll_wrap.sde_get_name(iStruct_id) == "iStruct"
     assert dll_wrap.sde_get_type(iStruct_id) == struct_type_id
+    assert dll_wrap.sde_get_group_expr(iStruct_id) == "(int32, dummy:bool)"
     iArray_id = dll_wrap.sde_get_child(root_op_id, 1)
     assert dll_wrap.sde_get_name(iArray_id) == "iArray"
     assert dll_wrap.sde_get_kind(iArray_id) == core.SdeKind.INPUT

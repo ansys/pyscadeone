@@ -30,21 +30,21 @@ from difflib import Differ
 import logging
 import re
 from typing import Union
-from pathlib import Path
 import pytest
 
 from ansys.scadeone.core.common.storage import SwanStorage, SwanString
 from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.model.loader import SwanParser
-import ansys.scadeone.core.swan as S
+import ansys.scadeone.core.swan as Swan
+from tools import log_diff  # type: ignore
 
 logging.basicConfig(level=logging.DEBUG)
 
 parser = SwanParser(logging.getLogger("pyofast"))
 
 
-def dbg_str(obj: S.SwanItem) -> str:
-    return S.swan_to_str(obj, normalize=False)
+def dbg_str(obj: Swan.SwanItem) -> str:
+    return Swan.swan_to_str(obj, normalize=False)
 
 
 # Helpers
@@ -62,28 +62,22 @@ def cmp_string(orig, new, no_markup=False, diff=False):
     diff : bool, optional
         Call diff.Differ() on strings, by default False
     """
-    orig_strip = re.sub(r"\s+", " ", orig).strip()
-    new_strip = re.sub(r"\s+", " ", new).strip()
+    stripped_orig = re.sub(r"\s+", " ", orig).strip()
+    stripped_new = re.sub(r"\s+", " ", new).strip()
     if no_markup:
-        orig_strip = re.sub(r"(?s)\{(\w*)%(.*)%\1\}", r"\2", orig_strip)
-    cmp = orig_strip == new_strip
+        stripped_orig = re.sub(r"(?s)\{(\w*)%(.*)%\1\}", r"\2", stripped_orig)
+    cmp = stripped_orig == stripped_new
     if not cmp:
-        with Path("test_pyofast.txt").open("w") as fd:
-            fd.write("===== Original =====\n")
-            fd.write(orig_strip)
-            fd.write("\n=====   New  =====\n")
-            fd.write(new_strip)
-    else:
-        Path("test_pyofast.txt").unlink(True)
+        log_diff(expected=orig, actual=new, winmerge=False)
     if not cmp and diff:
         d = Differ()
         # keep newlines this time
-        orig_strip = re.sub(" +", " ", orig).strip()
-        new_strip = re.sub(" +", " ", new).strip()
+        stripped_orig = re.sub(" +", " ", orig).strip()
+        stripped_new = re.sub(" +", " ", new).strip()
         res = "".join(
             d.compare(
-                orig_strip.splitlines(keepends=True),
-                new_strip.splitlines(keepends=True),
+                stripped_orig.splitlines(keepends=True),
+                stripped_new.splitlines(keepends=True),
             )
         )
         res_str = f"""
@@ -93,7 +87,7 @@ def cmp_string(orig, new, no_markup=False, diff=False):
 """
         # Ok, its false...
         assert "" == res_str
-    assert orig_strip == new_strip
+    assert stripped_orig == stripped_new
 
 
 def check_fragment(rule, fragment: Union[SwanStorage, str], no_markup=False, diff=False):
@@ -149,32 +143,31 @@ def check_section(code: SwanString, no_markup=False, diff=False):
 class TestDecl:
     def test_sensor(self):
         decl = parser.declaration(SwanString("sensor S: int32;"))
-        assert isinstance(decl, S.SensorDeclarations)
+        assert isinstance(decl, Swan.SensorDeclarations)
         sensor = decl.sensors[0]
-        assert isinstance(sensor, S.SensorDecl)
+        assert isinstance(sensor, Swan.SensorDecl)
         assert sensor.id.value == "S"
-        assert isinstance(sensor.type, S.Int32Type)
+        assert isinstance(sensor.type, Swan.Int32Type)
 
     def test_constant_no_init(self):
         decl = parser.declaration(SwanString("const C: int32;"))
-        assert isinstance(decl, S.ConstDeclarations)
+        assert isinstance(decl, Swan.ConstDeclarations)
         constant = decl.constants[0]
-        assert isinstance(constant, S.ConstDecl)
+        assert isinstance(constant, Swan.ConstDecl)
         assert constant.id.value == "C"
-        assert isinstance(constant.type, S.Int32Type)
+        assert isinstance(constant.type, Swan.Int32Type)
         assert constant.value is None
 
     def test_constant_init(self):
         decl = parser.declaration(SwanString("const C: int32 = 41+1;"))
         constant = decl.constants[0]
-        assert isinstance(constant, S.ConstDecl)
-        assert isinstance(constant, S.ConstDecl)
+        assert isinstance(constant, Swan.ConstDecl)
+        assert isinstance(constant, Swan.ConstDecl)
         value = constant.value
-        assert isinstance(value, S.BinaryExpr)
-        assert value.operator == S.BinaryOp.Plus
+        assert isinstance(value, Swan.BinaryExpr)
+        assert value.operator == Swan.BinaryOp.Plus
         left = value.left
-        assert isinstance(left, S.Literal)
-        assert left.is_integer
+        assert isinstance(left, Swan.IntegerLiteral)
         assert left.value == "41"
 
     @pytest.mark.parametrize(
@@ -219,7 +212,7 @@ class TestDecl:
             "type T = signed <<42>>;",
             "type T = unsigned <<2 * N + 1>>;",
             r" type T = {a: bool};",
-            "type T = T1 ^ 666 ^ (42 * N + 1);",
+            "type T = T1^666^(42 * N + 1);",
             "type T = enum {A, B, C};",
             r"type T = A {};",
             "type T = A { X };",
@@ -272,7 +265,15 @@ class TestExpression:
 
     @pytest.mark.parametrize("op ", ["-", "+", "lnot", "not", "pre"])
     def test_unary_expr(self, op):
-        self.gen_expr_test(f"{op} X")
+        code = f"{op}X" if op in ("-", "+") else f"{op} X"
+        self.gen_expr_test(code)
+
+    @pytest.mark.parametrize("expr", ["-42", "- -42", "3 * -42", "3 - -42", "1 - - - -42"])
+    def test_unary_minus(self, expr):
+        swan = SwanString(expr)
+        py_expr = parser.expression(swan)
+        py_expr_str = dbg_str(py_expr)
+        assert py_expr_str == expr
 
     @pytest.mark.parametrize(
         "op",
@@ -369,7 +370,7 @@ class TestExpression:
             "a[1 .. 3]",
             "(a + b) * c",
             "(x . [1].f[4][5].g default 0)",
-            "(42 + 1) ^ n",
+            "(42 + 1)^n",
             "[a, b, c]",
             "{1, 3, 3}",
             "{4, 5, (42 + 1)} : x::y",
@@ -516,6 +517,7 @@ class TestExpression:
             "(xor) ()",
             "(land) ()",
             "(lor) ()",
+            "(lxor) ()",
         ],
     )
     def test_nary(self, oracle):
@@ -617,7 +619,7 @@ class TestEquation:
         cmp_string(eq, py_eq_str)
 
     def test_simple_eq(self, make_lhs, make_path_identifier):
-        eq = S.ExprEquation(make_lhs(1), S.PathIdExpr(make_path_identifier()))
+        eq = Swan.ExprEquation(make_lhs(1), Swan.PathIdExpr(make_path_identifier()))
         oracle = "ID1 = ID2::ID3::ID4;"
         cmp_string(oracle, dbg_str(eq))
         # lhs
@@ -736,9 +738,9 @@ let
                 var x;
                 let x = 42;""",
             # transition Swan
-            ":2: #421 unless if (true) restart S1 ;",
-            ":0x1: #421 unless if (true) resume #666 ;",
-            ":3: #421 unless if (true) { let x = 1; } restart S1 ;",
+            ":2: #421 unless if (true) restart S1;",
+            ":0x1: #421 unless if (true) resume #666;",
+            ":3: #421 unless if (true) { let x = 1; } restart S1;",
             ":4: #421 unless if (true) :1: else restart S1 end;",
             ":5: #421 unless if (true) :1: if (false) restart S1 end;",
             """:6: #1 unless if (true)
@@ -755,8 +757,8 @@ let
                        end;""",
             # transition "Classic"
             """state simple :
-                unless if (start) restart s1 ;
-                until if (stop) restart s2 ;""",
+                unless if (start) restart s1;
+                until if (stop) restart s2;""",
             """state if_tree :
                 unless
                 if (start)
@@ -772,26 +774,29 @@ let
                             if (iO1 > 3_i32) {
                             emit
                                 'sig1;
-                            } restart #1 ;
+                            } restart #1;
                             if (bI1) {
                             emit
                                 'sig2;
-                            } resume #2 ;""",
+                            } resume #2;""",
         ],
     )
     def test_state_machine(self, item):
         self.gen_eq_test(f"() : automaton $test {item};")
 
+    @pytest.mark.parametrize("lunum", ["", " #42"])
+    @pytest.mark.parametrize("luid", ["", " $foo"])
     @pytest.mark.parametrize(
         "item",
         [
-            "automaton;",
-            "activate when P match | X : Y = 3;;",
-            "activate when P match | X : Y = 3;;",
-            "activate if true then X = 1; else X = 2;;",
+            "automaton{id};",
+            "activate{id} when P match | X : Y = 3;;",
+            "activate{id} if true then X = 1; else X = 2;;",
         ],
     )
-    def test_no_lhs(self, item):
+    def test_no_lhs_and_identification(self, item, lunum, luid):
+        id_ = f"{lunum}{luid}"
+        item = item.replace("{id}", id_)
         self.gen_eq_test(item)
 
 
@@ -809,6 +814,12 @@ class TestDiagram:
             "(#1 def ())",
             "(def {x%$$$%x})",
             "",
+            "(#0 $e1 expr i0)",
+            # concat
+            """(#2 $e2 expr (#3, #4)
+                 where
+                   (#3 group)
+                   (#4 group))""",
         ],
     )
     def test_def_expr(self, object):
@@ -829,9 +840,7 @@ class TestDiagram:
         ],
     )
     def test_block(self, object):
-        # suppress specific markups while comparing
-        no_markup = re.search(r"\{(?:op_expr|text)%", object) is not None
-        self.check(object, no_markup=no_markup)
+        self.check(object)
 
     @pytest.mark.parametrize(
         "source,target",
@@ -859,6 +868,7 @@ class TestDiagram:
     )
     def test_wire(self, source, target):
         self.check(f"(wire {source} => {target})")
+        self.check(f"($e6 wire {source} => {target})")
 
     @pytest.mark.parametrize(
         "group_op",
@@ -874,8 +884,10 @@ class TestDiagram:
     def test_group(self, group_op):
         if group_op:
             self.check(f"(group {group_op})")
+            self.check(f"($e4 group {group_op})")
         else:
             self.check("(group)")
+            self.check("($e5 group)")
 
     @pytest.mark.parametrize(
         "section",
@@ -932,7 +944,7 @@ sensor S1: int8; S2: int8;""",
 
     def test_signature(self, make_identifier, make_path_identifier, make_var_decl, make_type_var):
         # test 1: inputs/outputs
-        sig = S.Signature(
+        sig = Swan.OperatorDeclaration(
             make_identifier(),
             False,
             True,
@@ -946,20 +958,20 @@ returns (ID4: {a: int8};);"""
         cmp_string(oracle, sig_str)
 
         # test 2: empty list
-        sig = S.Signature(make_identifier(True), False, True, [make_var_decl()], [])
+        sig = Swan.OperatorDeclaration(make_identifier(True), False, True, [make_var_decl()], [])
         sig_str = dbg_str(sig)
         oracle = r"""
 node ID1 (ID2: bool;) returns ();"""
         cmp_string(oracle, sig_str)
 
         # test 3, no signals, sizes + specialization
-        sig = S.Signature(
+        sig = Swan.OperatorDeclaration(
             make_identifier(True),
             False,
             True,
             [],
             [],
-            sizes=[make_identifier(), make_identifier()],
+            size_parameters=[make_identifier(), make_identifier()],
             specialization=make_path_identifier(),
         )
         sig_str = dbg_str(sig)
@@ -967,15 +979,15 @@ node ID1 (ID2: bool;) returns ();"""
         cmp_string(oracle, sig_str)
 
         # test 4 : constraints
-        sig = S.Signature(
+        sig = Swan.OperatorDeclaration(
             make_identifier(True),
             False,
             False,
             [],
             [],
-            constraints=[
-                S.TypeConstraint([make_type_var(), make_type_var()], S.NumericKind.Signed),
-                S.TypeConstraint([make_type_var()], S.NumericKind.Integer),
+            type_constraints=[
+                Swan.TypeConstraint([make_type_var(), make_type_var()], Swan.NumericKind.Signed),
+                Swan.TypeConstraint([make_type_var()], Swan.NumericKind.Integer),
             ],
         )
         sig_str = dbg_str(sig)
@@ -983,13 +995,13 @@ node ID1 (ID2: bool;) returns ();"""
         cmp_string(oracle, sig_str)
 
         # test 5: pragmas
-        sig = S.Signature(
+        sig = Swan.OperatorDeclaration(
             make_identifier(True),
             False,
             False,
             [],
             [],
-            pragmas=[S.Pragma("#pragma x #end"), S.Pragma("#pragma y #end")],
+            pragmas=[Swan.Pragma("x"), Swan.Pragma("y")],
         )
         sig_str = dbg_str(sig)
         oracle = """function #pragma x #end #pragma y #end ID1 () returns ();"""
@@ -1045,7 +1057,7 @@ returns ()
 
     def test_wrong_text(self):
         code = SwanString("{text% $$$%text}")
-        obj = parser.operator_decl(code)
+        obj = parser.operator_decl_or_def(code)
         assert obj is None
 
 
@@ -1056,3 +1068,128 @@ class TestComment:
         obj = parser.module_body(swan)
         obj_str = dbg_str(obj)
         assert obj_str == gen_swan_version() + "\n"
+
+
+class TestInPlaceModification:
+    "Check Swan with in-place modification: ! expr, var ID *, var ID at ID, (expr at ID)"
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "(true at Y)",
+            "(A at Y)",
+            "(A::B at Y)",  # VS code isolate tests with "::"...
+            # port
+            "(#421 at Y)",
+            "($hello at Y)",
+            "(self at Y)",
+        ],
+    )
+    def test_expr_basic(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "!A",
+            "(+42 at Y)",
+            "(not true at Y)",
+            "(A + 42 at Y)",
+            "([1, 2] @ [3, 4] at Y)",
+            "((A :> int32) at Y)",
+        ],
+    )
+    def test_expr_unary_binary(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "((A, B, C) at Y)",
+            "(a .(3) at Y)",
+        ],
+    )
+    def test_expr_group(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "([1, 2, 3] at Y)",
+            "(A.f at Y)",
+            "(A[0] at Y)",
+            "(P::G group (S) at Y)",
+            "((X . .f default 42) at Y)",
+            "((X . [0] default 42) at Y)",
+            "((P::A {f: 42, g: true}) at Y)",
+            "(X with * [0] = 42)",
+            "((X with * [0] = 42) at Y)",
+            "((A with * [0] = !A[1]) with * [1] = A[0])",
+        ],
+    )
+    def test_expr_composite(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "(if true then 1 else 2 at Y)",
+            "((case X of | A: 1 | B: 2 | _: 3) at Y)",
+        ],
+    )
+    def test_expr_switch(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "(window <<42>> (I1, I2, I3) (X, Y, Z) at Y)",
+            "(merge (A, B) at Y)",
+            "(merge (A1, B1, C1) (A2, B2, C2) (A3, B3, C3) at Y)",
+        ],
+    )
+    def test_expr_multigroup(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "var_decl",
+        [
+            "X",
+            "X: int32",
+            "X *",
+            "X at Y",
+            "X * : int32",
+            "X * at Y: int32",
+        ],
+    )
+    def test_var(self, var_decl):
+        check_section(SwanString(f"var {var_decl};"))
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "(forward <<42>> returns () at Y)",
+        ],
+    )
+    def test_expr_fwd(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "(P1::Op <<42>> $call1 (1, 2, 3) at Y)",
+            "(transpose {1, 2} <<42>> $call1 (1, 2, 3) at Y)",
+            "((restart OP every TICK) <<42>> $call1 (1, 2, 3) at Y)",
+            "((function x => x + 1) (i0) at Y)",
+            r"((map (OP \ x: 0)) <<42>> (i0) at Y)",
+        ],
+    )
+    def test_expr_instance(self, expr):
+        check_expr(expr)
+
+    @pytest.mark.parametrize(
+        "decl",
+        ["function qsort <<N>> (A * : int32^N;) returns (A_sorted at A: int32^N;);"],
+    )
+    def test_decl(self, decl):
+        check_decl(decl)

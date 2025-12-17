@@ -10,9 +10,11 @@ This section presents some examples using PyScadeOne:
 
     quad_flight_control
     diagram/index
+    automaton/index
     namespace/index
     visitor/index
     generated_code/index
     fmu_export/index
-    wrapper/index
+    pywrapper/index
     creator/index
+    test_module/index

@@ -45,7 +45,6 @@ class _PropertiesData(TypedDict, total=False):
     Expansion: str
     ExpansionExp: str
     ExpansionNoExp: str
-    ShortCircuitOperators: str
     NameLength: str
     SignificanceLength: str
     KeepAssume: str
@@ -77,27 +76,27 @@ class JobStatus(Enum):
     """Exit codes for a job execution"""
 
     #: Success
-    Success = 0
+    SUCCESS = 0
     #: Missing parameters
-    MissingParameters = 1
+    MISSING_PARAMETERS = 1
     #: Load issue
-    LoadIssue = 2
+    LOAD_ISSUE = 2
     #: Not existing project
-    NotExistingProject = 3
+    NOT_EXISTING_PROJECT = 3
     #: Job not found
-    JobNotFound = 4
+    JOB_NOT_FOUND = 4
     #: Job failure
-    JobFailure = 5
+    JOB_FAILURE = 5
     #: Job name duplicate
-    JobNameDuplicate = 6
+    JOB_NAME_DUPLICATE = 6
     #: Internal error
-    InternalError = 7
+    INTERNAL_ERROR = 7
     #: Not executed yet
-    NotExecutedYet = 8
+    NOT_EXECUTED_YET = 8
 
     @staticmethod
     def get_message(status_code: int) -> str:
-        """Get the message corresponding to a status number
+        """Gets the message corresponding to a status number
 
         Parameters
         ----------
@@ -109,26 +108,26 @@ class JobStatus(Enum):
         str
             Status message
         """
-        if status_code == JobStatus.Success.value:
+        if status_code == JobStatus.SUCCESS.value:
             return "Job execution successful"
-        if status_code == JobStatus.MissingParameters.value:
+        if status_code == JobStatus.MISSING_PARAMETERS.value:
             return "The arguments are not filled in"
-        if status_code == JobStatus.LoadIssue.value:
+        if status_code == JobStatus.LOAD_ISSUE.value:
             return "The project or one of their dependencies cannot be loaded"
-        if status_code == JobStatus.NotExistingProject.value:
+        if status_code == JobStatus.NOT_EXISTING_PROJECT.value:
             return "The project was not found"
-        if status_code == JobStatus.JobNotFound.value:
+        if status_code == JobStatus.JOB_NOT_FOUND.value:
             return (
                 "The project has been loaded as expected "
                 "but there is no job that matches the specified name"
             )
-        if status_code == JobStatus.JobFailure.value:
+        if status_code == JobStatus.JOB_FAILURE.value:
             return "The job execution has failed"
-        if status_code == JobStatus.JobNameDuplicate.value:
+        if status_code == JobStatus.JOB_NAME_DUPLICATE.value:
             return "There is more than one job matching the requested name"
-        if status_code == JobStatus.InternalError.value:
+        if status_code == JobStatus.INTERNAL_ERROR.value:
             return "Undefined error"
-        if status_code == JobStatus.NotExecutedYet.value:
+        if status_code == JobStatus.NOT_EXECUTED_YET.value:
             return "No job was executed yet"
         return "Unknown error code"
 
@@ -145,12 +144,12 @@ class JobResult:
 
     @property
     def code(self) -> int:
-        """Get execution return code"""
+        """Gets execution return code"""
         return self._code
 
     @property
     def message(self) -> str:
-        """Get execution return message"""
+        """Gets execution return message"""
         return self._message
 
     def __str__(self) -> str:
@@ -167,18 +166,18 @@ class ExpansionMode(Enum):
     #: Expand
     EXPAND = auto()
     #: NoExpand
-    NOEXPAND = auto()
+    NO_EXPAND = auto()
 
     @staticmethod
     def str_to_expansion(str_exp: Union[str, None]) -> "ExpansionMode":
-        """Get Expansion value from sjob file content"""
+        """Gets Expansion value from sjob file content"""
         if str_exp:
             if str_exp == "All":
                 return ExpansionMode.ALL
             if str_exp == "Expand":
                 return ExpansionMode.EXPAND
             if str_exp == "NoExpand":
-                return ExpansionMode.NOEXPAND
+                return ExpansionMode.NO_EXPAND
         return ExpansionMode.NONE
 
     def __str__(self) -> str:
@@ -186,7 +185,7 @@ class ExpansionMode(Enum):
             return "All"
         if self == ExpansionMode.EXPAND:
             return "Expand"
-        if self == ExpansionMode.NOEXPAND:
+        if self == ExpansionMode.NO_EXPAND:
             return "NoExpand"
         if self == ExpansionMode.NONE:
             return "None"
@@ -197,27 +196,32 @@ class JobType(Enum):
     """Job types"""
 
     #: Code Generation type job
-    CODEGEN = auto()
+    CODE_GENERATION = auto()
     #: Simulation type job
-    SIMU = auto()
+    SIMULATION = auto()
     #: Test Execution type job
-    TESTEXEC = auto()
+    TEST_EXECUTION = auto()
+    #: Model Check type job
+    MODEL_CHECK = auto()
 
     def __str__(self) -> str:
         """String representation of type.
         Used for field `kind` in sjob files"""
 
-        if self == JobType.CODEGEN:
+        if self == JobType.CODE_GENERATION:
             return "CodeGeneration"
-        if self == JobType.SIMU:
+        if self == JobType.SIMULATION:
             return "Simulation"
-        if self == JobType.TESTEXEC:
+        if self == JobType.TEST_EXECUTION:
             return "TestExecution"
+        if self == JobType.MODEL_CHECK:
+            return "ModelCheck"
         return ""
 
 
 class Job(ABC):
-    """Abstract class for jobs. Must be instantiated from one of its 3 derivated classes.
+    """Abstract class for jobs.
+    Must be instantiated from one of its 4 derivated classes.
     Each of them uses its corresponding `Properties` parameters and kind."""
 
     def __init__(
@@ -262,19 +266,24 @@ class Job(ABC):
         return self._sproj
 
     @property
-    def is_simu(self) -> bool:
+    def is_simulation(self) -> bool:
         """True if job is a simulation"""
-        return self._kind == JobType.SIMU
+        return self._kind == JobType.SIMULATION
 
     @property
-    def is_codegen(self) -> bool:
+    def is_code_generation(self) -> bool:
         """True if job is a code generation"""
-        return self._kind == JobType.CODEGEN
+        return self._kind == JobType.CODE_GENERATION
 
     @property
-    def is_testexec(self) -> bool:
+    def is_test_execution(self) -> bool:
         """True if job is a test execution"""
-        return self._kind == JobType.TESTEXEC
+        return self._kind == JobType.TEST_EXECUTION
+
+    @property
+    def is_model_check(self) -> bool:
+        """True if job is a model check"""
+        return self._kind == JobType.MODEL_CHECK
 
     @property
     def storage(self) -> JobStorage:
@@ -312,7 +321,7 @@ class Job(ABC):
 
     @input_paths.setter
     def input_paths(self, value: Union[str, list[str]]) -> None:
-        """Set InputPaths"""
+        """Sets InputPaths"""
         if isinstance(value, str):
             self._input_paths = [value]
         else:
@@ -321,12 +330,14 @@ class Job(ABC):
     def folder_name(self) -> str:
         """Generate name of the folder containing the sjob file"""
 
-        if self.is_simu:
+        if self.is_simulation:
             prefix = "simu_"
-        elif self.is_codegen:
+        elif self.is_code_generation:
             prefix = "codegen_"
-        elif self.is_testexec:
+        elif self.is_test_execution:
             prefix = "testexec_"
+        elif self.is_model_check:
+            prefix = "check_"
         else:
             prefix = "unknown_"
         guid_short = str(uuid.uuid4())[:7]
@@ -351,7 +362,7 @@ class Job(ABC):
 
             os.makedirs(parent)
         self._storage.json = data
-        self._storage.dump()
+        self._storage.dump(indent=2)
         return data
 
     def run(self) -> JobResult:
@@ -369,10 +380,10 @@ class CodeGenerationJob(Job):
         self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
     ) -> None:
         if data:
-            super().__init__(name, JobType.CODEGEN, sproj, data.get("InputPaths"), storage)
+            super().__init__(name, JobType.CODE_GENERATION, sproj, data.get("InputPaths"), storage)
             self._properties = CodeGenerationJobProperties(name, data.get("Properties"))
         else:
-            super().__init__(name, JobType.CODEGEN, sproj)
+            super().__init__(name, JobType.CODE_GENERATION, sproj)
             self._properties = CodeGenerationJobProperties(name)
 
     @property
@@ -391,10 +402,6 @@ class CodeGenerationJob(Job):
     @property
     def expansion_no_exp(self) -> str:
         return self.properties.expansion_no_exp
-
-    @property
-    def short_circuit_operators(self) -> bool:
-        return self.properties.short_circuit_operators
 
     @property
     def name_length(self) -> int:
@@ -432,10 +439,6 @@ class CodeGenerationJob(Job):
     def expansion_no_exp(self, value: str) -> None:
         self.properties.expansion_no_exp = value
 
-    @short_circuit_operators.setter
-    def short_circuit_operators(self, value: bool) -> None:
-        self.properties.short_circuit_operators = value
-
     @name_length.setter
     def name_length(self, value: int) -> None:
         self.properties.name_length = value
@@ -468,10 +471,10 @@ class SimulationJob(Job):
         self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
     ) -> None:
         if data:
-            super().__init__(name, JobType.SIMU, sproj, data.get("InputPaths"), storage)
+            super().__init__(name, JobType.SIMULATION, sproj, data.get("InputPaths"), storage)
             self._properties = SimulationJobProperties(name, data.get("Properties"))
         else:
-            super().__init__(name, JobType.SIMU, sproj)
+            super().__init__(name, JobType.SIMULATION, sproj)
             self._properties = SimulationJobProperties(name)
 
     @property
@@ -488,8 +491,8 @@ class SimulationJob(Job):
         return self.properties.simulation_input_type
 
     @property
-    def test_harness(self) -> str:
-        return self.properties.test_harness
+    def test_module(self) -> str:
+        return self.properties.test_module
 
     @property
     def use_cycle_time(self) -> bool:
@@ -507,9 +510,9 @@ class SimulationJob(Job):
     def simulation_input_type(self, value: str) -> None:
         self.properties.simulation_input_type = value
 
-    @test_harness.setter
-    def test_harness(self, value: str) -> None:
-        self.properties.test_harness = value
+    @test_module.setter
+    def test_module(self, value: str) -> None:
+        self.properties.test_module = value
 
     @use_cycle_time.setter
     def use_cycle_time(self, value: bool) -> None:
@@ -527,10 +530,10 @@ class TestExecutionJob(Job):
         self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
     ) -> None:
         if data:
-            super().__init__(name, JobType.TESTEXEC, sproj, data.get("InputPaths"), storage)
+            super().__init__(name, JobType.TEST_EXECUTION, sproj, data.get("InputPaths"), storage)
             self._properties = TextExecutionJobProperties(name, data.get("Properties"))
         else:
-            super().__init__(name, JobType.TESTEXEC, sproj)
+            super().__init__(name, JobType.TEST_EXECUTION, sproj)
             self._properties = TextExecutionJobProperties(name)
 
     @property
@@ -539,20 +542,39 @@ class TestExecutionJob(Job):
         return self._properties
 
     @property
-    def test_harness(self) -> str:
-        return self.properties.test_harness
+    def test_module(self) -> str:
+        return self.properties.test_module
 
     @property
     def test_result_file(self) -> str:
         return self.properties.test_result_file
 
-    @test_harness.setter
-    def test_harness(self, value: str) -> None:
-        self.properties.test_harness = value
+    @test_module.setter
+    def test_module(self, value: str) -> None:
+        self.properties.test_module = value
 
     @test_result_file.setter
     def test_result_file(self, value: str) -> None:
         self.properties.test_result_file = value
+
+
+class ModelCheckJob(Job):
+    """Job of Model Check kind"""
+
+    def __init__(
+        self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
+    ) -> None:
+        if data:
+            super().__init__(name, JobType.MODEL_CHECK, sproj, data.get("InputPaths"), storage)
+            self._properties = ModelCheckJobProperties(name, data.get("Properties"))
+        else:
+            super().__init__(name, JobType.MODEL_CHECK, sproj)
+            self._properties = ModelCheckJobProperties(name)
+
+    @property
+    def properties(self) -> "ModelCheckJobProperties":
+        "Model check job properties"
+        return self._properties
 
 
 class JobProperties(ABC):
@@ -583,7 +605,7 @@ class JobProperties(ABC):
 
     @root_declarations.setter
     def root_declarations(self, value: Union[str, list[str]]) -> None:
-        """Set RootDeclarations. String can be passed instead of a single element list."""
+        """Sets RootDeclarations. String can be passed instead of a single element list."""
         if isinstance(value, str):
             self._root_declarations = [value]
         else:
@@ -591,21 +613,23 @@ class JobProperties(ABC):
 
     @custom_arguments.setter
     def custom_arguments(self, value: str) -> None:
-        """Set CustomArguments"""
+        """Sets CustomArguments"""
         self._custom_arguments = value
 
     @name.setter
     def name(self, value: str) -> None:
-        """Set Name"""
+        """Sets Name"""
         self._name = value
 
-    def _to_dict(self, data: _PropertiesData) -> _PropertiesData:
-        """Return the Properties dictionary that was prefilled
-        by one of derivated Properties method"""
+    def _to_dict(self) -> _PropertiesData:
+        """Always called by one of its derived methods.
+        Returns the Properties dictionary prefilled with common properties,
+        to be eventually completed by the derived JobProperties class"""
 
+        data = {}
         data["RootDeclarations"] = self._root_declarations
-        data["CustomArguments"] = self._custom_arguments
         data["Name"] = self._name
+        data["CustomArguments"] = self._custom_arguments
         return data
 
 
@@ -620,7 +644,6 @@ class CodeGenerationJobProperties(JobProperties):
         self._expansion = ExpansionMode.str_to_expansion(prop.get("Expansion"))
         self._expansion_exp = prop.get("ExpansionExp", "")
         self._expansion_no_exp = prop.get("ExpansionNoExp", "")
-        self._short_circuit_operators = prop.get("ShortCircuitOperators") == "True"
         self._name_length = int(prop.get("NameLength", 200))
         self._significance_length = int(prop.get("SignificanceLength", 31))
         self._keep_assume = prop.get("KeepAssume") == "True"
@@ -642,11 +665,6 @@ class CodeGenerationJobProperties(JobProperties):
     def expansion_no_exp(self) -> str:
         """ExpansionNoExp property"""
         return self._expansion_no_exp
-
-    @property
-    def short_circuit_operators(self) -> bool:
-        """ShortCircuitOperators property"""
-        return self._short_circuit_operators
 
     @property
     def name_length(self) -> int:
@@ -680,7 +698,7 @@ class CodeGenerationJobProperties(JobProperties):
 
     @expansion.setter
     def expansion(self, value: Union[ExpansionMode, str, None]) -> None:
-        """Set Expansion"""
+        """Sets Expansion"""
         if isinstance(value, ExpansionMode):
             self._expansion = value
         elif isinstance(value, str):
@@ -690,62 +708,59 @@ class CodeGenerationJobProperties(JobProperties):
 
     @expansion_exp.setter
     def expansion_exp(self, value: str) -> None:
-        """Set ExpansionExp"""
+        """Sets ExpansionExp"""
         self._expansion_exp = value
 
     @expansion_no_exp.setter
     def expansion_no_exp(self, value: str) -> None:
-        """Set ExpansionNoExp"""
+        """Sets ExpansionNoExp"""
         self._expansion_no_exp = value
-
-    @short_circuit_operators.setter
-    def short_circuit_operators(self, value: bool) -> None:
-        """Set ShortCircuitOperators"""
-        self._short_circuit_operators = value
 
     @name_length.setter
     def name_length(self, value: int) -> None:
-        """Set NameLength"""
+        """Sets NameLength"""
         self._name_length = value
 
     @significance_length.setter
     def significance_length(self, value: int) -> None:
-        """Set SignificanceLength"""
+        """Sets SignificanceLength"""
         self._significance_length = value
 
     @keep_assume.setter
     def keep_assume(self, value: bool) -> None:
-        """Set KeepAssume"""
+        """Sets KeepAssume"""
         self._keep_assume = value
 
     @globals_prefix.setter
     def globals_prefix(self, value: str) -> None:
-        """Set GlobalsPrefix"""
+        """Sets GlobalsPrefix"""
         self._globals_prefix = value
 
     @use_macros.setter
     def use_macros(self, value: bool) -> None:
-        """Set UseMacros"""
+        """Sets UseMacros"""
         self._use_macros = value
 
     @static_locals.setter
     def static_locals(self, value: bool) -> None:
-        """Set StaticLocals"""
+        """Sets StaticLocals"""
         self._static_locals = value
 
     def _to_dict(self) -> _PropertiesData:
-        data = {}
+        """Returns Code Generation JobProperties as a dictionary
+        for saving"""
+
+        data = super()._to_dict()
         data["Expansion"] = str(self._expansion)
         data["ExpansionExp"] = self._expansion_exp
         data["ExpansionNoExp"] = self._expansion_no_exp
-        data["ShortCircuitOperators"] = str(self._short_circuit_operators)
         data["NameLength"] = str(self._name_length)
         data["SignificanceLength"] = str(self._significance_length)
         data["KeepAssume"] = str(self._keep_assume)
         data["GlobalsPrefix"] = self._globals_prefix
         data["UseMacros"] = str(self._use_macros)
         data["StaticLocals"] = str(self._static_locals)
-        return super()._to_dict(data)
+        return data
 
 
 class SimulationJobProperties(JobProperties):
@@ -789,37 +804,41 @@ class SimulationJobProperties(JobProperties):
 
     @file_scenario.setter
     def file_scenario(self, value: str) -> None:
-        """Set FileScenario"""
+        """Sets FileScenario"""
         self._file_scenario = value
 
     @simulation_input_type.setter
     def simulation_input_type(self, value: str) -> None:
-        """Set SimulationInputType"""
+        """Sets SimulationInputType"""
         self._simulation_input_type = value
 
     @test_harness.setter
     def test_harness(self, value: str) -> None:
-        """Set TestHarness"""
+        """Sets TestHarness"""
         self._test_harness = value
 
     @use_cycle_time.setter
     def use_cycle_time(self, value: bool) -> None:
-        """Set UseCycleTime"""
+        """Sets UseCycleTime"""
         self._use_cycle_time = value
 
     @cycle_time.setter
     def cycle_time(self, value: int) -> None:
-        """Set CycleTime"""
+        """Sets CycleTime"""
         self._cycle_time = value
 
     def _to_dict(self) -> _PropertiesData:
-        data = {}
+        """Returns Simulation JobProperties as a dictionary
+        for saving"""
+
+        data = super()._to_dict()
         data["FileScenario"] = self._file_scenario
         data["SimulationInputType"] = self._simulation_input_type
         data["TestHarness"] = self._test_harness
         data["UseCycleTime"] = str(self._use_cycle_time)
-        data["CycleTime"] = str(self._cycle_time)
-        return super()._to_dict(data)
+        if self._use_cycle_time:
+            data["CycleTime"] = str(self._cycle_time)
+        return data
 
 
 class TextExecutionJobProperties(JobProperties):
@@ -845,19 +864,38 @@ class TextExecutionJobProperties(JobProperties):
 
     @test_harness.setter
     def test_harness(self, val: str) -> None:
-        """Set TestHarness"""
+        """Sets TestHarness"""
         self._test_harness = val
 
     @test_result_file.setter
     def test_result_file(self, val: str) -> None:
-        """Set TestResultFile"""
+        """Sets TestResultFile"""
         self._test_result_file = val
 
     def _to_dict(self) -> _PropertiesData:
-        data = {}
+        """Returns Test Execution JobProperties as a dictionary
+        for saving"""
+
+        data = super()._to_dict()
         data["TestHarness"] = self._test_harness
         data["TestResultFile"] = self._test_result_file
-        return super()._to_dict(data)
+        return data
+
+
+class ModelCheckJobProperties(JobProperties):
+    """Properties of Model Check kind Jobs.
+    Model Check has no unique parameter."""
+
+    def __init__(self, name: str, prop: dict = None) -> None:
+        if not prop:
+            prop = {}
+        super().__init__(name, prop)
+
+    def _to_dict(self) -> _PropertiesData:
+        """Returns Model Check JobProperties as a dictionary
+        for saving"""
+
+        return super()._to_dict()
 
 
 class JobLauncher:
@@ -886,12 +924,12 @@ class JobLauncher:
 
     @job.setter
     def job(self, value: Job) -> None:
-        """Set Job to execute"""
+        """Sets Job to execute"""
         self._job = value
 
     @sproj.setter
     def sproj(self, value: IProject) -> None:
-        """Set Job's project"""
+        """Sets Job's project"""
         self._sproj = value
 
     def execute(self) -> bool:
@@ -913,4 +951,4 @@ class JobLauncher:
             [str(job_launcher), "run", "-p", self._sproj._storage.source, "-j", self._job.name]
         )
         self._result = JobResult(proc.returncode)
-        return self._result.code == JobStatus.Success.value
+        return self._result.code == JobStatus.SUCCESS.value

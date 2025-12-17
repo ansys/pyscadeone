@@ -1,0 +1,16 @@
+@startuml
+skinparam groupInheritance 2
+left to right direction
+
+SwanItem <|-- OperatorExpression
+OperatorExpression <|-- Iterator
+OperatorExpression <|-- ActivateEvery
+OperatorExpression <|-- AnonymousOperatorWithExpression
+OperatorExpression <|-- AnonymousOperatorWithDataDefinition
+OperatorExpression <|-- RestartOperator
+OperatorExpression <|-- PartialOperator
+
+OperatorInstance <|-- OperatorExpressionInstance
+OperatorExpressionInstance *-- OperatorExpression
+
+@enduml

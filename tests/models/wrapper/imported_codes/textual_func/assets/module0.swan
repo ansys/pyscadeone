@@ -1,0 +1,19 @@
+-- version swan: 2025.2 graph: 2.1
+{text%function textual_func (i0: int32 ^ 4)
+      returns (o0: int32 ^ 4);%text}
+
+function test_func (i0: int32^4;)
+  returns (o0: int32^4;)
+{
+  diagram
+    (#0 block textual_func
+    #pragma diagram {"xy":"H3150;V-3350","wh":"20000;14000"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-27450;V-3350"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H29150;V-4350"} #end)
+    
+    (#3 wire #1 => #0)
+    (#4 wire #0 => #2
+    #pragma diagram {"wp":"v-1000|#0 #2"} #end)
+}

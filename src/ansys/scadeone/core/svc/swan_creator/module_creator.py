@@ -36,16 +36,16 @@ if TYPE_CHECKING:
 
 
 class UseDirectiveFactory:
+    """Factory class for creating use directives."""
+
     _instance = None
-
-    def __init__(self) -> None:
-        from ansys.scadeone.core.model.loader import SwanParser
-
-        self._parser = SwanParser(LOGGER)
 
     def __new__(cls, *args, **kwargs) -> "UseDirectiveFactory":
         if not cls._instance:
             cls._instance = super(UseDirectiveFactory, cls).__new__(cls)
+            from ansys.scadeone.core.model.loader import SwanParser
+
+            cls._instance._parser = SwanParser(LOGGER)
         return cls._instance
 
     def create_use_directive(
@@ -68,16 +68,16 @@ class UseDirectiveFactory:
 
 
 class DeclarationFactory:
+    """Factory class for creating declarations."""
+
     _instance = None
-
-    def __init__(self) -> None:
-        from ansys.scadeone.core.model.loader import SwanParser
-
-        self._parser = SwanParser(LOGGER)
 
     def __new__(cls, *args, **kwargs) -> "DeclarationFactory":
         if not cls._instance:
             cls._instance = super(DeclarationFactory, cls).__new__(cls)
+            from ansys.scadeone.core.model.loader import SwanParser
+
+            cls._instance._parser = SwanParser(LOGGER)
         return cls._instance
 
     def create_declaration(self, decl: str) -> "swan.Declaration":
@@ -108,57 +108,71 @@ class DeclarationFactory:
 
     @staticmethod
     def create_operator(
-        name: Union[List["swan.Identifier"], str],
+        name: str,
         is_node: bool = True,
         is_inlined: bool = False,
-    ) -> "swan.Operator":
+    ) -> "swan.OperatorDefinition":
         """Create an operator."""
-        from ansys.scadeone.core.swan import Identifier, Operator, Scope
+        from ansys.scadeone.core.swan import Identifier, OperatorDefinition, Scope
 
         id = Identifier(name)  # noqa
         if not id.is_valid:
             raise ScadeOneException(f"Invalid module name: {name}")
-        return Operator(id, is_inlined, is_node, [], [], Scope())
+        return OperatorDefinition(id, is_inlined, is_node, [], [], Scope())
 
     @staticmethod
-    def create_signature(
-        name: Union[List["swan.Identifier"], str],
+    def create_operator_declaration(
+        name: str,
         is_node: bool = True,
         is_inlined: bool = False,
-    ) -> "swan.Signature":
-        """Create a signature."""
-        from ansys.scadeone.core.swan import Identifier, Signature
+    ) -> "swan.OperatorDeclaration":
+        """Create an operator declaration."""
+        from ansys.scadeone.core.swan import Identifier, OperatorDeclaration
 
         id = Identifier(name)  # noqa
         if not id.is_valid:
             raise ScadeOneException(f"Invalid module name: {name}")
-        return Signature(id, is_inlined, is_node, [], [])
+        return OperatorDeclaration(id, is_inlined, is_node, [], [])
 
-    def create_textual_operator(self, operator_str: str) -> "swan.Operator":
+    def create_textual_operator(self, operator_str: str) -> "swan.OperatorDefinition":
         """Create a textual operator."""
-        from ansys.scadeone.core.swan import Operator
+        from ansys.scadeone.core.swan import OperatorDefinition
 
-        operator = self._parser.operator_decl(SwanString(operator_str, "new_op"))
-        if not isinstance(operator, Operator):
+        operator = self._parser.operator_decl_or_def(SwanString(operator_str, "new_op"))
+        if not isinstance(operator, OperatorDefinition):
             raise ScadeOneException(f"Invalid operator: {operator_str}")
         operator.is_text = True
         return operator
 
-    def create_textual_signature(self, operator_str: str) -> "swan.Operator":
-        """Create a textual operator signature."""
-        from ansys.scadeone.core.swan import Signature
+    def create_textual_operator_declaration(self, operator_str: str) -> "swan.OperatorDefinition":
+        """Create a textual operator operator declaration."""
+        from ansys.scadeone.core.swan import OperatorDeclaration
 
-        operator = self._parser.operator_decl(SwanString(operator_str, "new_op"))
-        if isinstance(operator, Signature):
+        operator = self._parser.operator_decl_or_def(SwanString(operator_str, "new_op"))
+        if isinstance(operator, OperatorDeclaration):
             operator.is_text = True
             return operator
         raise ScadeOneException(f"Invalid operator: {operator_str}")
 
+    @staticmethod
+    def create_harness(
+        name: str,
+    ) -> "swan.TestHarness":
+        """Create a test harness."""
+        from ansys.scadeone.core.swan import Identifier, TestHarness, Scope
+
+        id = Identifier(name)  # noqa
+        if not id.is_valid:
+            raise ScadeOneException(f"Invalid module name: {name}")
+        return TestHarness(id, Scope(), pragmas=None)
+
 
 class ModuleFactory:
+    """Factory class for creating modules."""
+
     @staticmethod
-    def create_module(name: Union[List["swan.PathIdentifier"], str]) -> "swan.Module":
-        """Create a module."""
+    def create_module_body(name: str) -> "swan.ModuleBody":
+        """Create a module body."""
         from ansys.scadeone.core.swan import ModuleBody
 
         id_path = ModuleFactory._get_path_identifier(name)
@@ -166,13 +180,21 @@ class ModuleFactory:
 
     @staticmethod
     def create_module_interface(
-        name: Union[List["swan.PathIdentifier"], str],
+        name: str,
     ) -> "swan.ModuleInterface":
         """Create a module interface."""
         from ansys.scadeone.core.swan import ModuleInterface
 
         id_path = ModuleFactory._get_path_identifier(name)
         return ModuleInterface(id_path)
+
+    @staticmethod
+    def create_test_module(name: str) -> "swan.TestModule":
+        """Create a test module."""
+        from ansys.scadeone.core.swan import TestModule
+
+        id_path = ModuleFactory._get_path_identifier(name)
+        return TestModule(id_path)
 
     @staticmethod
     def _get_path_identifier(name: str) -> "swan.PathIdentifier":
@@ -195,6 +217,8 @@ class ModuleFactory:
 
 
 class UseDirectiveAdder:
+    """Class for adding use directives to modules."""
+
     @staticmethod
     def add_use_directive(module: "swan.Module", use_directive: "swan.UseDirective") -> None:
         """Add a use directive to the module."""
@@ -203,6 +227,8 @@ class UseDirectiveAdder:
 
 
 class DeclarationAdder:
+    """Class for adding declarations to modules."""
+
     @staticmethod
     def add_declaration(module: "swan.Module", declaration: "swan.Declaration") -> None:
         """Add a declaration to the module."""
@@ -212,12 +238,13 @@ class DeclarationAdder:
             GroupDecl,
             GroupDeclarations,
             ModuleItem,
-            Operator,
+            OperatorDefinition,
             SensorDecl,
             SensorDeclarations,
-            Signature,
+            OperatorDeclaration,
             TypeDecl,
             TypeDeclarations,
+            TestHarness,
         )
 
         if isinstance(declaration, ConstDecl):
@@ -232,9 +259,11 @@ class DeclarationAdder:
         elif isinstance(declaration, GroupDecl):
             group_decl = GroupDeclarations([declaration])
             module.declarations.append(cast(ModuleItem, group_decl))
-        elif isinstance(declaration, Operator):
+        elif isinstance(declaration, OperatorDefinition):
             module.declarations.append(declaration)
-        elif isinstance(declaration, Signature):
+        elif isinstance(declaration, OperatorDeclaration):
+            module.declarations.append(declaration)
+        elif isinstance(declaration, TestHarness):
             module.declarations.append(declaration)
         else:
             raise ScadeOneException(f"Declaration not supported: {declaration}")
@@ -242,10 +271,12 @@ class DeclarationAdder:
 
 
 class ModuleAdder:
+    """Class for adding modules to models."""
+
     @staticmethod
     def add_module(model: "Model", module: "swan.Module") -> None:
         """Add a module to the model."""
-        from ansys.scadeone.core.swan import ModuleBody, ModuleInterface, TestHarness
+        from ansys.scadeone.core.swan import ModuleBody, ModuleInterface, TestModule
 
         if model.module_exists(module):
             raise ScadeOneException(f"Module '{module.name}' already exists.")
@@ -253,13 +284,15 @@ class ModuleAdder:
             model.add_body(module)
         elif isinstance(module, ModuleInterface):
             model.add_interface(module)
-        elif isinstance(module, TestHarness):
-            model.add_harness(module)
+        elif isinstance(module, TestModule):
+            model.add_test_module(module)
         else:
             assert False, f"Module type not supported: {type(module)}"
 
 
-class ModuleCreator(ABC):
+class ModuleInterfaceCreator(ABC):
+    """Module creator interface."""
+
     def use(self, module: Union["swan.Module", str], alias: str = None) -> "swan.UseDirective":
         """Add a use directive to the module.
 
@@ -267,7 +300,7 @@ class ModuleCreator(ABC):
         ----------
         module: Module
             Module name.
-        alias: Str
+        alias: str
             Module alias.
 
         Returns
@@ -299,7 +332,7 @@ class ModuleCreator(ABC):
         from ansys.scadeone.core.swan import Module
 
         if not isinstance(self, Module):
-            raise ScadeOneException(f"Cannot add sensor to {type(self)}")
+            raise ScadeOneException(f"Cannot add declaration to {type(self)}")
         declaration = DeclarationFactory().create_declaration(decl_expr)
         DeclarationAdder.add_declaration(self, declaration)
         return declaration
@@ -311,9 +344,9 @@ class ModuleCreator(ABC):
         ----------
         name: str
             Constant name.
-        type_str: Str
+        type_str: str
             Constant type.
-        value: Str
+        value: str
             Constant value.
 
         Returns
@@ -359,7 +392,7 @@ class ModuleCreator(ABC):
         ----------
         name: str
             Enum name.
-        values: List[Str]
+        values: List[str]
             Enum values.
 
         Returns
@@ -408,7 +441,7 @@ class ModuleCreator(ABC):
         ----------
         name: str
             Sensor name.
-        type_str: Str
+        type_str: str
             Sensor type.
 
         Returns
@@ -457,89 +490,38 @@ class ModuleCreator(ABC):
         DeclarationAdder.add_declaration(self, group)
         return cast(GroupDecl, group)
 
-    def add_operator(
+    def add_operator_declaration(
         self,
         name: str,
         is_node: bool = True,
         is_inlined: bool = False,
-    ) -> "swan.Operator":
-        """Add an operator to the module body.
+    ) -> "swan.OperatorDeclaration":
+        """Add an operator declaration to the module.
 
         Parameters
         ----------
         name: str
             Operator name.
-        is_node: Bool
+        is_node: bool
             True if Node, otherwise Function.
-        is_inlined: Bool
+        is_inlined: bool
             True if inline operator.
 
         Returns
         -------
-        Operator
-            Operator object.
-        """
-        from ansys.scadeone.core.swan import ModuleBody
-
-        if not isinstance(self, ModuleBody):
-            raise ScadeOneException(f"Cannot add operator to {type(self)}")
-        operator = DeclarationFactory().create_operator(name, is_node, is_inlined)
-        DeclarationAdder.add_declaration(self, operator)
-        return operator
-
-    def add_textual_operator(self, operator_str: str) -> "swan.Operator":
-        """Add a textual operator to the module body.
-
-        Parameters
-        ----------
-        operator_str: str
-            Operator string.
-
-        Returns
-        -------
-        Operator
-            Operator object.
-        """
-        from ansys.scadeone.core.swan import ModuleBody, Operator
-
-        if not isinstance(self, ModuleBody):
-            raise ScadeOneException(f"Cannot add operator to {type(self)}")
-        operator = DeclarationFactory().create_textual_operator(operator_str)
-        DeclarationAdder.add_declaration(self, operator)
-        return cast(Operator, operator)
-
-    def add_signature(
-        self,
-        name: str,
-        is_node: bool = True,
-        is_inlined: bool = False,
-    ) -> "swan.Signature":
-        """Add an operator signature to the module.
-
-        Parameters
-        ----------
-        name: str
-            Operator name.
-        is_inlined: Bool
-            True if inline operator.
-        is_node: Bool
-            True if Node, otherwise Function.
-
-        Returns
-        -------
-        Signature
-            Signature object.
+        OperatorDeclaration
+            Operator declaration object.
         """
         from ansys.scadeone.core.swan import Module
 
         if not isinstance(self, Module):
             raise ScadeOneException(f"Cannot add operator to {type(self)}")
-        operator = DeclarationFactory().create_signature(name, is_node, is_inlined)
+        operator = DeclarationFactory().create_operator_declaration(name, is_node, is_inlined)
         DeclarationAdder.add_declaration(self, operator)
         return operator
 
-    def add_textual_signature(self, operator_str: str) -> "swan.Signature":
-        """Add a textual operator signature to the module.
+    def add_textual_operator_declaration(self, operator_str: str) -> "swan.OperatorDeclaration":
+        """Add a textual operator declaration to the module.
 
         Parameters
         ----------
@@ -548,13 +530,91 @@ class ModuleCreator(ABC):
 
         Returns
         -------
-        Signature
-            Signature object.
+        OperatorDeclaration
+            Operator declaration object.
         """
-        from ansys.scadeone.core.swan import Module, Signature
+        from ansys.scadeone.core.swan import Module, OperatorDeclaration
 
         if not isinstance(self, Module):
             raise ScadeOneException(f"Cannot add operator to {type(self)}")
-        operator = DeclarationFactory().create_textual_signature(operator_str)
+        operator = DeclarationFactory().create_textual_operator_declaration(operator_str)
         DeclarationAdder.add_declaration(self, operator)
-        return cast(Signature, operator)
+        return cast(OperatorDeclaration, operator)
+
+
+class ModuleBodyCreator(ModuleInterfaceCreator, ABC):
+    def add_operator_definition(
+        self,
+        name: str,
+        is_node: bool = True,
+        is_inlined: bool = False,
+    ) -> "swan.OperatorDefinition":
+        """Add an operator definition to the module body or the test module.
+
+        Parameters
+        ----------
+        name: str
+            Operator name.
+        is_node: bool
+            True if Node, otherwise Function.
+        is_inlined: bool
+            True if inline operator.
+
+        Returns
+        -------
+        Operator
+            Operator definition object.
+        """
+        from ansys.scadeone.core.swan import ModuleBody, TestModule
+
+        if not isinstance(self, (ModuleBody, TestModule)):
+            raise ScadeOneException(f"Cannot add operator to {type(self)}")
+
+        operator = DeclarationFactory().create_operator(name, is_node, is_inlined)
+        DeclarationAdder.add_declaration(self, operator)
+        return operator
+
+    def add_textual_operator_definition(self, operator_str: str) -> "swan.OperatorDefinition":
+        """Add a textual operator definition to the module body.
+
+        Parameters
+        ----------
+        operator_str: str
+            Operator string.
+
+        Returns
+        -------
+        Operator
+            Operator definition object.
+        """
+        from ansys.scadeone.core.swan import ModuleBody, OperatorDefinition, TestModule
+
+        if not isinstance(self, (ModuleBody, TestModule)):
+            raise ScadeOneException(f"Cannot add operator to {type(self)}")
+        operator = DeclarationFactory().create_textual_operator(operator_str)
+        DeclarationAdder.add_declaration(self, operator)
+        return cast(OperatorDefinition, operator)
+
+
+class TestModuleCreator(ModuleBodyCreator, ABC):
+    def add_test_harness(self, name: str) -> "swan.TestHarness":
+        """Add a test harness to the module.
+
+        Parameters
+        ----------
+        name: str
+            Test harness name.
+
+        Returns
+        -------
+        TestHarness
+            Test harness object.
+        """
+        from ansys.scadeone.core.swan import TestModule
+
+        if not isinstance(self, TestModule):
+            raise ScadeOneException(f"Cannot add test harness to {type(self)}")
+
+        harness = DeclarationFactory().create_harness(name)
+        DeclarationAdder.add_declaration(self, harness)
+        return harness

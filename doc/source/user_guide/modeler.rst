@@ -3,6 +3,7 @@
 Modeler
 =======
 
+.. currentmodule:: ansys.scadeone.core
 
 This section uses the **QuadFlightControl** example provided with Scade One.
 The example is located in the ``examples/QuadFlightControl/QuadFlightControl`` folder in the Scade One
@@ -19,7 +20,7 @@ A *ScadeOne* instance is created with the following code:
 .. literalinclude:: quad_flight_control.py
     :lines: 14
 
-where :py:attr:`install_dir` is the location of Scade One installation and it could take a string or
+where :py:attr:`ScadeOne.install_dir` is the location of Scade One installation and it could take a string or
 a :py:class:`pathlib.Path` object as value. The *app* object is then used to access projects.
 
 
@@ -42,7 +43,7 @@ They can be accessed using the `app.projects` property.
 
 .. note::
     
-    From the :py:attr:`ansys.pyscadeone.core.project.Project.app`, one can access the
+    From the :py:attr:`ansys.scadeone.core.project.Project.app`, one can access the
     Scade One app containing the project.
 
 Dependencies
@@ -136,7 +137,7 @@ For an operator or a signature, one can access the input and output flows
 and to the body for operator. Then, from the body, one can access the content of diagrams, equations, etc.
 
 All Swan language constructs are represented by classes from the 
-:py:mod:`ansys.scadeone.core.swan` module. The section :ref:`ref_swan_api` describes
+**ansys.scadeone.core.swan** module. The section :ref:`ref_swan_api` describes
 the Swan classes, with respect to the structure of the language reference documentation in the product.
 
 Resuming with the previous code example, here is a usage sample of the Swan language API:

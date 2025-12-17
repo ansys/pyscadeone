@@ -1,4 +1,4 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2025.2 graph: 2.1
 use TypesModule as tType;
 
 node operator0 (i0 : int32;
@@ -7,14 +7,16 @@ node operator0 (i0 : int32;
                 i4 : tColor default = BLUE;
                 i5 : tType::tSize;
                 i6 : bool;
-                i7 : tStruct;)
+                i7 : tStruct;
+                i8 : tType::arrayType;)
   returns (o0: int32;
            o1 : int32;
            o3 : tType::floatType;
            o4 : tColor default = RED;
            o5 : tType::tSize;
            o6 : bool;
-           o7 : tStruct;)
+           o7 : tStruct;
+           o8 : tType::arrayType;)
 {
   diagram
     (#5 def o0
@@ -60,6 +62,10 @@ node operator0 (i0 : int32;
     #pragma diagram {"xy":"H-48000;V18400"} #end)
     (#31 def o7
     #pragma diagram {"xy":"H-28750;V18400"} #end)
+    (#33 expr i8
+    #pragma diagram {"xy":"H-48000;V25625"} #end)
+    (#34 def o8
+    #pragma diagram {"xy":"H-28750;V25625"} #end)
     
     (#7 wire #1 => #5, #9, #14
     #pragma diagram {"wp":"#1 h4500[v9100 #5, h2000[v5400 #9, h4000 v-2100 #14]]"} #end)
@@ -74,6 +80,7 @@ node operator0 (i0 : int32;
     (#26 wire #24 => #25)
     (#29 wire #27 => #28)
     (#32 wire #30 => #31)
+    (#35 wire #33 => #34)
 }
 
 function operator1 (i0: int32;)

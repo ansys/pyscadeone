@@ -3,6 +3,9 @@
     Expression <|-- UnaryExpr
     Expression <|-- BinaryExpr
     Expression <|-- NumericCast
-    UnaryExpr -[hidden]d- NAryOperator
-    note right: See [[api/language/expressions/instance.html#ansys.scadeone.core.swan.OperatorExpression OperatorExpression]]
+    UnaryExpr <|-- PreExpr
+    BinaryExpr <|-- InitialValueExpr
+    BinaryExpr <|-- PreWithInitialValueExpr
+    Expression -[hidden]d- NAryOperator
+    note top: See [[api/language/expressions/instance.html#ansys.scadeone.core.swan.OperatorExpression OperatorExpression]]
 @enduml

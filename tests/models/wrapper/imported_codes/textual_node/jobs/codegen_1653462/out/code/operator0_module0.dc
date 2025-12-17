@@ -1,0 +1,33 @@
+/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+** Command: swan_cg.exe config.json
+*************************************************************$ */
+#include "swan_sensors.h"
+#include "swan_consts.h"
+#include "operator0_module0.h"
+
+/* module0::operator0 */
+void operator0_module0(
+  /* i0 */
+  const array_int32_4 *i0,
+  /* o0 */array_int32_4 * restrict o0,
+  outC_operator0_module0 * restrict outC)
+{
+}
+
+void operator0_init_module0(outC_operator0_module0 * restrict outC)
+{
+}
+
+
+#ifndef SWAN_NO_EXTERN_CALL_TO_RESET
+void operator0_reset_module0(outC_operator0_module0 * restrict outC)
+{
+}
+#endif /* SWAN_NO_EXTERN_CALL_TO_RESET */
+
+
+
+
+/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+** operator0_module0.dc
+*************************************************************$ */

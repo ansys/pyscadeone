@@ -32,28 +32,28 @@ if TYPE_CHECKING:
 
 
 class DiagramFactory:
+    """Factory class for diagram."""
+
     _instance = None
-
-    def __init__(self) -> None:
-        from ansys.scadeone.core.model.loader import SwanParser
-
-        self._parser = SwanParser(LOGGER)
 
     def __new__(cls, *args, **kwargs) -> "DiagramFactory":
         if not cls._instance:
+            from ansys.scadeone.core.model.loader import SwanParser
+
             cls._instance = super(DiagramFactory, cls).__new__(cls)
+            cls._instance._parser = SwanParser(LOGGER)
         return cls._instance
 
     @staticmethod
-    def create_block(diagram: "swan.Diagram", instance: "swan.Operator") -> "swan.Block":
+    def create_block(diagram: "swan.Diagram", instance: "swan.OperatorDefinition") -> "swan.Block":
         """Create a call operator block.
 
         Parameters
         ----------
         diagram: Diagram
             Diagram where the block will be added.
-        instance: Operator
-            Operator instance. A **use** directive may be required in the *diagram*'s module to
+        instance: OperatorDefinition
+            OperatorDefinition instance. A **use** directive may be required in the *diagram*'s module to
             resolve the operator module.
 
         Returns
@@ -66,11 +66,18 @@ class DiagramFactory:
         ScadeOneException
             If the operator does not have a module or if the diagram does not have a module.
         """
-        from ansys.scadeone.core.swan import Block, PathIdOpCall
+        from ansys.scadeone.core.swan import (
+            Block,
+            NamedInstance,
+        )
         from ansys.scadeone.core.model import Model
 
+        if instance.module is None:
+            raise ScadeOneException(f"Operator {instance.get_full_path()} does not have a module.")
+        if diagram.module is None:
+            raise ScadeOneException("Diagram does not have a module.")
         path_id = Model.get_path_in_module(instance, diagram.module)
-        path_id_op_call = PathIdOpCall(path_id, [], [])
+        path_id_op_call = NamedInstance(path_id, [])
         return Block(path_id_op_call)
 
     @staticmethod
@@ -147,6 +154,8 @@ class DiagramFactory:
 
 
 class DiagramAdder:
+    """Class for adding diagrams."""
+
     def __init__(self, owner: "swan.Diagram") -> None:
         self._owner = owner
         self._lunum = -1
@@ -167,8 +176,12 @@ class DiagramAdder:
         """Add a group to the diagram."""
         self._add_diagram_object(bar)
 
-    def _check_for_wire(self, wire: "swan.Wire") -> Optional["swan.Wire"]:
-        # Check if wire is already in the diagram with the same source characteristics
+    def add_set_sensor(self, set_sensor: "swan.SetSensorBlock") -> None:
+        """Add a set sensor block to the diagram."""
+        self._add_diagram_object(set_sensor)
+
+    def _check_wire_source(self, wire: "swan.Wire") -> Optional["swan.Wire"]:
+        # Check if the wire source is already in the diagram with the same source characteristics
         from ansys.scadeone.core.swan import Wire
 
         source_lunum = wire.source.port.lunum.value
@@ -186,12 +199,21 @@ class DiagramAdder:
             return None
         return wires[0]
 
+    @staticmethod
+    def _check_wire_targets(wire: "swan.Wire", existing_wire: "swan.Wire") -> bool:
+        # Check if the wire has the same targets as the existing one
+        existing_targets = [t.port.lunum.value for t in existing_wire.targets]
+        new_targets = [t.port.lunum.value for t in wire.targets]
+        return set(existing_targets) == set(new_targets)
+
     def add_wire(self, wire: "swan.Wire") -> "swan.Wire":
         """Add a wire to the diagram."""
-        if existing_wire := self._check_for_wire(wire):
+        if existing_wire := self._check_wire_source(wire):
             # Check if the wire is already in the diagram with the same source
-            # and add the target to the existing wire
-            existing_wire.targets.extend(wire.targets)
+            if not self._check_wire_targets(wire, existing_wire):
+                # Check if existing wire have the same targets,
+                # if it doesn't, add the targets to the existing wire
+                existing_wire.targets.extend(wire.targets)
             return existing_wire
 
         # No candidate wires found, add the wire to the diagram
@@ -222,16 +244,18 @@ class DiagramAdder:
 
 
 class DiagramCreator:
+    """Diagram creator class."""
+
     def __init__(self) -> None:
         self._diagram_adder = DiagramAdder(self)
 
-    def add_block(self, instance: "swan.Operator") -> "swan.Block":
+    def add_block(self, instance: "swan.OperatorDefinition") -> "swan.Block":
         """Add an operator call to the operator.
 
         Parameters
         ----------
-        instance: Operator
-            Operator instance.
+        instance: OperatorDefinition
+            OperatorDefinition instance.
 
         Returns
         -------
@@ -317,3 +341,114 @@ class DiagramCreator:
         wire = DiagramFactory().create_wire(source, targets)
         added_wire = self._diagram_adder.add_wire(wire)
         return added_wire
+
+    # Harness specific methods
+    def _is_in_harness(self) -> bool:
+        """Check if the diagram is in a test harness."""
+        from ansys.scadeone.core.swan import TestHarness, OperatorDefinition
+
+        def _aux(owner: "swan.SwanItem") -> bool:
+            """Auxiliary function to check if the owner is a TestHarness."""
+
+            if owner is None:
+                return False
+            if isinstance(owner, TestHarness):
+                return True
+            if isinstance(owner, OperatorDefinition):
+                return False
+            return _aux(owner.owner)
+
+        return _aux(self.owner)
+
+    def add_instance_under_test(self, instance: "swan.OperatorDefinition") -> "swan.Block":
+        """Add an under test operator to the test harness.
+
+        Parameters
+        ----------
+        instance: OperatorDefinition
+            Operator instance.
+
+        Returns
+        -------
+        Block
+            Block object.
+        """
+        from ansys.scadeone.core.swan import TestPragma, TestPragmaKind
+
+        if not self._is_in_harness():
+            raise ScadeOneException(
+                "Cannot add an under test operator outside a test harness diagram."
+            )
+        block = self.add_block(instance)
+        block.pragmas.append(TestPragma(TestPragmaKind.UNDER_TEST))
+        return block
+
+    def add_data_source(self, key: str) -> "swan.Block":
+        """
+        Add a data source.
+
+        Parameters
+        ----------
+        key: str
+            Source key.
+
+        Returns
+        -------
+        Block
+            Block object.
+        """
+        from ansys.scadeone.core.svc.swan_creator.harness_creator import TestHarnessDiagramFactory
+        from ansys.scadeone.core.swan import Identifier
+
+        if not self._is_in_harness():
+            raise ScadeOneException("Cannot add a data source outside a test harness.")
+
+        src_key = Identifier(key)
+        data_src = TestHarnessDiagramFactory.create_data_source(src_key)
+        self._diagram_adder.add_block(data_src)
+        return data_src
+
+    def add_oracle(self, key: str) -> "swan.Block":
+        """
+        Add an oracle block.
+
+        Parameters
+        ----------
+        key: str
+            Oracle key.
+
+        Returns
+        -------
+        Block
+            Block object.
+        """
+        from ansys.scadeone.core.svc.swan_creator.harness_creator import TestHarnessDiagramFactory
+        from ansys.scadeone.core.swan import Identifier
+
+        if not self._is_in_harness():
+            raise ScadeOneException("Cannot add an oracle outside a test harness.")
+        oracle_key = Identifier(key)
+        oracle = TestHarnessDiagramFactory.create_oracle(oracle_key)
+        self._diagram_adder.add_block(oracle)
+        return oracle
+
+    def add_set_sensor(self, instance: "swan.SensorDecl") -> "swan.SetSensorBlock":
+        """Add a set sensor block to the diagram.
+
+        Parameters
+        ----------
+        instance: SensorDecl
+            Sensor instance.
+
+        Returns
+        -------
+        SetSensorBlock
+            Set sensor block object.
+        """
+        from ansys.scadeone.core.svc.swan_creator.harness_creator import TestHarnessDiagramFactory
+
+        if not self._is_in_harness():
+            raise ScadeOneException("Cannot add a set sensor block outside a test harness.")
+        set_sensor = TestHarnessDiagramFactory.create_set_sensor(self, instance)
+        self._diagram_adder.add_set_sensor(set_sensor)
+        return set_sensor

@@ -146,7 +146,7 @@ class TestDeclarationFactory:
     def test_create_simple_operator(self, dec_factory_singleton):
         operator = dec_factory_singleton.create_operator("op1")
         assert operator is not None
-        assert isinstance(operator, swan.Operator)
+        assert isinstance(operator, swan.OperatorDefinition)
         assert swan.swan_to_str(operator.id) == "op1"
         assert operator.is_node
         assert not operator.is_text
@@ -156,7 +156,7 @@ class TestDeclarationFactory:
     def test_create_function_operator(self, dec_factory_singleton):
         operator = dec_factory_singleton.create_operator("op2", is_node=False)
         assert operator is not None
-        assert isinstance(operator, swan.Operator)
+        assert isinstance(operator, swan.OperatorDefinition)
         assert swan.swan_to_str(operator.id) == "op2"
         assert not operator.is_node
         assert not operator.is_text
@@ -170,7 +170,7 @@ class TestDeclarationFactory:
         """
         operator = dec_factory_singleton.create_textual_operator(txt_op)
         assert operator is not None
-        assert isinstance(operator, swan.Operator)
+        assert isinstance(operator, swan.OperatorDefinition)
         assert swan.swan_to_str(operator.id) == "operator3"
         assert operator.is_node
         assert operator.is_text
@@ -180,14 +180,14 @@ class TestDeclarationFactory:
         assert len(operator.outputs) == 1
         assert swan.swan_to_str(operator.outputs[0]) == "o0: int32"
 
-    def test_create_textual_signature(self, dec_factory_singleton):
+    def test_create_textual_decl(self, dec_factory_singleton):
         txt_op = """
             node operator3 (i0: int32; i1: int32)
             returns (o0: int32);
         """
-        operator = dec_factory_singleton.create_textual_signature(txt_op)
+        operator = dec_factory_singleton.create_textual_operator_declaration(txt_op)
         assert operator is not None
-        assert isinstance(operator, swan.Signature)
+        assert isinstance(operator, swan.OperatorDeclaration)
         assert swan.swan_to_str(operator.id) == "operator3"
         assert operator.is_node
         assert operator.is_text
@@ -201,14 +201,14 @@ class TestDeclarationFactory:
 class TestModuleFactory:
     def test_create_invalid_module_by_name(self):
         with pytest.raises(swan.ScadeOneException):
-            ModuleFactory.create_module("module$")
+            ModuleFactory.create_module_body("module$")
 
     def test_create_invalid_module_by_path(self):
         with pytest.raises(swan.ScadeOneException):
-            ModuleFactory.create_module("module::$")
+            ModuleFactory.create_module_body("module::$")
 
-    def test_create_module(self):
-        module = ModuleFactory.create_module("module")
+    def test_create_module_body(self):
+        module = ModuleFactory.create_module_body("module")
         assert module is not None
         assert swan.swan_to_str(module.name) == "module"
 
@@ -218,6 +218,11 @@ class TestModuleFactory:
         assert swan.swan_to_str(module.name) == "module"
 
     def test_create_module_namesapce(self):
-        module = ModuleFactory.create_module("lib::submodule::module")
+        module = ModuleFactory.create_module_body("lib::submodule::module")
         assert module is not None
         assert swan.swan_to_str(module.name) == "lib::submodule::module"
+
+    def test_create_test_module(self):
+        test_module = ModuleFactory.create_test_module("test_module")
+        assert test_module is not None
+        assert swan.swan_to_str(test_module.name) == "test_module"

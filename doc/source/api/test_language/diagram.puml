@@ -1,0 +1,13 @@
+@startuml 
+' Diagram
+left to right direction
+skinparam groupInheritance 2
+
+Diagram *-- "*" DiagramObject
+HasPragma <|-- DiagramObject
+DiagramObject <|-- SetSensorBlock
+DiagramObject <|-- Block
+Block *-- DataSource : instance
+Block *-- Oracle : instance
+
+@enduml

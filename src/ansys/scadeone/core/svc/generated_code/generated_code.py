@@ -103,8 +103,8 @@ class CParameter(MappingObject):
         super().__init__(gen_code, param_elem)
         self._name = param_elem["name"]
         self._type_id = param_elem["type"]
-        self._pointer = param_elem.get("pointer", False)
-        self._const = param_elem.get("const", False)
+        self._is_pointer = param_elem.get("pointer", False)
+        self._is_const = param_elem.get("const", False)
         self._type_name = None
 
     @property
@@ -126,21 +126,21 @@ class CParameter(MappingObject):
         return self._type_name
 
     @property
-    def pointer(self) -> bool:
+    def is_pointer(self) -> bool:
         """Indicates if the parameter is a pointer"""
-        return self._pointer
+        return self._is_pointer
 
     @property
-    def const(self) -> bool:
+    def is_const(self) -> bool:
         """Indicates if the parameter is a const type"""
-        return self._const
+        return self._is_const
 
     @property
     def signature(self) -> str:
-        """Returns the parameter type signature (taking into account pointer and const)."""
-        const = "const " if self.const else ""
-        pointer = " *" if self.pointer else ""
-        return f"{const}{self.type_name}{pointer}"
+        """Returns the parameter type signature (taking into account is_pointer and is_const)."""
+        is_const = "const " if self.is_const else ""
+        is_pointer = " *" if self.is_pointer else ""
+        return f"{is_const}{self.type_name}{is_pointer}"
 
 
 class CFunction(CDeclaration):
@@ -236,7 +236,7 @@ class ModelSensor(ModelObject):
         """Returns the name of the variable as defined in the generated C function."""
         if self._code_name is None:
             code_elem = self.get_code_elem(silent=True)
-            if code_elem is None:
+            if not code_elem:
                 self._code_name = "__no_name__"
             else:
                 self._code_name = code_elem["content"]["name"]
@@ -250,6 +250,8 @@ class ModelSensor(ModelObject):
         """
         if self._code_type is None:
             code_elem = self.get_code_elem(silent=True)
+            if not code_elem:
+                return {}
             self._code_type = self._gen_code.decompose_code_type(
                 self._gen_code.get_code_elem(code_elem["content"]["type"])
             )
@@ -262,9 +264,22 @@ class ModelSensor(ModelObject):
             self._code_type_name = self.code_type.get("name", "__unknown__")
         return self._code_type_name
 
-    def get_code_elem(self, role: str = "", silent: bool = False) -> Optional[dict]:
+    def load_code_data(self) -> None:
+        """Forces the assignment of code name and type."""
+        code_elem = self.get_code_elem(silent=True)
+        if not code_elem:
+            self._code_name = "__no_name__"
+            self._code_type_name = "__unknown__"
+        else:
+            self._code_name = code_elem["content"]["name"]
+            self._code_type = self._gen_code.decompose_code_type(
+                self._gen_code.get_code_elem(code_elem["content"]["type"])
+            )
+            self._code_type_name = self._code_type.get("name", "__unknown__")
+
+    def get_code_elem(self, role: str = "", silent: bool = True) -> dict:
         """Returns the data associated to the model element, if any."""
-        code_elem = super().get_code_elem(role, True)
+        code_elem = super().get_code_elem(role, silent)
         if code_elem is None:
             # no correspondence in mapping section => use the model id as the code id
             code_elem = self._gen_code.get_code_elem(self._id)
@@ -510,30 +525,30 @@ class ModelOperator(ModelOperatorBase):
 
     def __init__(self, gen_code: "GeneratedCode", oper_elem: dict) -> None:
         super().__init__(gen_code, oper_elem)
-        self._root = oper_elem.get("root", False)
-        self._imported = oper_elem.get("imported", False)
-        self._expanded = oper_elem.get("expanded", False)
-        self._specialize = oper_elem.get("specialize", 0)
+        self._is_root = oper_elem.get("root", False)
+        self._is_imported = oper_elem.get("imported", False)
+        self._is_expanded = oper_elem.get("expanded", False)
+        self._is_specialized = oper_elem.get("specialized", 0)
 
     @property
-    def root(self) -> bool:
+    def is_root(self) -> bool:
         """Returns True if the operator is a root operator"""
-        return self._root
+        return self._is_root
 
     @property
-    def imported(self) -> bool:
+    def is_imported(self) -> bool:
         """Returns True if the operator is an imported operator"""
-        return self._imported
+        return self._is_imported
 
     @property
-    def expanded(self) -> bool:
+    def is_expanded(self) -> bool:
         """Returns True if the operator is expanded (inlined)"""
-        return self._expanded
+        return self._is_expanded
 
     @property
-    def specialize(self) -> bool:
+    def is_specialized(self) -> bool:
         """Returns True if the operator is specialized"""
-        return self._specialize
+        return self._is_specialized
 
     @property
     def inputs(self) -> List[ModelVariable]:
@@ -607,6 +622,8 @@ class ModelMonomorphicInstance(ModelOperatorBase):
 
 
 class ModelKeyword(Enum):
+    """Model keywords enumeration."""
+
     Array = auto()
     Enum = auto()
     EnumValue = auto()
@@ -619,9 +636,23 @@ class ModelKeyword(Enum):
     PredefinedType = auto()
     Sensor = auto()
     Struct = auto()
+    NamedType = auto()
 
     @staticmethod
     def to_str(value: "ModelKeyword") -> str:
+        """
+        Converts ModelKeyword enum value to string.
+
+        Parameters
+        ----------
+        value : ModelKeyword
+            The ModelKeyword enum value to convert.
+
+        Returns
+        -------
+        str
+            The string representation of the ModelKeyword enum value.
+        """
         if value == ModelKeyword.PredefinedType:
             return "predefined_type"
         elif value == ModelKeyword.EnumValue:
@@ -630,7 +661,69 @@ class ModelKeyword(Enum):
             return value.name.lower()
 
 
+class CodeKeyword(Enum):
+    """Code keywords enumeration."""
+
+    Array = auto()
+    Enum = auto()
+    Function = auto()
+    Global = auto()
+    Macro = auto()
+    PredefinedType = auto()
+    Struct = auto()
+    TypeDef = auto()
+    Union = auto()
+
+    @staticmethod
+    def to_str(value: "CodeKeyword") -> str:
+        """
+        Converts CodeKeyword enum value to string.
+
+        Parameters
+        ----------
+        value : CodeKeyword
+            The CodeKeyword enum value to convert.
+
+        Returns
+        -------
+        str
+            The string representation of the CodeKeyword enum value.
+        """
+        if value == CodeKeyword.PredefinedType:
+            return "predefined_type"
+        elif value == CodeKeyword.TypeDef:
+            return "typedef"
+        else:
+            return value.name.lower()
+
+    @staticmethod
+    def from_str(value: str) -> "CodeKeyword":
+        """
+        Converts string to CodeKeyword enum value.
+
+        Parameters
+        ----------
+        value : str
+            The string representation of the CodeKeyword enum value.
+
+        Returns
+        -------
+        CodeKeyword
+            The CodeKeyword enum value.
+        """
+        if value == "predefined_type":
+            return CodeKeyword.PredefinedType
+        elif value == "typedef":
+            return CodeKeyword.TypeDef
+        else:
+            if item := getattr(CodeKeyword, value.capitalize(), None):
+                return item
+            raise ScadeOneException(f"Generated code: {value} not yet supported.")
+
+
 class TypeObject(ABC):
+    """Type object base class."""
+
     def __init__(self, c_name: str = "", m_name: str = "", path: str = ""):
         self.c_name: str = c_name
         self.m_name: str = m_name
@@ -638,6 +731,8 @@ class TypeObject(ABC):
 
 
 class TypeBase(TypeObject):
+    """Type base class."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -659,11 +754,15 @@ class TypeBase(TypeObject):
 
 
 class Scalar(TypeBase):
+    """Scalar type class."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
 class Enumerate(TypeBase):
+    """Enumerate type class."""
+
     def __init__(self, enum_name, *args, **kwargs):
         self._enum_name = enum_name
         super().__init__(*args, **kwargs)
@@ -674,6 +773,8 @@ class Enumerate(TypeBase):
 
 
 class Array(TypeBase):
+    """Array type class."""
+
     def __init__(self, sizes: list[int], *args, **kwargs):
         self._sizes = sizes
         super().__init__(*args, **kwargs)
@@ -684,6 +785,8 @@ class Array(TypeBase):
 
 
 class Structure(TypeBase):
+    """Structure type class."""
+
     def __init__(self, fields: list[TypeBase], *args, **kwargs):
         self._fields = fields
         super().__init__(*args, **kwargs)
@@ -754,21 +857,14 @@ class GeneratedCode(object):
                     + f" ({self._mapping_path.name}) for job {self._job_name}"
                 )
 
-    def _get_links(self) -> dict:
+    def _get_mapping(self) -> dict:
+        # Returns the code-model mapping
         _rtn = {}
         for m in self.mapping.get("mapping", []):
             role = m.get("role", None)
             key = (m["code_id"], role) if role else m["code_id"]
             _rtn[key] = m["model_id"]
         return _rtn
-
-    @staticmethod
-    def _capitalize_string(inp: str) -> str:
-        # Capitalize the first character of string
-        if "_" in inp:
-            return "".join([_elm.title() for _elm in inp.split("_")])
-        else:
-            return inp.title()
 
     @staticmethod
     def _capitalize_string(inp: str) -> str:
@@ -814,24 +910,57 @@ class GeneratedCode(object):
 
     def decompose_code_type(self, ctype: dict) -> dict:
         """
-        Returns (as a dictionary) the C type name, category (array, struct, enum, union, typedef,
-        predefined_type) and sub elements of a given type element.
+        Returns as a dictionary with the C type name, category, and sub elements of a given type element.
 
-        The sub elements depends on the category:
+        The dictionary content is:
 
-        - For an array, it is a dictionary with base_type giving the type data of the element
-          (same format as this method) and size giving the size of the array.
-        - For a struct, it is a list of dictionaries, with name giving the field name,
-          type giving the field type data (same format as this method), pointer indicating if field
-          is a pointer type and size giving optional list of integer or constant names.
-        - For an enum, it is a dictionary with tag_name giving internal tag name for the enum,
-          and values giving the list of names corresponding to the enum values.
-        - For a union, it is a list of dictionaries, with name giving the variant field name,
-          type giving the variant field type data (same format as this method)
-          and enum_value giving optional integer value.
-        - For a typedef (imported type), it is the function names used to manipulate
-          the imported type.
-        - For a predefined_type, it is None.
+        .. code:: python
+
+            ret_type ::= { "name": "<str>", # C name
+                           "category": "array|struct|enum|union|typedef|predefined_type",
+                           "elements": <sub_elements> }
+
+
+        where *sub_elements* depends on the category:
+
+        array
+          dictionary of the form:
+
+        .. code:: python
+
+            { "base_type": <ret_type>, # base type of the array
+              "size": int }            # size of the array
+
+        struct
+          list of dictionaries, such as:
+
+        .. code:: python
+
+            { "name": str,        # field name
+              "type": <ret_type>, # field type data
+              "pointer": bool,    # True if field is a pointer type
+              "size": list }      # optional list of integer or constant names
+
+
+        enum
+          dictionary of the form:
+
+        .. code:: python
+
+            { "tag_name": str,        # internal tag name for the enum
+              "values": [<str, ...] } # list of names corresponding to the enum values
+
+        union
+          list of dictionaries, such as:
+
+        .. code:: python
+
+            { "name": str,        # variant field name
+              "type": <ret_type>, # variant field type data
+              "enum_value": int } # optional integer value
+
+        predefined_type
+          the value is None.
 
         """
         category = ctype.get("category", "")
@@ -866,9 +995,7 @@ class GeneratedCode(object):
                     }
                 )
         elif category == "typedef":
-            # typedef is used for imported types
-            # check that the 3 functions/macros are present: init, cp, eq
-            type_content = []
+            return self.decompose_code_type(self.get_code_elem(content["type"]))
         elif category == "predefined_type":
             type_content = None
         else:
@@ -995,6 +1122,31 @@ class GeneratedCode(object):
         """
         return (y for y in self.mapping["model"] if filter == "" or filter == y[0])
 
+    def get_model_element(self, model_id: int, resolve_def: bool = False) -> list:
+        """
+        Returns the model element with its given ID. If *resolve_def* is set to True,
+        and the element is a NamedType, the definition of the NamedType is resolved and returned
+
+        Parameters
+        ----------
+        model_id : int
+            ID of model
+        resolve_def : bool, optional
+            If True, resolve NamedType definition, by default False
+
+        Returns
+        -------
+        list
+            Return a list of model type and its parameters
+        """
+        model_elt = self.get_model_id_mapping()[model_id]
+        if resolve_def:
+            _key, _params = model_elt
+            if _key == ModelKeyword.NamedType:
+                return self.get_model_element(_params["definition"], True)
+        return model_elt
+
+    @functools.cache
     def get_model_id_mapping(self) -> dict:
         """
         Get model mapping
@@ -1104,19 +1256,22 @@ class GeneratedCode(object):
                 break
         return _rtn
 
-    def get_function_ios(self, id_model: int, role: str) -> tuple[List[str], str]:
+    def get_function_parameters(self, id_model: int, role: str) -> tuple[List[str], str]:
         """
-        Get inputs/outputs of a function
+        Get parameters of a function
 
         Parameters
         ----------
         id_model : int
-            ID of model
+            ID of model.
+
+        role: str
+            One of "CycleMethod, "ResetMethod", "InitMethod".
 
         Returns
         -------
-        tuple[List[str], List[str]]
-            Return a tuple including list of inputs and list of outputs
+        tuple[List[str], str]
+            Return a tuple including list of inputs and context parameter name.
         """
         _in = []
         _ctx = ""
@@ -1128,70 +1283,68 @@ class GeneratedCode(object):
                 _in.append(_elm["name"])
         return _in, _ctx
 
-    def get_type(self, dat: List, id_type: int) -> TypeBase:
+    def get_type(self, c_type_elt: List, c_type_id: int) -> Optional[TypeBase]:
         """
         Get type data with its ID given
 
         Parameters
         ----------
-        dat : List
-            A list of data
-        id_type : int
-            Type data ID
+        c_type_elt : List
+            Code type element
+        c_type_id : int
+            Code type ID
 
         Returns
         -------
-        TypeBase
+        Optional[TypeBase]
             An instance of TypeBase
         """
-        _rtn = None
-        c_ek, c_atts = dat
+        c_ek, c_atts = c_type_elt
         _model_mapping = self.get_model_id_mapping()
-        _link = self._get_links()
-        m_type_decl = _model_mapping.get(id_type)
-        if not m_type_decl:
-            m_type_decl = _model_mapping.get(_link.get(id_type))
-        if c_ek == "predefined_type":
-            _cvt = "PredefinedType"
-        elif c_ek == "enum_value":
-            _cvt = "EnumValue"
+        _code_to_model = self._get_mapping()
+        m_type_id = _code_to_model.get(c_type_id)
+        m_type_decl = _model_mapping.get(m_type_id)
+        if m_type_decl:
+            m_atts = m_type_decl[1]
         else:
-            _cvt = GeneratedCode._capitalize_string(c_ek)
-        _key = ModelKeyword[_cvt] if _cvt in ModelKeyword.__members__ else _cvt
-        assert not m_type_decl or m_type_decl[0] == _key
-        m_atts = m_type_decl[1] if m_type_decl else {}
-        if _key == ModelKeyword.PredefinedType:
-            _rtn = Scalar(ModelKeyword.to_str(_key), m_atts.get("name", ""), c_atts["name"])
-        elif _key == ModelKeyword.Enum:
-            _rtn = Enumerate(
+            m_atts = {}
+        c_key = CodeKeyword.from_str(c_ek)
+        if c_key == CodeKeyword.TypeDef:
+            c_elt = self.get_code_type_id_mapping().get(c_atts["type"])
+            return self.get_type(c_elt, c_atts["type"])
+        if c_key == CodeKeyword.PredefinedType:
+            return Scalar(CodeKeyword.to_str(c_key), m_atts.get("name", ""), c_atts["name"])
+        if c_key == CodeKeyword.Enum:
+            return Enumerate(
                 enum_name=c_atts["name"],
                 m_name=m_atts.get("name", "int32"),
                 c_name="swan_int32",
                 path=m_atts.get("path"),
             )
-        elif _key == ModelKeyword.Array:
+        if c_key == CodeKeyword.Array:
             base_type = self._get_array_base_type(c_atts["id"])
-            _rtn = Array(
+            return Array(
                 m_name=base_type["m_name"],
                 c_name=base_type["c_name"],
                 path=c_atts["name"],
                 sizes=base_type["sizes"],
             )
-        elif _key == ModelKeyword.Struct:
+        if c_key == CodeKeyword.Struct:
             fields = []
             for f in c_atts.get("fields", []):
-                new_dat = ["predefined_type", {"id": f["type"], "name": f["name"]}]
-                fields.append(self.get_type(new_dat, f["type"]))
-            _rtn = Structure(
+                new_dat = self.get_code_type_id_mapping().get(f["type"])
+                field_type = self.get_type(new_dat, f["type"])
+                fields.append(field_type)
+            return Structure(
                 fields,
-                ModelKeyword.to_str(_key),
+                CodeKeyword.to_str(c_key),
                 m_atts.get("name", ""),
                 c_atts["name"],
             )
-        else:
-            # TODO: support others
-            LOGGER.error(f"{ModelKeyword.to_str(_key)} not yet supported")
-        return _rtn
+
+        # TODO: support others
+        LOGGER.error(f"{CodeKeyword.to_str(c_key)} not yet supported")
+        return None
 
     def _get_array_base_type(self, id_: int) -> dict[str, Union[str, list[int]]]:
         """
@@ -1228,14 +1381,19 @@ class GeneratedCode(object):
         dict[str, Union[str, list[int]]]
             Return a dictionary with keys are c_name, m_name and sizes
         """
-        _base_type = self.get_code_elem(id_)
-        if _base_type["category"] == "array":
-            sizes.insert(0, _base_type["content"]["size"])
-            return self._get_array_base_type_with_sizes(_base_type["content"]["base_type"], sizes)
-        model_id = self.get_model_id(id_)
-        model_name = self.get_model_name(model_id)
+        c_type_elt = self.get_code_elem(id_)
+        c_type_key = CodeKeyword.from_str(c_type_elt["category"])
+        if c_type_key == CodeKeyword.Array:
+            sizes.insert(0, c_type_elt["content"]["size"])
+            return self._get_array_base_type_with_sizes(c_type_elt["content"]["base_type"], sizes)
+        if c_type_key == CodeKeyword.TypeDef:
+            return self._get_array_base_type_with_sizes(c_type_elt["content"]["type"], sizes)
+        if model_id := self.get_model_id(id_):
+            model_name = self.get_model_name(model_id)
+        else:
+            raise ScadeOneException(f"Generated code: no model name found for code ID {id_}")
         return {
-            "c_name": _base_type["content"]["name"],
+            "c_name": c_type_elt["content"]["name"],
             "m_name": model_name,
             "sizes": sizes,
         }
@@ -1256,7 +1414,8 @@ class GeneratedCode(object):
         except StopIteration:
             return ""
 
-    def get_type_id_mapping(self) -> dict:
+    @functools.cache
+    def get_code_type_id_mapping(self) -> dict:
         """
         Get type mapping
 
@@ -1268,18 +1427,17 @@ class GeneratedCode(object):
         _mapping = {}
         for file in self.mapping["code"]:
             for decl in file["declarations"]:
-                _cls, atts = decl
-                _cvt = GeneratedCode._capitalize_string(_cls)
-                if _cvt in ModelKeyword.__members__:
-                    _key = ModelKeyword[_cvt]
-                    if _key in {
-                        ModelKeyword.PredefinedType,
-                        ModelKeyword.Array,
-                        ModelKeyword.Enum,
-                        ModelKeyword.Struct,
-                        ModelKeyword.Global,
-                    }:
-                        _mapping[atts["id"]] = [ModelKeyword.to_str(_key), atts]
+                cls, atts = decl
+                _key = CodeKeyword.from_str(cls)
+                if _key in {
+                    CodeKeyword.PredefinedType,
+                    CodeKeyword.Array,
+                    CodeKeyword.Enum,
+                    CodeKeyword.Struct,
+                    CodeKeyword.TypeDef,
+                    CodeKeyword.Global,
+                }:
+                    _mapping[atts["id"]] = [CodeKeyword.to_str(_key), atts]
         return _mapping
 
     def get_interface_file(self, id_model: int) -> dict:
@@ -1345,21 +1503,30 @@ class GeneratedCode(object):
             sensor_elem = next(
                 i for _, i in self.get_model_elements("sensor") if i["path"] == sensor_path
             )
-            return ModelSensor(self, sensor_elem)
+            model_sensor = ModelSensor(self, sensor_elem)
+            model_sensor.load_code_data()
+            return model_sensor
         except StopIteration:
             raise ScadeOneException(f"Generated code: no sensor named {sensor_path}")
 
     @functools.cache
     def get_model_sensors(self) -> List[ModelSensor]:
         """Returns the list of *ModelSensor* objects for the mapping file."""
-        return [
+
+        model_sensors = [
             ModelSensor(self, sensor_elem) for _, sensor_elem in self.get_model_elements("sensor")
+        ]
+        return [
+            model_sensor
+            for model_sensor in model_sensors
+            if model_sensor.code_name != "__no_name__"
+            and model_sensor.code_type_name != "__unknown__"
         ]
 
     @functools.cache
     def get_elaboration_function(self) -> Optional["CFunction"]:
-        """Returns the elaboration function C function for the operator (as a CFunction object),
-        if any."""
+        """Returns the elaboration C function for the operator,
+        if any or None."""
         elaboration = next(self.get_model_elements("elaboration"))
         if not elaboration:
             return None

@@ -8,7 +8,7 @@ PyScadeOne documentation  |release|
 .. _link_primer: https://github.com/ansys/DevRelPublic/blob/main/Downloads/ScadeOne/SwanPrimer_Rev_2_1.pdf
 
 PyScadeOne is a Python library for the
-`Ansys Scade One <link_scadeone>`_  
+`Ansys Scade One <link_scadeone_>`_
 model-based development environment. 
 
 This library allows:

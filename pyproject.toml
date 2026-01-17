@@ -43,7 +43,7 @@ frozen-dependencies = [
     "jsonschema-specifications==2023.12.1",
     "MarkupSafe==2.1.5",
     "pycparser==2.22",
-    "referencing==0.35.1",
+    "referencing==0.36.2",
     "rpds-py==0.20.0",
     # Direct dependencies,
     "Jinja2==3.1.4",

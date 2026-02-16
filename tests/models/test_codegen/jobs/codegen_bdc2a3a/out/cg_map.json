@@ -1,0 +1,184 @@
+{
+  "$schema" : "cg-map-schema.json",
+  "version" : "0.1",
+  "model" : [
+    [ "predefined_type", { "id" : 6, "name" : "bool" } ],
+    [ "predefined_type", { "id" : 7, "name" : "char" } ],
+    [ "predefined_type", { "id" : 8, "name" : "int8" } ],
+    [ "predefined_type", { "id" : 9, "name" : "int16" } ],
+    [ "predefined_type", { "id" : 10, "name" : "int32" } ],
+    [ "predefined_type", { "id" : 11, "name" : "int64" } ],
+    [ "predefined_type", { "id" : 12, "name" : "uint8" } ],
+    [ "predefined_type", { "id" : 13, "name" : "uint16" } ],
+    [ "predefined_type", { "id" : 14, "name" : "uint32" } ],
+    [ "predefined_type", { "id" : 15, "name" : "uint64" } ],
+    [ "predefined_type", { "id" : 16, "name" : "float32" } ],
+    [ "predefined_type", { "id" : 17, "name" : "float64" } ],
+    [
+      "operator",
+      {
+        "id" : 49,
+        "path" : "module0::op_imptype",
+        "inputs" : [ { "id" : 286, "name" : "i0" } ],
+        "outputs" : [ { "id" : 287, "name" : "o0" } ],
+        "root" : true
+      }
+    ],
+    [ "named_type", { "id" : 29, "path" : "module0::t_imp" } ],
+    [ "elaboration", { "id" : 0 } ]
+  ],
+  "code" : [
+    {
+      "interface_file" : "op_imptype_module0.h",
+      "implementation_file" : "op_imptype_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1151, "name" : "SWAN_op_imptype_module0_H_" } ],
+        [
+          "function",
+          {
+            "id" : 49,
+            "name" : "op_imptype_module0",
+            "parameters" : [
+              { "id" : 286, "name" : "i0", "type" : 29, "pointer" : true, "const" : true },
+              { "id" : 287, "name" : "o0", "type" : 29, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_types.h",
+      "implementation_file" : "swan_types.c",
+      "declarations" : [ [ "macro", { "id" : 1094, "name" : "SWAN_TYPES_H_" } ] ]
+    },
+    {
+      "interface_file" : "swan_consts.h",
+      "implementation_file" : "swan_consts.c",
+      "declarations" : [ [ "macro", { "id" : 1093, "name" : "SWAN_CONSTS_H_" } ] ]
+    },
+    {
+      "interface_file" : "swan_sensors.h",
+      "declarations" : [ [ "macro", { "id" : 1092, "name" : "SWAN_SENSORS_H_" } ] ]
+    },
+    {
+      "interface_file" : "swan_imported_types.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "macro", { "id" : 1090, "name" : "SWAN_IMPORTED_TYPES_H_" } ],
+        [ "imported_type", { "id" : 29, "name" : "t_imp_module0" } ],
+        [
+          "function",
+          {
+            "id" : 1147,
+            "name" : "t_imp_init_module0",
+            "parameters" : [
+              { "id" : 1157, "name" : "swan_c1", "type" : 29, "pointer" : true }
+            ]
+          }
+        ],
+        [ "macro", { "id" : 1148, "name" : "swan_cp_t_imp_module0" } ],
+        [
+          "function",
+          {
+            "id" : 1149,
+            "name" : "swan_eq_t_imp_module0",
+            "return_type" : 1123,
+            "parameters" : [
+              {
+                "id" : 1155,
+                "name" : "swan_c1",
+                "type" : 29,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1156,
+                "name" : "swan_c2",
+                "type" : 29,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_config.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "predefined_type", { "id" : 1077, "name" : "swan_int8" } ],
+        [ "predefined_type", { "id" : 1078, "name" : "swan_int16" } ],
+        [ "predefined_type", { "id" : 1079, "name" : "swan_int32" } ],
+        [ "predefined_type", { "id" : 1080, "name" : "swan_int64" } ],
+        [ "predefined_type", { "id" : 1081, "name" : "swan_uint8" } ],
+        [ "predefined_type", { "id" : 1082, "name" : "swan_uint16" } ],
+        [ "predefined_type", { "id" : 1083, "name" : "swan_uint32" } ],
+        [ "predefined_type", { "id" : 1084, "name" : "swan_uint64" } ],
+        [ "predefined_type", { "id" : 1085, "name" : "swan_size" } ],
+        [ "predefined_type", { "id" : 1086, "name" : "swan_float32" } ],
+        [ "predefined_type", { "id" : 1087, "name" : "swan_float64" } ],
+        [ "macro", { "id" : 1103, "name" : "swan_incr" } ],
+        [ "macro", { "id" : 1104, "name" : "swan_cond" } ],
+        [ "macro", { "id" : 1105, "name" : "swan_not" } ],
+        [ "macro", { "id" : 1106, "name" : "swan_xor" } ],
+        [ "macro", { "id" : 1107, "name" : "swan_or" } ],
+        [ "macro", { "id" : 1108, "name" : "swan_and" } ],
+        [ "macro", { "id" : 1109, "name" : "swan_index" } ],
+        [ "macro", { "id" : 1110, "name" : "swan_diff" } ],
+        [ "macro", { "id" : 1111, "name" : "swan_eq" } ],
+        [ "macro", { "id" : 1112, "name" : "swan_assign_union" } ],
+        [ "macro", { "id" : 1113, "name" : "swan_assign_array" } ],
+        [ "macro", { "id" : 1114, "name" : "swan_assign_struct" } ],
+        [ "macro", { "id" : 1115, "name" : "swan_assign" } ],
+        [ "macro", { "id" : 1118, "name" : "swan_guarantee" } ],
+        [ "macro", { "id" : 1119, "name" : "swan_assume" } ],
+        [ "macro", { "id" : 1120, "name" : "swan_assert" } ],
+        [ "macro", { "id" : 1121, "name" : "swan_false" } ],
+        [ "macro", { "id" : 1122, "name" : "swan_true" } ],
+        [ "predefined_type", { "id" : 1123, "name" : "swan_bool" } ],
+        [ "predefined_type", { "id" : 1124, "name" : "swan_char" } ],
+        [ "macro", { "id" : 1125, "name" : "swan_lit_int8" } ],
+        [ "macro", { "id" : 1126, "name" : "swan_lit_int16" } ],
+        [ "macro", { "id" : 1127, "name" : "swan_lit_int32" } ],
+        [ "macro", { "id" : 1128, "name" : "swan_lit_int64" } ],
+        [ "macro", { "id" : 1129, "name" : "swan_lsl_uint8" } ],
+        [ "macro", { "id" : 1130, "name" : "swan_lnot_uint8" } ],
+        [ "macro", { "id" : 1131, "name" : "swan_lit_uint8" } ],
+        [ "macro", { "id" : 1132, "name" : "swan_lsl_uint16" } ],
+        [ "macro", { "id" : 1133, "name" : "swan_lnot_uint16" } ],
+        [ "macro", { "id" : 1134, "name" : "swan_lit_uint16" } ],
+        [ "macro", { "id" : 1135, "name" : "swan_lsl_uint32" } ],
+        [ "macro", { "id" : 1136, "name" : "swan_lnot_uint32" } ],
+        [ "macro", { "id" : 1137, "name" : "swan_lit_uint32" } ],
+        [ "macro", { "id" : 1138, "name" : "swan_lsl_uint64" } ],
+        [ "macro", { "id" : 1139, "name" : "swan_lnot_uint64" } ],
+        [ "macro", { "id" : 1140, "name" : "swan_lit_uint64" } ],
+        [ "macro", { "id" : 1141, "name" : "swan_lit_size" } ],
+        [ "macro", { "id" : 1142, "name" : "swan_lit_float32" } ],
+        [ "macro", { "id" : 1143, "name" : "swan_lit_float64" } ],
+        [ "macro", { "id" : 1144, "name" : "swan_diff_char" } ],
+        [ "macro", { "id" : 1145, "name" : "swan_eq_char" } ],
+        [ "macro", { "id" : 1146, "name" : "swan_lit_char" } ]
+      ]
+    }
+  ],
+  "mapping" : [
+    { "model_id" : 6, "code_id" : 1123 },
+    { "model_id" : 7, "code_id" : 1124 },
+    { "model_id" : 8, "code_id" : 1077 },
+    { "model_id" : 9, "code_id" : 1078 },
+    { "model_id" : 10, "code_id" : 1079 },
+    { "model_id" : 11, "code_id" : 1080 },
+    { "model_id" : 12, "code_id" : 1081 },
+    { "model_id" : 13, "code_id" : 1082 },
+    { "model_id" : 14, "code_id" : 1083 },
+    { "model_id" : 15, "code_id" : 1084 },
+    { "model_id" : 16, "code_id" : 1086 },
+    { "model_id" : 17, "code_id" : 1087 },
+    { "model_id" : 29, "code_id" : 29 },
+    { "model_id" : 49, "code_id" : 49, "role" : "CycleMethod" },
+    { "model_id" : 286, "code_id" : 286 },
+    { "model_id" : 287, "code_id" : 287 }
+  ]
+}

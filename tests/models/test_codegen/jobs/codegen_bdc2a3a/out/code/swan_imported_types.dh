@@ -1,0 +1,20 @@
+/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0777 - Prerelease 
+** Command: swan_cg.exe config.json
+*************************************************************$ */
+#ifndef SWAN_IMPORTED_TYPES_H_
+#define SWAN_IMPORTED_TYPES_H_
+
+typedef void t_imp_module0;
+
+extern void t_imp_init_module0(t_imp_module0 * restrict swan_c1);
+
+#define swan_cp_t_imp_module0(swan_c1, swan_c2)                               \
+  (swan_assign((swan_c1), (swan_c2), sizeof (t_imp_module0)))
+
+extern swan_bool swan_eq_t_imp_module0(
+  const t_imp_module0 *swan_c1,
+  const t_imp_module0 *swan_c2);
+#endif /* SWAN_IMPORTED_TYPES_H_ */
+/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0777 - Prerelease 
+** swan_imported_types.dh
+*************************************************************$ */

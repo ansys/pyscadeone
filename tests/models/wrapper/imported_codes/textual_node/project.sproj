@@ -1,0 +1,27 @@
+{
+  "Version": "1.0",
+  "Name": "project",
+  "Dependencies": [],
+  "Resources": [
+    {
+      "Kind": "HeaderFile",
+      "Path": "..\\imports\\operator0_module0.h",
+      "Key": ""
+    },
+    {
+      "Kind": "SourceFile",
+      "Path": "..\\imports\\operator0_module0.c",
+      "Key": ""
+    },
+    {
+      "Kind": "HeaderFile",
+      "Path": "..\\imports\\user_types.h",
+      "Key": ""
+    },
+    {
+      "Kind": "SourceFile",
+      "Path": "..\\imports\\user_types.c",
+      "Key": ""
+    }
+  ]
+}

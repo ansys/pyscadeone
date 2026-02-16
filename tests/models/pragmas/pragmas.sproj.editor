@@ -1,0 +1,11 @@
+{
+  "JobsOrder": [],
+  "ModulesOrder": [
+    "assets\\basic.swan",
+    "assets\\basic.swani",
+    "assets\\control.swan",
+    "assets\\tests.swant",
+    "assets\\errors.swan",
+    "assets\\multiline.swan"
+  ]
+}

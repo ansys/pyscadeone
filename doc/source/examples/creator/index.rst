@@ -3,28 +3,26 @@
 Create a Scade One project
 ==========================
 This section presents how to create a Scade One project using the Python API.
-You can start by creating a new project, then add modules, declarations, a diagram,
+One can start by creating a new project, then add modules, declarations, a diagram,
 blocks, and connections between them.
 
-.. note:: 
-    Project dependencies have not supported yet. You should add the dependencies manually.
-    
+   
 .. currentmodule:: ansys.scadeone.core
 
 Create a new project
 ---------------------
-Using the :py:class:`ScadeOne` class, you can create a new project:
+Using the :py:class:`ScadeOne` class, one can create a new project:
 
 .. literalinclude:: create_project.py
     :start-at: from ansys.scadeone.core
     :end-at: project = 
 
-Once the project is created, you can add a new module interface:
+Once the project is created, one can add a new module interface:
 
 .. literalinclude:: create_project.py
     :lines: 34
 
-Also, you can add a new module:
+Also, one can add a new module:
 
 .. literalinclude:: create_project.py
     :lines: 35
@@ -34,7 +32,7 @@ Namespace is also supported for creating new modules:
 .. literalinclude:: create_project.py
     :lines: 36
 
-In the new module, you can add a new declaration using the Scade One text syntax:
+In the new module, a new declaration is added using the Scade One text syntax:
 
 .. literalinclude:: create_project.py
     :lines: 38
@@ -54,7 +52,7 @@ You can also add textual operators:
 .. literalinclude:: create_project.py
     :lines: 52-59
 
-Once an operator is added to the module, you can add inputs or outputs:
+Once an operator is added to the module,  inputs or outputs can be added to it:
 
 .. literalinclude:: create_project.py
     :lines: 41-44

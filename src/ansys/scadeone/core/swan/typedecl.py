@@ -24,7 +24,7 @@
 This module contains classes to manipulate types and types expressions.
 """
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, cast
 
 import ansys.scadeone.core.swan.common as common
 
@@ -39,12 +39,19 @@ class TypeDecl(common.Declaration):  # numpydoc ignore=PR01
     """Type declaration with its name and optional definition:
     *type_decl* ::= id [[ = *type_def* ]]."""
 
-    def __init__(self, id: common.Identifier, definition: Optional[TypeDefinition] = None) -> None:
-        super().__init__(id)
+    def __init__(
+        self,
+        id: common.Identifier,
+        definition: Optional[TypeDefinition] = None,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(id, pragmas)
         self._definition = definition
+        common.SwanItem.set_owner(self, definition)
 
     @property
     def definition(self) -> Union[TypeDefinition, None]:
+        """Definition of the type declaration."""
         return self._definition
 
 
@@ -58,21 +65,37 @@ class ExprTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     def __init__(self, type: common.TypeExpression) -> None:
         super().__init__()
         self._type = type
+        common.SwanItem.set_owner(self, type)
 
     @property
     def type(self) -> common.TypeExpression:
         return self._type
 
 
+class EnumTag(common.HasPragma):  # numpydoc ignore=PR01
+    """Enumeration tag as: ID, with optional pragmas."""
+
+    def __init__(self, id: common.Identifier, pragmas: Optional[List[common.Pragma]] = None):
+        super().__init__(pragmas)
+        self._id = id
+        common.SwanItem.set_owner(self, id)
+
+    @property
+    def id(self) -> common.Identifier:
+        """Field name."""
+        return self._id
+
+
 class EnumTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     """Type definition as an enumeration: *type_def* ::= **enum** { id {{ , id }} }."""
 
-    def __init__(self, tags: List[common.Identifier]) -> None:
+    def __init__(self, tags: List[EnumTag]) -> None:
         super().__init__()
         self._tags = tags
+        common.SwanItem.set_owner(self, tags)
 
     @property
-    def tags(self) -> List[common.Identifier]:
+    def tags(self) -> List[EnumTag]:
         return self._tags
 
 
@@ -153,13 +176,14 @@ class SizedTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
         super().__init__()
         self._expr = size
         self._is_signed = is_signed
+        common.SwanItem.set_owner(self, size)
 
     @property
-    def is_signed(self):
+    def is_signed(self) -> bool:
         return self._is_signed
 
     @property
-    def size(self):
+    def size(self) -> common.Expression:
         return self._expr
 
 
@@ -169,11 +193,19 @@ class TypeReferenceExpression(common.TypeExpression):  # numpydoc ignore=PR01
     def __init__(self, alias: common.PathIdentifier) -> None:
         super().__init__()
         self._alias = alias
+        common.SwanItem.set_owner(self, alias)
 
     @property
     def alias(self) -> common.PathIdentifier:
         """Returns aliased type name."""
         return self._alias
+
+    @property
+    def type_decl(self) -> TypeDecl:
+        """Returns the final type definition."""
+        type_name = self._alias.as_string
+        type_decl = cast(common.ModuleBase, self.module).get_declaration(type_name)
+        return cast(TypeDecl, type_decl)
 
 
 class VariableTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
@@ -184,6 +216,7 @@ class VariableTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
     def __init__(self, name: common.Identifier) -> None:
         super().__init__()
         self._name = name
+        common.SwanItem.set_owner(self, name)
 
     @property
     def name(self) -> common.Identifier:
@@ -191,13 +224,20 @@ class VariableTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
         return self._name
 
 
-class StructField(common.SwanItem):  # numpydoc ignore=PR01
+class StructField(common.HasPragma):  # numpydoc ignore=PR01
     """Structure field as: ID **:** *type_expr*."""
 
-    def __init__(self, id: common.Identifier, type: common.TypeExpression) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        id: common.Identifier,
+        type: common.TypeExpression,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(pragmas)
         self._id = id
         self._type = type
+        common.SwanItem.set_owner(self, id)
+        common.SwanItem.set_owner(self, type)
 
     @property
     def id(self) -> common.Identifier:
@@ -216,6 +256,7 @@ class StructTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     def __init__(self, fields: List[StructField]) -> None:
         super().__init__()
         self._fields = fields
+        common.SwanItem.set_owner(self, fields)
 
     @property
     def fields(self) -> List[StructField]:
@@ -230,6 +271,8 @@ class ArrayTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
         super().__init__()
         self._type = type
         self._size = size
+        common.SwanItem.set_owner(self, type)
+        common.SwanItem.set_owner(self, size)
 
     @property
     def size(self) -> common.Expression:
@@ -242,12 +285,15 @@ class ArrayTypeExpression(common.TypeExpression):  # numpydoc ignore=PR01
         return self._type
 
 
-class VariantComponent(common.SwanItem):  # numpydoc ignore=PR01
+class VariantConstructor(common.HasPragma):  # numpydoc ignore=PR01
     """Variant component: *variant* ::= id *variant_type_expr*."""
 
-    def __init__(self, tag: common.Identifier) -> None:
-        super().__init__()
+    def __init__(
+        self, tag: common.Identifier, pragmas: Optional[List[common.Pragma]] = None
+    ) -> None:
+        super().__init__(pragmas)
         self._tag = tag
+        common.SwanItem.set_owner(self, tag)
 
     @property
     def tag(self) -> common.Identifier:
@@ -255,23 +301,31 @@ class VariantComponent(common.SwanItem):  # numpydoc ignore=PR01
         return self._tag
 
 
-class VariantSimple(VariantComponent):  # numpydoc ignore=PR01
+class VariantSimple(VariantConstructor):  # numpydoc ignore=PR01
     """Simple Variant
 
     *variant* ::= ID {}"""
 
-    def __init__(self, tag: common.Identifier) -> None:
-        super().__init__(tag)
+    def __init__(
+        self, tag: common.Identifier, pragmas: Optional[List[common.Pragma]] = None
+    ) -> None:
+        super().__init__(tag, pragmas=pragmas)
 
 
-class VariantTypeExpr(VariantComponent):  # numpydoc ignore=PR01
+class VariantTypeExpression(VariantConstructor):  # numpydoc ignore=PR01
     """Variant type expression:
 
     *variant* ::= ID { *type_expr* }"""
 
-    def __init__(self, tag: common.Identifier, type: common.TypeExpression) -> None:
-        super().__init__(tag)
+    def __init__(
+        self,
+        tag: common.Identifier,
+        type: common.TypeExpression,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(tag, pragmas=pragmas)
         self._type = type
+        common.SwanItem.set_owner(self, type)
 
     @property
     def type(self) -> common.TypeExpression:
@@ -279,34 +333,41 @@ class VariantTypeExpr(VariantComponent):  # numpydoc ignore=PR01
         return self._type
 
 
-class VariantStruct(VariantComponent):  # numpydoc ignore=PR01
-    """Variant structure expression:
+class VariantStruct(VariantConstructor):  # numpydoc ignore=PR01
+    """Variant structure type expression:
 
     *variant* ::= ID *struct_texpr*"""
 
-    def __init__(self, tag: common.Identifier, fields: list[StructField]) -> None:
-        super().__init__(tag)
-        self._fields = fields
+    def __init__(
+        self,
+        tag: common.Identifier,
+        structure_type: StructTypeDefinition,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(tag, pragmas=pragmas)
+        self._structure_type = structure_type
+        common.SwanItem.set_owner(self, structure_type)
 
     @property
-    def fields(self) -> list[StructField]:
-        """Variant structure fields."""
-        return self._fields
+    def structure_type(self) -> StructTypeDefinition:
+        """Variant structure type."""
+        return self._structure_type
 
 
 class VariantTypeDefinition(TypeDefinition):  # numpydoc ignore=PR01
     """Type definition as a variant: *type_def* ::= *variant* {{ | *variant* }}."""
 
-    def __init__(self, tags: List[VariantComponent]) -> None:
+    def __init__(self, tags: List[VariantConstructor]) -> None:
         super().__init__()
         self._tags = tags
+        common.SwanItem.set_owner(self, tags)
 
     @property
-    def tags(self) -> List[VariantComponent]:
+    def tags(self) -> List[VariantConstructor]:
         return self._tags
 
 
-class ProtectedTypeExpr(common.TypeExpression, common.ProtectedItem):  # numpydoc ignore=PR01
+class ProtectedTypeExpression(common.TypeExpression, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected type expression, i.e., saved as string if
     syntactically incorrect."""
 

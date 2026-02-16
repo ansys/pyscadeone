@@ -263,8 +263,8 @@ be also derived to implement other kind of rendering.
 
 from enum import Enum, auto
 import re
-from typing import Any, List, Optional, Union, IO, Callable
-
+from typing import Any, Optional, Union, Callable
+from io import IOBase
 from ansys.scadeone.core.common.exception import ScadeOneException
 
 
@@ -319,7 +319,7 @@ class DBlock(DElt):
         self._end = self._first
 
     @property
-    def doc(self) -> DElt:
+    def doc(self) -> Optional[DElt]:
         """Return the first document of the block."""
         return self._first
 
@@ -379,55 +379,14 @@ class DIndent(DElt):
         return super().__repr__() + f"({self._indent})"
 
 
-# Document creation functions
-CmdRe = re.compile("^(?P<c>@[a-zA-Z]+)(?P<a>(?::[^:])*)")
-Cmd = {
-    "@i": "indent",
-    "@u": "unindent",
-    "@m": "mark",
-    "@M": "unmark",
-    "@n": "nl",
-    "@s": "sep",
-}
-
-
-def fix_arg(arg):
-    """Transform arg into bool, int or keep it"""
-    if arg == "t":
-        return True
-    if arg == "f":
-        return False
-    if isinstance(arg, int):
-        return int(arg)
-    return arg
-
-
-def cmd(arg: str) -> Union[DElt, None]:
-    """Check if arg is a document manipulation string command
-    and returns its result if it is the case, else None."""
-    if not isinstance(arg, str):
-        return None
-    m = CmdRe.match(arg)
-    if not m:
-        return None
-    if m["c"] not in Cmd:
-        return None
-    func = Cmd[m["c"]]
-    # first item will always be empty.
-    args = m["a"].split(":")[1:]
-    args = [fix_arg(arg) for arg in args]
-    return func(*args)
-
-
-def to_doc(arg: Union[DElt, str]) -> DElt:
+def to_doc(arg: Union[DElt, str, None]) -> DElt:
     """Create a DElt:
     - If arg is already a DElt, return it
     - If arg is a shortcut, returns command
     - Else return a text()."""
     if isinstance(arg, DElt):
         return arg
-    res = cmd(arg)
-    if res:
+    if isinstance(arg, str) and (res := cmd(arg)):
         return res
     return text(arg if arg else "")
 
@@ -437,14 +396,16 @@ def text(txt: str, with_indent: bool = True) -> DElt:
     If text contains newlines, they are replaced by line breaks,
     with indentation if with_indent is True."""
     if txt.find("\n") != -1:
+        lines = [DText(line) for line in txt.split("\n")]
         doc = DBlock()
-        for line in txt.split("\n"):
-            doc << text(line) << nl(with_indent)
+        doc << lines[0]  # type: ignore
+        for line in lines[1:]:
+            doc << nl(with_indent) << line  # type: ignore
         return doc
     return DText(txt)
 
 
-def nl(with_indent: bool = True):
+def nl(with_indent: bool = True) -> DElt:
     """Add a new line. If `with_indent is True,
     indentation is added beginning of next line."""
     return DLineBreak(with_indent)
@@ -487,7 +448,7 @@ def block(first: DElt, *args) -> DElt:
 
 
 def doc_list(
-    *docs: List[Union[DElt, str]],
+    *docs: Union[DElt, str],
     sep: Optional[Union[DElt, str]] = None,
     start: Optional[Union[DElt, str]] = None,
     last: Optional[Union[DElt, str]] = None,
@@ -496,16 +457,19 @@ def doc_list(
 
     Parameters
     ----------
-        docs (List[Union[DElt, str]]): any number of documents
-        sep (Optional[Union[DElt, str]], optional): separator. Defaults to None.
-        start (Optional[Union[DElt, str]], optional): document at beginning of list.
-        Defaults to None.
-        last (Optional[AUnion[DElt, str]ny], optional): document at end of list.
-        Defaults to None.
+    docs : List[Union[DElt, str]]
+        Any number of documents
+    sep : Optional[Union[DElt, str]], optional
+        Separator. Defaults to None.
+    start : Optional[Union[DElt, str]], optional
+        document at beginning of list. Defaults to None.
+    last : Optional[Union[DElt, str]], optional
+        Document at end of list. Defaults to None.
 
     Returns
     -------
-        Document: _description_
+    DElt
+        The list of documents.
     """
     if not docs:
         return DBlock()
@@ -536,9 +500,47 @@ def sep(char: str, newline: bool = False) -> DElt:
     return DBlock(doc)
 
 
-# Fix function references
-for k, v in Cmd.items():
-    Cmd[k] = globals()[v]
+# Document creation functions
+CmdRe = re.compile("^(?P<c>@[a-zA-Z]+)(?P<a>(?::[^:])*)")
+Cmd = {
+    "@i": indent,
+    "@u": unindent,
+    "@m": mark,
+    "@M": unmark,
+    "@n": nl,
+    "@s": sep,
+}
+
+
+def fix_arg(arg: str) -> Union[bool, str]:
+    """Transform arg into bool or keep it."""
+    if arg == "t":
+        return True
+    if arg == "f":
+        return False
+    return arg
+
+
+def cmd(arg: str) -> Union[DElt, None]:
+    """Check if arg is a document manipulation string command
+    and returns its result if it is the case, else None."""
+    if not isinstance(arg, str):
+        return None
+    m = CmdRe.match(arg)
+    if not m:
+        return None
+    if m["c"] not in Cmd:
+        return None
+    func = Cmd[m["c"]]
+    # first item will always be empty.
+    args = m["a"].split(":")[1:]
+    args = [fix_arg(arg) for arg in args]
+    return func(*args)
+
+
+# # Fix function references
+# for k, v in Cmd.items():
+#     Cmd[k] = globals()[v]
 
 
 class Document(DBlock):
@@ -552,12 +554,14 @@ class Document(DBlock):
         super().__init__()
 
     @property
-    def start_doc(self):
+    def start_doc(self) -> DElt:
         """Return the first document."""
-        return self.doc
+        if self.doc:
+            return self.doc
+        raise ScadeOneException("Document is empty")
 
     @property
-    def end_doc(self):
+    def end_doc(self) -> Optional[DElt]:
         """Return the last document."""
         return self._end
 
@@ -569,76 +573,82 @@ class Renderer:
     The rendering is done by calling the render method which applies to
     a specific DElt.
 
+    Parameters
+    ----------
+    stream : IOBase, optional
+        Output stream.
+    indent : int, optional
+        Default indentation. Defaults to 2.
+    initial_indent : int, optional
+        Initial indentation. Defaults to 0.
     """
+
+    LoopDetection = False  # Enable loop detection debug
 
     def __init__(
         self,
-        stream: Optional[IO] = None,
-        indent: Optional[int] = 2,
-        initial_indent: Optional[int] = 0,
+        stream: Optional[IOBase] = None,
+        indent: int = 2,
+        initial_indent: int = 0,
     ) -> None:
-        """
-        Parameters
-        ----------
-            stream (io.IO): Output stream
-            indent (int, optional): default indentation. Defaults to 2.
-            initial_indent (int, optional): initial indentation. Defaults to 0.
-        """
         self._indent = indent
         self._initial_indent = initial_indent
         self._col = 0
         self._line = 0
         self._indent_stack = [initial_indent]
         self._stream = stream
+        self._rendered = {}  # for loop detection
 
-    def set_stream(self, stream: IO):
+    def set_stream(self, stream: IOBase):
         """Set the stream to render on."""
         self._stream = stream
 
     @property
     def lines(self) -> int:
-        """Current line number"""
+        """Current line number."""
         return self._line
 
     @property
-    def default_indent(self):
+    def default_indent(self) -> int:
         """Default indent, as given in constructor."""
         return self._indent
 
     @property
-    def curr_indent(self):
-        """Current indent"""
+    def curr_indent(self) -> int:
+        """Current indent."""
         if self._indent_stack:
             return self._indent_stack[-1]
         raise ScadeOneException("Render.indent: empty stack")
 
-    def render(self, doc: Document, error_ok: bool = False):
+    def render(self, doc: Document, error_ok: bool = False) -> None:
         """Render a document on the stream.
 
         Parameters
         ----------
         doc : Document
-            Document to render
+            Document to render.
 
         error_ok : bool, optional
-            If True, do not raise an exception if an error occurs and returns. Defaults to False.
+            If True, do not raise an exception if an error occurs and returns.
+            Defaults to False.
 
         Raises
         ------
         ScadeOneException
-            Raised if there is no stream to render on, or an error is raised
+            Raised if there is no stream to render on, or an error is raised.
         """
         if not self._stream:
             raise ScadeOneException("No stream to render on")
         if not isinstance(doc, Document):
             raise ScadeOneException("Renderer: Document expected")
         try:
+            self._rendered = {}
             self._render(doc.start_doc)
         except Exception as e:
             if not error_ok:
                 raise ScadeOneException(f"Error during rendering: ({e})") from e
 
-    def _write(self, obj: Any):
+    def _write(self, obj: Any) -> None:
         """Write obj on stream. str(obj) shall be a string without newlines"""
         text = str(obj)
         if text.find("\n") != -1:
@@ -646,57 +656,86 @@ class Renderer:
         self._col += len(text)
         self._stream.write(text)  # type: ignore # (stream is IO)
 
-    def _nl(self, with_indent: bool):
+    def _nl(self, with_indent: bool) -> None:
         self._stream.write("\n")  # type: ignore # (stream is IO)
         self._line += 1
         self._col = 0
         if with_indent:
             self._write(" " * self.curr_indent)
 
-    def _push_indent(self):
+    def _push_indent(self) -> None:
         indent = self.curr_indent + self.default_indent
         self._indent_stack.append(indent)
 
-    def _pop_indent(self):
+    def _pop_indent(self) -> None:
         try:
             self._indent_stack.pop()
         except Exception:  # pylint: disable=broad-except
             self._indent_stack = [self._initial_indent]
 
-    def _push_mark(self):
+    def _push_mark(self) -> None:
         self._indent_stack.append(self._col)
 
-    def _render(self, doc: DElt):
+    def _start_loop_detection(self, doc: DElt) -> None:
+        """Start loop detection for the document."""
+        if not Renderer.LoopDetection:
+            return
+        if doc in self._rendered:
+            # loop detected
+            rendered = list(self._rendered)
+            rendered.append(doc)
+            repr_doc = repr(doc)
+            res = "\n".join(
+                map(
+                    lambda x: ("    " if x != repr_doc else "--> ") + x, [repr(d) for d in rendered]
+                )
+            )
+            raise ScadeOneException("Loop in document rendering:\n" + res)
+        self._rendered[doc] = len(self._rendered)
+
+    def _end_loop_detection(self, doc: DElt) -> None:
+        """End loop detection for the document."""
+        if not Renderer.LoopDetection:
+            return
+        if doc not in self._rendered:
+            raise ScadeOneException(f"Document {doc} not found in rendered documents")
+        del self._rendered[doc]
+
+    def _render(self, doc: DElt) -> None:
+        self._start_loop_detection(doc)
+
         def _get_render_fn(doc) -> Callable[["Renderer", DElt], None]:
             "Auxiliary function to get the render function, which is a method of the Renderer class"
             class_name = doc.__class__.__name__
             func = getattr(self, f"_render_{class_name}", self._render_NoFunc)
-            return func
+            return func  # type: ignore
 
         _current_doc = doc
         while _current_doc:
             func = _get_render_fn(_current_doc)
-            func(_current_doc)
+            func(_current_doc)  # type: ignore
             _current_doc = _current_doc.next
 
-    def _render_NoFunc(self, doc):  # pylint: disable=C0103
+        self._end_loop_detection(doc)
+
+    def _render_NoFunc(self, doc) -> None:  # pylint: disable=C0103
         class_name = doc.__class__.__name__
         raise ScadeOneException(f"Render._render_{class_name}() does not exist")
 
-    def _render_DElt(self, _: DElt):  # pylint: disable=C0103
+    def _render_DElt(self, _: DElt) -> None:  # pylint: disable=C0103
         # Default render: do nothing
         pass
 
-    def _render_DText(self, doc: DText):  # pylint: disable=C0103
+    def _render_DText(self, doc: DText) -> None:  # pylint: disable=C0103
         self._write(doc.string)
 
-    def _render_DBlock(self, doc: DBlock):  # pylint: disable=C0103
-        self._render(doc.doc)
+    def _render_DBlock(self, doc: DBlock) -> None:  # pylint: disable=C0103
+        self._render(doc.doc)  # type: ignore
 
-    def _render_DLineBreak(self, doc: DLineBreak):  # pylint: disable=C0103
+    def _render_DLineBreak(self, doc: DLineBreak) -> None:  # pylint: disable=C0103
         self._nl(doc.with_indent)
 
-    def _render_DIndent(self, doc: DIndent):  # pylint: disable=C0103
+    def _render_DIndent(self, doc: DIndent) -> None:  # pylint: disable=C0103
         if doc.indent is EIndentation.INDENT:
             self._push_indent()
         elif doc.indent is EIndentation.UNINDENT:

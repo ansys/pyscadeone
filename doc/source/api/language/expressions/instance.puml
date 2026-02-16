@@ -2,18 +2,38 @@
 ' Operator Instance
 skinparam groupInheritance 2
 
-Expression <|-- OperatorInstance
-OperatorInstance *-- OperatorBase
+Expression <|-- OperatorInstanceApplication
+note left of OperatorInstanceApplication
+  An operator instance application 
+  is an expression that represents
+  the application of an operator 
+  to a set of arguments.
+end note
+OperatorInstanceApplication *-- OperatorInstance
+OperatorInstanceApplication *-- Luid
+OperatorInstanceApplication *-- Group
+OperatorInstance <|-- NamedInstance
 
-OperatorBase <|-- PathIdOpCall
-OperatorBase <|-- PrefixPrimitive
-note top of PrefixPrimitive
-**flatten**, **pack**, **reverse**
+OperatorInstance <|-- FlattenOperator
+OperatorInstance <|-- PackOperator
+OperatorInstance <|-- ReverseOperator
+OperatorInstance <|-- TransposeOperator
+
+FlattenOperator -[hidden]- PackOperator
+PackOperator -[hidden]- ReverseOperator
+ReverseOperator -[hidden]- TransposeOperator
+
+
+OperatorInstance <|-- OperatorExpressionInstance
+OperatorExpressionInstance *-- OperatorExpression
+
+'NamedInstance -[hidden]- OperatorExpressionInstance
+
+Block *-- OperatorInstance
+Block *-- OperatorExpressionInstance
+note right of Block
+    A **block** contains:  
+    - an OperatorInstance or
+    - an OperatorExpressionInstance.
 end note
-PrefixPrimitive <|-- Transpose
-OperatorBase <|-- PrefixOperatorExpression
-note top of PrefixOperatorExpression
-(//op_expr//) [size]
-end note
-PrefixOperatorExpression *-- OperatorExpression
 @enduml

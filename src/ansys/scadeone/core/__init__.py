@@ -25,8 +25,8 @@ from collections import namedtuple
 from platformdirs import PlatformDirs
 import re
 
-# Version must be directly defined for flit. No computation, else flit will fails
-__version__ = "0.7.1"
+# Version must be directly defined for flit. No computation, else flit will fail
+__version__ = "0.8.0"
 
 m = re.match(
     r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+)   # Major, minor, patch

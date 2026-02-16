@@ -1,0 +1,105 @@
+-- version swan: 2025.2 graph: 2.1
+#pragma use pragma #end use basic;
+
+node op_blocks (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr #1 ^ (4)
+      where
+        (#1 group)
+    #pragma diagram {"xy":"H-40000;V9750","wh":"10000;7000"} #end)
+    (#2 block (fold 
+                (map ({op_expr%+%op_expr})) <<4>>)
+               <<4>>
+    #pragma diagram {"xy":"H-8000;V4950","wh":"20000;21000"} #end)
+    (#4 expr i0
+    #pragma diagram {"xy":"H-51500;V9750"} #end)
+    (#5 expr 0_i32^4
+    #pragma diagram {"xy":"H-39000;V-5450","wh":"12000;3200"} #end)
+    (#6 expr #7 ^ (4)
+      where
+        (#7 group)
+    #pragma diagram {"xy":"H-27500;V9750","wh":"10000;7000"} #end)
+    (#8 block ({op_expr%function x,y => x*y%op_expr})
+    #pragma diagram {"xy":"H-45000;V28150","wh":"20000;14000"} #end)
+    (#9 block (op_simple_blocks \ i0: 0)
+    #pragma diagram {"xy":"H-5500;V28150","wh":"20000;14000"} #end)
+    (#10 expr {syntax%1_f64%syntax}
+    #pragma diagram {"xy":"H-72425;V28150","wh":"10000;3200"} #end)
+    
+    (#11 wire #4 => #1)
+    (#12 wire #0 => #7)
+    (#13 wire #5 => #2 .(1)
+    #pragma diagram {"wp":"#5 h8750 v9300 #2"} #end)
+    (#14 wire #6 => #2 .(2))
+    (#15 wire #10 => #8, #8
+    #pragma diagram {"wp":"#10 h3250[#8, v1733 #8]"} #end)
+}
+
+node op_activate (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (activate $ActivateIf0
+      if {syntax%%syntax}
+      then
+        {
+        #pragma diagram {"xy":"h0;v-10500","wh":"51000;20000"} #end
+        }
+      else
+        {
+        #pragma diagram {"xy":"h0;v13359","wh":"51000;20000"} #end
+        }
+    #pragma diagram {"xy":"H-61750;V-675","wh":"51000;49719"} #end)
+    (activate $ActivateIf1
+      if {syntax%%syntax}
+      then
+        {
+        #pragma diagram {"xy":"h0;v-34359","wh":"51000;20000"} #end
+        }
+      elsif {syntax%%syntax}
+      then
+        {
+        #pragma diagram {"xy":"h0;v-10500","wh":"51000;20000"} #end
+        }
+      elsif {syntax%%syntax}
+      then
+        {
+        #pragma diagram {"xy":"h0;v13359","wh":"51000;20000"} #end
+        }
+      else
+        {
+        #pragma diagram {"xy":"h0;v37219","wh":"51000;20000"} #end
+        }
+    #pragma diagram {"xy":"H2800;V24559","wh":"51000;97438"} #end)
+    (activate $ActivateWhen0 when {syntax%%syntax} match
+      | {syntax%%syntax} :
+        {
+        #pragma diagram {"xy":"h0;v-9070","wh":"51000;20000"} #end
+        }
+      | {syntax%%syntax} :
+        {
+        #pragma diagram {"xy":"h0;v14789","wh":"51000;20000"} #end
+        }
+    #pragma diagram {"xy":"H-60250;V59445","wh":"51000;52578"} #end)
+}
+
+node op_forward (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr forward
+      <<size>>
+      returns (name)
+    #pragma diagram {"xy":"H-9950;V-19250","wh":"48600;17600"} #end)
+    (#1 expr forward
+      <<size>>
+      unless UNLESS
+      diagram
+        ({syntax%BODY%syntax}
+        #pragma diagram {"xy":"h-15450;v400"} #end)
+      until UNTIL
+      returns (name)
+    #pragma diagram {"xy":"H-10150;V2500","wh":"48600;20200"} #end)
+}

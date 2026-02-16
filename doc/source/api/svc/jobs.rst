@@ -17,31 +17,30 @@ properties   JobProperties
 input_paths  list[str]
 ============ =============
 
-Parameters of :py:class:`JobProperties` depend on the :py:class:`Job` type (code generation, simulation or test execution):
+Parameters of :py:class:`JobProperties` depend on the :py:class:`Job` type (code generation, simulation, test execution or model check):
 
-======================= ===== ======= ========== ========
-Attribute               Type  CodeGen Simulation TestExec     
-======================= ===== ======= ========== ========
-root_declarations       list  x       x          x
-name                    str   x       x          x
-custom_arguments        str   x       x          x
-expansion               enum* x       
+======================= ===== ======= ========== ======== =====
+Attribute               Type  CodeGen Simulation TestExec Check
+======================= ===== ======= ========== ======== =====
+root_declarations       list  x       x          x        x
+name                    str   x       x          x        x
+custom_arguments        str   x       x          x        x
+expansion               enum* x
 expansion_exp           str   x
-expansion_no_exp        str   x 
-short_circuit_operators bool  x 
-name_length             int   x 
-significance_length     int   x 
-keep_assume             str   x 
-globals_prefix          str   x 
-use_macros              bool  x 
-static_locals           bool  x 
+expansion_no_exp        str   x
+name_length             int   x
+significance_length     int   x
+keep_assume             str   x
+globals_prefix          str   x
+use_macros              bool  x
+static_locals           bool  x
 file_scenario           str           x
 simulation_input_type   str           x
 test_harness            str           x          x
 test_result_file        str                      x
 use_cycle_time          bool          x
 cycle_time              int           x
-======================= ===== ======= ========== ========
+======================= ===== ======= ========== ======== =====
 
 \*`Expansion` is an attribute that can only have specific values: see :py:class:`ExpansionMode`
 

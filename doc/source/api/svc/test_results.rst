@@ -2,15 +2,16 @@
 
 Test results
 ============
-The PyScadeOne services allow to load the test results file in Python objects. :py:class:`TestResultsParser` allows
-to use the :py:meth:`load` method to load the test results file and return a :py:class:`TestResults` object.
+
+.. currentmodule:: ansys.scadeone.core.svc.test.test_results
+
+The PyScadeOne services allow to load the test results file in Python objects. 
+The :py:meth:`TestResultsParser.load` method to load the test results file and return a :py:class:`TestResults` object.
 
 .. code:: python
 
     from ansys.scadeone.core.svc.test.test_results import TestResultsParser
     test_results = TestResultsParser.load("testResults.json")
-
-.. currentmodule:: ansys.scadeone.core.svc.test.test_results
 
 Test results parsing
 --------------------

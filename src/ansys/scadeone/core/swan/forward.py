@@ -25,7 +25,6 @@ This module contains the classes for forward expression
 
 """
 
-from enum import Enum, auto
 from typing import List, Optional, Union
 
 from ansys.scadeone.core.common.exception import ScadeOneException
@@ -126,11 +125,6 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
         return self._is_protected
 
     @property
-    def value(self) -> str:
-        """Protected dimension content."""
-        return self._protected
-
-    @property
     def expr(self) -> common.Expression:
         """**forward** dimension expression."""
         return self._expr
@@ -157,7 +151,7 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
         return False
 
     @property
-    def protected(self) -> str:
+    def protected(self) -> Optional[str]:
         """Returns protected form as a string if dimension is syntactically invalid."""
         return self._protected
 
@@ -313,21 +307,6 @@ class ProtectedForwardReturnItem(common.ProtectedItem, ForwardReturnItem):  # nu
         super().__init__(data)
 
 
-class ForwardState(Enum):  # numpydoc ignore=PR01  # numpydoc ignore=PR01
-    """Forward state enumeration."""
-
-    # pylint: disable=invalid-name
-    Nothing = auto()
-    Restart = auto()
-    Resume = auto()
-
-    @staticmethod
-    def to_str(value: "ForwardState") -> str:
-        if value == ForwardState.Nothing:
-            return ""
-        return value.name.lower()
-
-
 class ForwardBody(common.SwanItem):  # numpydoc ignore=PR01
     """
     **forward** construct:
@@ -370,14 +349,14 @@ class Forward(common.Expression):  # numpydoc ignore=PR01
 
     def __init__(
         self,
-        state: ForwardState,
+        restart: Optional[bool],
         dimensions: List[ForwardDim],
         body: ForwardBody,
         returns: List[ForwardReturnItem],
         luid: Optional[common.Luid] = None,
     ) -> None:
         super().__init__()
-        self._state = state
+        self._restart = restart
         self._dimensions = dimensions
         self._body = body
         self._returns = returns
@@ -385,8 +364,15 @@ class Forward(common.Expression):  # numpydoc ignore=PR01
         common.SwanItem.set_owner(self, body)
 
     @property
-    def state(self) -> ForwardState:
-        return self._state
+    def restart(self) -> Optional[bool]:
+        return self._restart
+
+    @property
+    def is_restart(self) -> bool:
+        """True if restart mode, else resume mode.
+        Note: default mode for a forward is restart,
+        which is indicated by the restart property being None."""
+        return self._restart is None or self._restart
 
     @property
     def dimensions(self) -> List[ForwardDim]:

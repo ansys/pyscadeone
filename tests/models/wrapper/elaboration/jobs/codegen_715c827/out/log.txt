@@ -1,0 +1,13 @@
+<JobStatus:Completed>12/1/2025 10:40:32
+<JobCommandLine>"C:\Scade One\tools\swan_cg.exe" config.json
+<JobWorkingDirectory>C:\ansysdev\Scade One\repos\PyScadeOne\ANSYS.SONE.API.pyscadeone_FEAT\tests\models\wrapper\elaboration\jobs\codegen_715c827
+Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease
+(C) 2023-2025 ANSYS, Inc. Unauthorized use, distribution, or duplication is prohibited.
+
+Add Var 25
+Add Var 26
+Add Var 28
+Part Array list
+1 warning was found
+No error was found
+No failure occurred

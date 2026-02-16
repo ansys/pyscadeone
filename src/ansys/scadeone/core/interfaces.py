@@ -26,47 +26,67 @@
 # The point is that ScadeOne and Project uses each other
 # Alternative is to create an intermediate interfaces.py.
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
+from abc import ABC, abstractmethod
 
-from ansys.scadeone.core.common.storage import ProjectStorage
+from ansys.scadeone.core.common.logger import ScadeOneLogger
+from ansys.scadeone.core.common.storage import ProjectStorage, SwanFile
 
-from typing import Union
 
-
-class IProject:
+class IProject(ABC):
     """Interface class"""
 
     @property
+    @abstractmethod
     def app(self) -> Optional["IScadeOne"]:
-        return None
+        pass
 
     @property
+    @abstractmethod
     def storage(self) -> Optional["ProjectStorage"]:
-        return None
+        pass
 
     @property
+    @abstractmethod
     def directory(self) -> Optional[Path]:
-        return None
+        pass
 
-    def swan_sources(self, all: bool = False):
-        return None
+    @abstractmethod
+    def swan_sources(self, all: bool = False) -> List[SwanFile]:
+        return []
 
 
-class IScadeOne:
+class IScadeOne(ABC):
     """Interface class"""
 
     @property
-    def logger(self) -> None:
-        return None
+    @abstractmethod
+    def logger(self) -> ScadeOneLogger:
+        pass
 
     @property
+    @abstractmethod
     def version(self) -> str:
         return ""
 
     @property
-    def install_dir(self) -> Union[Path, None]:
+    @abstractmethod
+    def install_dir(self) -> Optional[Path]:
         """Installation directory as given when creating the ScadeOne instance."""
-        assert False
+        pass
 
-    def subst_in_path(self, _: str) -> str:
-        assert False
+    @abstractmethod
+    def subst_in_path(self, path: str) -> str:
+        pass
+
+
+class IModel(ABC):
+    """Interface class for model objects."""
+
+    @abstractmethod
+    def get_module_body(self, name: str) -> Optional["ModuleBody"]:  # type: ignore # noqa: F821
+        pass
+
+    @abstractmethod
+    def get_module_interface(self, name: str) -> Optional["ModuleInterface"]:  # type: ignore # noqa: F821
+        pass

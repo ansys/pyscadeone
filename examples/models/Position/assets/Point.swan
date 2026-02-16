@@ -1,0 +1,69 @@
+-- version swan: 2025.1 graph: 2.0
+node point (u: bool;
+            d: bool;
+            r: bool;
+            l: bool;
+            c: bool;
+            unlock: bool;)
+  returns (x: int32 last = 0;
+           y: int32 last = 0;)
+{
+  diagram
+    (automaton #0
+      initial state #1 Stop
+      #pragma diagram {"xy":"h-13800;v675","wh":"24000;59300"} #end :
+      state #3 Up
+      #pragma diagram {"xy":"h50600;v-22975","wh":"32000;12000"} #end :
+        diagram
+          (let y = last 'y + 1;
+          #pragma diagram {"xy":"h0;v0","wh":"24000;3200"} #end)
+      state #5 Down
+      #pragma diagram {"xy":"h50600;v-6875","wh":"32000;12000"} #end :
+        diagram
+          (let y = last 'y - 1;
+          #pragma diagram {"xy":"h0;v0","wh":"24000;3200"} #end)
+      state #7 Left
+      #pragma diagram {"xy":"h50600;v9225","wh":"32000;12000"} #end :
+        diagram
+          (let x = last 'x - 1;
+          #pragma diagram {"xy":"h0;v0","wh":"24000;3200"} #end)
+      state #9 Right
+      #pragma diagram {"xy":"h50600;v24325","wh":"32000;12000"} #end :
+        diagram
+          (let x = last 'x + 1;
+          #pragma diagram {"xy":"h0;v0","wh":"24000;3200"} #end)
+      state #11 Center
+      #pragma diagram {"xy":"h-70500;v-8275","wh":"28000;12000"} #end :
+        diagram
+          (let x = 0; y = 0;
+          #pragma diagram {"xy":"h0;v0","wh":"20000;3200"} #end)
+      :1: #1 unless if (unlock)
+        :1: if (u)
+        restart #3
+        :2: if (d)
+        restart #5
+        :3: if (l)
+        restart #7
+        :4: if (r)
+        restart #9 end
+      #pragma diagram {"tp":"h12000;v-1750|#1 h3858 h3858 h-2000;v0|h11775;v-1075[h-125;v-2000 v-167 v-167 v-167 v-9700 h10475;v-9700 h10475 h667 h667 h-16000;v0|#3, h2000;v-900 h6942 h6942 h-16000;v4900|#5, h1375;v2000 v167 v167 v167 v3900 h9725;v3900 h9725 h667 h667 h-16000;v0|#7, h-1625;v2000 v167 v167 v167 v11450 h11225;v11450 h11225 h667 h667 h-16000;v0|#9]"} #end;
+      :1: #3 unless if (not u)
+      restart #1
+      #pragma diagram {"tp":"h-15450;v-6000|#3 v-500 v-500 v-500 v-1475 h-2950;v-1475 h-2950 h-12717 h-12717;v0 h-12717 h-2450;v0 h-2450;v1225 v1225 v667 v667 h0;v-29650|#1"} #end;
+      :1: #5 unless if (not d)
+      restart #1
+      #pragma diagram {"tp":"h16000;v4950|#5 h500 h500 h500 h1525 h1525;v3050 v3050 v8612 v8612 v8612 v3375 h-2320;v1688 h-4639 h-11839 h-48327 h-12325 h-2750 h-2750;v-1375 v-1375 v-667 v-667 h0;v29650|#1"} #end;
+      :1: #7 unless if (not l)
+      restart #1
+      #pragma diagram {"tp":"h-16000;v-1650|#7 h-500 h-11100 h-5050 h-6900 h-6900;v-1150 v-2300 v-2300 h-1975;v-1150 h-1975 h-667 h-667 h12000;v0|#1"} #end;
+      :1: #9 unless if (not r)
+      restart #1
+      #pragma diagram {"tp":"h50;v6000|#9 v500 v500 v500 v3125 h-6250;v3125 h-6250 h-16988 h-16988;v0 h-16988 h-11691;v0 h-5845;v-2756 v-5513 v-8010 v-8010 v-8010 v-2550 h1275;v-2550 h1275 h667 h667 h-12000;v0|#1"} #end;
+      :2: #1 unless if (c)
+      restart #11
+      #pragma diagram {"tp":"h-12000;v-8950|#1 h-10233 h-10233 h14000;v0|#11"} #end;
+      :1: #11 unless 
+      restart #1
+      #pragma diagram {"tp":"h14000;v0|#11 h10233 h10233 h-12000;v-8950|#1"} #end;
+    #pragma diagram {"xy":"H-32650;V7925","wh":"181900;84150"} #end)
+}

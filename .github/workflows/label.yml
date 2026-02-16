@@ -7,7 +7,7 @@ on:
       - '../labels.yml'
 
 permissions:
-  contents: read
+  contents: read # Adding read permission to allow checking out the code
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,8 +30,8 @@ jobs:
     name: Set labels
     needs: [label-syncer]
     permissions:
-      contents: read
-      pull-requests: write
+      contents: read # Adding write permission to allow applying labels to PRs
+      pull-requests: write # Adding read permission to allow checking out the code
     runs-on: ubuntu-latest
     steps:
 
@@ -71,10 +71,11 @@ jobs:
         labels: bug
 
   commenter:
+    name: "Suggest to add labels"
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write
+      contents: read # Adding read permission to avoid "Resource not accessible by integration" error
+      pull-requests: write # Adding write permission to allow commenting on PRs
     steps:
     - name: Suggest to add labels
       uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
@@ -95,8 +96,8 @@ jobs:
     name: "Create changelog fragment"
     needs: [labeler]
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # Adding write permission to allow pushing changelog fragments
+      pull-requests: write # Adding write permission to allow creating PRs
     runs-on: ubuntu-latest
     steps:
     - uses: ansys/actions/doc-changelog@v10

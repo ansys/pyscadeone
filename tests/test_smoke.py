@@ -52,14 +52,14 @@ def smoke():
     import ansys.scadeone.core.swan as swan
 
     def op_filter(obj: swan.GlobalDeclaration):
-        if isinstance(obj, swan.Operator):
+        if isinstance(obj, swan.OperatorDefinition):
             return str(obj.id) == "Regulation"
         return False
 
     decl = model.find_declaration(op_filter)
 
     # %%
-    op = cast(swan.Operator, decl)
+    op = cast(swan.OperatorDefinition, decl)
     first_input = str(op.inputs[0].id)
 
     assert first_input == "CruiseSpeed"
@@ -77,7 +77,7 @@ def smoke():
 
     assert "CC::tCruiseState" in type_list
 
-    assert model.all_modules_loaded
+    assert model.is_all_modules_loaded
 
 
 def test_smoke(capsys):

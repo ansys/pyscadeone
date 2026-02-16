@@ -50,6 +50,8 @@ class UnaryOp(Enum):
     Not = auto()
     #: (**pre**) Unit delay.
     Pre = auto()
+    #: (**!**) Unary bang.
+    Bang = auto()
 
     @staticmethod
     def to_str(value: "UnaryOp") -> str:
@@ -63,6 +65,9 @@ class UnaryOp(Enum):
             return "not"
         elif value == UnaryOp.Pre:
             return "pre"
+        elif value == UnaryOp.Bang:
+            return "!"
+        raise ScadeOneException(f"Unknown UnaryOp: {value}")
 
 
 class BinaryOp(Enum):
@@ -178,6 +183,7 @@ class BinaryOp(Enum):
             return "pre"
         elif value == BinaryOp.Concat:
             return "@"
+        raise ScadeOneException(f"Unknown BinaryOp: {value}")
 
 
 class PathIdExpr(common.Expression):  # numpydoc ignore=PR01
@@ -206,82 +212,79 @@ class LastExpr(common.Expression):  # numpydoc ignore=PR01
         return self._id
 
 
-class LiteralKind(Enum):
-    """Literal kind enumeration."""
-
-    # pylint: disable=invalid-name
-
-    #: Boolean literal
-    Bool = auto()
-    #: Char literal
-    Char = auto()
-    #: Numeric literal (integer or float, with/without size)
-    Numeric = auto()
-    #: Erroneous literal
-    Error = auto()
-
-
 class Literal(common.Expression):  # numpydoc ignore=PR01
-    """Class for char, numeric, and Boolean expression.
-
-    Boolean value is stored as 'true' or 'false'.
-
-    Char value is a ascii char with its value between simple quotes (ex: 'a')
-    or an hexadecimal value.
-
-    Numeric value is INTEGER, TYPED_INTEGER, FLOAT, TYPED_FLOAT
-    (see language grammar definition and :py:class:`SwanRE` class).
-    """
+    """Class for literal expressions (char, numeric, and Boolean literals)."""
 
     def __init__(self, value: str) -> None:
         super().__init__()
         self._value = value
-        if common.SwanRE.is_char(self._value):
-            self._kind = LiteralKind.Char
-        elif common.SwanRE.is_bool(self._value):
-            self._kind = LiteralKind.Bool
-        elif common.SwanRE.is_numeric(self._value):
-            self._kind = LiteralKind.Numeric
-        else:
-            self._kind = LiteralKind.Error
 
     @property
     def value(self) -> str:
-        """Literal expression."""
+        """Literal value."""
         return self._value
 
-    @property
-    def is_bool(self) -> bool:
-        """Return true when LiteralExpr is a Boolean."""
-        return self._kind == LiteralKind.Bool
-
-    @property
-    def is_true(self) -> bool:
-        """Return true when LiteralExpr is true."""
-        return self._kind == LiteralKind.Bool and self._value == "true"
-
-    @property
-    def is_char(self) -> bool:
-        """Return true when LiteralExpr is a char."""
-        return self._kind == LiteralKind.Char
-
-    @property
-    def is_numeric(self) -> bool:
-        """Return true when LiteralExpr is a numeric."""
-        return self._kind == LiteralKind.Numeric
-
-    @property
-    def is_integer(self) -> bool:
-        """Return true when LiteralExpr is an integer."""
-        return self._kind == LiteralKind.Numeric and common.SwanRE.is_integer(self.value)
-
-    @property
-    def is_float(self) -> bool:
-        """Return true when LiteralExpr is a float."""
-        return self._kind == LiteralKind.Numeric and common.SwanRE.is_float(self.value)
-
     def __str__(self) -> str:
-        return self.value
+        return self._value
+
+
+class BooleanLiteral(Literal):
+    """Boolean expression.
+
+    Boolean value is stored as 'true' or 'false'.
+    """
+
+    def __init__(self, value: str) -> None:
+        if value not in ["true", "false"]:
+            raise ScadeOneException(f"Invalid boolean value: {self._value}")
+        super().__init__(value)
+
+    def is_true(self) -> bool:
+        """Return True if the boolean value is 'true'. Otherwise, return False."""
+        return self.value == "true"
+
+
+class CharLiteral(Literal):
+    """Character literal.
+
+    Char value is an ascii char with its value between simple quotes (ex: 'a')
+    or a hexadecimal value.
+    """
+
+    def __init__(self, value: str) -> None:
+        if not common.SwanRE.is_char(value):
+            raise ScadeOneException(f"Invalid char value: {value}")
+        super().__init__(value)
+
+
+class FloatLiteral(Literal):
+    """Float literal.
+    Float value is FLOAT or TYPED_FLOAT.
+    """
+
+    def __init__(self, value: str) -> None:
+        if not common.SwanRE.is_float(value):
+            raise ScadeOneException(f"Invalid float value: {value}")
+        super().__init__(value)
+
+    def to_float(self) -> float:
+        """Convert the float literal to a Python float."""
+        return float(self.value)
+
+
+class IntegerLiteral(Literal):
+    """Integer literal.
+    Integer value is INTEGER or TYPED_INTEGER.
+    """
+
+    def __init__(self, value: str) -> None:
+        if not common.SwanRE.is_integer(value):
+            raise ScadeOneException(f"Invalid integer value: {value}")
+        super().__init__(value)
+
+    def to_int(self) -> int:
+        """Convert the integer literal to a Python int."""
+        return int(self.value)
 
 
 class Pattern(common.SwanItem):  # numpydoc ignore=PR01
@@ -310,7 +313,7 @@ class ClockExpr(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(
         self,
         id: common.Identifier,
-        is_not: Optional[bool] = False,
+        is_not: bool = False,
         pattern: Optional[Pattern] = None,
     ) -> None:
         super().__init__()
@@ -356,6 +359,16 @@ class UnaryExpr(common.Expression):  # numpydoc ignore=PR01
         return self._expr
 
 
+class PreExpr(UnaryExpr):  # numpydoc ignore=PR01
+    """Unit delay expression: pre(*expr*).
+
+    This is a unary expression with the operator :py:class:`ansys.scadeone.swan.expressions.UnaryOp.Pre`.
+    """
+
+    def __init__(self, expr: common.Expression) -> None:
+        super().__init__(UnaryOp.Pre, expr)
+
+
 class BinaryExpr(common.Expression):  # numpydoc ignore=PR01
     """Expression with binary operators
     :py:class`ansys.scadeone.swan.expressions.BinaryOp`."""
@@ -385,6 +398,46 @@ class BinaryExpr(common.Expression):  # numpydoc ignore=PR01
     def right(self) -> common.Expression:
         """Right expression."""
         return self._right
+
+
+class PreWithInitialValueExpr(BinaryExpr):  # numpydoc ignore=PR01
+    """Unit delay with initial value expression: *expr* pre *expr*).
+
+    This is a binary expression with the operator :py:class:`ansys.scadeone.swan.expressions.BinaryOp.Pre`.
+    """
+
+    def __init__(self, left: common.Expression, right: common.Expression) -> None:
+        super().__init__(BinaryOp.Pre, left, right)
+
+    @property
+    def initial(self) -> common.Expression:
+        """Initial value expression."""
+        return self.left
+
+    @property
+    def expr(self) -> common.Expression:
+        """Delayed expression."""
+        return self.right
+
+
+class InitialValueExpr(BinaryExpr):  # numpydoc ignore=PR01
+    """Initial value expression: (*expr* -> *expr*).
+
+    This is a binary expression with the operator :py:class:`ansys.scadeone.swan.expressions.BinaryOp.Arrow`.
+    """
+
+    def __init__(self, left: common.Expression, right: common.Expression) -> None:
+        super().__init__(BinaryOp.Arrow, left, right)
+
+    @property
+    def initial(self) -> common.Expression:
+        """Initial value expression."""
+        return self.left
+
+    @property
+    def expr(self) -> common.Expression:
+        """Delayed expression."""
+        return self.right
 
 
 class WhenClockExpr(common.Expression):  # numpydoc ignore=PR01
@@ -420,7 +473,7 @@ class WhenMatchExpr(common.Expression):  # numpydoc ignore=PR01
         return self._expr
 
     @property
-    def when(self) -> ClockExpr:
+    def when(self) -> common.PathIdentifier:
         """When expression"""
         return self._when
 
@@ -514,10 +567,10 @@ class GroupRenaming(GroupRenamingBase):  # numpydoc ignore=PR01
     Parameters
     ----------
 
-    source: common.Identifier | LiteralExpr
+    source: common.Identifier | Literal
        Source index.
 
-    renaming: common.Identifier  (optional)
+    renaming: common.Identifier (optional)
        Renaming as an Identifier.
 
     is_shortcut: bool (optional)
@@ -528,7 +581,7 @@ class GroupRenaming(GroupRenamingBase):  # numpydoc ignore=PR01
         self,
         source: Union[common.Identifier, Literal],
         renaming: Optional[common.Identifier] = None,
-        is_shortcut: Optional[bool] = False,
+        is_shortcut: bool = False,
     ) -> None:
         super().__init__()
         self._source = source
@@ -627,12 +680,12 @@ class ProtectedGroupRenaming(GroupRenamingBase, common.ProtectedItem):  # numpyd
 class GroupAdaptation(common.SwanItem):  # numpydoc ignore=PR01
     """Group adaptation: *group_adaptation* ::= . ( *group_renamings* )."""
 
-    def __init__(self, renamings: List[GroupRenaming]) -> None:
+    def __init__(self, renamings: List[GroupRenamingBase]) -> None:
         super().__init__()
         self._renamings = renamings
 
     @property
-    def renamings(self) -> List[GroupRenaming]:
+    def renamings(self) -> List[GroupRenamingBase]:
         """Renaming list of group adaptation."""
         return self._renamings
 
@@ -666,6 +719,7 @@ class GroupProjection(common.Expression):  # numpydoc ignore=PR01
 
 
 # Composite
+# Array
 
 
 class ArrayProjection(common.Expression):  # numpydoc ignore=PR01
@@ -685,44 +739,6 @@ class ArrayProjection(common.Expression):  # numpydoc ignore=PR01
     def index(self) -> common.Expression:
         """Index expression."""
         return self._index
-
-
-class StructProjection(common.Expression):  # numpydoc ignore=PR01
-    """Static structure field access: *expr* . *label*."""
-
-    def __init__(self, expr: common.Expression, label: common.Identifier) -> None:
-        super().__init__()
-        self._expr = expr
-        self._label = label
-
-    @property
-    def expr(self) -> common.Expression:
-        """Expression."""
-        return self._expr
-
-    @property
-    def label(self) -> common.Identifier:
-        """Field name."""
-        return self._label
-
-
-class StructDestructor(common.Expression):  # numpydoc ignore=PR01
-    """Group creation: *path_id* **group** (*expr*)."""
-
-    def __init__(self, group: common.PathIdentifier, expr: common.Expression) -> None:
-        super().__init__()
-        self._group = group
-        self._expr = expr
-
-    @property
-    def expr(self) -> common.Expression:
-        """Expression."""
-        return self._expr
-
-    @property
-    def group(self) -> common.PathIdentifier:
-        """Group type."""
-        return self._group
 
 
 class Slice(common.Expression):  # numpydoc ignore=PR01
@@ -750,6 +766,87 @@ class Slice(common.Expression):  # numpydoc ignore=PR01
     def end(self) -> common.Expression:
         """End of slice expression."""
         return self._end
+
+
+class ArrayRepetition(common.Expression):  # numpydoc ignore=PR01
+    """Array expression: *expr* ^ *expr*."""
+
+    def __init__(self, expr: common.Expression, size: common.Expression) -> None:
+        super().__init__()
+        self._expr = expr
+        self._size = size
+
+    @property
+    def expr(self) -> common.Expression:
+        """Expression."""
+        return self._expr
+
+    @property
+    def size(self) -> common.Expression:
+        """Array size."""
+        return self._size
+
+
+class ArrayConstructor(common.Expression):  # numpydoc ignore=PR01
+    """Array construction expression: [ *group* ]."""
+
+    def __init__(self, group: Group) -> None:
+        super().__init__()
+        self._group = group
+
+    @property
+    def group(self) -> Group:
+        """Group items as a Group."""
+        return self._group
+
+
+class ArrayConcatExpr(BinaryExpr):
+    """Array concatenation expression: *expr* @ *expr*.
+
+    This is a binary expression with the operator :py:class:`ansys.scadeone.swan.expressions.BinaryOp.Concat`.
+    """
+
+    def __init__(self, left: common.Expression, right: common.Expression) -> None:
+        super().__init__(BinaryOp.Concat, left, right)
+
+
+class StructProjection(common.Expression):  # numpydoc ignore=PR01
+    """Static structure field access: *expr* . *label*."""
+
+    def __init__(self, expr: common.Expression, label: common.Identifier) -> None:
+        super().__init__()
+        self._expr = expr
+        self._label = label
+
+    @property
+    def expr(self) -> common.Expression:
+        """Expression."""
+        return self._expr
+
+    @property
+    def label(self) -> common.Identifier:
+        """Field name."""
+        return self._label
+
+
+class StructDestructor(common.Expression):  # numpydoc ignore=PR01
+    """Group creation from structure: *group_id* **group** (*expr*)
+    where *group_id* is the group type."""
+
+    def __init__(self, group_id: common.PathIdentifier, expr: common.Expression) -> None:
+        super().__init__()
+        self._group_id = group_id
+        self._expr = expr
+
+    @property
+    def expr(self) -> common.Expression:
+        """Expression."""
+        return self._expr
+
+    @property
+    def group_id(self) -> common.PathIdentifier:
+        """Group type."""
+        return self._group_id
 
 
 class LabelOrIndex(common.Expression):  # numpydoc ignore=PR01
@@ -801,38 +898,6 @@ class ProjectionWithDefault(common.Expression):  # numpydoc ignore=PR01
     def indices(self) -> List[LabelOrIndex]:
         """List of indices."""
         return self._indices
-
-
-class ArrayRepetition(common.Expression):  # numpydoc ignore=PR01
-    """Array expression: *expr* ^ *expr*."""
-
-    def __init__(self, expr: common.Expression, size: common.Expression) -> None:
-        super().__init__()
-        self._expr = expr
-        self._size = size
-
-    @property
-    def expr(self) -> common.Expression:
-        """Expression."""
-        return self._expr
-
-    @property
-    def size(self) -> common.Expression:
-        """Array size."""
-        return self._size
-
-
-class ArrayConstructor(common.Expression):  # numpydoc ignore=PR01
-    """Array construction expression: [ *group* ]."""
-
-    def __init__(self, group: Group) -> None:
-        super().__init__()
-        self._group = group
-
-    @property
-    def group(self) -> Group:
-        """Group items as a Group."""
-        return self._group
 
 
 class StructConstructor(common.Expression):  # numpydoc ignore=PR01
@@ -902,17 +967,25 @@ class Modifier(common.SwanItem):  # numpydoc ignore=PR01
         return self._modifier
 
     @property
-    def is_protected(self):
+    def is_protected(self) -> bool:
         """Modifier has a syntax error and is protected."""
         return self._is_protected
 
 
 class FunctionalUpdate(common.Expression):  # numpydoc ignore=PR01
-    """Copy with modification: ( *expr*  **with** *modifier* {{ ; *modifier* }} [[ ; ]] )."""
+    """Copy with modification:
 
-    def __init__(self, expr: common.Expression, modifiers: List[Modifier]) -> None:
+    - copy: ( *expr* **with** *modifier* {{ ; *modifier* }} [[ ; ]] ).
+    - replacing functional update ( *expr* **with** * *modifier* {{ ; *modifier* }} [[ ; ]] ).
+
+    """
+
+    def __init__(
+        self, expr: common.Expression, is_starred: bool, modifiers: List[Modifier]
+    ) -> None:
         super().__init__()
         self._expr = expr
+        self._is_starred = is_starred
         self._modifiers = modifiers
 
     @property
@@ -924,6 +997,11 @@ class FunctionalUpdate(common.Expression):  # numpydoc ignore=PR01
     def modifiers(self) -> List[Modifier]:
         """Copy modifiers."""
         return self._modifiers
+
+    @property
+    def is_starred(self) -> bool:
+        """Is starred update expression."""
+        return self._is_starred
 
 
 # Switches
@@ -1020,8 +1098,8 @@ class VariantPattern(Pattern):  # numpydoc ignore=PR01
 
     *pattern* ::=
 
-    - *path_id* **_**: has_underscore is True
-    - *path_id* { } has_underscore is False, has_capture is False
+    - *path_id* **_**: is_underscore is True
+    - *path_id* { } is_underscore is False, has_capture is False
     - *path_id* { Id } : has_capture is True
 
     """
@@ -1030,12 +1108,12 @@ class VariantPattern(Pattern):  # numpydoc ignore=PR01
         self,
         path_id: common.PathIdentifier,
         captured: Optional[common.Identifier] = None,
-        underscore: Optional[bool] = False,
+        is_underscore: bool = False,
     ) -> None:
         super().__init__()
         self._path_id = path_id
         self._captured = captured
-        self._underscore = underscore
+        self._is_underscore = is_underscore
 
     @property
     def path_id(self) -> common.PathIdentifier:
@@ -1043,14 +1121,9 @@ class VariantPattern(Pattern):  # numpydoc ignore=PR01
         return self._path_id
 
     @property
-    def underscore(self) -> Union[bool, None]:
-        """Underscore as bool or None."""
-        return self._underscore
-
-    @property
-    def has_underscore(self) -> bool:
+    def is_underscore(self) -> bool:
         """Variant part is '_'."""
-        return self._underscore
+        return self._is_underscore
 
     @property
     def has_capture(self) -> bool:
@@ -1060,15 +1133,15 @@ class VariantPattern(Pattern):  # numpydoc ignore=PR01
     @property
     def empty_capture(self) -> bool:
         """The variant pattern as an empty {} capture."""
-        return not (self.has_underscore or self.has_capture)
+        return not (self.is_underscore or self.has_capture)
 
     @property
     def captured(self) -> Union[common.Identifier, None]:
         """The variant pattern captured tag."""
         return self._captured
 
-    def __str__(self):
-        if self.has_underscore:
+    def __str__(self) -> str:
+        if self.is_underscore:
             return f"{self.path_id} _"
         if self.has_capture:
             return f"{self.path_id} {{{self.captured}}}"
@@ -1086,14 +1159,14 @@ class CharPattern(Pattern):  # numpydoc ignore=PR01
     def value(self) -> str:
         return self._value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
 class IntPattern(Pattern):  # numpydoc ignore=PR01
     """Pattern: *pattern* ::= [-] INTEGER | [-] TYPED_INTEGER."""
 
-    def __init__(self, value: str, is_minus: Optional[bool] = False) -> None:
+    def __init__(self, value: str, is_minus: bool = False) -> None:
         super().__init__()
         self._value = value
         self._is_minus = is_minus
@@ -1109,12 +1182,12 @@ class IntPattern(Pattern):  # numpydoc ignore=PR01
         return self._is_minus
 
     @property
-    def as_int(self) -> int:
+    def as_int(self) -> Optional[int]:
         """Return value as an integer."""
         description = common.SwanRE.parse_integer(self.value, self.is_minus)
-        return description.value
+        return description.value if description else None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"-{self.value}" if self.is_minus else self.value
 
 
@@ -1135,7 +1208,7 @@ class BoolPattern(Pattern):  # numpydoc ignore=PR01
         """Return True when pattern is **true**, else False."""
         return self._value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "true" if self.is_true else "false"
 
 
@@ -1164,9 +1237,9 @@ class PortExpr(common.Expression):  # numpydoc ignore=PR01
 
     def __init__(
         self,
-        lunum: Optional[common.Luid] = None,
+        lunum: Optional[common.Lunum] = None,
         luid: Optional[common.Luid] = None,
-        is_self: Optional[bool] = False,
+        is_self: bool = False,
     ) -> None:
         super().__init__()
         self._lunum = lunum
@@ -1174,11 +1247,11 @@ class PortExpr(common.Expression):  # numpydoc ignore=PR01
         self._is_self = is_self
 
     @property
-    def lunum(self) -> common.Lunum:
+    def lunum(self) -> Optional[common.Lunum]:
         return self._lunum
 
     @property
-    def luid(self) -> common.Luid:
+    def luid(self) -> Optional[common.Luid]:
         return self._luid
 
     @property
@@ -1233,3 +1306,6 @@ class ProtectedExpr(common.Expression, common.ProtectedItem):  # numpydoc ignore
 
     def __init__(self, data: str, markup: Optional[str] = common.Markup.Syntax) -> None:
         common.ProtectedItem.__init__(self, data, markup)
+        # Calling common.Expression.__init__() does not work, as it calls super().__init__()
+        # which is given the same parameters as ProtectedItem.__init__()
+        self._at = None

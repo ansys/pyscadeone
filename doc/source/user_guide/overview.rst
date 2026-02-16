@@ -34,7 +34,7 @@ or it can be created using a context manager:
 
 
 PyScadeOne uses the **ScadeOneException** exception when an error occurs from the API.
-Errors, warnings, etc. are logged into the `'pyscadeone.log` file located in the 
+Errors, warnings, etc. are logged into the ``pyscadeone.log`` file located in the 
 folder where the script is launched.
 
 Check out section :ref:`ref_modeler` for more details. 

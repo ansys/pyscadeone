@@ -1,4 +1,4 @@
-Common classes
+Helper classes
 ==============
 
 Exception

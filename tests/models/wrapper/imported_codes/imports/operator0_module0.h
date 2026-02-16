@@ -1,0 +1,23 @@
+#ifndef SWAN_operator0_module0_H_
+#define SWAN_operator0_module0_H_
+
+#include "swan_types.h"
+
+typedef struct Ctx_operator0_module0 { 
+	int dummy;
+} outC_operator0_module0;
+
+/* module0::operator0 */
+extern void operator0_module0(
+  /* i0 */
+  const array_int32_4 *i0,
+  /* o0 */array_int32_4 * restrict o0,
+  outC_operator0_module0 * restrict outC);
+
+#ifndef SWAN_NO_EXTERN_CALL_TO_RESET
+extern void operator0_reset_module0(outC_operator0_module0 * restrict outC);
+#endif /* SWAN_NO_EXTERN_CALL_TO_RESET */
+
+extern void operator0_init_module0(outC_operator0_module0 * restrict outC);
+
+#endif /* SWAN_operator0_module0_H_ */

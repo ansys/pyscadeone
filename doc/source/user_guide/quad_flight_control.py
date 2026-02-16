@@ -32,13 +32,13 @@ model = project.model
 # All sensors in the model
 sensors = model.sensors
 
-# All operators in the model
-operators = model.operators
+# All operator definitions in the model
+operator_defs = model.operator_definitions
 
 
 # Filter function, looking for an operator of name 'EngineControl'
 def op_filter(obj: swan.GlobalDeclaration):
-    if isinstance(obj, swan.Operator):
+    if isinstance(obj, swan.OperatorDefinition):
         return str(obj.id) == "MotorControl"
     return False
 
@@ -51,5 +51,5 @@ type_list = list(model.types)
 print(type_list[1].get_full_path())  # => "QuadFlightControl::EngineHealth"
 
 # Stating op_decl is indeed a Swan operator
-operator = cast(swan.Operator, op_decl)
+operator = cast(swan.OperatorDefinition, op_decl)
 print(f"first input: {operator.inputs[0].id}")  # => 'attitudeCmd'

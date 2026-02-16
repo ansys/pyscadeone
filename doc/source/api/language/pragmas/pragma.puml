@@ -1,5 +1,7 @@
 @startuml
-left to right direction
-
-Pragma *--"diagram" DiagramPragma
+Pragma <|-- DiagramPragma
+Pragma <|-- CGPragma
+Pragma <|-- TestPragma
+Pragma <|-- DocumentationPragma
+Pragma <|-- TraceabilityPragma
 @enduml

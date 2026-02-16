@@ -21,15 +21,11 @@
 # SOFTWARE.
 
 
-from typing import TYPE_CHECKING, List, Optional
-
-from .common import Pragma, PragmaBase, SwanItem
-
-if TYPE_CHECKING:
-    from .namespace import ScopeNamespace  # noqa: F401
+from typing import List, Optional
+from .common import Pragma, HasPragma, SwanItem, Declaration
 
 
-class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
+class Scope(HasPragma):  # numpydoc ignore=PR01
     """Scope definition:
 
     | *data_def* ::= *scope*
@@ -40,8 +36,7 @@ class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
         sections: Optional[List["ScopeSection"]] = None,
         pragmas: Optional[List[Pragma]] = None,
     ) -> None:
-        SwanItem.__init__(self)
-        PragmaBase.__init__(self, pragmas)
+        super().__init__(pragmas)
         self._sections = sections or []
         self._pragmas = pragmas or []
         self.set_owner(self, self._sections)
@@ -51,7 +46,7 @@ class Scope(SwanItem, PragmaBase):  # numpydoc ignore=PR01
         """Scope sections."""
         return self._sections
 
-    def get_declaration(self, name: str):
+    def get_declaration(self, name: str) -> Optional[Declaration]:
         """Returns the type, global, operator or variable declaration searching by namespace."""
         from ansys.scadeone.core.swan.namespace import ScopeNamespace
 
@@ -63,8 +58,6 @@ class ScopeSection(SwanItem):  # numpydoc ignore=PR01
     """Base class for scopes."""
 
     def __init__(self) -> None:
-        # Cannot use super() because of multiple inheritance from ProtectedSection
-        # which leads to a conflict with the MRO (Method Resolution Order)
         SwanItem.__init__(self)
         self._is_text = False
 
@@ -74,11 +67,18 @@ class ScopeSection(SwanItem):  # numpydoc ignore=PR01
         return self._is_text
 
     @is_text.setter
-    def is_text(self, text_flag: bool):
+    def is_text(self, text_flag: bool) -> None:
         self._is_text = text_flag
 
-    def get_declaration(self, name: str):
+    def get_declaration(self, name: str) -> Optional[Declaration]:
         from ansys.scadeone.core.swan.namespace import ScopeNamespace
 
         ns = ScopeNamespace(self)
         return ns.get_declaration(name)
+
+    @property
+    def pragmas(self) -> List[Pragma]:
+        """Pragmas associated to this scope section."""
+        if isinstance(self.owner, HasPragma):
+            return self.owner.pragmas
+        return []

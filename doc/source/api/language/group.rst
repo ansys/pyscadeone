@@ -1,7 +1,7 @@
 .. _ref_group:
 
-Group
-=====
+Groups
+======
 
 .. currentmodule:: ansys.scadeone.core.swan
 

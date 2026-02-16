@@ -12,12 +12,13 @@ the creation of a new value.
     * - Operation
       - Kind
     * - **_ with [_]**
-      - Array
+      - Array update, :py:class:`FunctionalUpdate`
     * - **_ with .l**
-      - Structure
+      - Structure update, :py:class:`FunctionalUpdate`
 
 See also :py:class:`LabelOrIndex`.
 
+.. autoclass:: FunctionalUpdate
+  
 .. autoclass:: Modifier
 
-.. autoclass:: FunctionalUpdate

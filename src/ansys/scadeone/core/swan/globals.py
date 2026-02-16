@@ -25,7 +25,7 @@ This module contains the classes for global definitions:
 constants (const) and sensors.
 """
 
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import ansys.scadeone.core.swan.common as common
 
@@ -38,10 +38,13 @@ class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
         id: common.Identifier,
         type: Optional[common.TypeExpression],
         value: Optional[common.Expression] = None,
+        pragmas: Optional[list[common.Pragma]] = None,
     ) -> None:
-        super().__init__(id)
+        super().__init__(id, pragmas)
         self._type_expr = type
         self._value = value
+        common.SwanItem.set_owner(self, self._type_expr)
+        common.SwanItem.set_owner(self, self._value)
 
     @property
     def type(self) -> Union[common.TypeExpression, None]:
@@ -57,9 +60,15 @@ class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
 class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
     """Sensor declaration with an id and a type."""
 
-    def __init__(self, id: common.Identifier, type: common.TypeExpression) -> None:
-        super().__init__(id)
+    def __init__(
+        self,
+        id: common.Identifier,
+        type: common.TypeExpression,
+        pragmas: Optional[List[common.Pragma]] = None,
+    ) -> None:
+        super().__init__(id, pragmas)
         self._type = type
+        common.SwanItem.set_owner(self, self._type)
 
     @property
     def type(self) -> common.TypeExpression:

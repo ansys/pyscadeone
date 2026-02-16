@@ -39,7 +39,7 @@ class ScadeOne(IScadeOne):
         self._logger = LOGGER
         self._projects = []
         self._install_dir = Path(install_dir) if isinstance(install_dir, str) else install_dir
-        self._model = Model()
+        self._model = Model(self)
         self._tools = self._Tools(self._install_dir)
 
     class _Tools:
@@ -141,11 +141,11 @@ class ScadeOne(IScadeOne):
             return None
         project = Project(self, storage)
         self._projects.append(project)
-        self._model.configure(project)
+        self._model.load_project(project)
         return project
 
     def subst_in_path(self, path: str) -> str:
-        """Substitute $(SCADE_ONE_LIBRARIES_DIR) in path.
+        """Substitute ``$(SCADE_ONE_LIBRARIES_DIR)`` in path.
 
         if :py:attr:`ScadeOne.install_dir` is None, no change is made.
         """
@@ -154,7 +154,7 @@ class ScadeOne(IScadeOne):
 
         return path
 
-    def new_project(self, storage: Union[str, Path]) -> Optional[Project]:
+    def new_project(self, storage: Union[str, Path]) -> Project:
         """Create a new project.
 
         Parameters

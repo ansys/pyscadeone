@@ -25,36 +25,33 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "Jinja2>=3.1.4",
-    "jsonschema>=4.23.0",
-    "platformdirs>=4.3.2",
-    "pyparsing>=3.1.4",
-    "pythonnet>=3.0.4",
-    "typing_extensions>=4.12.2",
-    "lark>=1.2.2",
+    "Jinja2>=3.1.6",
+    "jsonschema>=4.25.1",
+    "platformdirs>=4.4.0",
+    "pythonnet>=3.0.5",
+    "lark>=1.3.0",
 ]
 
 [project.optional-dependencies]
 frozen-dependencies = [
     # Indirect dependencies,
-    "attrs==24.2.0",
-    "cffi==1.17.1",
-    "clr-loader==0.2.6",
-    "jsonschema-specifications==2023.12.1",
-    "MarkupSafe==2.1.5",
-    "pycparser==2.22",
-    "referencing==0.35.1",
-    "rpds-py==0.20.0",
+    "attrs==25.3.0",
+    "cffi==2.0.0",
+    "clr-loader==0.2.7.post0",
+    "jsonschema-specifications==2025.9.1",
+    "markupsafe==3.0.2",
+    "pycparser==2.23",
+    "referencing==0.36.2",
+    "rpds-py==0.27.1",
     # Direct dependencies,
-    "Jinja2==3.1.4",
-    "jsonschema==4.23.0",
-    "platformdirs==4.3.2",
-    "pyparsing==3.1.4",
-    "pythonnet==3.0.4",
-    "typing_extensions==4.12.2",
-    "lark==1.2.2",
+    "jinja2==3.1.6",
+    "jsonschema==4.25.1",
+    "platformdirs==4.4.0",
+    "pythonnet==3.0.5",
+    "typing_extensions==4.15.0",
+    "lark==1.3.0",
 ]
-tests = ["pytest>=7.1.0", "pytest-cov>=3.0.0", "click>=8.1.7", "fmpy>=0.3.21"]
+tests = ["pytest>=8.4.2", "pytest-cov>=3.0.0", "click>=8.1.7", "fmpy>=0.3.21"]
 doc = [
     "ansys-sphinx-theme==1.2.4",
     "pillow>=10.1",
@@ -77,7 +74,6 @@ tracker = "https://github.com/ansys/pyscadeone/issues"
 
 [project.scripts]
 pyscadeone = "ansys.scadeone.core.cli:main"
-stpimporter = "ansys.scadeone.core.svc.simdata.stpimporter:cmd_parse"
 
 [tool.flit.module]
 name = "ansys.scadeone.core"
@@ -98,7 +94,18 @@ show_missing = true
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-log_file = "logs/pytest-logs.txt"
+python_files = ["test_*.py"]
+ # not in pytest-tmp, to avoid deletion
+log_file = "logs/pytest.log"
+# pytest temporary files are in tests/pytest-tmp to avoid polluting the main tests folder
+# and to shortern the paths from Windows limitations when using model files
+addopts = "--basetemp=tests/pytest-tmp"
+# keep the tmp folder for failed tests only. Other options: "all", "none"
+tmp_path_retention_policy = "failed"
+# avoid collecting tests from imported modules, ex. TestPragma
+collect_imported_tests = false 
+# don't recurse into these directories
+norecursedirs = [".venv", "doc", "examples", "tests/pytest-tmp"]
 
 [tool.ruff]
 line-length = 100
@@ -128,9 +135,9 @@ checks = [
     # "whitespace only",
     "GL06", # 'Found unknown section "{section}". Allowed sections are: '
     # "{allowed_sections}",
-    #  "GL07", # "Sections are in the wrong order. Correct order is: {correct_sections}",
+    # "GL07", # "Sections are in the wrong order. Correct order is: {correct_sections}",
     # "GL08", # "The object does not have a docstring",
-    "GL09", # "Deprecation warning should precede extended summary",
+    # "GL09", # "Deprecation warning should precede extended summary",
     "GL10", # "reST directives {directives} must be followed by two colons",
     # "SS01", # "No summary found (a short summary in a single line should be "
     # "present at the beginning of the docstring)",

@@ -1,5 +1,5 @@
 @startuml
-left to right direction
+'left to right direction
 skinparam linetype ortho
 
 enum Position
@@ -10,13 +10,19 @@ DiagramPragma *--"coordinates" Coordinates
 DiagramPragma *--"size" Size
 DiagramPragma *--"direction" Direction
 DiagramPragma *--"orientation" Orientation
-DiagramPragma *--"wire_info" PathInfo
-DiagramPragma *--"arrow_info" PathInfo
+DiagramPragma *--"wire_path_info" PathInfo
+DiagramPragma *--"transition_path_info" PathInfo
 Coordinates *--"x" Coordinate
 Coordinates *--"y" Coordinate
-Coordinate *--"position" Position
-Direction *--"value" DirectionType
-Orientation *--"value" OrientationType
-PathInfo *--"w_anchor" WireAnchor
-PathInfo *--"path" WirePath
+Coordinate *-- Position
+Direction *-- DirectionType
+Orientation *-- OrientationType
+PathInfo *-- PathAnchor
+PathInfo *-- PathPart
+PathPart *-- Move
+PathPart *-- PathAnchor
+PathPart *-- Branches
+Branches *-- PathPart
+
+
 @enduml

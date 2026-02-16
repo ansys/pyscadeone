@@ -29,11 +29,11 @@ from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.common.storage import SwanString
 from ansys.scadeone.core.model.loader import SwanParser
 from ansys.scadeone.core.svc.swan_printer import swan_to_str
+from tools import log_diff # type: ignore
 
 logging.basicConfig(level=logging.DEBUG)
 
 parser = SwanParser(logging.getLogger("pprinter"))
-
 
 class TestPrinterGlobals:
     """
@@ -72,20 +72,19 @@ const THRESHOLD: float32 = 5.0;
     @pytest.mark.parametrize(
         "constant, expected",
         [
-            ("const C1: int32;", "const C1: int32;\n\n"),
-            ("const C7 = 5;", "const C7 = 5;\n\n"),
+            ("const C1: int32;", "const C1: int32;\n"),
+            ("const C7 = 5;", "const C7 = 5;\n"),
             (
                 "const C8: bool = false; C9 = 1;",
                 """\
 const C8: bool = false;
 
 const C9 = 1;
-
 """,
             ),
             (
                 "const SpeedInc: CarTypes::tSpeed = 2.5;",
-                "const SpeedInc: CarTypes::tSpeed = 2.5;\n\n",
+                "const SpeedInc: CarTypes::tSpeed = 2.5;\n",
             ),
             (
                 "const THRESHOLD: float32 = 5.0; N: int16 = 8;",
@@ -93,7 +92,6 @@ const C9 = 1;
 const THRESHOLD: float32 = 5.0;
 
 const N: int16 = 8;
-
 """,
             ),
         ],
@@ -131,7 +129,6 @@ sensor K3: bool;
 sensor K1: float32;
 
 sensor K2: int8;
-
 """,
             ),
             (
@@ -140,7 +137,6 @@ sensor K2: int8;
 sensor K3: bool;
 
 sensor K4: int16;
-
 """,
             ),
         ],
@@ -195,11 +191,11 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
         [
             (
                 "group G1 = (bool, x: char); G2 = float32;",
-                "group G1 = (bool, x: char);\n\ngroup G2 = float32;\n\n",
+                "group G1 = (bool, x: char);\n\ngroup G2 = float32;\n",
             ),
             (
                 "group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (uint16, float64))))); G9 = (bool, char); G10 = float32;",
-                "group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (uint16, float64)))));\n\ngroup G9 = (bool, char);\n\ngroup G10 = float32;\n\n",
+                "group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (uint16, float64)))));\n\ngroup G9 = (bool, char);\n\ngroup G10 = float32;\n",
             ),
         ],
     )
@@ -221,7 +217,7 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
             ),  # unsigned (with unary operator)
             (
                 "type A3 = signed <<- A + 1>>;",
-                "type A3 = signed <<- A + 1>>;\n",
+                "type A3 = signed <<-A + 1>>;\n",
             ),  # signed (with binary operator)
             (
                 "type SIG = unsigned <<PD::ID>>;",
@@ -283,8 +279,8 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
                 "type V = B { bool } | C { char } | I { int8 } | U { uint8 };\n",
             ),  # variant predef type
             (
-                "type T = A { N ^ 5 };",
-                "type T = A { N ^ 5 };\n",
+                "type T = A { N^5 };",
+                "type T = A { N^5 };\n",
             ),  # variant with array type
             (
                 "type VS = B {T1: int16, T2: int64, T3: uint32, T4: char} | C {T1: PID::VID, T2: PID2, T3: int32, T4: uint64};",
@@ -313,8 +309,8 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
                 "type FT;\n     FB;\n     SV = {T1: FT, T2: FB, T3: uint8, T4: uint16};\n",
             ),  # struct type with typevar
             (
-                "type VS = {T1: int16 ^ last 'Speed, T2: A, T3: unsigned <<pre B>>, T4: signed <<A + B>>};",
-                "type VS = {T1: int16 ^ last 'Speed, T2: A, T3: unsigned <<pre B>>, T4: signed <<A + B>>};\n",
+                "type VS = {T1: int16^last 'Speed, T2: A, T3: unsigned <<pre B>>, T4: signed <<A + B>>};",
+                "type VS = {T1: int16^last 'Speed, T2: A, T3: unsigned <<pre B>>, T4: signed <<A + B>>};\n",
             ),  # struct type with expr
             (
                 "type Either = Either1 {} | Either2 { int32 } | Either3 {a: bool, b: int32};",
@@ -330,7 +326,7 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
     @pytest.mark.parametrize(
         "type, expected",
         [
-            ("type matrix = float32 ^ 5;", "type matrix = float32 ^ 5;\n"),
+            ("type matrix = float32^5;", "type matrix = float32^5;\n"),
         ],
     )
     def test_expr_type(self, type, expected):
@@ -340,7 +336,7 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
 
     @pytest.mark.parametrize(
         "type, expected",
-        [("type tBool; tInt;", "type tBool;\n\ntype tInt;\n\n")],
+        [("type tBool; tInt;", "type tBool;\n\ntype tInt;\n")],
     )
     def test_types_normalize(self, type, expected):
         swan_obj = parser.declaration(SwanString(type))
@@ -350,8 +346,8 @@ group G8 = ((uint8, G1: int32), char, G2: (uint32, G3: (bool, G4: (int16, G5: (u
     @pytest.mark.parametrize(
         "case",
         [
-            "type #pragma swan_cg C:name A #end T;\n\n",
-            "type #pragma\nsome_tools\nvalue #end\n T = int32;\n\n",
+            "type #pragma cg C:name A #end T;\n",
+            "type #pragma \n     some_tools\n     value #end T = int32;\n",
         ],
     )
     def test_pragmas(self, case):
@@ -369,16 +365,16 @@ class TestPrinterExpr:
         "type, expected",
         [
             (
-                "type C = signed <<- A + B when B>>;",
-                "type C = signed <<- A + B when B>>;\n",
+                "type C = signed <<-A + B when B>>;",
+                "type C = signed <<-A + B when B>>;\n",
             ),  # with ID
             (
                 "type C = unsigned <<A when not B>>;",
                 "type C = unsigned <<A when not B>>;\n",
             ),  # not ID
             (
-                "type C = signed <<T1 ^ T2 when (B match true)>>;",
-                "type C = signed <<T1 ^ T2 when (B match true)>>;\n",
+                "type C = signed <<T1^T2 when (B match true)>>;",
+                "type C = signed <<T1^T2 when (B match true)>>;\n",
             ),  # bool pattern
             (
                 "type C = unsigned <<T1 when (C match A::B)>>;",
@@ -417,12 +413,12 @@ class TestPrinterExpr:
                 "type C = signed <<pre T when (C match 'C')>>;\n",
             ),  # char pattern
             (
-                "type C = unsigned <<'A' ^ 5 when B when (C match false)>>;",
-                "type C = unsigned <<'A' ^ 5 when B when (C match false)>>;\n",
+                "type C = unsigned <<'A'^5 when B when (C match false)>>;",
+                "type C = unsigned <<'A'^5 when B when (C match false)>>;\n",
             ),  # bool pattern
             (
-                "type tU = float32 ^ 3; tC = tU ^ 2; tA = signed <<0.4_f32 * T when not A>>;",
-                "type tU = float32 ^ 3;\n     tC = tU ^ 2;\n     tA = signed <<0.4_f32 * T when not A>>;\n",
+                "type tU = float32^3; tC = tU^2; tA = signed <<0.4_f32 * T when not A>>;",
+                "type tU = float32^3;\n     tC = tU^2;\n     tA = signed <<0.4_f32 * T when not A>>;\n",
             ),
         ],
     )
@@ -447,8 +443,8 @@ class TestPrinterExpr:
                 "type C = unsigned <<T::U::V::Y::X::Q::R::S::P::Z when match B>>;\n",
             ),
             (
-                "type C = signed <<T1 ^ T2 when match T::U::V::Y::X::Q::R::S::P::Z>>;",
-                "type C = signed <<T1 ^ T2 when match T::U::V::Y::X::Q::R::S::P::Z>>;\n",
+                "type C = signed <<T1^T2 when match T::U::V::Y::X::Q::R::S::P::Z>>;",
+                "type C = signed <<T1^T2 when match T::U::V::Y::X::Q::R::S::P::Z>>;\n",
             ),
             (
                 "type C = unsigned <<4_i8 + 84_ui8 when match C>>;",
@@ -456,7 +452,7 @@ class TestPrinterExpr:
             ),
             (
                 "type C = signed <<- A when match C::B::D>>;",
-                "type C = signed <<- A when match C::B::D>>;\n",
+                "type C = signed <<-A when match C::B::D>>;\n",
             ),
             (
                 "type C = signed <<0.8_f64 * T when A when match B>>;",
@@ -471,8 +467,8 @@ class TestPrinterExpr:
                 "type C = unsigned <<T / 3 when (C match A::B _) when match T::U::V>>;\n",
             ),
             (
-                "type C = unsigned <<'A' ^ 5 when match T>>;",
-                "type C = unsigned <<'A' ^ 5 when match T>>;\n",
+                "type C = unsigned <<'A'^5 when match T>>;",
+                "type C = unsigned <<'A'^5 when match T>>;\n",
             ),
         ],
     )
@@ -529,7 +525,7 @@ class TestPrinterExpr:
                 "type T = unsigned <<(A when B)>>;\n",
             ),
             ("type T = unsigned <<(true)>>;", "type T = unsigned <<(true)>>;\n"),
-            ("type T = signed <<(- B)>>;", "type T = signed <<(- B)>>;\n"),
+            ("type T = signed <<(-B)>>;", "type T = signed <<(-B)>>;\n"),
             ("type T = unsigned <<(4_i16)>>;", "type T = unsigned <<(4_i16)>>;\n"),
             ("type T = unsigned <<(A::B)>>;", "type T = unsigned <<(A::B)>>;\n"),
             ("type T = signed <<(a: B::C)>>;", "type T = signed <<(a: B::C)>>;\n"),
@@ -565,7 +561,7 @@ class TestPrinterExpr:
         [
             (
                 "type A = signed <<- A + B .(C)>>;",
-                "type A = signed <<- A + B .(C)>>;\n",
+                "type A = signed <<-A + B .(C)>>;\n",
             ),
             (
                 "type A = signed <<true .(C, D, E, F)>>;",
@@ -576,8 +572,8 @@ class TestPrinterExpr:
                 "type A = signed <<(4_i8 + 84_ui8 :> float32) .(1, 2, 3, 4)>>;\n",
             ),
             (
-                "type T = unsigned <<A ^ 5_ui8 .(a: B1, b: B2, c: B4)>>;",
-                "type T = unsigned <<A ^ 5_ui8 .(a: B1, b: B2, c: B4)>>;\n",
+                "type T = unsigned <<A^5_ui8 .(a: B1, b: B2, c: B4)>>;",
+                "type T = unsigned <<A^5_ui8 .(a: B1, b: B2, c: B4)>>;\n",
             ),
             (
                 "type T = signed <<42_i16 .(1, 2: a, b: c, d)>>;",
@@ -605,7 +601,7 @@ class TestPrinterExpr:
     @pytest.mark.parametrize(
         "const, expected",
         [
-            ("const C = - A + B.C;", "const C = - A + B.C;\n"),
+            ("const C = - A + B.C;", "const C = -A + B.C;\n"),
             (
                 "const C = A when B[A mod B when (C match D::E _)];",
                 "const C = A when B[A mod B when (C match D::E _)];\n",
@@ -616,7 +612,7 @@ class TestPrinterExpr:
             ),
             ("const C = A[B];", "const C = A[B];\n"),
             ("const C = A[B::C::D::E];", "const C = A[B::C::D::E];\n"),
-            ("const C = T group (- A + B);", "const C = T group (- A + B);\n"),
+            ("const C = T group (- A + B);", "const C = T group (-A + B);\n"),
             ("const C = T group (true);", "const C = T group (true);\n"),
             (
                 "const C = U::V::Z group ((A * B, a: (A :> T1)));",
@@ -636,7 +632,7 @@ class TestPrinterExpr:
             ),
             (
                 "const C = (A . [C + D] default - B);",
-                "const C = (A . [C + D] default - B);\n",
+                "const C = (A . [C + D] default -B);\n",
             ),
             (
                 "const C = (42 . .A.B.C default D::E::T);",
@@ -649,7 +645,7 @@ class TestPrinterExpr:
             ("const C = {A, B, C} : D;", "const C = {A, B, C} : D;\n"),
             (
                 "const C = {a: - A + B, c: A when B} : D::E;",
-                "const C = {a: - A + B, c: A when B} : D::E;\n",
+                "const C = {a: -A + B, c: A when B} : D::E;\n",
             ),
             ("const C = {42} : T;", "const C = {42} : T;\n"),
             (
@@ -659,10 +655,10 @@ class TestPrinterExpr:
             ("const C = T {A, B, C};", "const C = T {A, B, C};\n"),
             (
                 "const C = T {A: D * E, B: - 42, C};",
-                "const C = T {A: D * E, B: - 42, C};\n",
+                "const C = T {A: D * E, B: -42, C};\n",
             ),
             ("const C = D::E {1, 2, 3_i8};", "const C = D::E {1, 2, 3_i8};\n"),
-            ("const C = T {- A + B};", "const C = T {- A + B};\n"),
+            ("const C = T {- A + B};", "const C = T {-A + B};\n"),
             (
                 "const C = (X with .f = 42; [0] = 666);",
                 "const C = (X with .f = 42; [0] = 666);\n",
@@ -687,8 +683,8 @@ class TestPrinterExpr:
         [
             ("const C = if true then B else C;", "const C = if true then B else C;\n"),
             (
-                "const C = if D::E then - A + B else C ^ N ^ M;",
-                "const C = if D::E then - A + B else C ^ N ^ M;\n",
+                "const C = if D::E then - A + B else C^N^M;",
+                "const C = if D::E then -A + B else C^N^M;\n",
             ),
             (
                 "const C = (case A of | P: B + C| T0: true| T1: 1_i8| T2::U::V: D when E| T3: D {A, B, C}| T4: (X with .f = 42; [0] = 666)| T5: U.V| T6: M[N::O::P::Q]| T7: a[0 .. N - 1]);",
@@ -726,77 +722,61 @@ class TestPrinterExpr:
         "const, expected",
         [
             (
-                "const C = forward <<42>> returns ();",
-                "const C = forward\n<<42>>\n\nreturns ();\n",
+                "X = forward <<42>> returns ();",
+                "X = forward\n  <<42>>\n  returns ();",
             ),
             (
-                "const C = forward <<42>> returns ();",
-                "const C = forward\n<<42>>\n\nreturns ();\n",
+                "X = forward <<42>> assume $D: A mod 3; assume $B: A / 3; returns ();",
+                "X = forward\n  <<42>>\n  assume\n        $D: A mod 3;\n  assume\n        $B: A / 3;\n  returns ();",
             ),
             (
-                "const C = forward <<42>> assume $D: A mod 3; assume $B: A / 3; returns ();",
-                "const C = forward\n<<42>>\nassume\n      $D: A mod 3;\nassume\n      $B: A / 3;\nreturns ();\n",
+                "X = forward <<42>> guarantee $D: A mod 3; $B: A / 3; returns ();",
+                "X = forward\n  <<42>>\n  guarantee\n           $D: A mod 3;\n           $B: A / 3;\n  returns ();",
             ),
             (
-                "const C = forward <<42>> guarantee $D: A mod 3; $B: A / 3; returns ();",
-                "const C = forward\n<<42>>\nguarantee\n         $D: A mod 3;\n         $B: A / 3;\nreturns ();\n",
+                "X = forward <<42>> emit 'D, 'C if true; 'L; returns ();",
+                "X = forward\n  <<42>>\n  emit\n      'D, 'C if true;\n      'L;\n  returns ();",
             ),
             (
-                "const C = forward <<42>> emit 'D, 'C if true; 'L; returns ();",
-                "const C = forward\n<<42>>\nemit\n    'D, 'C if true;\n    'L;\nreturns ();\n",
+                "X = forward <<42>> with <<X>> u = U; [v] = V; [[y]] = Y; returns ();",
+                "X = forward\n  <<42>> with <<X>> u = U; [v] = V; [[y]] = Y;\n  returns ();",
             ),
             (
-                "const C = forward <<42>> with <<X>> u = U; [v] = V; [[y]] = Y; returns ();",
-                "const C = forward\n<<42>> with <<X>> u = U; [v] = V; [[y]] = Y;\n\nreturns ();\n",
+                "X = forward $xy resume <<2>> var x: int8; var y; until WEAK returns (I);",
+                "X = forward $xy resume\n  <<2>>\n  var\n     x: int8;\n  var\n     y;\n  until WEAK\n  returns (I);",
             ),
             (
-                "const C = forward $xy resume <<2>> var x: int8; var y; until WEAK returns (I);",
-                "const C = forward $xy resume\n<<2>>\nvar\n   x: int8;\nvar\n   y;\nuntil WEAK\nreturns (I);\n",
+                "X = forward $foo resume <<2>> var clock I1; var #pragma x probe #end #pragma y probe #end I2; returns (I);",
+                "X = forward $foo resume\n  <<2>>\n  var\n     clock I1;\n  var\n     #pragma x probe #end\n     #pragma y probe #end I2;\n  returns (I);",
             ),
             (
-                "const C = forward $foo resume <<2>> var clock I1; var #pragma x probe #end #pragma y probe #end I2; returns (I);",
-                "const C = forward $foo resume\n<<2>>\nvar\n   clock I1;\nvar\n   #pragma x probe #end #pragma y probe #end I2;\nreturns (I);\n",
+                "X = forward restart <<A>> var I1 default = B / 4; I2 last = C * 4; returns (B: last = D + C default = D / C);",
+                "X = forward restart\n  <<A>>\n  var\n     I1 default = B / 4;\n     I2 last = C * 4;\n  returns (B: last = D + C default = D / C);",
             ),
             (
-                "const C = forward restart <<A>> var I1 default = B / 4; I2 last = C * 4; returns (B: last = D + C default = D / C);",
-                "const C = forward restart\n<<A>>\nvar\n   I1 default = B / 4;\n   I2 last = C * 4;\nreturns (B: last = D + C default = D / C);\n",
+                "X = forward $x resume <<A + B>> var clock I1; var #pragma cg probe #end I2; returns (I = [I5: default = 3 * A]);",
+                "X = forward $x resume\n  <<A + B>>\n  var\n     clock I1;\n  var\n     #pragma cg probe #end I2;\n  returns (I = [I5: default = 3 * A]);",
             ),
             (
-                "const C = forward $x resume <<A + B>> var clock I1; var #pragma cg probe #end I2; returns (I = [I5: default = 3 * A]);",
-                "const C = forward $x resume\n<<A + B>>\nvar\n   clock I1;\nvar\n   #pragma cg probe #end I2;\nreturns (I = [I5: default = 3 * A]);\n",
+                "X = forward $x <<A>> var I1; returns (B: last = D + C);",
+                "X = forward $x\n  <<A>>\n  var\n     I1;\n  returns (B: last = D + C);",
             ),
             (
-                "const C = forward $x <<A>> var I1; returns (B: last = D + C);",
-                "const C = forward $x\n<<A>>\nvar\n   I1;\nreturns (B: last = D + C);\n",
+                "X = forward $x <<A>> var I1; returns ([ID: last = 42], X = [[Z]]);",
+                "X = forward $x\n  <<A>>\n  var\n     I1;\n  returns ([ID: last = 42], X = [[Z]]);",
             ),
             (
-                "const C = forward $x <<A>> var I1; returns ([ID: last = 42], X = [[Z]]);",
-                "const C = forward $x\n<<A>>\nvar\n   I1;\nreturns ([ID: last = 42], X = [[Z]]);\n",
+                "X = forward $x <<I = - A + B>> with I2 = I3 mod 2; var clock I1; returns (I6, I4 = [I5: default = 3 * A]);",
+                "X = forward $x\n  <<I = -A + B>> with I2 = I3 mod 2;\n  var\n     clock I1;\n  returns (I6, I4 = [I5: default = 3 * A]);",
             ),
             (
-                "const C = forward $x <<I = - A + B>> with I2 = I3 mod 2; var clock I1; returns (I6, I4 = [I5: default = 3 * A]);",
-                "const C = forward $x\n<<I = - A + B>> with I2 = I3 mod 2;\nvar\n   clock I1;\nreturns (I6, I4 = [I5: default = 3 * A]);\n",
+                "X = forward <<2>> unless A - C var V1 when A; until B + 4 returns (I: last = default = A * B);",
+                "X = forward\n  <<2>>\n  unless A - C\n  var\n     V1 when A;\n  until B + 4\n  returns (I: last = default = A * B);",
             ),
-            (
-                "const C = forward <<2>> unless A - C var V1 when A; until B + 4 returns (I: last = default = A * B);",
-                "const C = forward\n<<2>>\nunless A - C\nvar\n   V1 when A;\nuntil B + 4\nreturns (I: last = default = A * B);\n",
-            ),
-            # (
-            #     "const C = forward <<42>> unless not B let () $let_1 = A + B; until pre A returns (E: last = D + C);",
-            #     "const C = forward\n<<42>>\nunless not B\nlet\n   () $let_1 = A + B;\nuntil pre A\nreturns (E: last = D + C);\n",
-            # ),
-            # (
-            #     "const C = forward <<C + D>> with [[[[[[I3]]]]]] = B / 3; let _, I1, I2, _, .. $i = not A; returns (B: last = A);",
-            #     "const C = forward\n<<C + D>> with [[[[[[I3]]]]]] = B / 3;\nlet\n   _, I1, I2, _, .. $i = not A;\nreturns (B: last = A);\n",
-            # ),
-            # (
-            #     "const C = forward <<true when not B>> let _ $item_1 = pre B; () = (A + B when match C::D :> int16); returns (A: default = true);",
-            #     "const C = forward\n<<true when not B>>\nlet\n   _ $item_1 = pre B;\n   () = (A + B when match C::D :> int16);\nreturns (A: default = true);\n",
-            # ),
         ],
     )
     def test_fwd_expr(self, const, expected):
-        swan_obj = parser.declaration(SwanString(const))
+        swan_obj = parser.equation(SwanString(const))
         res = swan_to_str(swan_obj)
         assert res == expected
 
@@ -804,22 +784,23 @@ class TestPrinterExpr:
         "const, expected",
         [
             (
-                "const C = window <<42 ^ N>> (G: A + B) (D * C);",
-                "const C = window <<42 ^ N>> (G: A + B) (D * C);\n\n",
+                "const C = window <<42^N>> (G: A + B) (D * C);",
+                "const C = window <<42^N>> (G: A + B) (D * C);\n",
             ),
-            ("const C = merge (A) (true);", "const C = merge (A) (true);\n\n"),
+            ("const C = merge (A) (true);", "const C = merge (A) (true);\n"),
         ],
     )
     def test_multigroup_prefix(self, const, expected):
         swan_obj = parser.declaration(SwanString(const))
         res = swan_to_str(swan_obj, normalize=True)
+
         assert res == expected
 
     @pytest.mark.parametrize(
         "const, expected",
         [
-            ("const C = $luid1;", "const C = $luid1;\n\n"),
-            ("const C = self;", "const C = self;\n\n"),
+            ("const C = $luid1;", "const C = $luid1;\n"),
+            ("const C = self;", "const C = self;\n"),
         ],
     )
     def test_port(self, const, expected):
@@ -847,8 +828,8 @@ class TestDiagram_GraphItem:
                 "diagram\n  (#0 expr (e1: T::P, e2: T::Q, e3: T::V, e4: T::U))",
             ),
             (
-                "diagram (expr (G: not #3 when match A::B) where (expr A ^ 3_ui8 * last 'T))",
-                "diagram\n  (expr (G: not #3 when match A::B)\n    where\n      (expr A ^ 3_ui8 * last 'T))",
+                "diagram (expr (G: not #3 when match A::B) where (expr A^3_ui8 * last 'T))",
+                "diagram\n  (expr (G: not #3 when match A::B)\n    where\n      (expr A^3_ui8 * last 'T))",
             ),
             (
                 "diagram (diagram (diagram (expr true)))",
@@ -1015,6 +996,14 @@ class TestDiagram_GraphItem:
                 "diagram (#1 block (+) where (#3 block (*) where (#4 block (or) where (#5 block (land)))))",
                 "diagram\n  (#1 block (+)\n    where\n      (#3 block (*)\n        where\n          (#4 block (or)\n            where\n              (#5 block (land)))))",
             ),
+            (
+                "diagram (#40 block ({op_expr%lxor%op_expr}))",
+                "diagram\n  (#40 block ({op_expr%lxor%op_expr}))",
+            ),
+            (
+                "diagram (#45 block {text%(lxor)%text})",
+                "diagram\n  (#45 block {text%(lxor)%text})",
+            )
         ],
     )
     def test_NAryOp_diagram(self, object, expected):
@@ -1026,8 +1015,8 @@ class TestDiagram_GraphItem:
         "object, expected",
         [
             (
-                "diagram (#1 block (function A, B, C => A ^ last 'B ^ (C + 5)))",
-                "diagram\n  (#1 block (function A, B, C => A ^ last 'B ^ (C + 5)))",
+                "diagram (#1 block (function A, B, C => A^last 'B^(C + 5)))",
+                "diagram\n  (#1 block (function A, B, C => A^last 'B^(C + 5)))",
             ),
             # (
             #     "diagram (#1 block (function fast_exp var u; v; => u * v) where (expr last 'u))",
@@ -1043,10 +1032,28 @@ class TestDiagram_GraphItem:
     @pytest.mark.parametrize(
         "object, expected",
         [
+            (
+                "diagram $diagram0 (#1 block (function A, B, C => A^last 'B^(C + 5)))",
+                "diagram $diagram0\n  (#1 block (function A, B, C => A^last 'B^(C + 5)))",
+            ),
+            (
+                "diagram {luid%$$$%luid} (#1 block (function A, B, C => A^last 'B^(C + 5)))",
+                "diagram {luid%$$$%luid}\n  (#1 block (function A, B, C => A^last 'B^(C + 5)))",
+            ),
+        ],
+    )
+    def test_named_diagram(self, object, expected):
+        swan_obj = parser.scope_section(SwanString(object))
+        res = swan_to_str(swan_obj)
+        assert res == expected
+
+    @pytest.mark.parametrize(
+        "object, expected",
+        [
             ("diagram (#1 def {x%$$$%x})", "diagram\n  (#1 def {x%$$$%x})"),
             (
                 "diagram (#1 expr forward restart <<N>> unless {%$$$%} until {%£££%} returns ())",
-                "diagram\n  (#1 expr forward restart\n<<N>>\nunless {%$$$%}\nuntil {%£££%}\nreturns ())",
+                "diagram\n  (#1 expr forward restart\n    <<N>>\n    unless {%$$$%}\n    until {%£££%}\n    returns ())",
             ),
             (
                 "diagram (wire #2 => #3 .({syntax%!$$%syntax}))",
@@ -1059,11 +1066,11 @@ class TestDiagram_GraphItem:
             ("diagram (#1 block {x%$$$%x})", "diagram\n  (#1 block {x%$$$%x})"),
             (
                 "diagram ($D1 expr forward restart <<N>> unless {%$$$%} until {%£££%} returns ())",
-                "diagram\n  ($D1 expr forward restart\n<<N>>\nunless {%$$$%}\nuntil {%£££%}\nreturns ())",
+                "diagram\n  ($D1 expr forward restart\n    <<N>>\n    unless {%$$$%}\n    until {%£££%}\n    returns ())",
             ),
             (
                 "diagram (#1 block ({op_expr%node x => x%op_expr}))",
-                "diagram\n  (#1 block (node x => x))",
+                "diagram\n  (#1 block ({op_expr%node x => x%op_expr}))",
             ),
             (
                 "diagram (#1 block {text%(node x => x)%text})",
@@ -1075,7 +1082,7 @@ class TestDiagram_GraphItem:
             ),
             (
                 "diagram (#1 block (fold ({op_expr%or%op_expr})) <<N>>)",
-                "diagram\n  (#1 block (fold (or)) <<N>>)",
+                "diagram\n  (#1 block (fold ({op_expr%or%op_expr})) <<N>>)",
             ),
             (
                 "diagram (#1 block (map {text%(operator0 \\ name:value)%text}) <<123>>)",
@@ -1097,45 +1104,45 @@ class TestPrinterInterface:
     @pytest.mark.parametrize(
         "interface, expected",
         [
-            ("{type%type type = int3;%type}", "{type%type type = int3;%type}"),
+            ("{type%type type = int3;%type}", "{type%type type = int3;%type}\n"),
             (
                 "{const%const C: int32 = 4 + 3j;%const}",
-                "{const%const C: int32 = 4 + 3j;%const}",
+                "{const%const C: int32 = 4 + 3j;%const}\n",
             ),
             (
                 "{const%const const2: int32 = 0_t8;%const}",
-                "{const%const const2: int32 = 0_t8;%const}",
+                "{const%const const2: int32 = 0_t8;%const}\n",
             ),
-            ("{type%type type% = int32;%type}", "{type%type type% = int32;%type}"),
+            ("{type%type type% = int32;%type}", "{type%type type% = int32;%type}\n"),
             (
                 "{const%const const: int2 = 0;%const}",
-                "{const%const const: int2 = 0;%const}",
+                "{const%const const: int2 = 0;%const}\n",
             ),
             (
                 "{sensor%sensor sensor: int3;%sensor}",
-                "{sensor%sensor sensor: int3;%sensor}",
+                "{sensor%sensor sensor: int3;%sensor}\n",
             ),
             (
                 "{group%group group = (int3, int32);%group}",
-                "{group%group group = (int3, int32);%group}",
+                "{group%group group = (int3, int32);%group}\n",
             ),
             (
                 "{const%const const1: int32 : 0;%const}",
-                "{const%const const1: int32 : 0;%const}",
+                "{const%const const1: int32 : 0;%const}\n",
             ),
             (
                 "{type%type type1 = int32 : 5;%type}",
-                "{type%type type1 = int32 : 5;%type}",
+                "{type%type type1 = int32 : 5;%type}\n",
             ),
             (
                 "{sensor%sensor sensor1: int32 = 2;%sensor}",
-                "{sensor%sensor sensor1: int32 = 2;%sensor}",
+                "{sensor%sensor sensor1: int32 = 2;%sensor}\n",
             ),
             (
                 "{group%group group1 = (int32, int32);;%group}",
-                "{group%group group1 = (int32, int32);;%group}",
+                "{group%group group1 = (int32, int32);;%group}\n",
             ),
-            ("{type%type2 type = int32;%type}", "{type%type2 type = int32;%type}"),
+            ("{type%type2 type = int32;%type}", "{type%type2 type = int32;%type}\n"),
         ],
     )
     def test_markups_interface(self, interface, expected):
@@ -1148,27 +1155,27 @@ class TestPrinterInterface:
         [
             (
                 "inline function F1 (i0: int32) returns (o0: int32);",
-                "inline function F1 (i0: int32;)\n  returns (o0: int32;);",
+                "inline function F1 (i0: int32;)\n  returns (o0: int32;);\n",
             ),
             (
                 "function Op <<N1, N2>> (i0: int32) returns (o0: int32);",
-                "function Op <<N1, N2>> (i0: int32;)\n  returns (o0: int32;);",
+                "function Op <<N1, N2>> (i0: int32;)\n  returns (o0: int32;);\n",
             ),
             (
                 "function Op (a: 'T1) returns (b: 'T2; c: 'T3) where 'T1, 'T2 integer where 'T3 float;",
-                "function Op (a: 'T1;)\n  returns (b: 'T2;\n           c: 'T3;)\n  where 'T1, 'T2 integer \n  where 'T3 float;",
+                "function Op (a: 'T1;)\n  returns (b: 'T2;\n           c: 'T3;)\n  where 'T1, 'T2 integer \n  where 'T3 float;\n",
             ),
             (
                 "function Op (a: int32) returns (b: int32) specialize Foo::Bar;",
-                "function Op (a: int32;)\n  returns (b: int32;) specialize Foo::Bar;",
+                "function Op (a: int32;)\n  returns (b: int32;) specialize Foo::Bar;\n",
             ),
             (
                 "inline function Op <<N1, N2>> (a: 'T1) returns (b: 'T2; c: 'T3) where 'T1, 'T2 integer where 'T3 float specialize Foo::Bar;",
-                "inline function Op <<N1, N2>> (a: 'T1;)\n  returns (b: 'T2;\n           c: 'T3;)\n  where 'T1, 'T2 integer \n  where 'T3 float specialize Foo::Bar;",
+                "inline function Op <<N1, N2>> (a: 'T1;)\n  returns (b: 'T2;\n           c: 'T3;)\n  where 'T1, 'T2 integer \n  where 'T3 float specialize Foo::Bar;\n",
             ),
         ],
     )
-    def test_signature(self, interface, expected):
+    def test_op_decl(self, interface, expected):
         swan_obj = parser.declaration(SwanString(interface))
         res = swan_to_str(swan_obj)
         assert res == expected
@@ -1206,11 +1213,11 @@ sensor S1: int8;
 function F (a: int8;
             c: bool;
             d: int32;)
-  returns (b: int8;);
+  returns (b: int8;);\n
 node G (a: uint8;)
-  returns (b: uint8;);
+  returns (b: uint8;);\n
 function H (a: float64;)
-  returns (b: float64;);""",
+  returns (b: float64;);\n""",
             ),
         ],
     )
@@ -1237,18 +1244,14 @@ returns (b: int8);""",
 use P::Q as Plop;\n
 type T;\n
 type T2 = uint8;\n
-
 const C1: T;\n
 const C2: T2;\n
-
 group G1 = (bool, x: char);\n
 group G2 = float32;\n
-
 sensor S1: int8;\n
 sensor S2: bool;\n
-
 function F (a: int8;)
-  returns (b: int8;);""",
+  returns (b: int8;);\n""",
             ),
         ],
     )
@@ -1289,7 +1292,7 @@ group G1 = (bool, x: char);
 sensor S1: int8;
        S2: uint8;\n
 inline function f1 (A: bool;)
-  returns (B: bool;);""",
+  returns (B: bool;);\n""",
             ),
             (
                 """\
@@ -1316,7 +1319,7 @@ sensor S1: int8;
 inline function function1 <<E, F>> (A: bool;)
   returns (B: bool;)
   where 'T1, 'T2 numeric 
-  where 'T3 unsigned specialize P::D;""",
+  where 'T3 unsigned specialize P::D;\n""",
             ),
             (
                 """\
@@ -1339,7 +1342,7 @@ node #pragma kcg expand #end ramp (start: 'T;
                                    limit: 'T;
                                    incr: 'T;)
   returns (data: 'T;)
-  where 'T numeric specialize A::B;""",
+  where 'T numeric specialize A::B;\n""",
             ),
             (
                 """\
@@ -1349,8 +1352,7 @@ _, B, .. $f2 = A;
 """,
                 """\
 inline function f2 (A: bool;)
-  returns (B: bool;)
-  _, B, .. $f2 = A;""",
+  returns (B: bool;) _, B, .. $f2 = A;""",
             ),
             (
                 """\
@@ -1371,8 +1373,8 @@ where 'C unsigned specialize D::E
             _, _, _, .. = A / B;
             _, _, _, .. $le = (A + B when match C::D :> int16);
             A, _, B, _ = - A + B when B;
-            A, .. = 'A' ^ 5 when B when (C match false);
-            I1, I2, I3 = 2 ^ A;
+            A, .. = 'A'^5 when B when (C match false);
+            I1, I2, I3 = 2^A;
 
         var V;
         diagram
@@ -1387,37 +1389,37 @@ where 'C unsigned specialize D::E
                 """\
 node n3 (A: bool;)
   returns (B: bool;)
-  where 'C unsigned specialize D::E
-  U, _, .. $n3 = forward $fw restart
-<<true>> with [[F]] = false;
-unless not B
-let () $let_1 = A + B;
-_ $a_ = true;
-() = false;
-() $bl = 1;
-D = B * C;
-D $lD = last 'T;
-A, B, C, D, .. = not D;
-A, B, C, D, .. $pe = pre E;
-_ = false;
-_, _, _, .. = A / B;
-_, _, _, .. $le = (A + B when match C::D :> int16);
-A, _, B, _ = - A + B when B;
-A, .. = 'A' ^ 5 when B when (C match false);
-I1, I2, I3 = 2 ^ A;
-var
-   V;
-diagram
-  (#1 $def def ())
-  (#2 $block block G::H <<false>>)
-  
-  (#3 wire self => ())
-assert
-      $assert: false;
-emit
-    $emit 'E, 'T if not V <> A and $true;
-until pre A
-returns (E: last = D + C);""",
+  where 'C unsigned specialize D::E U, _, .. $n3 = forward $fw restart
+  <<true>> with [[F]] = false;
+  unless not B
+  let
+     () $let_1 = A + B;
+     _ $a_ = true;
+     () = false;
+     () $bl = 1;
+     D = B * C;
+     D $lD = last 'T;
+     A, B, C, D, .. = not D;
+     A, B, C, D, .. $pe = pre E;
+     _ = false;
+     _, _, _, .. = A / B;
+     _, _, _, .. $le = (A + B when match C::D :> int16);
+     A, _, B, _ = -A + B when B;
+     A, .. = 'A'^5 when B when (C match false);
+     I1, I2, I3 = 2^A;
+  var
+     V;
+  diagram
+    (#1 $def def ())
+    (#2 $block block G::H <<false>>)
+    
+    (#3 $wire wire self => ())
+  assert
+        $assert: false;
+  emit
+      $emit 'E, 'T if not V <> A and $true;
+  until pre A
+  returns (E: last = D + C);""",
             ),
             (
                 """\
@@ -1427,8 +1429,7 @@ returns (E: last = D + C);""",
 """,
                 """\
 {text%node operator8 (i0: int32;)
-  returns (o0: int32;)
-  () $eq = false;%text}""",
+  returns (o0: int32;) () $eq = false;%text}""",
             ),
             (
                 """\
@@ -1438,14 +1439,14 @@ node operator9 ()
 """,
                 """\
 node operator9 ()
-  returns ()
-  _ = true;""",
+  returns () _ = true;""",
             ),
         ],
     )
     def test_body(self, body, expected):
         swan_obj = parser.module_body(SwanString(gen_swan_version() + "\n" + body))
         res = swan_to_str(swan_obj)
+        # log_diff(actual=res, expected=gen_swan_version() + "\n" + expected, winmerge=True)
         assert res == gen_swan_version() + "\n" + expected
 
     @pytest.mark.parametrize(
@@ -1539,7 +1540,7 @@ function f0 (A: float64;)
 function fx (A: float32)
 returns (B: float32)
 {
-let () $let = A - B ^ 2;
+let () $let = A - B^2;
 let _ $under = C::D;
 let I, H, G = false;
 let () = pre A;
@@ -1551,7 +1552,7 @@ let _, _, _, .. = false;
 function fx (A: float32;)
   returns (B: float32;)
 {
-  let () $let = A - B ^ 2;
+  let () $let = A - B^2;
   let _ $under = C::D;
   let I, H, G = false;
   let () = pre A;
@@ -1563,17 +1564,16 @@ function fx (A: float32;)
                 """\
 function fy (A: int32)
 returns (B: int32)
-_ $eq = A + B ^ 2;
+_ $eq = A + B^2;
 """,
                 """\
 function fy (A: int32;)
-  returns (B: int32;)
-  _ $eq = A + B ^ 2;""",
+  returns (B: int32;) _ $eq = A + B^2;""",
             ),  # LHS Item
             (
                 """\
 function fz (A: uint32)
-returns (B: uint32)
+returns (B: uint32) 
 () : automaton $auto initial state #1 start:
 unless if (false) restart #2;
 let _ $let = false;
@@ -1581,18 +1581,15 @@ until if (not A) resume #3;;
 """,
                 """\
 function fz (A: uint32;)
-  returns (B: uint32;)
-  () : automaton $auto
-  initial state #1 start :
-    unless
-    if (false)
-    restart #2
-    ;
-    let _ $let = false;
-    until
-    if (not A)
-    resume #3
-    ;;""",
+  returns (B: uint32;) () : automaton $auto
+                              initial state #1 start :
+                                unless
+                                if (false)
+                                restart #2;
+                                let _ $let = false;
+                                until
+                                if (not A)
+                                resume #3;;""",
             ),  # Def by case with state machine
             (
                 """\
@@ -1606,24 +1603,21 @@ else {emit 'T;}
 """,
                 """\
 function fz (A: uint32;)
-  returns (B: uint32;)
-  _ : activate $active
-  if false
-  then
-    _ $let = false;
-  elsif pre C
-  then
-    {
-      var
-         clock V: bool when not A default = false last = true;
-    
-    }
-  else
-    {
-      emit
-          'T;
-    
-    };""",
+  returns (B: uint32;) _ : activate $active
+                             if false
+                             then
+                               _ $let = false;
+                             elsif pre C
+                             then
+                               {
+                                 var
+                                    clock V: bool when not A default = false last = true;
+                               }
+                             else
+                               {
+                                 emit
+                                     'T;
+                               };""",
             ),  # Def by case with selection action
         ],
     )
@@ -1647,13 +1641,14 @@ returns (o0: int16)
 ;
 """,
                 """\
-{use%use;%use}
-{const%const const: int32 = 0;%const}
-{type%type type = int32;%type}
-{sensor%sensor sensor: int32;%sensor}
-{group%group group = (int8, int8);%group}
+{use%use;%use}\n
+{const%const const: int32 = 0;%const}\n
+{type%type type = int32;%type}\n
+{sensor%sensor sensor: int32;%sensor}\n
+{group%group group = (int8, int8);%group}\n
 inline function {syntax%1%syntax} (i0: int16;)
-  returns (o0: int16;);""",
+  returns (o0: int16;);
+""",
             ),
             (
                 """\
@@ -1679,28 +1674,28 @@ node PID ()
               #pragma diagram {"xy":"H78124;V58295","wh":"13348;7000"} #end)
 }
 """,
-                """\
-node PID ()
+                """node PID ()
   returns ()
 {
   diagram
     (#1312 block {text%(+)%text}
     #pragma diagram {"xy":"H216087;V55890","wh":"12000;48730"} #end)
-    (#1 block (function x => x / T_CCYCLE)
+    (#1 block ({op_expr%function x => x / T_CCYCLE%op_expr})
     #pragma diagram {"xy":"H141876;V79010","wh":"13348;7000"} #end)
-    (#2 block (function x => x * ki)
+    (#2 block ({op_expr%function x => x * ki%op_expr})
     #pragma diagram {"xy":"H194304;V57095","wh":"12000;7000"} #end)
-    (#3 block (function x => x * kd)
+    (#3 block ({op_expr%function x => x * kd%op_expr})
     #pragma diagram {"xy":"H118921;V76755","wh":"12000;7000"} #end)
-    (#4 block (function x => x * kp)
+    (#4 block ({op_expr%function x => x * kp%op_expr})
     #pragma diagram {"xy":"H78124;V35025","wh":"12000;7000"} #end)
     (#5 block (restart (QuadUtils::Integrator \ i: 0.0) every #7)
       where
         (#7 group)
     #pragma diagram {"xy":"H166021;V55095","wh":"25000;18000"} #end)
-    (#8 block (function x => x * T_CCYCLE)
+    (#8 block ({op_expr%function x => x * T_CCYCLE%op_expr})
     #pragma diagram {"xy":"H78124;V58295","wh":"13348;7000"} #end)
-}\n""",
+}
+""",
             ),
             (
                 """\
@@ -1722,10 +1717,10 @@ function fct (i0: int32;)
 {
   diagram
     (#1 block {text%(node x => x)%text})
-    (#2 block reverse)
+    (#2 block {text%reverse%text})
     (#3 block (map {text%(operator0 \ name: value)%text}) <<123>>)
-    (#4 block (node x => x))
-    (#5 block (map (op \ name: value)) <<4>>)
+    (#4 block ({op_expr%node x => x%op_expr}))
+    (#5 block (map ({op_expr%op \ name: value%op_expr})) <<4>>)
     (#6 block (map {empty%%empty}) <<123>>)
 }\n""",
             ),
@@ -1790,27 +1785,27 @@ inline function fct ({var%i0: d0 123%var};)
 {
   diagram
     (#0 expr forward
-<<n>>
-diagram
-      (#3 block (node x => x)
-      #pragma diagram {"xy":"h-1037;v-5413","wh":"20000;14000"} #end)
-      (var
-          x0;)
-returns ()
+      <<n>>
+      diagram
+        (#3 block ({op_expr%node x => x%op_expr})
+        #pragma diagram {"xy":"h-1037;v-5413","wh":"20000;14000"} #end)
+        (var
+            x0;)
+      returns ()
     #pragma diagram {"xy":"H13162;V22138","wh":"48600;40000"} #end)
-    (#4 block (node x => x mod 2 = 0)
+    (#4 block ({op_expr%node x => x mod 2 = 0%op_expr})
     #pragma diagram {"xy":"H-25157;V56369","wh":"42675;14000"} #end)
-    (#14 block (node x => x mod 2 = 0)
+    (#14 block ({op_expr%node x => x mod 2 = 0%op_expr})
     #pragma diagram {"xy":"H-8657;V86269","wh":"42675;14000"} #end)
-    (#1 block (map (node x => not A)) <<123>>
+    (#1 block (map ({op_expr%node x => not A%op_expr})) <<123>>
     #pragma diagram {"xy":"H63200;V50700","wh":"24000;18000"} #end)
-    (#5 $wxkyh qcjh block {syntax%node y =>
+    (#5 {luid%$wxkyh qcjh%luid} block {syntax%node y =>
    o <<1>>
 
 
    $12 (y)%syntax}
     #pragma diagram {"xy":"H35275;V91775","wh":"20000;14000"} #end)
-    (#8 block (map (function a => (a[0] + 2 * a[1] + a[2]) / 4)) <<n - 2>>
+    (#8 block (map ({op_expr%function a => (a[0] + 2 * a[1] + a[2]) / 4%op_expr})) <<n - 2>>
     #pragma diagram {"xy":"H-60475;V63038","wh":"25000;18000"} #end)
     (#10 block {text%(node z => z)%text}
     #pragma diagram {"xy":"H-65450;V87000","wh":"20000;14000"} #end)
@@ -1824,7 +1819,8 @@ returns ()
               {var%kusdf c cy%var};)
       state #7 state1
       #pragma diagram {"xy":"h25000;v0","wh":"40000;26000"} #end :
-      :1: #6 until restart #7
+      :1: #6 until 
+      restart #7
       #pragma diagram {"tp":"h20000;v-25|#6 h3333 h3333 h-20000;v-25|#7"} #end;
     #pragma diagram {"xy":"H-8038;V90850","wh":"98000;34000"} #end)
 }
@@ -1865,7 +1861,7 @@ node operator0 (i0: int32;)
     #pragma diagram {"xy":"H-59825;V30028","wh":"20000;14000"} #end)
     (#2 block (G \ X: 42)
     #pragma diagram {"xy":"H-25650;V30028","wh":"20000;14000"} #end)
-    (#3 block (G \ X = 42)
+    (#3 block ({op_expr%G \ X = 42%op_expr})
     #pragma diagram {"xy":"H6275;V30028","wh":"20000;14000"} #end)
     (#4 block (map {syntax%%syntax}) <<{syntax%$$$%syntax}>>
     #pragma diagram {"xy":"H10525;V63162","wh":"24000;18000"} #end)
@@ -1873,9 +1869,10 @@ node operator0 (i0: int32;)
     #pragma diagram {"xy":"H-23650;V63162","wh":"24000;18000"} #end)
     (#8 block (map G) <<4>>
     #pragma diagram {"xy":"H-57825;V62187","wh":"24000;18000"} #end)
-    (#10 block (function x => x + 1_i32)
+    (#10 block ({op_expr%function x => x + 1_i32%op_expr})
     #pragma diagram {"xy":"H-59825;V86000","wh":"20000;14000"} #end)
-}\n""",
+}
+""",
             ),
             (
                 """\
@@ -1890,7 +1887,8 @@ node G (X: int32;
         Y: int32;)
   returns ()
 {
-}\n""",
+}
+""",
             ),
             (
                 """\
@@ -1903,7 +1901,8 @@ node G (X: int32;
 {syntax_text%node operator1 (i0: int32)
 returns (o0: int32)
 {
-%syntax_text}""",
+%syntax_text}
+""",
             ),
             (
                 """\
@@ -1920,7 +1919,8 @@ returns (o0: int32)
 {
   o0 = forward restart <<4>>
   returns (o);
-}%syntax_text}""",
+}%syntax_text}
+""",
             ),
             (
                 """\
@@ -1933,7 +1933,8 @@ returns (o0: int32)
 {syntax_text%node opera tor3 (i0: int32)
 returns (o0: int32)
 {
-}%syntax_text}""",
+}%syntax_text}
+""",
             ),
             (
                 """\
@@ -1970,6 +1971,7 @@ function operator4 <<{syntax%4%syntax}>> (i0: int32)
 """,
                 """\
 {const%const con st0: int32 = 0;%const}
+
 const const1: int32 = 0;
 
 function operator4 <<{syntax%4%syntax}>> (i0: int32;)
@@ -1984,7 +1986,8 @@ function operator4 <<{syntax%4%syntax}>> (i0: int32;)
 
 0: 1%var};
         {var%x1: 2%var};)
-}\n""",
+}
+""",
             ),
             (
                 """\
@@ -2134,7 +2137,8 @@ node {syntax%operator 6%syntax} <<{syntax%N 0%syntax}>> (i0: int32;)
       #pragma diagram {"xy":"h-25000;v0","wh":"40000;26000"} #end :
       initial state #14 state1
       #pragma diagram {"xy":"h25000;v0","wh":"40000;26000"} #end :
-      :1: #13 until restart #14
+      :1: #13 until 
+      restart #14
       #pragma diagram {"tp":"h20000;v150|#13 h3333 h3333 h-20000;v150|#14"} #end;
     #pragma diagram {"xy":"H33450;V29550","wh":"98000;34000"} #end)
     (activate $ActivateIf0
@@ -2220,23 +2224,23 @@ class TestDiagram_Scope_DefByCase:
             # transition_decl
             (
                 "diagram (automaton $auto_1 :1: #1 until restart A;)",
-                "diagram\n  (automaton $auto_1\n    :1: #1 until restart A\n    ;)",
+                "diagram\n  (automaton $auto_1\n    :1: #1 until \n    restart A;)",
             ),
             (
                 "diagram (automaton $au_1 :2: A unless {var C;} resume B;)",
-                "diagram\n  (automaton $au_1\n    :2: A unless {\n      var\n         C;\n    }\n    \n    resume B\n    ;)",
+                "diagram\n  (automaton $au_1\n    :2: A unless \n    {\n      var\n         C;\n    }\n    resume B;)",
             ),
             (
                 "diagram (automaton :3: A unless {var C;} resume #1;)",
-                "diagram\n  (automaton\n    :3: A unless {\n      var\n         C;\n    }\n    \n    resume #1\n    ;)",
+                "diagram\n  (automaton\n    :3: A unless \n    {\n      var\n         C;\n    }\n    resume #1;)",
             ),
             (
                 "diagram (automaton :4: #1 until {diagram} restart #2;)",
-                "diagram\n  (automaton\n    :4: #1 until {\n      diagram\n        \n    }\n    \n    restart #2\n    ;)",
+                "diagram\n  (automaton\n    :4: #1 until \n    {\n      diagram\n        \n    }\n    restart #2;)",
             ),
             (
                 "diagram (automaton : : A until {diagram (wire #1 => self)} restart B;)",
-                "diagram\n  (automaton\n    : : A until {\n      diagram\n        (wire #1 => self)\n    }\n    \n    restart B\n    ;)",
+                "diagram\n  (automaton\n    : : A until \n    {\n      diagram\n        (wire #1 => self)\n    }\n    restart B;)",
             ),
             ("diagram (automaton state A:)", "diagram\n  (automaton\n    state A :)"),
             (
@@ -2245,19 +2249,19 @@ class TestDiagram_Scope_DefByCase:
             ),
             (
                 "diagram (automaton $auto_1 initial state #1 A: unless resume #2; until restart #3;)",
-                "diagram\n  (automaton $auto_1\n    initial state #1 A :\n      unless\n      resume #2\n      ;\n      until\n      restart #3\n      ;)",
+                "diagram\n  (automaton $auto_1\n    initial state #1 A :\n      unless\n      \n      resume #2;\n      until\n      \n      restart #3;)",
             ),
             (
                 "diagram (automaton $b_1 initial state #2 A: unless if (true) restart B;)",
-                "diagram\n  (automaton $b_1\n    initial state #2 A :\n      unless\n      if (true)\n      restart B\n      ;)",
+                "diagram\n  (automaton $b_1\n    initial state #2 A :\n      unless\n      if (true)\n      restart B;)",
             ),
             (
-                "diagram (automaton initial state #1 A: unless if (A ^ N) {var C;} restart B;)",
-                "diagram\n  (automaton\n    initial state #1 A :\n      unless\n      if (A ^ N)\n      {\n        var\n           C;\n      }\n      \n      restart B\n      ;)",
+                "diagram (automaton initial state #1 A: unless if (A^N) {var C;} restart B;)",
+                "diagram\n  (automaton\n    initial state #1 A :\n      unless\n      if (A^N)\n      {\n        var\n           C;\n      }\n      restart B;)",
             ),
             (
                 "diagram (automaton $auto_1 initial state #1 A: unless if (last 'T) if (A * 2) resume B end;)",
-                "diagram\n  (automaton $auto_1\n    initial state #1 A :\n      unless\n      if (last 'T)\n      if (A * 2)\n      resume B\n       end;)",
+                "diagram\n  (automaton $auto_1\n    initial state #1 A :\n      unless\n      if (last 'T)\n        if (A * 2)\n        resume B end;)",
             ),
             (
                 """\
@@ -2289,11 +2293,10 @@ diagram
   (automaton
     state #1 A :
       unless
+      
       {
       }
-      
-      restart #6
-      ;
+      restart #6;
       diagram
         
       until
@@ -2302,29 +2305,23 @@ diagram
         diagram
           
       }
-      
       if (true)
-      restart #2
-      
-      elsif (last 'C)
-      resume #3
-      
-      elsif (D + E >= 20)
-      restart #5
-      
-      elsif (not F)
-      if (pre H)
-      resume K
-      
-      else {
-        diagram
-          
-      }
-      
-      restart J
-       end
-      else restart #4
-       end;)""",
+        restart #2
+        elsif (last 'C)
+        resume #3
+        elsif (D + E >= 20)
+        restart #5
+        elsif (not F)
+          if (pre H)
+          resume K
+          else 
+          {
+            diagram
+              
+          }
+          restart J end
+        else 
+        restart #4 end;)""",
             ),
             (
                 """\
@@ -2356,26 +2353,29 @@ diagram
     #pragma diagram {"xy":"h23249;v11400","wh":"34688;12000"} #end :
     state #12 red
     #pragma diagram {"xy":"h23249;v-11000","wh":"34688;11200"} #end :
-    :1: #4 until restart #8
+    :1: #4 until 
+    restart #8
     #pragma diagram {"tp":"h-55;v5600|#4 v500 v500 v500 v7650 h8678;v7650 h8678 h5785 h12904 h-17344;v0|#8"} #end;
-    :1: #8 until restart #12
+    :1: #8 until 
+    restart #12
     #pragma diagram {"tp":"h0;v-6000|#8 v-3600 v-3600 h0;v5600|#12"} #end;
-    :1: #12 until restart #4
+    :1: #12 until 
+    restart #4
     #pragma diagram {"tp":"h-17344;v0|#12 h-6322 h-6323 h17688;v0|#4"} #end;
   #pragma diagram {"xy":"H48306;V26350","wh":"106877;43200"} #end)""",
             ),
             (
                 "diagram (automaton $trans :1: A until if (true) :2: if (false) restart C end;)",
-                "diagram\n  (automaton $trans\n    :1: A until if (true)\n    :2: if (false)\n    restart C\n     end;)",
+                "diagram\n  (automaton $trans\n    :1: A until if (true)\n      :2: if (false)\n      restart C end;)",
             ),
             (
                 "diagram (automaton $trans :3: A until if (true) : : else restart C end;)",
-                "diagram\n  (automaton $trans\n    :3: A until if (true)\n    : : else restart C\n     end;)",
+                "diagram\n  (automaton $trans\n    :3: A until if (true)\n      : : else \n      restart C end;)",
             ),
             ("diagram (automaton $auto)", "diagram\n  (automaton $auto)"),
             (
                 "diagram (() : automaton $lhs_def :0: A until if (false) : : else restart C end;)",
-                "diagram\n  (() : automaton $lhs_def\n    :0: A until if (false)\n    : : else restart C\n     end;)",
+                "diagram\n  (() : automaton $lhs_def\n    :0: A until if (false)\n      : : else \n      restart C end;)",
             ),
             (
                 "diagram (_, _, .. : automaton $auto)",
@@ -2478,34 +2478,36 @@ diagram
                 """\
 diagram
   (activate $EncodingMsg when msg match
-  | Position {x} : {
-    diagram
-      (#1 block PositionEncoding
-      #pragma diagram {"xy":"h-476;v-150","wh":"17097;7000"} #end)
-      (#2 expr x
-      #pragma diagram {"xy":"h-18876;v-150"} #end)
-      (#3 def code
-      #pragma diagram {"xy":"h17924;v-150"} #end)
-      
-      (#4 wire #2 => #1)
-      (#5 wire #1 => #3
-      #pragma diagram {"wp":"v0|#1 #3"} #end)
-  #pragma diagram {"xy":"h0;v-5400","wh":"54003;13300"} #end
-  }
-  | Alarm {x} : {
-    diagram
-      (#6 block AlarmEncoding
-      #pragma diagram {"xy":"h0;v300","wh":"17097;7000"} #end)
-      (#7 expr x
-      #pragma diagram {"xy":"h-18575;v300"} #end)
-      (#8 def code
-      #pragma diagram {"xy":"h17623;v300"} #end)
-      
-      (#9 wire #7 => #6)
-      (#10 wire #6 => #8
-      #pragma diagram {"wp":"v0|#6 #8"} #end)
-  #pragma diagram {"xy":"h0;v11950","wh":"54003;13000"} #end
-  }
+    | Position {x} :
+      {
+        diagram
+          (#1 block PositionEncoding
+          #pragma diagram {"xy":"h-476;v-150","wh":"17097;7000"} #end)
+          (#2 expr x
+          #pragma diagram {"xy":"h-18876;v-150"} #end)
+          (#3 def code
+          #pragma diagram {"xy":"h17924;v-150"} #end)
+          
+          (#4 wire #2 => #1)
+          (#5 wire #1 => #3
+          #pragma diagram {"wp":"v0|#1 #3"} #end)
+      #pragma diagram {"xy":"h0;v-5400","wh":"54003;13300"} #end
+      }
+    | Alarm {x} :
+      {
+        diagram
+          (#6 block AlarmEncoding
+          #pragma diagram {"xy":"h0;v300","wh":"17097;7000"} #end)
+          (#7 expr x
+          #pragma diagram {"xy":"h-18575;v300"} #end)
+          (#8 def code
+          #pragma diagram {"xy":"h17623;v300"} #end)
+          
+          (#9 wire #7 => #6)
+          (#10 wire #6 => #8
+          #pragma diagram {"wp":"v0|#6 #8"} #end)
+      #pragma diagram {"xy":"h0;v11950","wh":"54003;13000"} #end
+      }
   #pragma diagram {"xy":"H-239924;V-82400","wh":"57003;39900"} #end)""",
             ),  # match activation,
             (
@@ -2592,11 +2594,11 @@ function blur_map <<n>> (A: float64^n)
 }
 """,
                 """\
-function blur_map <<n>> (A: float64 ^ n;)
-  returns (B: float64 ^ n;)
+function blur_map <<n>> (A: float64^n;)
+  returns (B: float64^n;)
 {
   diagram
-    (#0 block #pragma path #end #pragma ident #end #pragma path #end #pragma ident #end M::Sqr
+    (#0 block M::Sqr
     #pragma diagram {"xy":"H-152743;V-102000","wh":"12000;7000"} #end)
     (#1 block {text%(+)%text}
     #pragma diagram {"xy":"H-129793;V-110450","wh":"12000;23900"} #end)
@@ -2608,7 +2610,7 @@ function blur_map <<n>> (A: float64 ^ n;)
     #pragma diagram {"xy":"H-80481;V-16850","wh":"11501;3200"} #end)
     (#5 expr C
     #pragma diagram {"xy":"H-109024;V-18750"} #end)
-    (#6 block (map (function a => (a[0] + 2 * a[1] + a[2]) / 4)) <<n - 2>>
+    (#6 block (map ({op_expr%function a => (a[0] + 2 * a[1] + a[2]) / 4%op_expr})) <<n - 2>>
     #pragma diagram {"xy":"H-56225;V-36650","wh":"25000;18000"} #end)
     (#8 expr A
     #pragma diagram {"xy":"H-110650;V-34650"} #end)
@@ -2621,19 +2623,21 @@ function blur_map <<n>> (A: float64 ^ n;)
     (var
         C;)
     (activate $pragma when msg match
-    | C::D {A} : {
-      var
-         V;
-    
-    }
+      | C::D {A} :
+        {
+          var
+             V;
+        }
     #pragma diagram {"xy":"H-31761;V-6050","wh":"44028;28800"} #end)
     (() : activate $pragma1 when false match
-    | C::D {A} : {
-      var
-         V;
-    
-    }
-    #pragma diagram {"xy":"H-31761;V-6050","wh":"44028;28800"} #end)\n}\n""",
+      | C::D {A} :
+        {
+          var
+             V;
+        }
+    #pragma diagram {"xy":"H-31761;V-6050","wh":"44028;28800"} #end)
+}
+""",
             ),
             (
                 """\
@@ -2661,7 +2665,7 @@ function node7 ()
     #pragma diagram {"xy":"H28800;V-11600","wh":"24000;3200"} #end)
     (let _, _, _ = last 'T;
     #pragma diagram {"xy":"H29800;V3325","wh":"26000;3200"} #end)
-    (let () = 'A' ^ 4;
+    (let () = 'A'^4;
     #pragma diagram {"xy":"H26800;V-39100","wh":"20000;3200"} #end)
     (let _ $item = false;
     #pragma diagram {"xy":"H28800;V-26525","wh":"24000;3200"} #end)
@@ -2696,7 +2700,7 @@ function node7 ()
     #pragma diagram {"xy":"H28800;V-11600","wh":"24000;3200"} #end)
     (let _, _, _ = last 'T;
     #pragma diagram {"xy":"H29800;V3325","wh":"26000;3200"} #end)
-    (let () = 'A' ^ 4;
+    (let () = 'A'^4;
     #pragma diagram {"xy":"H26800;V-39100","wh":"20000;3200"} #end)
     (let _ $item = false;
     #pragma diagram {"xy":"H28800;V-26525","wh":"24000;3200"} #end)
@@ -2711,7 +2715,7 @@ function node7 ()
 function ft (A: uint16 default = 0)
   returns (B: uint16)
 {
-assume $ass: A::B <<N, M ^ 2>> $path_id (G1: A + B, G2: false, G3: 'C' ^ 2);
+assume $ass: A::B <<N, M^2>> $path_id (G1: A + B, G2: false, G3: 'C'^2);
 assume $asr: transpose {1, 0b0, 0xff, 0o4} <<1, 2>> $trans (G1: A / B, G2: true, G3: 2);
     $mer: merge (M: false, G: not C);
     $win: window <<42>> (false) (true);
@@ -2753,7 +2757,7 @@ function ft (A: uint16 default = 0;)
   returns (B: uint16;)
 {
   assume
-        $ass: A::B <<N, M ^ 2>> $path_id (G1: A + B, G2: false, G3: 'C' ^ 2);
+        $ass: A::B <<N, M^2>> $path_id (G1: A + B, G2: false, G3: 'C'^2);
   assume
         $asr: transpose {1, 0b0, 0xff, 0o4} <<1, 2>> $trans (G1: A / B, G2: true, G3: 2);
         $mer: merge (M: false, G: not C);
@@ -2771,7 +2775,6 @@ function ft (A: uint16 default = 0;)
       (expr (activate pack <<6>> every pre C default last 'T) (true))
       (expr (restart (fold (+) <<7>>) every (case true of | true: true | false: last 'T)) (A * 2)))
     (#1 $ex expr (function (B: int32; C: uint16) returns (D: int32) {
-    
     }) (C: A))
     (expr (A::B::C <<5, 7>> \ _, D: false) (B: K))
     (#2 expr (node A, B emit
@@ -2791,21 +2794,20 @@ function ft (A: uint16 default = 0;)
           (block mapfoldi (@)))
       (#7 $block block flatten \ _, _, _, I: (true :> bool)))
     (let () : automaton $let_au
-      :2: #10 unless if (false)
-      resume Q
-      ;;)
+                :2: #10 unless if (false)
+                resume Q;;)
     (let _, .. : activate $let_act when false match
-    | U::V {X} : {
-      emit
-          $emit 'T if true;
-    
-    }
-    | 'P' : () = pre A;
-    | default : {
-    
-    };)
+                   | U::V {X} :
+                     {
+                       emit
+                           $emit 'T if true;
+                     }
+                   | 'P' :
+                     () = pre A;
+                   | default :
+                     {
+                     };)
     (#1 $ex expr (node (B: uint32; C: float32) returns (D: float64) {
-    
     }) (C: A, D, E: F))
 }
 """,
@@ -2816,6 +2818,7 @@ function ft (A: uint16 default = 0;)
         expected = gen_swan_version() + "\n" + expected
         swan_obj = parser.module_body(SwanString(gen_swan_version() + "\n" + body))
         res = swan_to_str(swan_obj)
+        # log_diff(actual=res, expected=expected, winmerge=True)
         assert res == expected
 
 
@@ -2838,7 +2841,7 @@ class TestElements:
         [
             ("C1=3+4", "C1 = 3 + 4"),
             ("true", "true"),
-            ("+x", "+ x"),
+            ("+x", "+x"),
             ("X when(CK match A::B _)", "X when (CK match A::B _)"),
         ],
     )

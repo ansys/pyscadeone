@@ -79,3 +79,13 @@ PyScadeOne uses `pytest`. In the main directory use:
     pytest
 
 Tests are in `tests` folder. Please add your own tests for non-regression.
+
+Documentation
+^^^^^^^^^^^^^
+
+PyScadeOne uses UML diagrams to document parts of the classes. The diagrams are generated using `PlantUML <https://plantuml.com/>`_
+from the `.puml` files in the `docs/source/` folder. The command is:
+
+.. code::
+
+    plantuml -tsvg docs/source/*.puml

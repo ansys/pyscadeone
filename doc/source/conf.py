@@ -39,8 +39,12 @@ supported_versions.write_text(".. Generated files from conf.py\n\n" + FormatVers
 
 # Copy button customization ---------------------------------------------------
 # exclude traditional Python prompts from the copied code
-copybutton_prompt_text = r">>> ?|\.\.\. "
-copybutton_prompt_is_regexp = True
+# Using copybutton_prompt_text keeps only lines starting with the prompt
+# which is not what we want when we include .py with prompts in comments/docstrings.
+# copybutton_prompt_text = r">>> ?|\.\.\. "
+# copybutton_prompt_is_regexp = True
+# exclude the following lines from the copy button, based on Pygments
+copybutton_exclude = ".linenos, .gp, .go"
 
 # Sphinx extensions
 
@@ -76,7 +80,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     # kept here as an example
     # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    # "numpy": ("https://numpy.org/devdocs", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
     # "matplotlib": ("https://matplotlib.org/stable", None),
     # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     # "pyvista": ("https://docs.pyvista.org/", None),
@@ -88,6 +92,9 @@ intersphinx_mapping = {
 numpydoc_show_class_members = False
 numpydoc_xref_param_type = True
 #
+# Do not: transform Optional[X] to X | None
+# Requires https://jbms.github.io/sphinx-immaterial/ ?
+# python_transform_type_annotations_pep604 = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -163,3 +170,24 @@ linkcheck_ignore = [
     "https://www.ansys.com/*",
 ]
 linkcheck_exclude_documents = ["changelog.rst"]
+
+# PyAnsys tags configuration
+html_context = {"pyansys_tags": ["Embedded Software"]}
+
+# Check for references where target cannot be found
+nitpicky = True
+
+nitpick_ignore = [
+    ("py:obj", "ScadeOneException"),
+    ("py:obj", "Path"),
+]
+
+nitpick_ignore_regex = [
+    (r"py:class", r".*"),  # :-(
+    (r"py:meth", r".*"),  # TBC
+    (r"py:obj", r".*"),  # :-(
+    (r"py:func", r".*"),  # TBC
+]
+
+# number figures, tables, and allow to use :numref: in the text
+numfig = True

@@ -1,6 +1,0 @@
-Additional pragmas have been automatically added:
-
-StpImporter::S:
-  #pragma cg Ada:name S #end
-  #pragma cg C:name S #end
-

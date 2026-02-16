@@ -1,0 +1,11 @@
+-- version swan: 2025.2 graph: 2.1
+type #pragma cg C:name FLAG #end flag = enum {#pragma cg C:enum_val 4 #end Blue, Green};
+
+{signature%node decl_as_text (i0: int32)
+           returns (o0: int32);%signature}
+
+type Position = {#pragma doc X #end x: float32, #pragma doc Y #end y: float32};
+
+type Coordinate = 
+   #pragma doc Polar #end Polar {r: float32, t: float32}
+ | #pragma doc Cartesian #end Cartesian { Position }  ;

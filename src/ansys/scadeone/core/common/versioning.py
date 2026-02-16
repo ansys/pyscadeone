@@ -64,7 +64,7 @@ class VersionManager:
             buffer += f"- {self.description(k)}: {self.version(k)}\n"
         return buffer
 
-    def load_versions(self, version_file: Path):
+    def load_versions(self, version_file: Path) -> None:
         """Load the versions from the json file file.
 
         Parameters
@@ -88,7 +88,7 @@ class VersionManager:
             if not (isinstance(v, dict) and "version" in v and "description" in v):
                 raise ScadeOneException(f"{version_file}: Invalid version for {k}")
 
-    def version(self, format: str):
+    def version(self, format: str) -> str:
         """Get the version for the format.
 
         Parameters
@@ -105,7 +105,7 @@ class VersionManager:
             raise ScadeOneException(f"Unknown format: {format}")
         return self._format_versions[format]["version"]
 
-    def description(self, format: str):
+    def description(self, format: str) -> str:
         """Get the description for the format.
 
         Parameters
@@ -122,7 +122,7 @@ class VersionManager:
             raise ScadeOneException(f"Unknown format: {format}")
         return self._format_versions[format]["description"]
 
-    def check(self, format: str, version: str):
+    def check(self, format: str, version: str) -> None:
         """Check if the version is supported for the format.
 
         Parameters
@@ -161,13 +161,13 @@ FormatVersions = VersionManager()
 FormatVersions.load_versions(VersionFile)
 
 
-def gen_swan_version(is_harness=False):
+def gen_swan_version(is_test_module=False) -> str:
     """Generate the version for a Swan file.
 
     Parameters
     ----------
-    is_harness : bool
-        True if the harness version is needed
+    is_test_module : bool
+        True if the test module version is needed
 
     Returns
     -------
@@ -177,6 +177,6 @@ def gen_swan_version(is_harness=False):
     version = "-- version"
     version += f" swan: {FormatVersions.version('swan')}"
     version += f" graph: {FormatVersions.version('graph')}"
-    if is_harness:
+    if is_test_module:
         version += f" swant: {FormatVersions.version('swant')}"
     return version

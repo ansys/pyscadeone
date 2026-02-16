@@ -1,3 +1,5 @@
+.. _ref_model_navigation:
+
 Model navigation
 ================
 
@@ -14,4 +16,5 @@ A general tree walk is implemented by the :py:class:`Visitor` class.
 
    namespace
    diagram
+   statemachine
    visitor

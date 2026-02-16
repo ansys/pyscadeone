@@ -31,7 +31,7 @@ to interface with the dotnet DLLs and to transform F# data structure into the
 """
 
 import logging
-from typing import Union
+from typing import Callable, Union
 
 # dotnet configuration
 import ansys.scadeone.core.model.dotnet  # noqa
@@ -48,7 +48,7 @@ from ANSYS.SONE.Infrastructure.Services.Serialization.BNF.Parsing import (  # ty
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.storage import SwanStorage
 
-import ansys.scadeone.core.swan as S
+import ansys.scadeone.core.swan as Swan
 
 from .parser import Parser
 from .pyofast import (
@@ -57,10 +57,11 @@ from .pyofast import (
     expressionOfAst,
     interfaceOfAst,
     moduleOfAst,
+    testOfAst,
     operatorBlockOfAst,
     operatorExprOfAst,
     operatorOfAst,
-    signatureOfAst,
+    operatorDeclarationOfAst,
     scopeSectionOfAst,
 )
 
@@ -96,23 +97,23 @@ class ParserLogger(ILogger):
     # https://stackoverflow.com/questions/49736531/implement-a-c-sharp-interface-in-python-for-net
     __namespace__ = "MyPythonLogger"
 
-    def _log(self, category, message, log_fn):
+    def _log(self, category: str, message: str, log_fn: Callable) -> None:
         log_fn(f"{category}: {message}")
 
     # pylint: disable=invalid-name
-    def Info(self, category, message):
+    def Info(self, category: str, message: str) -> None:
         self._log(category, message, self.logger.info)
 
-    def Warning(self, category, message):
+    def Warning(self, category: str, message: str) -> None:
         self._log(category, message, self.logger.warning)
 
-    def Error(self, category, message):
+    def Error(self, category: str, message: str) -> None:
         self._log(category, message, self.logger.error)
 
-    def Exception(self, category, message):
+    def Exception(self, category: str, message: str) -> None:
         self._log(category, message, self.logger.exception)
 
-    def Debug(self, category, message):
+    def Debug(self, category: str, message: str) -> None:
         self._log(category, message, self.logger.debug)
 
 
@@ -124,7 +125,7 @@ class SwanParser(Parser):
     def __init__(self, logger: logging.Logger) -> None:
         self._logger = ParserLogger(logger)
 
-    def _parse(self, rule_fn, swan: SwanStorage, parse_error_ok: bool = False):
+    def _parse(self, rule_fn: Callable, swan: SwanStorage, parse_error_ok: bool = False) -> tuple:
         """Call F# parser with a given rule
 
         Parameters
@@ -159,7 +160,7 @@ class SwanParser(Parser):
             raise ScadeOneException(f"Internal: {e}")
         return result
 
-    def module_body(self, source: SwanStorage) -> S.ModuleBody:
+    def module_body(self, source: SwanStorage) -> Swan.ModuleBody:
         """Parse a Swan module from a SwanStorage object.
 
             The *content()* method is called to get the code.
@@ -175,13 +176,19 @@ class SwanParser(Parser):
         -------
         ModuleBody
             Instance of ModuleBody.
+
+        Raises
+        ------
+        ScadeOneException
+            If the Swan version is not compatible with the module body parsing.
         """
-        source.check_swan_version()
+        if not source.check_swan_version():
+            raise ScadeOneException("Invalid Swan version for module body parsing.")
         result = self._parse(Reader.parse_body, source)
         return moduleOfAst(source.name, result.Item1)
 
-    def test_harness(self, source: SwanStorage) -> S.TestModule:
-        """Parse a test harness from a SwanStorage object.
+    def test_module(self, source: SwanStorage) -> Swan.TestModule:
+        """Parse a Swan test from a SwanStorage object.
 
             The *content()* method is called to get the code.
 
@@ -196,12 +203,18 @@ class SwanParser(Parser):
         -------
         TestModule
             Instance of TestModule.
-        """
-        # source.check_swan_version()
-        result = self._parse(Reader.parse_body, source)
-        return moduleOfAst(source.name, result)
 
-    def module_interface(self, source: SwanStorage) -> S.ModuleInterface:
+        Raises
+        ------
+        ScadeOneException
+            If the Swan version is not compatible with the test harness parsing.
+        """
+        if not source.check_swant_version():
+            raise ScadeOneException("Invalid Swan version for test module parsing.")
+        result = self._parse(Reader.parse_test, source)
+        return testOfAst(source.name, result.Item1)
+
+    def module_interface(self, source: SwanStorage) -> Swan.ModuleInterface:
         """Parse a Swan interface from a SwanStorage object.
 
             The *content()* method is called to get the code.
@@ -217,14 +230,20 @@ class SwanParser(Parser):
         -------
         ModuleInterface
             Instance of ModuleInterface.
+
+        Raises
+        ------
+        ScadeOneException
+            If the Swan version is not compatible with the interface parsing.
         """
-        source.check_swan_version()
+        if not source.check_swan_version():
+            raise ScadeOneException("Invalid Swan version for module interface parsing.")
         result = self._parse(Reader.parse_interface, source)
         return interfaceOfAst(source.name, result.Item1)
 
-    def declaration(self, source: SwanStorage) -> S.Declaration:
+    def declaration(self, source: SwanStorage) -> Swan.Declaration:
         """Parse a Swan declaration:
-          type, const, sensor, group, use, operator (signature or with body).
+          type, const, sensor, group, use, operator (declaration or definition).
 
         Parameters
         ----------
@@ -239,7 +258,7 @@ class SwanParser(Parser):
         ast = self._parse(Reader.parse_declaration, source)
         return declarationOfAst(ast)
 
-    def equation(self, source: SwanStorage) -> S.Equation:
+    def equation(self, source: SwanStorage) -> Swan.Equation:
         """Parse a Swan equation.
 
         Parameters
@@ -255,7 +274,7 @@ class SwanParser(Parser):
         ast = self._parse(Reader.parse_equation, source)
         return equationOfAst(ast)
 
-    def expression(self, source: SwanStorage) -> S.expressions:
+    def expression(self, source: SwanStorage) -> Swan.Expression:
         """Parse a Swan expression
 
         Parameters
@@ -271,7 +290,7 @@ class SwanParser(Parser):
         ast = self._parse(Reader.parse_expr, source)
         return expressionOfAst(ast)
 
-    def scope_section(self, source: SwanStorage) -> S.ScopeSection:
+    def scope_section(self, source: SwanStorage) -> Swan.ScopeSection:
         """Parse a Swan scope section
 
         Parameters
@@ -287,7 +306,7 @@ class SwanParser(Parser):
         ast = self._parse(Reader.parse_scope_section, source)
         return scopeSectionOfAst(ast)
 
-    def op_expr(self, source: SwanStorage) -> S.OperatorExpression:
+    def op_expr(self, source: SwanStorage) -> Swan.OperatorExpression:
         """Parse a Swan operator expression
 
         Parameters
@@ -303,7 +322,9 @@ class SwanParser(Parser):
         ast = self._parse(Reader.parse_op_expr, source)
         return operatorExprOfAst(ast)
 
-    def operator_block(self, source: SwanStorage) -> Union[S.OperatorBase, S.OperatorExpression]:
+    def operator_block(
+        self, source: SwanStorage
+    ) -> Union[Swan.OperatorInstance, Swan.OperatorExpression, Swan.OperatorExpressionInstance]:
         """Parse a Swan operator block
 
         *operator_block* ::= *operator* | *op_expr*
@@ -315,14 +336,16 @@ class SwanParser(Parser):
 
         Returns
         -------
-        Union[S.OperatorBase, S.OperatorExpression]
+        Union[S.OperatorBase, S.OperatorExpression, S.OperatorExpressionInstance]
             Instance of the *operator* or *op_expr*
         """
         ast = self._parse(Reader.parse_operator_block, source)
         return operatorBlockOfAst(ast)
 
-    def operator_decl(self, source: SwanStorage) -> Union[S.Operator, S.Signature, None]:
-        """Parse a Swan operator declaration
+    def operator_decl_or_def(
+        self, source: SwanStorage
+    ) -> Union[Swan.OperatorDefinition, Swan.OperatorDeclaration, None]:
+        """Parse a Swan operator declaration or definition.
 
         Parameters
         ----------
@@ -331,13 +354,13 @@ class SwanParser(Parser):
 
         Returns
         -------
-        S.Operator|S.Signature
-            Instance of the operator, or its signature
+        S.OperatorDefinition|S.OperatorDeclaration|None
+            Instance of the operator declaration or definition.
             Returns None if expected parsing error occurs (for markup parsing)
         """
         ast = self._parse(Reader.parse_user_operator, source, parse_error_ok=True)
         if ast is None:
             return None
         if ast.OpBody.IsSDEmpty:
-            return signatureOfAst(ast)
+            return operatorDeclarationOfAst(ast)
         return operatorOfAst(ast)

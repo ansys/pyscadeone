@@ -21,7 +21,7 @@ The operator is first retrieved from the module:
 Diagram block
 -------------
 
-The operator's diagram block can be accessed with the :py:attr:`ansys.scadeone.core.swan.Operator.diagrams` property.
+The operator's diagram block can be accessed with the :py:attr:`ansys.scadeone.core.swan.OperatorDefinition.diagrams` property.
 
 .. literalinclude:: quad_flight_control.py
     :start-after: Step 2
@@ -64,22 +64,29 @@ One can also get the operator's targets using the
 Navigate from Input to Output
 -----------------------------
 One can navigate inside the **MotorControl** operator selecting a starting and an ending point.
-One take **attitudeCmd** input as starting point and one navigate through the wires to get the blocks on the route
-until one arrive at the ending point, **rotorCmd**.
+One takes **attitudeCmd** input as starting point and one navigates through the wires to get the blocks on the route
+until one arrives at the ending point, **rotorCmd**.
 
 .. figure:: images/input_output_navigation.png
 
-First, one get the **attitudeCmd** input with its fields.
+First, the **MotoControl** operator is selected, then its **$Control** sub-diagram is extracted.
+
+.. literalinclude:: quad_flight_control.py
+    :start-at: # Get the 'MotorControl' operator
+    :end-at: control_diag =
+
+Then, one gets the **attitudeCmd** input with its fields, that is to say, expression
+blocks using **attitudeCmd** are selected as starting blocks.
 
 .. literalinclude:: quad_flight_control.py
     :start-at: def input_filter
     :end-at: attitude_cmd_fields =
 
 
-Once one have the input, one can move to the next object diagram using
+Once one has the inputs, one can move to the next object diagram using
 the :py:attr:`ansys.scadeone.core.swan.DiagramObject.targets` property.
 For each object diagram target, one can move to the
-next object, and so on until one arrive at the output. For each move, one can save the navigated object.
+next object, and so on until one arrives at the output. For each move, one can save the navigated object.
 
 .. literalinclude:: quad_flight_control.py
     :start-at: def contains_output

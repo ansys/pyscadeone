@@ -33,7 +33,7 @@
 
 {{ FMI_INCLUDES }}
 
-#include "FMI/fmi2Functions.h"
+#include "fmi2Functions.h"
 
 #define ENSURE_USED(x) (void)(x)
 
@@ -746,11 +746,11 @@ fmi2Status fmi2DoStep(fmi2Component c, fmi2Real time, fmi2Real step, fmi2Boolean
 {{ FMI_INIT_CONTEXT | indent(8, true) }}
         comp->initDone = fmi2True;
     }
-    if (comp->nextTime >= finalTime + 100 * DBL_EPSILON) {
+    if (comp->nextTime >= finalTime + 100 * __DBL_EPSILON__) {
         DO_FMI_DBG_LOG("** nextTime=%.17g, finalTime=%.17g => no SCADE cycle\n", comp->nextTime, finalTime);
     }
     else {
-        while (comp->nextTime < finalTime + 100 * DBL_EPSILON) {
+        while (comp->nextTime < finalTime + 100 * __DBL_EPSILON__) {
             DO_FMI_DBG_LOG("nextTime=%.17g, finalTime=%.17g => SCADE cycle\n", comp->nextTime, finalTime);
             /* Executing SCADE cycle */
 {{ FMI_CALL_CYCLE | indent(12, true) }}
@@ -876,7 +876,7 @@ fmi2Status fmi2NewDiscreteStates(fmi2Component c, fmi2EventInfo* eventInfo)
 {{ FMI_INIT_CONTEXT | indent(8, true) }}
         comp->initDone = fmi2True;
     } 
-    if (comp->nextTime <= comp->currentTime + 100 * DBL_EPSILON) {
+    if (comp->nextTime <= comp->currentTime + 100 * __DBL_EPSILON__) {
         DO_FMI_DBG_LOG("SCADE cycle\n", comp->nextTime, comp->currentTime);
         /* Executing SCADE cycle */
 {{ FMI_CALL_CYCLE | indent(8, true) }}

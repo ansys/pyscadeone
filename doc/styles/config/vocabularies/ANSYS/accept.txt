@@ -1,3 +1,4 @@
+_stop_condition
 ansys
 Ansys
 ANSYS
@@ -16,8 +17,10 @@ caplog
 capsys
 codegen
 codespell
+Concat
 const
 coreclr
+DataSource
 data_def
 delt
 diagram_object
@@ -26,8 +29,10 @@ dotnet
 ebnf
 elems
 elsif
+en
 enduml
 enum
+es
 expansion_exp
 expansion_no_exp
 expr
@@ -42,6 +47,7 @@ FSharp
 gcc
 genindex
 get_declaration
+graphviz
 group_renaming
 groupdecl
 Ifte*
@@ -75,9 +81,13 @@ multigroup
 my_app
 namespace
 ndindex
+ne
 numpydoc
+nw
 owner_property
+path_anchor
 path_id
+path_info
 pathid
 pathlib
 platformdirs
@@ -102,7 +112,7 @@ SCADE
 scadeone
 ScadeOne
 scopesections
-short_circuit_operators
+se
 significance_length
 simdata
 simulation_input_type
@@ -114,13 +124,16 @@ static_locals
 stdc
 stpimporter
 Struct*
+sw
 swan_config_end
 swan_obj
 swani
 swant
 SwanVisitor
+Synopsys
 target_adaptation
 test_harness
+test_module
 test_result_file
 texpr
 toctree
@@ -132,6 +145,9 @@ Unary
 ungroup
 use_macros
 useroperator
+var_id
 venv
 vsize
+wn
+ws
 zlib

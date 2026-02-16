@@ -1,0 +1,23 @@
+@startuml
+' Equation
+' left to right direction
+skinparam groupInheritance 2
+
+LetSection *-- "*" Equation
+Equation <|-- ExprEquation
+Equation <|-- DefByCase
+
+ExprEquation *-- EquationLHS
+ExprEquation -- Expression
+EquationLHS *-- "*" LHSItem
+
+DefByCase *-- EquationLHS
+
+class DefByCase
+note left: Base class for:\n- StateMachine\n- ActivateIf\n- ActivateWhen
+
+
+class EquationLHS {
+    +is_partial_lhs: Boolean
+}
+@enduml

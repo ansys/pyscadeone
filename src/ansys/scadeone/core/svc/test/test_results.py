@@ -37,6 +37,8 @@ _SCHEMA = Path(__file__).parents[2] / "libs/test-results-schema.json"
 
 
 class BaseTestResults:
+    """Base class for TestResults to be ignored by pytest."""
+
     __test__ = False
 
 
@@ -191,7 +193,7 @@ class TestResults(BaseTestResults):
         """Returns the test results version."""
         return self._version
 
-    def check_version(self):
+    def check_version(self) -> None:
         """Check the version of the test results.
 
         Raises

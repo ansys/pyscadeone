@@ -15,3 +15,7 @@ The :py:class:`Pragma` class and its subclasses are detailed in the following se
 
    pragma
    diagram_pragma
+   cg_pragmas
+   documentation_pragma
+   traceability_pragma
+   test_pragmas

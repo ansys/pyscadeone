@@ -10,6 +10,8 @@ Expression <|-- ArrayProjection
 Expression <|-- ProjectionWithDefault
 Expression <|-- FunctionalUpdate
 note right: array with update
+Expression <|-- BinaryExpr
+BinaryExpr <|-- ArrayConcatExpr
 
 note as N1
 **flatten**, **reverse**, **transpose**, **pack**:

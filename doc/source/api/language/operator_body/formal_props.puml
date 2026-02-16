@@ -1,0 +1,8 @@
+@startuml
+SwanItem <|-- Assertion
+ScopeSection <|-- AssertionBase
+AssertionBase <|-- AssertSection
+AssertionBase <|-- AssumeSection
+AssertionBase <|-- GuaranteeSection
+AssertionBase *-- Assertion
+@enduml

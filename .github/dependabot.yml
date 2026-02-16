@@ -2,9 +2,11 @@ version: 2
 updates:
 
   - package-ecosystem: "pip"
+    cooldown: "1 day"
     directory: "/"
     schedule:
       interval: "daily"
+      cooldown: "1 day"
     labels:
       - "maintenance"
       - "dependencies"
@@ -12,9 +14,11 @@ updates:
       prefix: "build"
 
   - package-ecosystem: "github-actions"
+    cooldown: "1 day"
     directory: "/"
     schedule:
       interval: "weekly"
+      cooldown: "1 day"
     labels:
       - "maintenance"
     commit-message:

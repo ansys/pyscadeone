@@ -32,18 +32,18 @@ app = ScadeOne()
 project = app.new_project(project_path)
 
 m0_int = project.add_module_interface("module0")
-m0 = project.add_module("module0")
-lib_m0 = project.add_module("lib::module1")
+m0 = project.add_module_body("module0")
+lib_m0 = project.add_module_body("lib::module1")
 
 type0 = m0_int.add_declaration("type type0 = int32")
 const0 = m0.add_constant("const0", "type0", "5")
-op0_int = m0_int.add_signature("op0")
+op0_int = m0_int.add_operator_declaration("op0")
 op0_int.add_input("in0", "int32")
 op0_int.add_input("in1", "int32")
 op0_int.add_output(declaration="out0: int32")
 op0_int.add_output(declaration="out1: int32")
 
-op0 = m0.add_operator("op0")
+op0 = m0.add_operator_definition("op0")
 op0_in0 = op0.add_input("in0", "int32")
 op0_in1 = op0.add_input("in1", "int32")
 op0_out0 = op0.add_output("out0", "int32", default="5")
@@ -56,9 +56,9 @@ op1_str = """
         let out0 = in0 + in1;
     }
 """
-op1 = m0.add_textual_operator(op1_str)
+op1 = m0.add_textual_operator_definition(op1_str)
 
-lib_op = lib_m0.add_operator("libOp")
+lib_op = lib_m0.add_operator_definition("libOp")
 lib_op_in0 = lib_op.add_input("in0", "int32")
 lib_op_out0 = lib_op.add_output("out0", "int32")
 

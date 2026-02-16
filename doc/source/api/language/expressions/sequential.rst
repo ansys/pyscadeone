@@ -3,18 +3,20 @@ Sequential
 
 .. currentmodule:: ansys.scadeone.core.swan
 
-.. list-table:: Sequential Operations
+.. list-table:: Sequential
     :header-rows: 1
 
     * - Operator
-      - Class
-    * - **->** (Initial value)
-      - See :py:class:`BinaryExpr`
-    * - **pre** (Unit delay)
-      - See :py:class:`UnaryExpr`
-    * - **pre** (Initialized unit delay)
-      - See :py:class:`BinaryExpr`
-    * - **window** (Temporal window)
+      - Operation
+      - Class and operator as enum value
+    * - **pre**
+      - Unit delay
+      - :py:class:`UnaryExpr` with ``UnaryOp.Pre`` operator / :py:class:`BinaryExpr` with ``BinaryOp.Pre`` operator
+    * - **->**
+      - initial value
+      - :py:class:`BinaryExpr` with ``BinaryOp.Arrow`` operator
+    * - **window** 
+      - temporal window
       - See :py:class:`Window`
 
 .. figure:: sequential.svg

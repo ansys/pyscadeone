@@ -1,0 +1,18 @@
+@startuml 
+' Module hierarchy
+HasPragma <|-- ModuleBase
+ModuleBase <|-- Module
+Module <|-- ModuleInterface
+Module <|-- ModuleBody
+Module *-- "*" ModuleItem
+
+ModuleItem <|-- UseDirective
+ModuleItem <|-- GlobalDeclaration
+ModuleItem <|-- OperatorDeclarationDefinitionBase
+OperatorDeclarationDefinitionBase <|-- OperatorDeclaration
+OperatorDeclarationDefinitionBase <|-- OperatorDefinition
+note left of GlobalDeclaration
+    **type**, **sensor**, **const**
+and **group** declarations
+end note 
+@enduml

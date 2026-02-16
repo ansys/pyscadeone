@@ -7,9 +7,9 @@ FMU export
 
 .. _FMU/FMI: https://fmi-standard.org/
 
-This section contains the classes related to Scade One FMU Export.
+This section contains the classes related to Scade One FMU export.
 
-The FMU Export supports the FMI 2.0 version for Model-Exchange and Co-Simulation.
+The FMU export supports the FMI 2.0 version for Model-Exchange and Co-Simulation.
 
 The principle is to build a FMU package from a given Scade One operator.
 This operator has to be a root operator of a code generation job,
@@ -40,14 +40,14 @@ For more information about the FMI standard, consult `FMU/FMI`_.
 
    **Supported Platforms**
 
-   This version only supports gcc compiler on 64 bits Windows platform.
+   This version only supports gcc compiler on 64-bits Windows platforms.
 
 .. _fmu_export_cli:
 
 FMU export command line
 -----------------------
 
-The FMU Export can also be performed using the pyscadeone command line, by selecting the fmu command.
+The FMU export can also be performed using the pyscadeone command line, by selecting the fmu command.
 The command performs the complete export, by running :py:meth:`FMU_2_Export.generate`
 and :py:meth:`FMU_2_Export.build` methods of the :py:class:`FMU_2_Export` class.
 All expected arguments can be passed through this command. Complete list is given by --help.
@@ -58,7 +58,7 @@ All expected arguments can be passed through this command. Complete list is give
 
 .. code::
 
-    usage: pyscadeone fmu [-h] [-inst INSTALL_DIR] [-op OPER_NAME]
+    usage: pyscadeone fmu [-h] -inst INSTALL_DIR [-op OPER_NAME]
                           [-max MAX_VARIABLES] [-k KIND] [-o OUTDIR] [-p PERIOD]
                           [-ws] [-args key value]
                           project job_name
@@ -86,23 +86,18 @@ All expected arguments can be passed through this command. Complete list is give
                             Execution period in seconds
       -ws, --with_sources   Keep the sources in the FMU package
       -args key value, --build_arguments key value
-                            Build arguments. Use one -args argument per key.
-                            Supported keys are: cc: compiler name (only gcc
-                            supported), arch: compiler architecture (only win64
-                            supported), gcc_path: path on the bin directory where
-                            gcc is located, user_sources: list (comma separated)
-                            of user source files and directories (code, includes),
-                            cc_opts: list (comma separated) of extra compiler
-                            options, link_opt: list (comma separated) of extra
-                            link (dll creation) options, swan_config_begin: data
-                            to insert at the beginning of swan_config.h,
-                            swan_config_end: data to insert at the end of
-                            swan_config.h.
+                            Build arguments. Use one -args argument per key. Supported keys are:
+                            arch: compiler architecture,
+                            user_sources: list (comma separated) of user source files or directories (code, includes),
+                            cc_opts: list (comma separated) of extra compiler options,
+                            link_opts: list (comma separated) of extra link (dll creation) options,
+                            swan_config_begin: data to insert at the beginning of swan_config.h,
+                            swan_config_end: data to insert at the end of swan_config.h.
 
 FMU export documentation
 ------------------------
 
-This section gives the API for the FMU Export.
+This section gives the API for the FMU export.
 
 *Note that the FMU export relies on the* :ref:`ref_generated_code` *API.*
 

@@ -1,4 +1,6 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2025.2 graph: 2.1
 type floatType = float32;
 
 type tSize = enum{Small, High};
+
+type arrayType = floatType^2;

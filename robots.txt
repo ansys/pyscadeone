@@ -1,0 +1,7 @@
+User-agent: *
+
+Disallow: /version/0.7
+Disallow: /version/0.6
+Disallow: /pull/
+
+Sitemap: https://scadeone.docs.pyansys.com/sitemap.xml

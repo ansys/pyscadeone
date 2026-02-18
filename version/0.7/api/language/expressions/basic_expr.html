@@ -1,0 +1,1316 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Bitwise, boolean, arithmetic, relational &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=5a5a329e"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/language/expressions/basic_expr';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.7';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Array, structure and variant" href="composite.html" />
+    <link rel="prev" title="Identifiers and atoms" href="atom.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://scadeone.docs.pyansys.com/version/stable/api/language/expressions/basic_expr.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Swan language</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operator/index.html">Operators</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Expressions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="atom.html">Identifiers and atoms</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Bitwise, boolean, arithmetic, relational</a></li>
+<li class="toctree-l3"><a class="reference internal" href="composite.html">Array, structure and variant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selection.html">Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sequential.html">Sequential</a></li>
+<li class="toctree-l3"><a class="reference internal" href="instance.html">Operator instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="forward.html">Forward expression</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../group.html">Group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pragmas/index.html">Pragmas</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../svc/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Common classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Swan language</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Expressions</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Bitwise, boolean, arithmetic, relational</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="bitwise-boolean-arithmetic-relational">
+<h1>Bitwise, boolean, arithmetic, relational<a class="headerlink" href="#bitwise-boolean-arithmetic-relational" title="Link to this heading">#</a></h1>
+<p>Arithmetic, logical, bitwise, and relational expressions are represented
+by unary expressions (ex: <em>not X</em>), binary expressions (ex: <em>1 + 2</em>), or n-ary expressions.</p>
+<p>Unary and binary expressions are implemented with the <a class="reference internal" href="#ansys.scadeone.core.swan.UnaryExpr" title="ansys.scadeone.core.swan.UnaryExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnaryExpr</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.BinaryExpr" title="ansys.scadeone.core.swan.BinaryExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryExpr</span></code></a> classes with the appropriate operator as an enumeration.</p>
+<p>N-ary expressions correspond to specific operator instance calls which use the <a class="reference internal" href="#ansys.scadeone.core.swan.NaryOp" title="ansys.scadeone.core.swan.NaryOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">NaryOp</span></code></a> enumeration.</p>
+<figure class="align-default">
+<img alt="../../../_images/arithmetic.svg" src="../../../_images/arithmetic.svg" />
+</figure>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-text">Operators</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Kind</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>-</strong></p></td>
+<td><p>minus / subtraction</p></td>
+<td><p>unary / binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>+</strong></p></td>
+<td><p>plus / addition</p></td>
+<td><p>unary / binary, n-ary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>*</strong></p></td>
+<td><p>multiplication</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>/</em></p></td>
+<td><p>division</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>lnot</strong></p></td>
+<td><p>bitwise not</p></td>
+<td><p>unary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>land</strong></p></td>
+<td><p>bitwise and</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>lor</strong></p></td>
+<td><p>bitwise or</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>lxor</strong></p></td>
+<td><p>bitwise xor</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>lsl</strong></p></td>
+<td><p>bitwise left-shift</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>lsr</strong></p></td>
+<td><p>bitwise right-shift</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>not</strong></p></td>
+<td><p>logical not</p></td>
+<td><p>unary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>and</strong></p></td>
+<td><p>logical and</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>or</strong></p></td>
+<td><p>logical and</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>xor</strong></p></td>
+<td><p>logical and</p></td>
+<td><p>binary, n-ary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>pre</strong></p></td>
+<td><p>Unit delay</p></td>
+<td><p>unary (not initial value), binary (initial value)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>=</strong></p></td>
+<td><p>relation equal</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>&lt;&gt;</strong></p></td>
+<td><p>relation difference</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>&lt;</strong></p></td>
+<td><p>relation less than</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>&lt;=</strong></p></td>
+<td><p>relation less than or equal to</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>&gt;</strong></p></td>
+<td><p>relation greater than</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>&gt;=</strong></p></td>
+<td><p>relation greater than or equal to</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>-&gt;</strong></p></td>
+<td><p>initial value</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>&#64;</strong></p></td>
+<td><p>array concatenation</p></td>
+<td><p>binary</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>(:&gt;)</strong></p></td>
+<td><p>cast operation</p></td>
+<td><p>binary</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="unary-expressions">
+<h2>Unary expressions<a class="headerlink" href="#unary-expressions" title="Link to this heading">#</a></h2>
+<p>A unary expression is composed of a unary operator and an expression.
+Unary operators are defined with the <a class="reference internal" href="#ansys.scadeone.core.swan.UnaryOp" title="ansys.scadeone.core.swan.UnaryOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnaryOp</span></code></a> enumeration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">UnaryOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Unary operators:</p>
+<ul class="simple">
+<li><p>arithmetic operators</p></li>
+<li><p>logical operators</p></li>
+<li><p>Unit delay operator</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp.Lnot">
+<span class="sig-name descname"><span class="pre">Lnot</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp.Lnot" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lnot</strong>) Bitwise not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp.Minus">
+<span class="sig-name descname"><span class="pre">Minus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp.Minus" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>-</strong>) Unary minus.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp.Not">
+<span class="sig-name descname"><span class="pre">Not</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp.Not" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>not</strong>) Logical not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp.Plus">
+<span class="sig-name descname"><span class="pre">Plus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp.Plus" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>+</strong>) Unary plus.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryOp.Pre">
+<span class="sig-name descname"><span class="pre">Pre</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryOp.Pre" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>pre</strong>) Unit delay.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">UnaryExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.UnaryOp" title="ansys.scadeone.core.swan.expressions.UnaryOp"><span class="pre">UnaryOp</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>Expression with unary operators
+:py:class`ansys.scadeone.core.swan.expressions.UnaryOp`.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.expr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.expr" title="Link to this definition">#</a></dt>
+<dd><p>Expression.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.operator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.UnaryOp" title="ansys.scadeone.core.swan.expressions.UnaryOp"><span class="pre">UnaryOp</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.operator" title="Link to this definition">#</a></dt>
+<dd><p>Unary operator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.UnaryExpr.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.UnaryExpr.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="binary-expressions">
+<span id="ref-bin-expr"></span><h2>Binary expressions<a class="headerlink" href="#binary-expressions" title="Link to this heading">#</a></h2>
+<p>A binary expression is composed of a binary operator and two expressions.
+Binary operators are defined with the <a class="reference internal" href="#ansys.scadeone.core.swan.BinaryOp" title="ansys.scadeone.core.swan.BinaryOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOp</span></code></a> enumeration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">BinaryOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Binary operators:</p>
+<ul class="simple">
+<li><p>arithmetic operators</p></li>
+<li><p>relational operators</p></li>
+<li><p>logical operators</p></li>
+<li><p>bitwise operators</p></li>
+<li><p>Initial value, initialed unit delay</p></li>
+<li><p>Concat</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.And">
+<span class="sig-name descname"><span class="pre">And</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.And" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>and</strong>) Logical and.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Diff">
+<span class="sig-name descname"><span class="pre">Diff</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Diff" title="Link to this definition">#</a></dt>
+<dd><p>(&lt;&gt;) Different.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Equal">
+<span class="sig-name descname"><span class="pre">Equal</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Equal" title="Link to this definition">#</a></dt>
+<dd><p>(=) Equal.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Geq">
+<span class="sig-name descname"><span class="pre">Geq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Geq" title="Link to this definition">#</a></dt>
+<dd><p>(&gt;=) Greater than or equal to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Gt">
+<span class="sig-name descname"><span class="pre">Gt</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Gt" title="Link to this definition">#</a></dt>
+<dd><p>(&gt;) Greater than.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Land">
+<span class="sig-name descname"><span class="pre">Land</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Land" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>land</strong>) Bitwise and.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Leq">
+<span class="sig-name descname"><span class="pre">Leq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Leq" title="Link to this definition">#</a></dt>
+<dd><p>(&lt;=) Less than or equal to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Lor">
+<span class="sig-name descname"><span class="pre">Lor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Lor" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lor</strong>) Bitwise or.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Lsl">
+<span class="sig-name descname"><span class="pre">Lsl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">18</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Lsl" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lsl</strong>) Logical shift left.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Lsr">
+<span class="sig-name descname"><span class="pre">Lsr</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">19</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Lsr" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lsr</strong>) Logical shift right.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Lt">
+<span class="sig-name descname"><span class="pre">Lt</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Lt" title="Link to this definition">#</a></dt>
+<dd><p>(&lt;) Less than.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Lxor">
+<span class="sig-name descname"><span class="pre">Lxor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">17</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Lxor" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lxor</strong>) Bitwise exclusive or.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Minus">
+<span class="sig-name descname"><span class="pre">Minus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Minus" title="Link to this definition">#</a></dt>
+<dd><p>(-) Subtraction.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Mod">
+<span class="sig-name descname"><span class="pre">Mod</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Mod" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>mod</strong>) Modulo.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Mult">
+<span class="sig-name descname"><span class="pre">Mult</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Mult" title="Link to this definition">#</a></dt>
+<dd><p>(*) Multiplication.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Or">
+<span class="sig-name descname"><span class="pre">Or</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">13</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Or" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>or</strong>) Logical or.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Plus">
+<span class="sig-name descname"><span class="pre">Plus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Plus" title="Link to this definition">#</a></dt>
+<dd><p>(+) Addition.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Slash">
+<span class="sig-name descname"><span class="pre">Slash</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Slash" title="Link to this definition">#</a></dt>
+<dd><p>(/) Division.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryOp.Xor">
+<span class="sig-name descname"><span class="pre">Xor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">14</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryOp.Xor" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>xor</strong>) Logical exclusive or.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">BinaryExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.BinaryOp" title="ansys.scadeone.core.swan.expressions.BinaryOp"><span class="pre">BinaryOp</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>Expression with binary operators
+:py:class`ansys.scadeone.swan.expressions.BinaryOp`.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.left">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.left" title="Link to this definition">#</a></dt>
+<dd><p>Left expression.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.operator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.BinaryOp" title="ansys.scadeone.core.swan.expressions.BinaryOp"><span class="pre">BinaryOp</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.operator" title="Link to this definition">#</a></dt>
+<dd><p>Binary operator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.BinaryExpr.right">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.BinaryExpr.right" title="Link to this definition">#</a></dt>
+<dd><p>Right expression.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="cast-operators">
+<h2>Cast operators<a class="headerlink" href="#cast-operators" title="Link to this heading">#</a></h2>
+<p>A cast operator ( :&gt; )  is a specific binary expression as it takes an
+expression and a type.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">NumericCast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>Cast expression: ( <em>expr</em> :&gt; <em>type_expr</em>).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.expr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.expr" title="Link to this definition">#</a></dt>
+<dd><p>Expression.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NumericCast.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../declarations/type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NumericCast.type" title="Link to this definition">#</a></dt>
+<dd><p>Type expression.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="n-ary-expressions">
+<span id="ref-n-ary-expr"></span><h2>N-ary expressions<a class="headerlink" href="#n-ary-expressions" title="Link to this heading">#</a></h2>
+<p>N-ary operators are a special case of operator calls. The n-ary operations
+are given by the following enumeration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">NaryOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>N-ary operators.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.And">
+<span class="sig-name descname"><span class="pre">And</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.And" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>and</strong>) N-ary logical and.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Concat">
+<span class="sig-name descname"><span class="pre">Concat</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Concat" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>&#64;</strong>) N-ary array concat.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Land">
+<span class="sig-name descname"><span class="pre">Land</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Land" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>land</strong>) N-ary bitwise and.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Lor">
+<span class="sig-name descname"><span class="pre">Lor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Lor" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>lor</strong>) N-ary bitwise or.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Mult">
+<span class="sig-name descname"><span class="pre">Mult</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Mult" title="Link to this definition">#</a></dt>
+<dd><p>(*) N-ary multiplication.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Or">
+<span class="sig-name descname"><span class="pre">Or</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Or" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>or</strong>) N-ary logical or.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Plus">
+<span class="sig-name descname"><span class="pre">Plus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Plus" title="Link to this definition">#</a></dt>
+<dd><p>(+) N-ary addition.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NaryOp.Xor">
+<span class="sig-name descname"><span class="pre">Xor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.NaryOp.Xor" title="Link to this definition">#</a></dt>
+<dd><p>(<strong>xor</strong>) N-ary exclusive or.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">NAryOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.NaryOp" title="ansys.scadeone.core.swan.instances.NaryOp"><span class="pre">NaryOp</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="instance.html#ansys.scadeone.core.swan.OperatorExpression" title="ansys.scadeone.core.swan.instances.OperatorExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatorExpression</span></code></a></p>
+<p>N-ary operators: ‘+’ | ‘*’ | ‘&#64;’ | <strong>and</strong> | <strong>or</strong> | <strong>xor</strong> | <strong>land</strong> | <strong>lor</strong>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../declarations/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.operator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.NaryOp" title="ansys.scadeone.core.swan.instances.NaryOp"><span class="pre">NaryOp</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.operator" title="Link to this definition">#</a></dt>
+<dd><p>N-ary operator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NAryOperator.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../declarations/common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NAryOperator.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unary-expressions">Unary expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-expressions">Binary expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cast-operators">Cast operators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-ary-expressions">N-ary expressions</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/language/expressions/basic_expr.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

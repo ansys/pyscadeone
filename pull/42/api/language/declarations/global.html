@@ -1,0 +1,1736 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Global declarations &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=5a5a329e"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/language/declarations/global';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.7';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Operators" href="../operator/index.html" />
+    <link rel="prev" title="Type declarations" href="type.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Swan language</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Declarations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="common.html">Common classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module.html">Modules and Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type.html">Type declarations</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Global declarations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../operator/index.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expressions/index.html">Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../group.html">Group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pragmas/index.html">Pragmas</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../svc/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Common classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Swan language</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Declarations</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Global declarations</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="global-declarations">
+<span id="ref-global-decl"></span><h1>Global declarations<a class="headerlink" href="#global-declarations" title="Link to this heading">#</a></h1>
+<p>This section describes the classes that represent the
+global declarations of a Swan program: <strong>const</strong>, <strong>type</strong>,
+<strong>sensor</strong> and <strong>group</strong> constructs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Swan, a global declaration can contain several declarations. One can have
+for instance: <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">C1:</span> <span class="pre">int32;</span> <span class="pre">C2:</span> <span class="pre">int32;</span></code> or <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">C1:</span> <span class="pre">int32;</span> <span class="pre">const</span> <span class="pre">C2:</span> <span class="pre">int32;</span></code>.
+The Swan editor produces the second form, but having a list of declarations
+is correct.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">Declaration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">SwanItem</span></code></a></p>
+<p>Base class for declarations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.id" title="Link to this definition">#</a></dt>
+<dd><p>Language item identifier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Declaration.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Declaration.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">GlobalDeclaration</span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleItem</span></code></p>
+<p>Abstract class for global declarations:</p>
+<ul class="simple">
+<li><p>type declaration list</p></li>
+<li><p>constant declaration list</p></li>
+<li><p>sensor declaration list</p></li>
+<li><p>group declarations</p></li>
+<li><p>user operator declaration (without body, in interface)</p></li>
+<li><p>user operator definition (with body)</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GlobalDeclaration.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GlobalDeclaration.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="types">
+<h2>Types<a class="headerlink" href="#types" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">TypeDeclarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeDecl" title="ansys.scadeone.core.swan.typedecl.TypeDecl"><span class="pre">TypeDecl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="ansys.scadeone.core.swan.modules.GlobalDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalDeclaration</span></code></a></p>
+<p>Type declarations: <strong>type</strong> {{ <em>type_decl</em> ; }}.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeDeclarations.types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeDecl" title="ansys.scadeone.core.swan.typedecl.TypeDecl"><span class="pre">TypeDecl</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeDeclarations.types" title="Link to this definition">#</a></dt>
+<dd><p>Declared types.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>See also <a class="reference internal" href="type.html"><span class="doc">Type declarations</span></a> for details on type definitions.</p>
+</section>
+<section id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">ConstDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.Declaration" title="ansys.scadeone.core.swan.common.Declaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Declaration</span></code></a></p>
+<p>Constant declaration, with an id, a type, and an optional expression.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.id" title="Link to this definition">#</a></dt>
+<dd><p>Language item identifier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.type" title="Link to this definition">#</a></dt>
+<dd><p>Type of constant.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDecl.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDecl.value" title="Link to this definition">#</a></dt>
+<dd><p>Constant optional value. None if undefined.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">ConstDeclarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.ConstDecl" title="ansys.scadeone.core.swan.globals.ConstDecl"><span class="pre">ConstDecl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="ansys.scadeone.core.swan.modules.GlobalDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalDeclaration</span></code></a></p>
+<p>Constant declarations: <strong>constant</strong> {{ <em>constant_decl</em> ; }}.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.constants">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.ConstDecl" title="ansys.scadeone.core.swan.globals.ConstDecl"><span class="pre">ConstDecl</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.constants" title="Link to this definition">#</a></dt>
+<dd><p>Declared constants.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ConstDeclarations.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ConstDeclarations.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="sensors">
+<h2>Sensors<a class="headerlink" href="#sensors" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">SensorDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.Declaration" title="ansys.scadeone.core.swan.common.Declaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Declaration</span></code></a></p>
+<p>Sensor declaration with an id and a type.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.id" title="Link to this definition">#</a></dt>
+<dd><p>Language item identifier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDecl.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDecl.type" title="Link to this definition">#</a></dt>
+<dd><p>Sensor type.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">SensorDeclarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.SensorDecl" title="ansys.scadeone.core.swan.globals.SensorDecl"><span class="pre">SensorDecl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="ansys.scadeone.core.swan.modules.GlobalDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalDeclaration</span></code></a></p>
+<p>Sensor declarations: <strong>sensor</strong> {{ <em>sensor_decl</em> ; }}.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.SensorDeclarations.sensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sensors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.SensorDecl" title="ansys.scadeone.core.swan.globals.SensorDecl"><span class="pre">SensorDecl</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.SensorDeclarations.sensors" title="Link to this definition">#</a></dt>
+<dd><p>Declared sensors.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="groups">
+<span id="ref-group-decl"></span><h2>Groups<a class="headerlink" href="#groups" title="Link to this heading">#</a></h2>
+<p>A <a class="reference internal" href="#ansys.scadeone.core.swan.GroupDecl" title="ansys.scadeone.core.swan.GroupDecl"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupDecl</span></code></a> object defines a <strong>group</strong> declaration, with a name and
+a <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a> for the type.</p>
+<p>A <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a> can be:</p>
+<ul class="simple">
+<li><p>a type expression, represented by a <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeGroupTypeExpressionGroupType</span></code> instance</p></li>
+<li><p>or a list of <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a> items, decomposed into two lists:</p>
+<ul>
+<li><p>a positional list of <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a> items</p></li>
+<li><p>followed by a list of named <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a> items, represented
+with <a class="reference internal" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression" title="ansys.scadeone.core.swan.NamedGroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedGroupTypeExpression</span></code></a> instances.</p></li>
+</ul>
+</li>
+</ul>
+<figure class="align-default">
+<img alt="../../../_images/group_type_expr.svg" src="../../../_images/group_type_expr.svg" />
+</figure>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">GroupDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.Declaration" title="ansys.scadeone.core.swan.common.Declaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Declaration</span></code></a></p>
+<p>Group declaration with an id and a type.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.id" title="Link to this definition">#</a></dt>
+<dd><p>Language item identifier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDecl.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDecl.type" title="Link to this definition">#</a></dt>
+<dd><p>Group type expression.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">GroupTypeExpression</span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">SwanItem</span></code></a></p>
+<p>Base class for group type expressions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpression.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpression.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">TypeGroupTypeExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a></p>
+<p>Group type expression: <em>group_type_expr</em> ::= <em>type_expr</em>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.TypeGroupTypeExpression.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="type.html#ansys.scadeone.core.swan.TypeExpression" title="ansys.scadeone.core.swan.common.TypeExpression"><span class="pre">TypeExpression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.TypeGroupTypeExpression.type" title="Link to this definition">#</a></dt>
+<dd><p>Type expression of group item</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">NamedGroupTypeExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a></p>
+<p>A named group type expression, used in GroupTypeExpressionList as id : <em>group_type_expr</em>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.label" title="Link to this definition">#</a></dt>
+<dd><p>Label of named group item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.NamedGroupTypeExpression.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression.type" title="Link to this definition">#</a></dt>
+<dd><p>Type of named group item.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">GroupTypeExpressionList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">named</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression" title="ansys.scadeone.core.swan.groupdecl.NamedGroupTypeExpression"><span class="pre">NamedGroupTypeExpression</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupTypeExpression</span></code></a></p>
+<p>Group list made of positional items followed by named items.
+Each item is a group type expression.</p>
+<div class="line-block">
+<div class="line"><em>group_type_expr</em> ::= ( <em>group_type_expr</em> {{ , <em>group_type_expr</em> }}</div>
+<div class="line-block">
+<div class="line">{{ , id : <em>group_type_expr</em> }} )</div>
+</div>
+<div class="line">| ( id : <em>group_type_expr</em> {{ , id : <em>group_type_expr</em> }} )</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.items">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.items" title="Link to this definition">#</a></dt>
+<dd><p>Returns all items</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.named">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">named</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.NamedGroupTypeExpression" title="ansys.scadeone.core.swan.groupdecl.NamedGroupTypeExpression"><span class="pre">NamedGroupTypeExpression</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.named" title="Link to this definition">#</a></dt>
+<dd><p>Return named group items</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupTypeExpressionList.positional">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">positional</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupTypeExpression" title="ansys.scadeone.core.swan.common.GroupTypeExpression"><span class="pre">GroupTypeExpression</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupTypeExpressionList.positional" title="Link to this definition">#</a></dt>
+<dd><p>Return positional group items</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">GroupDeclarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupDecl" title="ansys.scadeone.core.swan.groupdecl.GroupDecl"><span class="pre">GroupDecl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="ansys.scadeone.core.swan.modules.GlobalDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalDeclaration</span></code></a></p>
+<p>Group declarations: <strong>group</strong> {{ <em>group_decl</em> ; }}.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.groups">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">groups</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.GroupDecl" title="ansys.scadeone.core.swan.groupdecl.GroupDecl"><span class="pre">GroupDecl</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.groups" title="Link to this definition">#</a></dt>
+<dd><p>Declared groups.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.GroupDeclarations.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.GroupDeclarations.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="protected-declarations">
+<h2>Protected declarations<a class="headerlink" href="#protected-declarations" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">ProtectedDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="common.html#ansys.scadeone.core.swan.ProtectedItem" title="ansys.scadeone.core.swan.common.ProtectedItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProtectedItem</span></code></a>, <a class="reference internal" href="#ansys.scadeone.core.swan.GlobalDeclaration" title="ansys.scadeone.core.swan.modules.GlobalDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalDeclaration</span></code></a></p>
+<p>Protected declaration.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of Swan construct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.has_markup">
+<span class="sig-name descname"><span class="pre">has_markup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.has_markup" title="Link to this definition">#</a></dt>
+<dd><p>Check if protected data has the specified <em>markup</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>markup</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>String markup.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>result: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></dt><dd><p>True when instance markup is same as parameter.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>]]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.data" title="Link to this definition">#</a></dt>
+<dd><p>Protected data between markups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Protected data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_const">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_const</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_const" title="Link to this definition">#</a></dt>
+<dd><p>Protected const declaration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_group">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_group" title="Link to this definition">#</a></dt>
+<dd><p>Protected group declaration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if item is syntactically protected and provided as a string.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_sensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sensor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_sensor" title="Link to this definition">#</a></dt>
+<dd><p>Protected sensor declaration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_type" title="Link to this definition">#</a></dt>
+<dd><p>Protected type declaration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.is_user_operator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_user_operator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.is_user_operator" title="Link to this definition">#</a></dt>
+<dd><p>Protected operator declaration.</p>
+<p>Note: operator declaration within {text% … %text} is parsed.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.markup">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">markup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.markup" title="Link to this definition">#</a></dt>
+<dd><p>Protection markup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Markup string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../model.html#ansys.scadeone.core.model.Model" title="ansys.scadeone.core.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.ProtectedDecl.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../project.html#ansys.scadeone.core.project.IProject" title="ansys.scadeone.core.interfaces.IProject"><span class="pre">IProject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.ProtectedDecl.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types">Types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensors">Sensors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#groups">Groups</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protected-declarations">Protected declarations</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/language/declarations/global.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

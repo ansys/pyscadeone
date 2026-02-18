@@ -1,0 +1,1491 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>State machines &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=f82dc3d9"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/language/operator_body/automaton';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Formal properties" href="formal_props.html" />
+    <link rel="prev" title="Activations" href="activation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Swan constructs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../common.html">Basic classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module_global/index.html">Module and global declarations</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Operator body</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="scope.html">Operator sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="var.html">Variable declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="equation.html">Equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="activation.html">Activations</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">State machines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formal_props.html">Formal properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="emission.html">Emissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diagram.html">Diagrams</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../expressions/index.html">Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../group.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mem_annot.html">Memory annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pragmas/index.html">Pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protected.html">Protected items</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_language/index.html">Swan Test constructs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../svc/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Helper classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Swan constructs</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Operator body</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">State machines</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="state-machines">
+<h1>State machines<a class="headerlink" href="#state-machines" title="Link to this heading">#</a></h1>
+<p>The Swan language has the notion of a state machine, represented by the <a class="reference internal" href="#ansys.scadeone.core.swan.StateMachine" title="ansys.scadeone.core.swan.StateMachine"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateMachine</span></code></a> class. A state machine is composed of:</p>
+<ul class="simple">
+<li><p>states, represented by the <a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a> class;</p></li>
+<li><p>transitions between states, represented by the <a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> class;</p></li>
+<li><p>forks, represented by the <a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.Fork"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fork</span></code></a> class, which are used to split transitions into several branches.</p></li>
+</ul>
+<p>The figure <a class="reference internal" href="#fig-states-and-transitions"><span class="std std-numref">Fig. 9</span></a> shows the classes hierarchy and the relationships between these classes.</p>
+<figure class="align-default" id="fig-states-and-transitions">
+<img alt="../../../_images/states_and_transitions.svg" src="../../../_images/states_and_transitions.svg" />
+<figcaption>
+<p><span class="caption-number">Fig. 9 </span><span class="caption-text">States and transition declarations</span><a class="headerlink" href="#fig-states-and-transitions" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Swan language has two syntaxes for defining transitions:</p>
+<ul class="simple">
+<li><p>Inline transitions: defined directly within the state definition. This syntax is used to defined an automaton within a <strong>let</strong> section.</p></li>
+<li><p>Separate transition declarations: defined outside the state, referencing the state by its ID. This syntax is used to define a state machine within
+a diagram, using a <a class="reference internal" href="diagram.html#ansys.scadeone.core.swan.StateMachineBlock" title="ansys.scadeone.core.swan.StateMachineBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateMachineBlock</span></code></a> within a <a class="reference internal" href="diagram.html#ref-diagram"><span class="std std-ref">Diagrams</span></a>.</p></li>
+</ul>
+</div>
+<dl class="simple">
+<dt>The two notations are abstracted, and the <a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> class represents both notations. The <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.is_transition_decl" title="ansys.scadeone.core.swan.Transition.is_transition_decl"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.is_transition_decl</span></code></a> property</dt><dd><p>indicates whether the transition is a separate declaration (<cite>is_transition_decl=True</cite>) or an inline transition.</p>
+</dd>
+</dl>
+<p>In addition a transition can be:</p>
+<ul class="simple">
+<li><p>between two states, which a direct transition;</p></li>
+<li><p>a part of a transition starting from a state and going to fork, which can split into several branches.</p></li>
+</ul>
+<p>The <a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> class represents either a direct state-to-state transition or any part when there are forks.</p>
+<section id="state-machine">
+<h2>State machine<a class="headerlink" href="#state-machine" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">StateMachine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="equation.html#ansys.scadeone.core.swan.EquationLHS" title="ansys.scadeone.core.swan.equations.EquationLHS"><span class="pre">EquationLHS</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">StateMachineItem</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lunum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Luid" title="ansys.scadeone.core.swan.common.Luid"><span class="pre">Luid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#ansys.scadeone.core.swan.DefByCase" title="ansys.scadeone.core.swan.equations.DefByCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefByCase</span></code></a></p>
+<p>State machine definition.</p>
+<p>A state machine contains states and transition declarations defined as <em>items</em>.</p>
+<p>Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.StateMachine.states" title="ansys.scadeone.core.swan.StateMachine.states"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StateMachine.states</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.StateMachine.transition_decls" title="ansys.scadeone.core.swan.StateMachine.transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StateMachine.transition_decls</span></code></a>
+properties to get the list of states and transition declarations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of the Swan construct.</p>
+<p>This method is implemented by derived classes that correspond to a declaration
+at the module level (such as sensor, type, group, const, operator), or a module itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path within the owner and name of the Swan construct.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the method is not implemented for the current SwanItem type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.equations.StateRef"><span class="pre">StateRef</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.get_state" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a state object matching the given identifier or lunum.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>state_id</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.Identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Identifier</span></code></a>, <a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.Lunum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lunum</span></code></a>, <a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.StateRef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateRef</span></code></a>]</span></dt><dd><p>The identifier or lunum to match against the states.
+If a string is provided, it is treated as an identifier.
+If a StateRef is provided, identifier or lunum are used for matching (lunum has priority if both are set).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.State"><code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The state object that matches the given identifier or lunum, or None if no match is found.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If <cite>ident</cite> type is not supported.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.all_transitions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_transitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.all_transitions" title="Link to this definition">#</a></dt>
+<dd><p>Return all transitions, strong and weak, of all states.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.default_state">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.default_state" title="Link to this definition">#</a></dt>
+<dd><p>Return the default state, or None if no default state.
+The default state is marked with dedicated pragma.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.initial_state">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initial_state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.initial_state" title="Link to this definition">#</a></dt>
+<dd><p>Return the initial state, or None if no initial state.
+There should be only one initial state, but this is not checked is there are multiple initial states.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.items">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">StateMachineItem</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.items" title="Link to this definition">#</a></dt>
+<dd><p>List of states and transition declarations in declaration order.</p>
+<p>Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.StateMachine.states" title="ansys.scadeone.core.swan.StateMachine.states"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StateMachine.states</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.StateMachine.transition_decls" title="ansys.scadeone.core.swan.StateMachine.transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StateMachine.transition_decls</span></code></a>
+properties to get the list of states and transition declarations.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.lhs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lhs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="equation.html#ansys.scadeone.core.swan.EquationLHS" title="ansys.scadeone.core.swan.equations.EquationLHS"><span class="pre">EquationLHS</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.lhs" title="Link to this definition">#</a></dt>
+<dd><p>Left-hand side of the equation, may be None.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.luid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">luid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Luid" title="ansys.scadeone.core.swan.common.Luid"><span class="pre">Luid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.luid" title="Link to this definition">#</a></dt>
+<dd><p>Return luid or None if no luid.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.lunum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lunum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.lunum" title="Link to this definition">#</a></dt>
+<dd><p>Return lunum or None if no lunum.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IModel</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.pragmas">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pragmas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><span class="pre">Pragma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.pragmas" title="Link to this definition">#</a></dt>
+<dd><p>Pragmas associated to this Def by case.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.states">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">states</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.states" title="Link to this definition">#</a></dt>
+<dd><p>Transitions and states of the state machine.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateMachine.transition_decls">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transition_decls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateMachine.transition_decls" title="Link to this definition">#</a></dt>
+<dd><p>List of transition declarations, defined in the automaton (not in a state).</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="states">
+<h2>States<a class="headerlink" href="#states" title="Link to this heading">#</a></h2>
+<p>A state may have a body, as a scope and may have transitions as <a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> objects. In that case,
+transitions belongs to the strong or weak lists.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lunum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_state_strong_transition_decls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><span class="pre">Scope</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_state_weak_transition_decls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_initial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pragmas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><span class="pre">Pragma</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.State" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StateMachineItem</span></code></p>
+<p>State definition.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Syntactically, state transitions can be defined either in the state declaration, or in the automaton as
+separate items. Transitions defined in the state declaration are stored within the state, using the
+<a class="reference internal" href="#ansys.scadeone.core.swan.State.in_state_strong_transition_decls" title="ansys.scadeone.core.swan.State.in_state_strong_transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.in_state_strong_transition_decls</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.State.in_state_weak_transition_decls" title="ansys.scadeone.core.swan.State.in_state_weak_transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.in_state_weak_transition_decls</span></code></a> properties.
+These properties are used to preserve the original Swan description.</p>
+</div>
+<p>Consider using instead the <a class="reference internal" href="#ansys.scadeone.core.swan.State.strong_transitions" title="ansys.scadeone.core.swan.State.strong_transitions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.strong_transitions</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.State.weak_transitions" title="ansys.scadeone.core.swan.State.weak_transitions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.weak_transitions</span></code></a> properties.
+They return the list of all strong and weak transitions, respectively. They combine the transitions defined
+in the state declaration, and the transitions defined in the automaton with this state as source.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Identifier</span></code></a>]</span></dt><dd><p>State identifier, None if not set.</p>
+</dd>
+<dt><strong>lunum</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Lunum</span></code></a>]</span></dt><dd><p>State lunum, None if not set.</p>
+</dd>
+<dt><strong>in_state_strong_transition_decls</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transition</span></code></a>]]</span></dt><dd><p>List of strong transitions, None if not set. These are the transitions found in the state declaration.
+They are kept to preserve the original Swan description.</p>
+</dd>
+<dt><strong>body</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scopes.Scope</span></code></a>]</span></dt><dd><p>Body of the state as a Scope, None if not set. Note that syntactically, the body is a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code>.</p>
+</dd>
+<dt><strong>in_state_weak_transition_decls</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transition</span></code></a>]]</span></dt><dd><p>List of weak transitions, None if not set. These are the transitions that are found in the state declaration.
+They are kept to preserve the original Swan description.</p>
+</dd>
+<dt><strong>is_initial</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>True if the state is the initial state.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.State.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of the Swan construct.</p>
+<p>This method is implemented by derived classes that correspond to a declaration
+at the module level (such as sensor, type, group, const, operator), or a module itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path within the owner and name of the Swan construct.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the method is not implemented for the current SwanItem type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.get_targets">
+<span class="sig-name descname"><span class="pre">get_targets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.14)"><span class="pre">Set</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.State.get_targets" title="Link to this definition">#</a></dt>
+<dd><p>Get direct target states of the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.State"><code class="xref py py-obj docutils literal notranslate"><span class="pre">State</span></code></a>]</dt><dd><p>A set of target State objects.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.State.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.body">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><span class="pre">Scope</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.body" title="Link to this definition">#</a></dt>
+<dd><p>Body of state as a Scope.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.id" title="Link to this definition">#</a></dt>
+<dd><p>State ID.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.in_state_strong_transition_decls">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">in_state_strong_transition_decls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.in_state_strong_transition_decls" title="Link to this definition">#</a></dt>
+<dd><p>List of strong transitions defined <strong>in</strong> the state declaration.</p>
+<p>Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.State.strong_transitions" title="ansys.scadeone.core.swan.State.strong_transitions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.strong_transitions</span></code></a> property to get the list of all strong transitions
+(defined in the state and/or defined in the automaton with this state as source).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.in_state_weak_transition_decls">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">in_state_weak_transition_decls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.in_state_weak_transition_decls" title="Link to this definition">#</a></dt>
+<dd><p>List of weak transitions defined <strong>in</strong> the state declaration.</p>
+<p>Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.State.weak_transitions" title="ansys.scadeone.core.swan.State.weak_transitions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.weak_transitions</span></code></a> property to get the list of all weak transitions
+(defined in the state and/or defined in the automaton with this state as target).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.is_initial">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_initial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.is_initial" title="Link to this definition">#</a></dt>
+<dd><p>True when state is initial.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IModel</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.pragmas">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pragmas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><span class="pre">Pragma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.pragmas" title="Link to this definition">#</a></dt>
+<dd><p>List of pragmas.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.strong_transitions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">strong_transitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.strong_transitions" title="Link to this definition">#</a></dt>
+<dd><p>List of strong transitions, sorted by priority. It combines:</p>
+<ul class="simple">
+<li><p>transitions defined in the state declaration,</p></li>
+<li><p>transitions declared outside of states with this state as source.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adding or removing transitions from this list does not change the state transitions.
+Use <a class="reference internal" href="#ansys.scadeone.core.swan.State.in_state_strong_transition_decls" title="ansys.scadeone.core.swan.State.in_state_strong_transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.in_state_strong_transition_decls</span></code></a> to modify the list of strong
+transitions defined within the state, or changes the automaton’s transitions for this state.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.State.weak_transitions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weak_transitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.State.weak_transitions" title="Link to this definition">#</a></dt>
+<dd><p>List of weak transitions, sorted by priority. It combines:</p>
+<ul class="simple">
+<li><p>transitions defined in the state declaration,</p></li>
+<li><p>transitions declared outside of states with this state as target.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adding or removing transitions from this list does not change the state transitions.
+Use <a class="reference internal" href="#ansys.scadeone.core.swan.State.in_state_weak_transition_decls" title="ansys.scadeone.core.swan.State.in_state_weak_transition_decls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">State.in_state_weak_transition_decls</span></code></a> to modify the list of weak transitions defined within
+the state, or changes the automaton’s transitions for this state.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="transitions">
+<h2>Transitions<a class="headerlink" href="#transitions" title="Link to this heading">#</a></h2>
+<p>A transition gathers the following information:</p>
+<ul class="simple">
+<li><p>its priority,</p></li>
+<li><p>whether it is a strong or weak transition;</p></li>
+<li><p>a guard condition, represented by a <a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">common.Expression</span></code></a> object;</p></li>
+<li><p>an action, represented by a <a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><code class="xref py py-class docutils literal notranslate"><span class="pre">scopes.Scope</span></code></a> object;</p></li>
+<li><p>its target, which can be either a <a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a> or a <a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.Fork"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fork</span></code></a> object.</p></li>
+<li><p>if target is a state, whether it is a <strong>resume</strong> or <strong>restart</strong> transition (see <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.is_resume" title="ansys.scadeone.core.swan.Transition.is_resume"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.is_resume</span></code></a>).</p></li>
+</ul>
+<p>The priority and the kind of transition (strong or weak) are defined for the whole transition, or for the start branch in case of a fork.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">Transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../expressions/atom.html#ansys.scadeone.core.swan.Literal" title="ansys.scadeone.core.swan.expressions.Literal"><span class="pre">Literal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_strong</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">guard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><span class="pre">Scope</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.equations.StateRef"><span class="pre">StateRef</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.equations.Fork"><span class="pre">Fork</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.equations.StateRef"><span class="pre">StateRef</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_resume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pragmas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><span class="pre">Pragma</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.Transition" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StateMachineItem</span></code></p>
+<p>Transition definition between states or forks.</p>
+<p>A transition can be between two states, or from a state to a fork,
+or from a fork to a state. The Transition class represents all these cases,
+including the case with a guard or not, a source state or not (for transition declarations),
+a priority or not, and a resume or restart type.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>priority</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../expressions/atom.html#ansys.scadeone.core.swan.Literal" title="ansys.scadeone.core.swan.Literal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>]</span></dt><dd><p>Transition priority, None if not set.</p>
+</dd>
+<dt><strong>is_strong</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>True if the transition is strong, False if weak.</p>
+</dd>
+<dt><strong>guard</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Expression</span></code></a>]</span></dt><dd><p>Transition guard, None if not set.</p>
+</dd>
+<dt><strong>action</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scopes.Scope</span></code></a>]</span></dt><dd><p>Transition action, None if not set.</p>
+</dd>
+<dt><strong>target</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.StateRef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateRef</span></code></a>, <a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.Fork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fork</span></code></a>]</span></dt><dd><p>Transition target, either a StateRef or a Fork.</p>
+</dd>
+<dt><strong>source</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.StateRef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateRef</span></code></a>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Transition source, None if not set (for transition declarations), by default None.</p>
+</dd>
+<dt><strong>is_resume</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>True if the transition is a resume transition, False if restart, by default False.
+Only applies to transitions to a state.</p>
+</dd>
+<dt><strong>pragmas</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Pragma</span></code></a>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>List of pragmas associated with the transition, None if not set. Apply to the transition itself,
+either a state-to-state or state-to-fork transition, by default None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of the Swan construct.</p>
+<p>This method is implemented by derived classes that correspond to a declaration
+at the module level (such as sensor, type, group, const, operator), or a module itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path within the owner and name of the Swan construct.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the method is not implemented for the current SwanItem type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.sort_key">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sort_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.sort_key" title="Link to this definition">#</a></dt>
+<dd><p>Key function to sort transitions by priority, with None as lowest priority.
+This key can be used in sort() or sorted() functions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.action">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scope.html#ansys.scadeone.core.swan.Scope" title="ansys.scadeone.core.swan.scopes.Scope"><span class="pre">Scope</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.action" title="Link to this definition">#</a></dt>
+<dd><p>Transition action or None.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.guard">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guard</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../expressions/index.html#ansys.scadeone.core.swan.Expression" title="ansys.scadeone.core.swan.common.Expression"><span class="pre">Expression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.guard" title="Link to this definition">#</a></dt>
+<dd><p>Transition guard or None. Apply to transition start, or to <em>else</em> branch of a fork.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.head">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">head</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.equations.Fork"><span class="pre">Fork</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.head" title="Link to this definition">#</a></dt>
+<dd><p>Transition target, either a State or a Fork.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the target is a StateRef and the actual State cannot be found.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.is_guarded">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_guarded</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.is_guarded" title="Link to this definition">#</a></dt>
+<dd><p>Check whether the transition has a guard.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.is_resume">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_resume</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.is_resume" title="Link to this definition">#</a></dt>
+<dd><p>True when the transition is a <strong>resume</strong> transition, False when <strong>restart</strong>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.is_strong">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_strong</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.is_strong" title="Link to this definition">#</a></dt>
+<dd><p>True when the transition is strong, False when weak.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.is_transition_decl">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_transition_decl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.is_transition_decl" title="Link to this definition">#</a></dt>
+<dd><p>True when the transition is a source (whole state-to-state transition, or state-to-fork transition).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IModel</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.pragmas">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pragmas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.common.Pragma"><span class="pre">Pragma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.pragmas" title="Link to this definition">#</a></dt>
+<dd><p>List of pragmas.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.priority">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../expressions/atom.html#ansys.scadeone.core.swan.Literal" title="ansys.scadeone.core.swan.expressions.Literal"><span class="pre">Literal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.priority" title="Link to this definition">#</a></dt>
+<dd><p>Transition priority or None.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.equations.StateRef"><span class="pre">StateRef</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.source" title="Link to this definition">#</a></dt>
+<dd><p>Transition source, either a StateRef (transition declaration), or None.
+Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.tail" title="ansys.scadeone.core.swan.Transition.tail"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.tail</span></code></a> property to get the actual source.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.tail">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tail</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.State" title="ansys.scadeone.core.swan.equations.State"><span class="pre">State</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.equations.Fork"><span class="pre">Fork</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.tail" title="Link to this definition">#</a></dt>
+<dd><p>Transition source, either a State or a Fork.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Transition.target">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.equations.StateRef"><span class="pre">StateRef</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.equations.Fork"><span class="pre">Fork</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Transition.target" title="Link to this definition">#</a></dt>
+<dd><p>Transition target, either a StateRef, or a Fork.
+Consider using <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.head" title="ansys.scadeone.core.swan.Transition.head"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.head</span></code></a> property to get the actual target.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="reference-to-states">
+<h3>Reference to states<a class="headerlink" href="#reference-to-states" title="Link to this heading">#</a></h3>
+<p>Transitions reference their source and target states using <a class="reference internal" href="#ansys.scadeone.core.swan.StateRef" title="ansys.scadeone.core.swan.StateRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateRef</span></code></a> objects as internal information to defined start and end states.
+The actual state can be accessed using the <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.head" title="ansys.scadeone.core.swan.Transition.head"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.head</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.swan.Transition.tail" title="ansys.scadeone.core.swan.Transition.tail"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Transition.tail</span></code></a> properties, which resolve the references.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">StateRef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lunum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">SwanItem</span></code></a></p>
+<p>Reference to a state in a state machine.</p>
+<p>This class is used to reference a state in a state machine, either by its identifier or its lunum.
+It also includes a flag to indicate whether the state should be resumed or restarted.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Identifier</span></code></a>]</span></dt><dd><p>The identifier of the state. Default is None.</p>
+</dd>
+<dt><strong>lunum</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common.Lunum</span></code></a>]</span></dt><dd><p>The lunum of the state. Default is None.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If both <cite>id</cite> and <cite>lunum</cite> are None, or if both are provided.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of the Swan construct.</p>
+<p>This method is implemented by derived classes that correspond to a declaration
+at the module level (such as sensor, type, group, const, operator), or a module itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path within the owner and name of the Swan construct.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the method is not implemented for the current SwanItem type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.common.Identifier"><span class="pre">Identifier</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.id" title="Link to this definition">#</a></dt>
+<dd><p>State identifier, or None if lunum is used.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.lunum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lunum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.common.Lunum"><span class="pre">Lunum</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.lunum" title="Link to this definition">#</a></dt>
+<dd><p>State lunum, or None if identifier is used.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IModel</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.StateRef.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.StateRef.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="forks">
+<h2>Forks<a class="headerlink" href="#forks" title="Link to this heading">#</a></h2>
+<p>Forks are transitions that split into several branches. Each branch is represented by a <a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> object,
+and the fork itself is represented by a <a class="reference internal" href="#ansys.scadeone.core.swan.Fork" title="ansys.scadeone.core.swan.Fork"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fork</span></code></a> object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.swan.</span></span><span class="sig-name descname"><span class="pre">Fork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.swan.Fork" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">SwanItem</span></code></a></p>
+<p>Base class for fork-related classes.
+Transitions are ordered by priority, with the first transition having the highest priority.</p>
+<p>If the latest transition has None guard, it is the <em>else</em> branch.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.get_full_path">
+<span class="sig-name descname"><span class="pre">get_full_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.get_full_path" title="Link to this definition">#</a></dt>
+<dd><p>Full path of the Swan construct.</p>
+<p>This method is implemented by derived classes that correspond to a declaration
+at the module level (such as sensor, type, group, const, operator), or a module itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path within the owner and name of the Swan construct.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>If the method is not implemented for the current SwanItem type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.set_owner">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_owner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.set_owner" title="Link to this definition">#</a></dt>
+<dd><p>Helper to set <em>owner</em> as the owner of each item in the Iterable <em>items</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>owner</strong><span class="classifier"><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a></span></dt><dd><p>Owner of the items.</p>
+</dd>
+<dt><strong>children</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.SwanItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwanItem</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>]</span></dt><dd><p>Items to set owner.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.from_transition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_transition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.from_transition" title="Link to this definition">#</a></dt>
+<dd><p>Return the transition owning this fork.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.is_protected">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_protected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.is_protected" title="Link to this definition">#</a></dt>
+<dd><p>Tell if a construct item is syntactically protected with some markup
+and is stored as a string (without the markup).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IModel</span></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.model" title="Link to this definition">#</a></dt>
+<dd><p>Return model containing the Swan item.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.module">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModuleBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.module" title="Link to this definition">#</a></dt>
+<dd><p>Module containing the item.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>ModuleBase: module container, see <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a>
+and <a class="reference internal" href="../module_global/module.html#ansys.scadeone.core.swan.ModuleInterface" title="ansys.scadeone.core.swan.ModuleInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleInterface</span></code></a> or None if the object is itself a module.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../common.html#ansys.scadeone.core.swan.SwanItem" title="ansys.scadeone.core.swan.common.SwanItem"><span class="pre">SwanItem</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.owner" title="Link to this definition">#</a></dt>
+<dd><p>Owner of current Swan construct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.swan.Fork.transitions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.swan.Transition" title="ansys.scadeone.core.swan.equations.Transition"><span class="pre">Transition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.swan.Fork.transitions" title="Link to this definition">#</a></dt>
+<dd><p>List of transitions, sorted by priority.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A new list is returned, modifying it does not change the state.
+Use <em>self._transitions</em> to modify the internal list.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#state-machine">State machine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#states">States</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transitions">Transitions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-to-states">Reference to states</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forks">Forks</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/language/operator_body/automaton.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

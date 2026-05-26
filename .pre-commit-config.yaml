@@ -1,11 +1,9 @@
 repos:
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.4.4
+    rev: d8b24e3bdb9a1872dbca234d5bf34598e54980f8
     hooks:
       - id: add-license-headers
         exclude: ".*.j2"
-        args:
-          - --start_year=2024
 
   - repo: https://github.com/numpy/numpydoc
     rev: v1.8.0

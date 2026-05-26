@@ -1,0 +1,1766 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulation data &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=f82dc3d9"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/svc/simdata';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Test results" href="test_results.html" />
+    <link rel="prev" title="Generated code" href="generated_code.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language/index.html">Swan constructs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_language/index.html">Swan Test constructs</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Services</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="navigation/index.html">Model navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated_code.html">Generated code</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulation data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_results.html">Test results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fmu_export.html">FMU export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_creator.html">Project creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pywrapper.html">Python wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Project jobs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Helper classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Services</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Simulation data</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="simulation-data">
+<span id="ref-sim-data"></span><h1>Simulation data<a class="headerlink" href="#simulation-data" title="Link to this heading">#</a></h1>
+<p>Simulation data files are used to represent sequences of values:</p>
+<ul class="simple">
+<li><p>they are the outputs of simulation jobs;</p></li>
+<li><p>they can be used in test harnesses:</p>
+<ul>
+<li><p>in <em>data source</em> blocks, to feed the input flows of the operator instance to test</p></li>
+<li><p>in <em>oracle</em> blocks, to store expected output values to compare with the actual values in model test execution</p></li>
+</ul>
+</li>
+</ul>
+<p>This library allows to read and edit simulation data files. Look for <em>simulation data</em> in the Scade One documentation.</p>
+<section id="covered-features">
+<h2>Covered features<a class="headerlink" href="#covered-features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Support of <code class="docutils literal notranslate"><span class="pre">none</span></code> values, meaning that the value is not defined at a given cycle:</p>
+<ul>
+<li><p>Stimuli operator: a value must be defined at first cycle, for next steps the <code class="docutils literal notranslate"><span class="pre">none</span></code> type means that a previous value is held.</p></li>
+<li><p>Simulator trace: a <code class="docutils literal notranslate"><span class="pre">none</span></code> value means that the variable clock is false.</p></li>
+</ul>
+</li>
+<li><p>Support of all Swan types, imported types (stored as a byte array) and combinations of them (native support of Variants &amp; Groups).</p>
+<ul>
+<li><p>Data support: structure, table (when the table size is a static constant), enum, string.</p></li>
+<li><p>Limitations: partial data is not supported. All values of a complex type must be given.</p></li>
+</ul>
+</li>
+<li><p>The variables are organized as a tree of &lt;scope&gt;/&lt;scope&gt;/…/&lt;variable&gt;, each scope and variable has an optional Swan kind: sensors, inputs, outputs, probes, assume, guarantee and so on.</p></li>
+<li><p>Possibility to specify a <em>repetition</em> of a signal or part of it.</p></li>
+<li><p>Possibility to open an existing file for modification: elements, types and values.</p></li>
+</ul>
+<section id="design-principles">
+<h3>Design principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The values are stored as their binary representation in memory: no structured representation of composite values.</p></li>
+<li><p>The values sequences are compressed using the zlib data-compression library.</p></li>
+<li><p>The file size has no limit (more than 4 GB): use of 64-bits positions and C APIs for seek in file.</p></li>
+<li><p>The entire file content is not loaded in memory when opening: the data is read in file only on demand.</p></li>
+<li><p>The file content is not entirely rewritten on disk when closing: incremental read and write operations.</p></li>
+</ul>
+</section>
+<section id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Appending values to an element: no need to read all the values before appending and use of a write cache.</p></li>
+<li><p>Updating element: no move of significant data in file.</p></li>
+</ul>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="simulation-data-file-preview-command-line">
+<h3>Simulation data file preview command line<a class="headerlink" href="#simulation-data-file-preview-command-line" title="Link to this heading">#</a></h3>
+<p>The <strong>pyscadeone</strong> <a class="reference internal" href="../../user_guide/cli.html#ref-cli"><span class="std std-ref">Command line interface</span></a> is used, in combination with the <em>simdata</em> and <em>-show</em> arguments, to preview
+the content of a data file with .SD extension in a text editor, without opening the Scade One tool or the Signal Editor.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># View content of a .SD file as a text</span>
+pyscadeone<span class="w"> </span>simdata<span class="w"> </span>--show<span class="w"> </span>some_file.sd<span class="w"> </span>&gt;<span class="w"> </span>some_file.txt
+notepad<span class="w"> </span>some_file.txt<span class="w"> </span><span class="c1"># opens the file in notepad, or vi editor and so on</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-structure-type-data">
+<h3>Create a structure type data<a class="headerlink" href="#create-a-structure-type-data" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ansys.scadeone.core.svc.simdata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sd</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span><span class="s2">&quot;mySimDataFile.sd&quot;</span><span class="p">)</span> <span class="c1"># creates a new simulation data file</span>
+
+<span class="n">t_struct1</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_struct_type</span><span class="p">([(</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Bool</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;f2&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Int32</span><span class="p">)],</span> <span class="s2">&quot;p1::tStruct1&quot;</span><span class="p">)</span> <span class="c1"># creates a new structure type</span>
+<span class="n">e_struct1</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="s2">&quot;eStruct1&quot;</span><span class="p">,</span> <span class="n">t_struct1</span><span class="p">)</span> <span class="c1"># adds an element to the file</span>
+<span class="n">clock1</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span> <span class="c1"># number of cycles</span>
+    <span class="n">clock1</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">clock1</span>
+    <span class="n">e_struct1</span><span class="o">.</span><span class="n">append_value</span><span class="p">([</span><span class="n">clock1</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">14</span><span class="p">])</span> <span class="c1"># adds values to the element</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="c1"># closes the file</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-variant-type-data">
+<h3>Create a variant type data<a class="headerlink" href="#create-a-variant-type-data" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ansys.scadeone.core.svc.simdata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sd</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span><span class="s2">&quot;mySimDataFile.sd&quot;</span><span class="p">)</span> <span class="c1"># creates a new simulation data file</span>
+
+<span class="n">variant_type2</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_variant_type</span><span class="p">([(</span><span class="s2">&quot;speedLimitStart&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;speedLimitEnd&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span> <span class="s2">&quot;MyModule::SpeedLimit&quot;</span><span class="p">)</span> <span class="c1"># creates a new variant type</span>
+<span class="n">variant_type1</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_variant_type</span><span class="p">([(</span><span class="s2">&quot;tsBool&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Bool</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;tsNone&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;tsSome&quot;</span><span class="p">,</span> <span class="n">variant_type2</span><span class="p">)],</span> <span class="s2">&quot;MyModule::Variant&quot;</span><span class="p">)</span> <span class="c1"># creates a new variant type with an inserted variant subtype</span>
+<span class="n">variant_element</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="s2">&quot;inputVariant&quot;</span><span class="p">,</span> <span class="n">variant_type1</span><span class="p">)</span> <span class="c1"># adds an element to the file</span>
+
+<span class="n">variant_element</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([(</span><span class="s2">&quot;tsNone&quot;</span><span class="p">)])</span> <span class="c1"># fills with values</span>
+<span class="n">variant_element</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([(</span><span class="s2">&quot;tsBool&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+<span class="n">variant_element</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([(</span><span class="s2">&quot;tsSome&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;speedLimitStart&quot;</span><span class="p">,</span> <span class="mi">147</span><span class="p">))])</span>
+<span class="n">variant_element</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([(</span><span class="s2">&quot;tsSome&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;speedLimitEnd&quot;</span><span class="p">))])</span>
+<span class="n">variant_element</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([(</span><span class="s2">&quot;tsNone&quot;</span><span class="p">)])</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="c1"># closes the file</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-group-type-data">
+<h3>Create a group type data<a class="headerlink" href="#create-a-group-type-data" title="Link to this heading">#</a></h3>
+<p>A group is a composite type that contains child elements. Each child element can be of any type, including another group.
+The Simdata representation of a group is a container used to organize related elements together. The <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a>
+representing the group has the name of the group itself, but does not hold values; its child elements do.</p>
+<p>The group representation is flattened: child elements are represented as individual elements in the simulation data file.
+Child elements are identified by their path in the group hierarchy, using positions and names.</p>
+<p>Suppose one defines a group type in Swan as follows: <cite>group MyGroup = (int32, bool, b:((x:float32, y:float32), int32))</cite>
+in the module interface <cite>MyModule</cite>. The code to create a simulation data file with this group type is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ansys.scadeone.core.svc.simdata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sd</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span><span class="s2">&quot;mySimDataFile.sd&quot;</span><span class="p">)</span> <span class="c1"># creates a new simulation data file</span>
+<span class="n">group_element</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="s2">&quot;inputGroup&quot;</span><span class="p">,</span> <span class="n">group_expr</span><span class="o">=</span><span class="s2">&quot;MyModule::MyGroup&quot;</span><span class="p">)</span>
+<span class="n">child_1</span> <span class="o">=</span> <span class="n">group_element</span><span class="o">.</span><span class="n">add_child_element</span><span class="p">(</span><span class="s2">&quot;.(.1)&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Int32</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">ElementKind</span><span class="o">.</span><span class="n">GROUP_ITEM</span><span class="p">)</span>
+<span class="n">child_2</span> <span class="o">=</span> <span class="n">group_element</span><span class="o">.</span><span class="n">add_child_element</span><span class="p">(</span><span class="s2">&quot;.(.2)&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Bool</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">ElementKind</span><span class="o">.</span><span class="n">GROUP_ITEM</span><span class="p">)</span>
+<span class="n">child_b1_b_1_x</span> <span class="o">=</span> <span class="n">group_element</span><span class="o">.</span><span class="n">add_child_element</span><span class="p">(</span>
+    <span class="s2">&quot;.(.b.1.x)&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">ElementKind</span><span class="o">.</span><span class="n">GROUP_ITEM</span>
+<span class="p">)</span>
+<span class="n">child_b1_b_1_y</span> <span class="o">=</span> <span class="n">group_element</span><span class="o">.</span><span class="n">add_child_element</span><span class="p">(</span>
+    <span class="s2">&quot;.(.b.1.y)&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">ElementKind</span><span class="o">.</span><span class="n">GROUP_ITEM</span>
+<span class="p">)</span>
+<span class="n">child_b1_b_2</span> <span class="o">=</span> <span class="n">group_element</span><span class="o">.</span><span class="n">add_child_element</span><span class="p">(</span>
+    <span class="s2">&quot;.(.b.2)&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Int32</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">ElementKind</span><span class="o">.</span><span class="n">GROUP_ITEM</span>
+<span class="p">)</span>
+
+<span class="n">child_1</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">child_b1_b_1_x</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">])</span>
+<span class="n">child_b1_b_1_y</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">])</span>
+<span class="n">child_b1_b_2</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="n">child_2</span><span class="o">.</span><span class="n">append_values_sequence</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The content of the file can be visualized:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pyscadeone<span class="w"> </span>simdata<span class="w"> </span>--show<span class="w"> </span>mySimDataFile.sd
+***<span class="w"> </span>Elements:
+inputGroup:
+<span class="w">    </span>GROUP_ITEM<span class="w"> </span>.<span class="o">(</span>.1<span class="o">)</span>:<span class="w"> </span>int32:<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="p">|</span>
+<span class="w">    </span>GROUP_ITEM<span class="w"> </span>.<span class="o">(</span>.2<span class="o">)</span>:<span class="w"> </span>bool:<span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="p">|</span>
+<span class="w">    </span>GROUP_ITEM<span class="w"> </span>.<span class="o">(</span>.b.1.x<span class="o">)</span>:<span class="w"> </span>float32:<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.2<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.3<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.4<span class="w"> </span><span class="p">|</span>
+<span class="w">    </span>GROUP_ITEM<span class="w"> </span>.<span class="o">(</span>.b.1.y<span class="o">)</span>:<span class="w"> </span>float32:<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.5<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.5<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.6<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.7<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.8<span class="w"> </span><span class="p">|</span>
+<span class="w">    </span>GROUP_ITEM<span class="w"> </span>.<span class="o">(</span>.b.2<span class="o">)</span>:<span class="w"> </span>int32:<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="p">|</span>
+</pre></div>
+</div>
+<p>In the Scade One Signal Editor, the group is represented as:</p>
+<a class="reference internal image-reference" href="../../_images/simdata_group.png"><img alt="Signal Editor view of a group type" class="align-center" src="../../_images/simdata_group.png" style="width: 60%;" />
+</a>
+</section>
+</section>
+<section id="high-level-api">
+<h2>High-level API<a class="headerlink" href="#high-level-api" title="Link to this heading">#</a></h2>
+<section id="high-level-functions">
+<h3>High-level functions<a class="headerlink" href="#high-level-functions" title="Link to this heading">#</a></h3>
+<p>The following functions are used to create or open a simulation data file,
+and to create user types definitions for elements, which can be then be filled with values
+from Python values.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.open_file">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">FileBase</span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.open_file" title="Link to this definition">#</a></dt>
+<dd><p>Open a simdata file in read-only mode</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>path of the file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileBase</span></code></dt><dd><p>The opened file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>file could not be opened</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_file">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">FileBase</span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_file" title="Link to this definition">#</a></dt>
+<dd><p>Create a simdata file</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>path of the file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileBase</span></code></dt><dd><p>The created file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>file could not be created</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.edit_file">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">edit_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">FileBase</span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.edit_file" title="Link to this definition">#</a></dt>
+<dd><p>Open a simdata file in edit mode</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>path of the file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileBase</span></code></dt><dd><p>The opened file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>The file could not be opened</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_array_type">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_array_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType" title="ansys.scadeone.core.svc.simdata.defs.ArrayType"><span class="pre">ArrayType</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_array_type" title="Link to this definition">#</a></dt>
+<dd><p>Create a multi dimensional array type</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_type</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Type</span></code></span></dt><dd><p>type of array</p>
+</dd>
+<dt><strong>dims</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>]</span></dt><dd><p>array dimensions</p>
+</dd>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>array name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ArrayType</span></code></dt><dd><p>Created array type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>incorrect dimensions, array type could not be created, argument error or none type passed</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_struct_type">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_struct_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.StructType" title="ansys.scadeone.core.svc.simdata.defs.StructType"><span class="pre">StructType</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_struct_type" title="Link to this definition">#</a></dt>
+<dd><p>Create a structure type</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>fields</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tuple</span></code>]</span></dt><dd><p>all fields of the structure</p>
+</dd>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>structure name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">StructType</span></code></dt><dd><p>The created structure type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>structure type could not be created,
+arguments are invalid, or field names duplicate</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_enum_type">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_enum_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.EnumType" title="ansys.scadeone.core.svc.simdata.defs.EnumType"><span class="pre">EnumType</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_enum_type" title="Link to this definition">#</a></dt>
+<dd><p>Create an enumeration type</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>values</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>values of the enumeration type</p>
+</dd>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>name of enumeration type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnumType</span></code></dt><dd><p>Created enumeration type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>could not create enumeration type, create a value of passed argument
+or invalid arguments in creation</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_variant_type">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_variant_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constructors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.VariantType" title="ansys.scadeone.core.svc.simdata.defs.VariantType"><span class="pre">VariantType</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_variant_type" title="Link to this definition">#</a></dt>
+<dd><p>Create a variant type</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>constructors</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tuple</span></code>]</span></dt><dd><p>constructors of the variant type</p>
+</dd>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>name of variant type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariantType</span></code></dt><dd><p>Created variant type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>variant type could not be created, invalid arguments or duplicate constructor names</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.create_imported_type">
+<span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">create_imported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mem_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.ImportedType" title="ansys.scadeone.core.svc.simdata.defs.ImportedType"><span class="pre">ImportedType</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.create_imported_type" title="Link to this definition">#</a></dt>
+<dd><p>Create an imported type</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>mem_size</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>memory size</p>
+</dd>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>imported type name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImportedType</span></code></dt><dd><p>Created imported type</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>could not create imported type, argument type error or argument type error</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="high-level-classes">
+<h3>High-level classes<a class="headerlink" href="#high-level-classes" title="Link to this heading">#</a></h3>
+<p>Following classes are used to manipulate simulation data files and their content:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.File" title="ansys.scadeone.core.svc.simdata.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> is returned by <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.open_file" title="ansys.scadeone.core.svc.simdata.open_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">open_file()</span></code></a>, <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.create_file" title="ansys.scadeone.core.svc.simdata.create_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_file()</span></code></a> and <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.edit_file" title="ansys.scadeone.core.svc.simdata.edit_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">edit_file()</span></code></a>.</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> is created by <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.File.add_element" title="ansys.scadeone.core.svc.simdata.File.add_element"><code class="xref py py-meth docutils literal notranslate"><span class="pre">File.add_element()</span></code></a> or <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element.add_child_element" title="ansys.scadeone.core.svc.simdata.Element.add_child_element"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Element.add_child_element()</span></code></a>.</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.File">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">File</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.File" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FileBase</span></code></p>
+<p>Simdata files class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.File.add_element">
+<span class="sig-name descname"><span class="pre">add_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SdeKind</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">SdeKind.NONE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ElementBase</span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.File.add_element" title="Link to this definition">#</a></dt>
+<dd><p>Create and add an element to file</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>element name</p>
+</dd>
+<dt><strong>sd_type</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Type</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>type of element</p>
+</dd>
+<dt><strong>kind</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementKind</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>kind of element</p>
+</dd>
+<dt><strong>group_expr</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>group expression of element</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementBase</span></code></dt><dd><p>The new element that was added to file</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.File.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.File.close" title="Link to this definition">#</a></dt>
+<dd><p>Close a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>Could not close file or file was not opened</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.File.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.File.get_version" title="Link to this definition">#</a></dt>
+<dd><p>Get the file version</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Version number</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.File.remove_element">
+<span class="sig-name descname"><span class="pre">remove_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.csd.Element"><span class="pre">Element</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.File.remove_element" title="Link to this definition">#</a></dt>
+<dd><p>Delete an element from file</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>element</strong><span class="classifier"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.Element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Element</span></code></a></span></dt><dd><p>element to delete</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>element of wrong type or could not be found or deleted</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FileBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SdeKind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ElementBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ElementBase</span></code></p>
+<p>Class for simdata elements</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.add_child_element">
+<span class="sig-name descname"><span class="pre">add_child_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SdeKind</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">SdeKind.NONE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ElementBase</span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.add_child_element" title="Link to this definition">#</a></dt>
+<dd><p>Add a child to element</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>child element name</p>
+</dd>
+<dt><strong>sd_type</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Type</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>child element type</p>
+</dd>
+<dt><strong>kind</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementKind</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>child element kind</p>
+</dd>
+<dt><strong>group_expr</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>child element group expression</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElementBase</span></code></dt><dd><p>Created child element</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.append_nones_sequence">
+<span class="sig-name descname"><span class="pre">append_nones_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.append_nones_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Create and append a sequence of ‘none’</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>count</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>number of Nones to add</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>invalid count, cannot create or append nones sequence</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.append_value">
+<span class="sig-name descname"><span class="pre">append_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">py_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.append_value" title="Link to this definition">#</a></dt>
+<dd><p>Add a value to an element or appends to the last sequence of values if any.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>py_value</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></span></dt><dd><p>value that has a type corresponding to the element</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>value is invalid or could not be added</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.append_values_sequence">
+<span class="sig-name descname"><span class="pre">append_values_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">py_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.append_values_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Create and append a new sequence of ‘values’ with repeat factor.
+Do not use repeat factor for array and structure types.
+Do not use this for structure or array types that already have any value,
+use append_value() instead in such case.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>py_values</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code>]</span></dt><dd><p>list of value(s) to add</p>
+</dd>
+<dt><strong>repeat_factor</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>number of times to add, by default 1 (no repeat), do not use with non scalar values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>Invalid repeat, none contained in values, invalid values, cannot create or append
+values sequence, used repeat factor for array or structure types</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.clear_values">
+<span class="sig-name descname"><span class="pre">clear_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.clear_values" title="Link to this definition">#</a></dt>
+<dd><p>Clear all values of element</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>values could not be cleared</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.get_last_sequence">
+<span class="sig-name descname"><span class="pre">get_last_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_void_p" title="(in Python v3.14)"><span class="pre">c_void_p</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.get_last_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Get the last sequence</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.read_values">
+<span class="sig-name descname"><span class="pre">read_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><span class="pre">Value</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.read_values" title="Link to this definition">#</a></dt>
+<dd><p>Read element values</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>start</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>start index for reading, beginning if not specified</p>
+</dd>
+<dt><strong>n</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>number of values to read, runs until end if not specified</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Value</span></code>]</dt><dd><p>each value read</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>invalid number of values to read, cannot seek element index</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.Element.remove_child_element">
+<span class="sig-name descname"><span class="pre">remove_child_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.csd.Element"><span class="pre">Element</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.Element.remove_child_element" title="Link to this definition">#</a></dt>
+<dd><p>Remove a child from element</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>element</strong><span class="classifier"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.Element" title="ansys.scadeone.core.svc.simdata.Element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Element</span></code></a></span></dt><dd><p>element to remove</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScadeOneException</span></code></dt><dd><p>child is not an element, was not found or could not be removed</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="type-definitions">
+<h2>Type definitions<a class="headerlink" href="#type-definitions" title="Link to this heading">#</a></h2>
+<p>Simulation values have types, defined in Swan language. Types can be predefined (native) or user-defined.
+In the latter case, the type must be created before creating an element of this type.</p>
+<p>Values are passed to the API as Python values, and converted to the proper binary representation of the Swan type.
+Scalar types are mapped to Python built-in types, composite types are mapped to Python lists or tuples.
+For arrays one can use <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v2.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a> function.</p>
+<section id="predefined-types">
+<h3>Predefined types<a class="headerlink" href="#predefined-types" title="Link to this heading">#</a></h3>
+<p>Predefined swan types that shall be used for creation of
+simple elements or user types definitions</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Swan type</p></th>
+<th class="head"><p>SD Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>char</p></td>
+<td><p>Char</p></td>
+</tr>
+<tr class="row-odd"><td><p>bool</p></td>
+<td><p>Bool</p></td>
+</tr>
+<tr class="row-even"><td><p>int8</p></td>
+<td><p>Int8</p></td>
+</tr>
+<tr class="row-odd"><td><p>int16</p></td>
+<td><p>Int16</p></td>
+</tr>
+<tr class="row-even"><td><p>int32</p></td>
+<td><p>Int32</p></td>
+</tr>
+<tr class="row-odd"><td><p>int64</p></td>
+<td><p>Int64</p></td>
+</tr>
+<tr class="row-even"><td><p>uint8</p></td>
+<td><p>UInt8</p></td>
+</tr>
+<tr class="row-odd"><td><p>uint16</p></td>
+<td><p>UInt16</p></td>
+</tr>
+<tr class="row-even"><td><p>uint32</p></td>
+<td><p>UInt32</p></td>
+</tr>
+<tr class="row-odd"><td><p>uint64</p></td>
+<td><p>UInt64</p></td>
+</tr>
+<tr class="row-even"><td><p>float32</p></td>
+<td><p>Float32</p></td>
+</tr>
+<tr class="row-odd"><td><p>float64</p></td>
+<td><p>Float64</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Example of using a predefined type (float 32 here) for new element and a custom user type:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ansys.scadeone.core.svc.simdata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sd</span>
+
+<span class="n">my_file</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span><span class="s2">&quot;mySimDataFile.sd&quot;</span><span class="p">)</span>
+<span class="c1"># Predefined type</span>
+<span class="n">my_element1</span> <span class="o">=</span> <span class="n">my_file</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="s2">&quot;myElement&quot;</span><span class="p">,</span> <span class="n">sd</span><span class="o">.</span><span class="n">Float32</span><span class="p">)</span>
+<span class="c1"># User defined type: 2D array of float32</span>
+<span class="n">my_array_type</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">create_array_type</span><span class="p">(</span><span class="n">sd</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;my2DArrayType&quot;</span><span class="p">)</span>
+<span class="n">my_element2</span> <span class="o">=</span> <span class="n">my_file</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="s2">&quot;my2DArrayElement&quot;</span><span class="p">,</span> <span class="n">my_array_type</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="module-ansys.scadeone.core.svc.simdata.defs">
+<span id="type-related-classes"></span><h3>Type-related classes<a class="headerlink" href="#module-ansys.scadeone.core.svc.simdata.defs" title="Link to this heading">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ArrayType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">ArrayType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Multidimensional array type</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ArrayType.base_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">base_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType.base_type" title="Link to this definition">#</a></dt>
+<dd><p>Base type of array elements</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ArrayType.dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType.dims" title="Link to this definition">#</a></dt>
+<dd><p>Array dimensions as list of integers for multidimensional arrays</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ArrayType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ArrayType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ArrayType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">EnumType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedType" title="ansys.scadeone.core.svc.simdata.defs.PredefinedType"><span class="pre">PredefinedType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.EnumTypeValue" title="ansys.scadeone.core.svc.simdata.defs.EnumTypeValue"><span class="pre">EnumTypeValue</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Enumeration type defined with enumeration values</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumType.base_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">base_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedType" title="ansys.scadeone.core.svc.simdata.defs.PredefinedType"><span class="pre">PredefinedType</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumType.base_type" title="Link to this definition">#</a></dt>
+<dd><p>Base type of enumeration values</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumType.values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.EnumTypeValue" title="ansys.scadeone.core.svc.simdata.defs.EnumTypeValue"><span class="pre">EnumTypeValue</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumType.values" title="Link to this definition">#</a></dt>
+<dd><p>Enumeration values, with their names and integer values</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumTypeValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">EnumTypeValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumTypeValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Enumeration type value</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumTypeValue.int_value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">int_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumTypeValue.int_value" title="Link to this definition">#</a></dt>
+<dd><p>Enumeration value integer value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumTypeValue.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumTypeValue.name" title="Link to this definition">#</a></dt>
+<dd><p>Enumeration value name</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.EnumValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">EnumValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.EnumValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>Values for enumeration types</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ImportedType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">ImportedType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_size:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_vsize:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfn_vsize_get_bytes_size:</span> <span class="pre">~ctypes.CFUNCTYPE.&lt;locals&gt;.CFunctionType</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pfn_vsize_to_bytes:</span> <span class="pre">~ctypes.CFUNCTYPE.&lt;locals&gt;.CFunctionType</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ImportedType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Imported Types (stored as byte arrays)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ImportedType.mem_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mem_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ImportedType.mem_size" title="Link to this definition">#</a></dt>
+<dd><p>Memory size in bytes for fixed-size imported types</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ImportedType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ImportedType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ImportedType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ImportedType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ImportedValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">ImportedValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bytes_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ImportedValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>Values for imported types</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.ListValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">ListValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><span class="pre">Value</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.ListValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>Values for list types</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.NoneValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">NoneValue</span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.NoneValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>None Values</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedBoolValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedBoolValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ubyte" title="(in Python v3.14)"><span class="pre">c_ubyte</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedBoolValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type boolean</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedCharValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedCharValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ubyte" title="(in Python v3.14)"><span class="pre">c_ubyte</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedCharValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type char</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedFloat32Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedFloat32Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_float" title="(in Python v3.14)"><span class="pre">c_float</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedFloat32Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type float 32</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedFloat64Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedFloat64Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_double" title="(in Python v3.14)"><span class="pre">c_double</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedFloat64Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type float 64</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedInt16Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedInt16Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_short" title="(in Python v3.14)"><span class="pre">c_short</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedInt16Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type int 16</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedInt32Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedInt32Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_int" title="(in Python v3.14)"><span class="pre">c_int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedInt32Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type int 32</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedInt64Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedInt64Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_long" title="(in Python v3.14)"><span class="pre">c_long</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedInt64Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type int 64</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedInt8Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedInt8Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_byte" title="(in Python v3.14)"><span class="pre">c_byte</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedInt8Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type int 8</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Predefined Swan types are not stored in file.
+They have hard-coded identifiers that can be used in user types definitions.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedUInt16Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedUInt16Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ushort" title="(in Python v3.14)"><span class="pre">c_ushort</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedUInt16Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type unsigned int 16</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedUInt32Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedUInt32Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_uint" title="(in Python v3.14)"><span class="pre">c_uint</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedUInt32Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type unsigned int 32</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedUInt64Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedUInt64Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ulong" title="(in Python v3.14)"><span class="pre">c_ulong</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedUInt64Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type unsigned int 64</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedUInt8Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedUInt8Value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/ctypes.html#ctypes.c_ubyte" title="(in Python v3.14)"><span class="pre">c_ubyte</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedUInt8Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="ansys.scadeone.core.svc.simdata.defs.PredefinedValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedValue</span></code></a></p>
+<p>Values for predefined type unsigned int 8</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.PredefinedValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">PredefinedValue</span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.PredefinedValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>Values for predefined Swan Types</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">StructType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.StructTypeField" title="ansys.scadeone.core.svc.simdata.defs.StructTypeField"><span class="pre">StructTypeField</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Structure type defined with structure type fields</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructType.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.StructTypeField" title="ansys.scadeone.core.svc.simdata.defs.StructTypeField"><span class="pre">StructTypeField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructType.fields" title="Link to this definition">#</a></dt>
+<dd><p>Structure fields</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructTypeField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">StructTypeField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructTypeField" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Structure type’s fields</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructTypeField.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructTypeField.name" title="Link to this definition">#</a></dt>
+<dd><p>Field name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.StructTypeField.sd_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sd_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.StructTypeField.sd_type" title="Link to this definition">#</a></dt>
+<dd><p>Field type</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.Type">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">Type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents an abstract data type.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.Type.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.Type.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.Type.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.Type.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.UntypedVariantConstructorValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">UntypedVariantConstructorValue</span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.UntypedVariantConstructorValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>No value to return for untyped variant constructor</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.Value">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">Value</span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Interface for all element types values that shall
+provide a readable string representation.
+Derived classes shall implement __str__() method.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">VariantType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">constructors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor" title="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor"><span class="pre">VariantTypeConstructor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a></p>
+<p>Variant type defined with variant type constructors</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantType.find_constructor">
+<span class="sig-name descname"><span class="pre">find_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor" title="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor"><span class="pre">VariantTypeConstructor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantType.find_constructor" title="Link to this definition">#</a></dt>
+<dd><p>Find variant constructor by name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantType.constructors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constructors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor" title="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor"><span class="pre">VariantTypeConstructor</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantType.constructors" title="Link to this definition">#</a></dt>
+<dd><p>Variant constructors for each possible value of the variant</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantType.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantType.name" title="Link to this definition">#</a></dt>
+<dd><p>Type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantType.type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantType.type_id" title="Link to this definition">#</a></dt>
+<dd><p>Type identifier in the simulation data file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">VariantTypeConstructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Variant type constructor</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor.name" title="Link to this definition">#</a></dt>
+<dd><p>Variant constructor name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor.value_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Type" title="ansys.scadeone.core.svc.simdata.defs.Type"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantTypeConstructor.value_type" title="Link to this definition">#</a></dt>
+<dd><p>Variant constructor value type</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.simdata.defs.VariantValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.simdata.defs.</span></span><span class="sig-name descname"><span class="pre">VariantValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><span class="pre">Value</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.simdata.defs.VariantValue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.simdata.defs.Value" title="ansys.scadeone.core.svc.simdata.defs.Value"><code class="xref py py-class docutils literal notranslate"><span class="pre">Value</span></code></a></p>
+<p>Values for variant types</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covered-features">Covered features</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design principles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-data-file-preview-command-line">Simulation data file preview command line</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-structure-type-data">Create a structure type data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-variant-type-data">Create a variant type data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-group-type-data">Create a group type data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-api">High-level API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-functions">High-level functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-classes">High-level classes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-definitions">Type definitions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#predefined-types">Predefined types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ansys.scadeone.core.svc.simdata.defs">Type-related classes</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/api/svc/simdata.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

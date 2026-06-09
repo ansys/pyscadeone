@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: d8b24e3bdb9a1872dbca234d5bf34598e54980f8
+    rev: 8f243c63767dc8189c353d5e7ea1ad2d96d70e37
     hooks:
       - id: add-license-headers
         exclude: ".*.j2"

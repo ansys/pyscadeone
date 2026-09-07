@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,7 +24,6 @@ import pytest
 
 from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.common.storage import SwanString
-from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as swan
 from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.swan.typedecl import (
@@ -39,14 +38,10 @@ def gen_code(swan_code: str, module: str) -> SwanString:
 
 
 @pytest.fixture(scope="session")
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
-
-
-@pytest.fixture(scope="session")
-def model(parser):
+def model(parser, tmp_path_factory):
     app_ = ScadeOne()
-    model_ = app_.model
+    project_ = app_.new_project(tmp_path_factory.mktemp("type_def_access") / "empty.sproj")
+    model_ = project_.model
 
     code_M0_body = gen_code(
         """
@@ -59,6 +54,7 @@ def model(parser):
             const C3: M1::T3 = true;
             const C4: M3::T4;
             const C5: M5::T5;
+            const C6: M5::T6;
         """,
         "M0",
     )
@@ -83,6 +79,7 @@ def model(parser):
     code_M3_body = gen_code(
         """
             type T5 = enum {ONE, TWO, THREE};
+            group T6 = (int32, int32);
         """,
         "N1::N2::M4",
     )
@@ -111,12 +108,16 @@ class TestGetTypeDecl:
             ("C3", ExprTypeDefinition, "T3 = bool"),
             ("C4", StructTypeDefinition, "T4 = {a: int8, b: int16}"),
             ("C5", EnumTypeDefinition, "T5 = enum {ONE, TWO, THREE}"),
+            ("C6", swan.GroupDecl, "T6 = (int32, int32)"),
         ],
     )
     def test_constant_decl(self, model, constant, expected_type_definition, expected_type_str):
         decl = model.get_module_body("M0").get_declaration(constant).type.type_decl
-        assert isinstance(decl, swan.TypeDecl)
-        type_definition = decl.definition
-        assert isinstance(type_definition, expected_type_definition)
+        if expected_type_definition is swan.GroupDecl:
+            assert isinstance(decl, swan.GroupDecl)
+        else:
+            assert isinstance(decl, swan.TypeDecl)
+            type_definition = decl.definition
+            assert isinstance(type_definition, expected_type_definition)
         decl_str = swan.swan_to_str(decl)
         assert decl_str == expected_type_str

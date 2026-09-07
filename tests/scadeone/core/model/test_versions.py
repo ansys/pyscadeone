@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,7 @@
 
 import pytest
 
-from ansys.scadeone.core import ScadeOneException, __version__, version_info
+from ansys.scadeone.core import ScadeOneException, __version__, full_version
 from ansys.scadeone.core.model.loader import VersionMap
 from ansys.scadeone.core.common.versioning import FormatVersions
 
@@ -33,7 +33,7 @@ def swan_formats():
 
 
 def test_version():
-    assert __version__ == ".".join((version_info.major, version_info.minor, version_info.patch))
+    assert __version__ == full_version
 
 
 def test_swan_versions(swan_formats):

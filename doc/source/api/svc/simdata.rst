@@ -24,7 +24,7 @@ Covered features
   * Stimuli operator: a value must be defined at first cycle, for next steps the ``none`` type means that a previous value is held.
   * Simulator trace: a ``none`` value means that the variable clock is false.
 
-* Support of all Swan types, imported types (stored as a byte array) and combinations of them (native support of Variants & Groups).
+* Support of all Swan types, external types (stored as a byte array) and combinations of them (native support of Variants & Groups).
 
   * Data support: structure, table (when the table size is a static constant), enum, string.
   * Limitations: partial data is not supported. All values of a complex type must be given.
@@ -50,6 +50,13 @@ Performance
 
 Examples
 ========
+
+This section gives some examples of using the API to create and edit simulation data files. It describes how to 
+create elements for composite types (struct, variant, group) and fill them with values. 
+It also shows how to preview the content of a `.sd` file as text.
+
+For type definitions, see :ref:`ref_sim_data_type_defs` section. See :py:meth:`Element.append_value` 
+for the correspondence between Python values and simulation data types.
 
 Simulation data file preview command line
 -----------------------------------------
@@ -112,7 +119,7 @@ The Simdata representation of a group is a container used to organize related el
 representing the group has the name of the group itself, but does not hold values; its child elements do.
 
 The group representation is flattened: child elements are represented as individual elements in the simulation data file.
-Child elements are identified by their path in the group hierarchy, using positions and names.
+Child elements are identified by their path in the group hierarchy, using positions, and names.
 
 Suppose one defines a group type in Swan as follows: `group MyGroup = (int32, bool, b:((x:float32, y:float32), int32))` 
 in the module interface `MyModule`. The code to create a simulation data file with this group type is:
@@ -174,28 +181,60 @@ The following functions are used to create or open a simulation data file,
 and to create user types definitions for elements, which can be then be filled with values
 from Python values.
 
+File creation and edition functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:py:func:`open_file`, :py:func:`create_file` and :py:func:`edit_file` functions return a :py:class:`File` object, 
+which can be used as a context manager.
+
+Example of using the context manager support for a file:
+
+.. code:: python
+
+    import ansys.scadeone.core.svc.simdata as sd
+
+    # instead of:
+    # my_file = sd.create_file("mySimDataFile.sd")
+    # try:
+    with sd.create_file("mySimDataFile.sd") as my_file:
+        my_element = my_file.add_element("myElement", sd.Float32)
+        my_element.append_values_sequence([0.1, 0.2, 0.3])
+
 .. autofunction:: open_file
 .. autofunction:: create_file
 .. autofunction:: edit_file
+
+Type creation functions
+^^^^^^^^^^^^^^^^^^^^^^^
+
 .. autofunction:: create_array_type
 .. autofunction:: create_struct_type
 .. autofunction:: create_enum_type
 .. autofunction:: create_variant_type
-.. autofunction:: create_imported_type
+.. autofunction:: create_external_type
+
 
 High-level classes
 ------------------
 
 Following classes are used to manipulate simulation data files and their content:
 
+
 - :py:class:`File` is returned by :py:func:`open_file`, :py:func:`create_file` and :py:func:`edit_file`.
 
 - :py:class:`Element` is created by :py:meth:`File.add_element` or :py:meth:`Element.add_child_element`.
 
+File class
+^^^^^^^^^^
+
 .. autoclass:: File
+
+Element class
+^^^^^^^^^^^^^ 
 
 .. autoclass:: Element
 
+.. _ref_sim_data_type_defs:
 
 Type definitions
 ================ 
@@ -246,6 +285,8 @@ Example of using a predefined type (float 32 here) for new element and a custom 
 
 Type-related classes
 --------------------
+
+.. currentmodule:: ansys.scadeone.core.svc.simdata.defs
 
 .. automodule:: ansys.scadeone.core.svc.simdata.defs
     :exclude-members: ElementBase, FileBase

@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,17 +20,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 import subprocess
 from pathlib import Path
 from typing import Optional, Union, TypedDict
 import uuid
+import shutil
 
-from ansys.scadeone.core.common.storage import JobFile, JobStorage
+from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.storage import JobFile, JobStorage, ProjectFile
 
 from ansys.scadeone.core.common.versioning import FormatVersions
-from ansys.scadeone.core.interfaces import IProject
+from ansys.scadeone.core.interfaces import IProject, IScadeOne
+import ansys.scadeone.core.assets as assets
+import ansys.scadeone.core.swan as swn
 
 
 class _PropertiesData(TypedDict, total=False):
@@ -46,11 +51,12 @@ class _PropertiesData(TypedDict, total=False):
     ExpansionExp: str
     ExpansionNoExp: str
     NameLength: str
-    SignificanceLength: str
     KeepAssume: str
     GlobalsPrefix: str
     UseMacros: str
     StaticLocals: str
+    MaxFunctionParameters: str
+    Probes: str
 
     # Test execution fields
     TestHarness: str
@@ -230,7 +236,7 @@ class Job(ABC):
         kind: JobType,
         sproj: IProject,
         input_paths: Optional[list[str]] = None,
-        storage: JobStorage = None,
+        storage: JobStorage | None = None,
     ) -> None:
         self._name = name
         self._kind = kind
@@ -238,9 +244,15 @@ class Job(ABC):
         self._input_paths = input_paths if input_paths else []
         self._storage = storage
         self._sproj = sproj
+        self._input_assets: list[assets.Asset] = []
+        self._output_assets: list[assets.Asset] = []
 
-    def __eq__(self, value: "Job") -> bool:
+    def __eq__(self, value: object) -> bool:
         """Two jobs are equal if their json content is equal"""
+        if not isinstance(value, Job):
+            return False
+        if not (isinstance(self.storage, JobFile) and isinstance(value.storage, JobFile)):
+            raise ScadeOneException("Cannot compare jobs that do not have file storage.")
         self.storage.load()
         value.storage.load()
         return self.storage.json == value.storage.json
@@ -286,17 +298,45 @@ class Job(ABC):
         return self._kind == JobType.MODEL_CHECK
 
     @property
-    def storage(self) -> JobStorage:
+    def storage(self) -> JobStorage | JobFile | None:
         """Job storage"""
         return self._storage
 
     @property
-    def root_declarations(self) -> str:
+    def root_declarations(self) -> list[str]:
         return self.properties.root_declarations
 
     @property
     def custom_arguments(self) -> str:
         return self.properties.custom_arguments
+
+    @property
+    def input_assets(self) -> list[assets.Asset]:
+        """Input assets of the job"""
+        if self._input_assets:
+            return self._input_assets
+
+        _list_modules = [str(mdl.name) for mdl in self.sproj.modules]
+        for input_path_str in self.input_paths:
+            input_path = Path(input_path_str)
+            module_name = swn.Module.module_name_from_path(input_path)
+
+            suffix = input_path.suffix
+            if suffix == ".swan" and module_name in _list_modules:
+                self._input_assets.append(assets.ModuleBodyAsset(input_path, self.sproj))
+            elif suffix == ".swani" and module_name in _list_modules:
+                self._input_assets.append(assets.ModuleInterfaceAsset(input_path, self.sproj))
+            elif suffix == ".swant" and module_name in _list_modules:
+                self._input_assets.append(assets.TestModuleAsset(input_path, self.sproj))
+
+        return self._input_assets
+
+    @property
+    @abstractmethod
+    def output_assets(self) -> list[assets.Asset]:
+        """Output assets of the job.
+        Must be implemented by child classes corresponding to its asset type."""
+        pass
 
     @root_declarations.setter
     def root_declarations(self, value: list[str]) -> None:
@@ -313,7 +353,7 @@ class Job(ABC):
 
     @property
     @abstractmethod
-    def properties(self) -> "JobProperties":
+    def properties(self) -> JobProperties:
         """Properties parameter.
         Its subtype depends on the Job kind,
         JobProperties is an abstract class."""
@@ -353,9 +393,13 @@ class Job(ABC):
         data["Properties"] = self.properties._to_dict()
         data["InputPaths"] = self._input_paths
         if not self._storage:
+            if not isinstance(self._sproj.storage, ProjectFile):
+                raise ScadeOneException("Cannot save a job for a project without file storage.")
             job_folder = self.folder_name()
-            sjob_path = Path(self._sproj._storage.source).parent / "jobs" / job_folder / ".sjob"
+            sjob_path = Path(self._sproj.storage.source).parent / "jobs" / job_folder / ".sjob"
             self._storage = JobFile(sjob_path)
+        elif not isinstance(self._storage, JobFile):
+            raise ScadeOneException("Cannot save a job that does not have file storage.")
         parent = Path(self._storage.source).parent
         if not parent.exists():
             import os
@@ -363,7 +407,7 @@ class Job(ABC):
             os.makedirs(parent)
         self._storage.json = data
         self._storage.dump(indent=2)
-        return data
+        return _JobData(**data)
 
     def run(self) -> JobResult:
         job_launcher = JobLauncher()
@@ -372,12 +416,84 @@ class Job(ABC):
         job_launcher.execute()
         return job_launcher.result
 
+    def delete(self) -> None:
+        """Delete the job output assets and the job outputs itself."""
+
+        if not isinstance(self._storage, JobFile):
+            raise ScadeOneException("Cannot delete a job that does not have file storage.")
+
+        # Delete output assets linked to the job
+        for asset in self.output_assets:
+            asset._delete()
+
+        job_folder = self._storage.path.parent
+
+        # Delete the job folder, which contains the .sjob file and generated other outputs.
+        if job_folder.exists():
+            shutil.rmtree(job_folder)
+
+    def add_asset(self, asset: assets.Asset) -> None:
+        """Add an asset to the job."""
+        supported_asset_types = (
+            assets.ModuleBodyAsset,
+            assets.TestModuleAsset,
+        )
+        if not isinstance(asset, supported_asset_types):
+            raise ScadeOneException("Only Swan module or test module assets are supported.")
+
+        asset_path = asset.path
+        if not asset_path:
+            raise ScadeOneException("Cannot add asset: asset path is not available.")
+
+        module_name = swn.Module.module_name_from_path(asset_path)
+        project_modules = {str(mdl.name) for mdl in self.sproj.modules}
+        if module_name not in project_modules:
+            raise ScadeOneException(
+                f"Cannot add asset: module '{module_name}' is not part of the project."
+            )
+
+        asset_path_str = asset_path.as_posix()
+
+        if asset_path_str not in [Path(p).as_posix() for p in self.input_paths]:
+            self.input_paths.append(asset_path_str)
+            try:
+                self.save()
+            except Exception:
+                self.input_paths.pop()
+                raise
+
+            self._input_assets.append(asset)
+
+    def remove_asset(self, asset: assets.Asset) -> None:
+        """Remove an asset from the job."""
+        if not asset.path:
+            return
+
+        asset_path_str = Path(asset.path).as_posix()
+
+        if asset_path_str in [Path(p).as_posix() for p in self.input_paths]:
+            self._input_paths = [
+                p for p in self._input_paths if Path(p).as_posix() != asset_path_str
+            ]
+            self.save()
+
+        if any(Path(existing.path).as_posix() == asset_path_str for existing in self.input_assets):
+            self._input_assets = [
+                existing
+                for existing in self.input_assets
+                if Path(existing.path).as_posix() != asset_path_str
+            ]
+
 
 class CodeGenerationJob(Job):
     """Job of Code Generation kind"""
 
     def __init__(
-        self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
+        self,
+        name: str,
+        sproj: IProject,
+        data: dict | None = None,
+        storage: JobStorage | None = None,
     ) -> None:
         if data:
             super().__init__(name, JobType.CODE_GENERATION, sproj, data.get("InputPaths"), storage)
@@ -387,9 +503,21 @@ class CodeGenerationJob(Job):
             self._properties = CodeGenerationJobProperties(name)
 
     @property
-    def properties(self) -> "CodeGenerationJobProperties":
+    def properties(self) -> CodeGenerationJobProperties:
         "Code generation job properties"
         return self._properties
+
+    @property
+    def output_assets(self) -> list[assets.Asset]:
+        """Output assets of the job - Generated code asset"""
+        if self._output_assets:
+            return self._output_assets
+
+        self._output_assets = [
+            assets.GeneratedCodeAsset(self.storage.path.parent, self.sproj, self.name),
+            assets.CGMappingAsset(self.storage.path.parent, self.sproj, self.name),
+        ]
+        return self._output_assets
 
     @property
     def expansion(self) -> ExpansionMode:
@@ -408,11 +536,11 @@ class CodeGenerationJob(Job):
         return self.properties.name_length
 
     @property
-    def significance_length(self) -> int:
-        return self.properties.significance_length
+    def max_function_parameters(self) -> int | None:
+        return self.properties.max_function_parameters
 
     @property
-    def keep_assume(self) -> str:
+    def keep_assume(self) -> bool:
         return self.properties.keep_assume
 
     @property
@@ -426,6 +554,10 @@ class CodeGenerationJob(Job):
     @property
     def static_locals(self) -> bool:
         return self.properties.static_locals
+
+    @property
+    def with_probes(self) -> bool:
+        return self.properties.with_probes
 
     @expansion.setter
     def expansion(self, value: Union[ExpansionMode, str, None]) -> None:
@@ -443,12 +575,12 @@ class CodeGenerationJob(Job):
     def name_length(self, value: int) -> None:
         self.properties.name_length = value
 
-    @significance_length.setter
-    def significance_length(self, value: int) -> None:
-        self.properties.significance_length = value
+    @max_function_parameters.setter
+    def max_function_parameters(self, value: int | None) -> None:
+        self.properties.max_function_parameters = value
 
     @keep_assume.setter
-    def keep_assume(self, value: str) -> None:
+    def keep_assume(self, value: bool) -> None:
         self.properties.keep_assume = value
 
     @globals_prefix.setter
@@ -463,12 +595,20 @@ class CodeGenerationJob(Job):
     def static_locals(self, value: bool) -> None:
         self.properties.static_locals = value
 
+    @with_probes.setter
+    def with_probes(self, value: bool) -> None:
+        self.properties.with_probes = value
+
 
 class SimulationJob(Job):
     """Job of Simulation kind"""
 
     def __init__(
-        self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
+        self,
+        name: str,
+        sproj: IProject,
+        data: dict | None = None,
+        storage: JobStorage | None = None,
     ) -> None:
         if data:
             super().__init__(name, JobType.SIMULATION, sproj, data.get("InputPaths"), storage)
@@ -478,9 +618,19 @@ class SimulationJob(Job):
             self._properties = SimulationJobProperties(name)
 
     @property
-    def properties(self) -> "SimulationJobProperties":
+    def properties(self) -> SimulationJobProperties:
         """Simulation job properties"""
         return self._properties
+
+    @property
+    def output_assets(self) -> list[assets.Asset]:
+        """Output assets of the job - Simulation data asset"""
+        if self._output_assets:
+            return self._output_assets
+        self._output_assets = [
+            assets.SimulationDataAsset(self.storage.path.parent, self.sproj, self.name)
+        ]
+        return self._output_assets
 
     @property
     def file_scenario(self) -> str:
@@ -491,8 +641,8 @@ class SimulationJob(Job):
         return self.properties.simulation_input_type
 
     @property
-    def test_module(self) -> str:
-        return self.properties.test_module
+    def test_harness(self) -> str:
+        return self.properties.test_harness
 
     @property
     def use_cycle_time(self) -> bool:
@@ -510,9 +660,9 @@ class SimulationJob(Job):
     def simulation_input_type(self, value: str) -> None:
         self.properties.simulation_input_type = value
 
-    @test_module.setter
-    def test_module(self, value: str) -> None:
-        self.properties.test_module = value
+    @test_harness.setter
+    def test_harness(self, value: str) -> None:
+        self.properties.test_harness = value
 
     @use_cycle_time.setter
     def use_cycle_time(self, value: bool) -> None:
@@ -527,31 +677,37 @@ class TestExecutionJob(Job):
     """Job of Test Execution kind"""
 
     def __init__(
-        self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
+        self,
+        name: str,
+        sproj: IProject,
+        data: dict | None = None,
+        storage: JobStorage | None = None,
     ) -> None:
         if data:
             super().__init__(name, JobType.TEST_EXECUTION, sproj, data.get("InputPaths"), storage)
-            self._properties = TextExecutionJobProperties(name, data.get("Properties"))
+            self._properties = TestExecutionProperties(name, data.get("Properties"))
         else:
             super().__init__(name, JobType.TEST_EXECUTION, sproj)
-            self._properties = TextExecutionJobProperties(name)
+            self._properties = TestExecutionProperties(name)
 
     @property
-    def properties(self) -> "TextExecutionJobProperties":
+    def properties(self) -> TestExecutionProperties:
         """Test execution job properties"""
         return self._properties
 
     @property
-    def test_module(self) -> str:
-        return self.properties.test_module
+    def output_assets(self) -> list[assets.Asset]:
+        """Output assets of the job - Test results asset"""
+        if self._output_assets:
+            return self._output_assets
+        self._output_assets = [
+            assets.TestResultsAsset(self.storage.path.parent, self.sproj, self.name)
+        ]
+        return self._output_assets
 
     @property
     def test_result_file(self) -> str:
         return self.properties.test_result_file
-
-    @test_module.setter
-    def test_module(self, value: str) -> None:
-        self.properties.test_module = value
 
     @test_result_file.setter
     def test_result_file(self, value: str) -> None:
@@ -562,7 +718,11 @@ class ModelCheckJob(Job):
     """Job of Model Check kind"""
 
     def __init__(
-        self, name: str, sproj: IProject, data: dict = None, storage: JobStorage = None
+        self,
+        name: str,
+        sproj: IProject,
+        data: dict | None = None,
+        storage: JobStorage | None = None,
     ) -> None:
         if data:
             super().__init__(name, JobType.MODEL_CHECK, sproj, data.get("InputPaths"), storage)
@@ -572,9 +732,17 @@ class ModelCheckJob(Job):
             self._properties = ModelCheckJobProperties(name)
 
     @property
-    def properties(self) -> "ModelCheckJobProperties":
+    def properties(self) -> ModelCheckJobProperties:
         "Model check job properties"
         return self._properties
+
+    @property
+    def output_assets(self) -> list[assets.Asset]:
+        """Output assets of the job - Model check has no output assets
+        TODO to implement"""
+        if self._output_assets:
+            return self._output_assets
+        return self._output_assets
 
 
 class JobProperties(ABC):
@@ -630,14 +798,14 @@ class JobProperties(ABC):
         data["RootDeclarations"] = self._root_declarations
         data["Name"] = self._name
         data["CustomArguments"] = self._custom_arguments
-        return data
+        return _PropertiesData(**data)
 
 
 class CodeGenerationJobProperties(JobProperties):
     """Properties of Code Generation kind Jobs.
     Parameters presented here are unique to Code Generation."""
 
-    def __init__(self, name: str, prop: dict = None) -> None:
+    def __init__(self, name: str, prop: dict | None = None) -> None:
         if not prop:
             prop = {}
         super().__init__(name, prop)
@@ -645,11 +813,16 @@ class CodeGenerationJobProperties(JobProperties):
         self._expansion_exp = prop.get("ExpansionExp", "")
         self._expansion_no_exp = prop.get("ExpansionNoExp", "")
         self._name_length = int(prop.get("NameLength", 200))
-        self._significance_length = int(prop.get("SignificanceLength", 31))
+        self._max_function_parameters: int | None = None
+        try:
+            self._max_function_parameters = int(prop.get("MaxFunctionParameters", ""))
+        except ValueError:
+            pass
         self._keep_assume = prop.get("KeepAssume") == "True"
         self._globals_prefix = prop.get("GlobalsPrefix", "")
         self._use_macros = prop.get("UseMacros") == "True"
         self._static_locals = prop.get("StaticLocals") == "True"
+        self._with_probes = prop.get("Probes") == "True"
 
     @property
     def expansion(self) -> ExpansionMode:
@@ -672,9 +845,9 @@ class CodeGenerationJobProperties(JobProperties):
         return self._name_length
 
     @property
-    def significance_length(self) -> int:
-        """SignificanceLength property"""
-        return self._significance_length
+    def max_function_parameters(self) -> int | None:
+        """MaxFunctionParameters property. None if the value is unset or invalid"""
+        return self._max_function_parameters
 
     @property
     def keep_assume(self) -> bool:
@@ -695,6 +868,11 @@ class CodeGenerationJobProperties(JobProperties):
     def static_locals(self) -> bool:
         """StaticLocals property"""
         return self._static_locals
+
+    @property
+    def with_probes(self) -> bool:
+        """Probes property. True if probes are generated, False otherwise"""
+        return self._with_probes
 
     @expansion.setter
     def expansion(self, value: Union[ExpansionMode, str, None]) -> None:
@@ -721,10 +899,10 @@ class CodeGenerationJobProperties(JobProperties):
         """Sets NameLength"""
         self._name_length = value
 
-    @significance_length.setter
-    def significance_length(self, value: int) -> None:
-        """Sets SignificanceLength"""
-        self._significance_length = value
+    @max_function_parameters.setter
+    def max_function_parameters(self, value: int | None) -> None:
+        """Sets MaxFunctionParameters"""
+        self._max_function_parameters = value
 
     @keep_assume.setter
     def keep_assume(self, value: bool) -> None:
@@ -746,6 +924,11 @@ class CodeGenerationJobProperties(JobProperties):
         """Sets StaticLocals"""
         self._static_locals = value
 
+    @with_probes.setter
+    def with_probes(self, value: bool) -> None:
+        """Sets Probes"""
+        self._with_probes = value
+
     def _to_dict(self) -> _PropertiesData:
         """Returns Code Generation JobProperties as a dictionary
         for saving"""
@@ -755,11 +938,14 @@ class CodeGenerationJobProperties(JobProperties):
         data["ExpansionExp"] = self._expansion_exp
         data["ExpansionNoExp"] = self._expansion_no_exp
         data["NameLength"] = str(self._name_length)
-        data["SignificanceLength"] = str(self._significance_length)
+        data["MaxFunctionParameters"] = (
+            str(self._max_function_parameters) if self._max_function_parameters is not None else ""
+        )
         data["KeepAssume"] = str(self._keep_assume)
         data["GlobalsPrefix"] = self._globals_prefix
         data["UseMacros"] = str(self._use_macros)
         data["StaticLocals"] = str(self._static_locals)
+        data["Probes"] = str(self._with_probes)
         return data
 
 
@@ -767,7 +953,7 @@ class SimulationJobProperties(JobProperties):
     """Properties of Simulation kind Jobs.
     Parameters presented here are unique to Simulation."""
 
-    def __init__(self, name: str, prop: dict = None) -> None:
+    def __init__(self, name: str, prop: dict | None = None) -> None:
         if not prop:
             prop = {}
         super().__init__(name, prop)
@@ -841,11 +1027,11 @@ class SimulationJobProperties(JobProperties):
         return data
 
 
-class TextExecutionJobProperties(JobProperties):
+class TestExecutionProperties(JobProperties):
     """Properties of Test Execution kind Jobs.
     Parameters presented here are unique to Test Execution."""
 
-    def __init__(self, name: str, prop: dict = None) -> None:
+    def __init__(self, name: str, prop: dict | None = None) -> None:
         if not prop:
             prop = {}
         super().__init__(name, prop)
@@ -853,19 +1039,9 @@ class TextExecutionJobProperties(JobProperties):
         self._test_result_file = prop.get("TestResultFile", "testResults.json")
 
     @property
-    def test_harness(self) -> str:
-        """TestHarness property"""
-        return self._test_harness
-
-    @property
     def test_result_file(self) -> str:
         """TestResultFile property"""
-        return self._test_result_file
-
-    @test_harness.setter
-    def test_harness(self, val: str) -> None:
-        """Sets TestHarness"""
-        self._test_harness = val
+        return self._test_result_file or "testResults.json"
 
     @test_result_file.setter
     def test_result_file(self, val: str) -> None:
@@ -886,7 +1062,7 @@ class ModelCheckJobProperties(JobProperties):
     """Properties of Model Check kind Jobs.
     Model Check has no unique parameter."""
 
-    def __init__(self, name: str, prop: dict = None) -> None:
+    def __init__(self, name: str, prop: dict | None = None) -> None:
         if not prop:
             prop = {}
         super().__init__(name, prop)
@@ -940,15 +1116,16 @@ class JobLauncher:
             raise ScadeOneException("No Job was assigned for JobLauncher to execute.")
         elif not self._sproj:
             raise ScadeOneException("No Job project was assigned for the JobLauncher")
-        job_launcher = self._sproj.app.tools.job_launcher
+        job_launcher = self._sproj.app.get_tool_path(IScadeOne.Tool.JOB_LAUNCHER)
 
         if not job_launcher:
             raise ScadeOneException(
                 "Job launcher tool was not found. It is required for Job Execution."
             )
-
+        if not isinstance(self._sproj.storage, ProjectFile):
+            raise ScadeOneException("Cannot execute a job for a project without file storage.")
         proc = subprocess.run(
-            [str(job_launcher), "run", "-p", self._sproj._storage.source, "-j", self._job.name]
+            [str(job_launcher), "run", "-p", self._sproj.storage.source, "-j", self._job.name]
         )
         self._result = JobResult(proc.returncode)
         return self._result.code == JobStatus.SUCCESS.value

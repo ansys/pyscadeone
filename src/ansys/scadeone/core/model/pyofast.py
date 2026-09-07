@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,19 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# cSpell: ignore Aroba elems OPEXPR Predef prio Verif
-# pylint: disable=invalid-name, too-many-lines, no-else-return, too-many-branches,
-# pylint: disable=inconsistent-return-statements, too-many-return-statements
-# pylint: disable=singleton-comparison, too-many-locals, too-many-statements
-# pyright: ignore-all
-# pyre-ignore-all-errors
-# type: ignore
-
 """
 The PyOfAst module transforms F# AST into Python ansys.scadeone.core.swan classes.
 """
 
 from typing import Optional, Union, List, Any
+from collections import defaultdict
 
 # pylint: disable-next=import-error
 from ANSYS.SONE.Infrastructure.Services.Serialization.BNF.Parsing import Ast, Raw
@@ -43,6 +36,28 @@ import ansys.scadeone.core.swan as Swan
 from ansys.scadeone.core.swan.pragmas import PragmaParser
 
 from .parser import Parser
+
+
+class LunumCollector:
+    """Collect lunum of objects which identified by a lunum"""
+
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._lunums = defaultdict(list)
+        return cls._instance
+
+    def clear(self):
+        self._lunums.clear()
+
+    def add_object(self, obj: Swan.DiagramObject, lunum: Swan.Lunum):
+        self._lunums[lunum].append(obj)
+
+    def set_lunum_manager(self, operator: Swan.OperatorDefinition | Swan.TestHarness):
+        # We could also check that a Lunum correspond to several objects
+        operator._lunum_manager.set_lunums(self._lunums.keys())
 
 
 def getValueOf(option) -> Optional[Any]:
@@ -289,18 +304,6 @@ def groupAdaptationOfAst(ast) -> Swan.GroupAdaptation:
     return Swan.GroupAdaptation(renamings)
 
 
-# Clock expression
-# ----------------
-def clockExprOfAst(ast) -> Swan.ClockExpr:
-    if ast.IsClockId:  # of Id
-        return Swan.ClockExpr(identifierOfAst(ast.Item))
-    if ast.IsClockNotId:  # of Id
-        return Swan.ClockExpr(identifierOfAst(ast.Item), is_not=True)
-    if ast.IsClockMatch:  # of Id * PatternOrRaw
-        pattern = patternOrRawOfAst(ast.Item2)
-        return Swan.ClockExpr(identifierOfAst(ast.Item1), pattern=pattern)
-
-
 # Forward expression
 # ~~~~~~~~~~~~~~~~~~~
 def forwardLHSofAst(ast) -> Swan.ForwardLHS:
@@ -310,10 +313,10 @@ def forwardLHSofAst(ast) -> Swan.ForwardLHS:
     return Swan.ForwardLHS(forwardLHSofAst(ast.Item))
 
 
-def forwardElement(ast) -> Swan.ForwardElement:
+def forwardCurrentElement(ast) -> Swan.ForwardCurrentElement:
     lhs = forwardLHSofAst(ast.Item1)
     expr = expressionOfAst(ast.Item2)
-    return Swan.ForwardElement(lhs, expr)
+    return Swan.ForwardCurrentElement(lhs, expr)
 
 
 def forwardDimOfAst(ast) -> Swan.ForwardDim:
@@ -324,7 +327,7 @@ def forwardDimOfAst(ast) -> Swan.ForwardDim:
         expr = expressionOfAst(ast.Item1)
         if id := getValueOf(ast.Item2):
             id = identifierOfAst(id)
-        elems = [forwardElement(elem) for elem in ast.Item3]
+        elems = [forwardCurrentElement(elem) for elem in ast.Item3]
         return Swan.ForwardDim(expr, id, elems)
 
     # FRaw of Raw.t
@@ -333,7 +336,7 @@ def forwardDimOfAst(ast) -> Swan.ForwardDim:
 
 
 def forwardBodyOfAst(ast) -> Swan.ForwardBody:
-    sections = [scopeSectionOfAst(sec) for sec in ast.FScopeSections]
+    sections = [scopeSectionWithPragmaOfAst(sec) for sec in ast.FScopeSections]
     if until := getValueOf(ast.FUntilCondition):
         until = exprOrRawOfAst(until)
     if unless := getValueOf(ast.FUnlessCondition):
@@ -342,40 +345,23 @@ def forwardBodyOfAst(ast) -> Swan.ForwardBody:
     return Swan.ForwardBody(sections, unless, until)
 
 
-def forwardLastDefaultOfAst(ast) -> Swan.ForwardLastDefault:
-    if ast.IsFLast:  # of Expr
-        return Swan.ForwardLastDefault(last=expressionOfAst(ast.Item))
-
-    if ast.IsFDefault:  # of Expr
-        return Swan.ForwardLastDefault(default=expressionOfAst(ast.Item))
-
-    if ast.IsFLastPlusDefault:  # of Expr * Expr
-        return Swan.ForwardLastDefault(
-            last=expressionOfAst(ast.Item1), default=expressionOfAst(ast.Item2)
-        )
-    # ast.IsFLastAndDefault: # of Expr
-    return Swan.ForwardLastDefault(shared=expressionOfAst(ast.Item))
-
-
-def forwardItemClauseOfAst(ast) -> Swan.ForwardItemClause:
-    id = identifierOfAst(ast.Item1)
-    if last_default := getValueOf(ast.Item2):
-        last_default = forwardLastDefaultOfAst(last_default)
-    return Swan.ForwardItemClause(id, last_default)
-
-
 def forwardArrayClauseOfAst(ast) -> Swan.ForwardArrayClause:
-    if ast.IsFItemClause:  # of ForwardItemClause
-        clause = forwardItemClauseOfAst(ast.Item)
+    if ast.IsFItemClause:  # of Expr * Expr option
+        expr = expressionOfAst(ast.Item1)
+        if default_expr := getValueOf(ast.Item2):
+            default_expr = expressionOfAst(default_expr)
+        return Swan.ForwardArrayClauseExpr(expr, default_expr)
     else:  # ast.IsFArrayClause  of ForwardArrayClause
         clause = forwardArrayClauseOfAst(ast.Item)
-    return Swan.ForwardArrayClause(clause)
+        return Swan.ForwardArrayClauseElement(clause)
 
 
 def forwardReturnOfAst(ast) -> Swan.ForwardReturnItem:
-    if ast.IsFRetItemClause:  # of ForwardItemClause * SourcePosition.t
-        clause = forwardItemClauseOfAst(ast.Item1)
-        return Swan.ForwardReturnItemClause(clause)
+    if ast.IsFRetAccuClause:  # of Id * Expr * SourcePosition.t
+        id = identifierOfAst(ast.Item1)
+        expr = expressionOfAst(ast.Item2)
+        return Swan.ForwardAccuClause(id, expr)
+
     if ast.IsFRetArrayClause:  # of Id option * ForwardArrayClause * SourcePosition.t
         if id := getValueOf(ast.Item1):
             id = identifierOfAst(id)
@@ -437,11 +423,6 @@ def operatorExprOfAst(ast) -> Swan.OperatorExpression:
         operator = operatorBaseOfAst(ast.Item2)
         return iteratorOfAst(ast.Item1, operator)
 
-    if ast.IsOActivateClock:  # Operator * ClockExpr
-        operator = operatorBaseOfAst(ast.Item1)
-        clock = clockExprOfAst(ast.Item2)
-        return Swan.ActivateClock(operator, clock)
-
     if ast.IsOActivateCondition:  # Operator * ExprOrRaw * bool * ExprOrRaw
         operator = operatorBaseOfAst(ast.Item1)
         cond = exprOrRawOfAst(ast.Item2)
@@ -464,7 +445,7 @@ def operatorExprOfAst(ast) -> Swan.OperatorExpression:
     if ast.IsOLambdaScopes:  # bool * Id list * ScopeSection list * ExprOrRaw
         is_node = ast.Item1
         params = [identifierOfAst(id) for id in ast.Item2]
-        sections = [scopeSectionOfAst(scope) for scope in ast.Item3]
+        sections = [scopeSectionWithPragmaOfAst(scope) for scope in ast.Item3]
         expr = exprOrRawOfAst(ast.Item4)
         return Swan.AnonymousOperatorWithExpression(is_node, params, sections, expr)
 
@@ -618,18 +599,7 @@ def expressionOfAst(ast):
     elif ast.IsEAt:  # ExprOrRaw * Id
         expr = exprOrRawOfAst(ast.Item1)
         id_ = identifierOfAst(ast.Item2)
-        expr.at = id_
-        return expr
-
-    elif ast.IsEWhenClock:  # of ExprOrRaw * ClockExpr
-        expr = exprOrRawOfAst(ast.Item1)
-        ck = clockExprOfAst(ast.Item2)
-        return Swan.WhenClockExpr(expr, ck)
-
-    elif ast.IsEWhenMatch:  # of ExprOrRaw * PathId
-        expr = exprOrRawOfAst(ast.Item1)
-        match = pathIdentifierOfAst(ast.Item2)
-        return Swan.WhenMatchExpr(expr, match)
+        return Swan.AtExpr(expr, id_)
 
     elif ast.IsECast:  # of ExprOrRaw * TypeExprOrRaw
         expr = exprOrRawOfAst(ast.Item1)
@@ -681,8 +651,7 @@ def expressionOfAst(ast):
 
     elif ast.IsEMkStruct:  # of Group * PathIdOrRaw option
         group = groupOfAst(ast.Item1)
-        if id := getValueOf(ast.Item2):
-            id = pathIdentifierOrRawOfAst(id)
+        id = pathIdentifierOrRawOfAst(ast.Item2)
         return Swan.StructConstructor(group, id)
 
     elif ast.IsEVariant:  # of PathIdOrRaw * Group
@@ -713,7 +682,10 @@ def expressionOfAst(ast):
         if luid := getValueOf(ast.Item1.OIInstance):
             luid = luidOfAst(luid)
         operator = operatorBaseOfAst(ast.Item1.OIOperator)
-        return Swan.OperatorInstanceApplication(operator, params, luid)
+        operator_instance = Swan.OperatorInstanceApplication(operator, params, luid)
+        pragmas = getPragmas(ast.Item3)
+        operator_instance.set_pragmas(pragmas)
+        return operator_instance
 
     elif ast.IsEPort:  # of Port
         return portOfAst(ast.Item)
@@ -817,12 +789,13 @@ def typeOrRawOfAst(ast):
 # ------------------------------------------------------------
 def constDecl(ast):
     id = identifierOfAst(ast.ConstId)
+    is_elaborated = ast.ConstIsElaborated
     pragmas = getPragmasFromIdentifier(ast.ConstId)
     if value := getValueOf(ast.ConstDefinition):
         value = expressionOfAst(value)
     if type := getValueOf(ast.ConstType):
         type = typeExpressionOfAst(type)
-    return Swan.ConstDecl(id, type, value, pragmas)
+    return Swan.ConstDecl(id, is_elaborated, type, value, pragmas)
 
 
 def sensorDecl(ast):
@@ -945,21 +918,30 @@ def varDeclOfAst(ast) -> Swan.Variable:
         return Swan.ProtectedVariable(getProtectedString(ast.Item1), pragmas)
     var_decl = ast.Item1
     id = identifierOfAst(var_decl.VarId)
-    is_clock = var_decl.VarIsClock
     is_modified = var_decl.VarIsStar
+
+    if var_decl.VarInit.IsDelayNone:
+        init_type = Swan.VarInitDelay.DelayNone
+    elif var_decl.VarInit.IsDelay0:
+        init_type = Swan.VarInitDelay.Delay0
+    else:
+        init_type = Swan.VarInitDelay.Delay1
+
+    causality_type = [identifierOfAst(item) for item in var_decl.VarCausality]
+
     if place := getValueOf(var_decl.VarAt):
         place = identifierOfAst(place)
     pragmas = [p for p in getPragmasFromIdentifier(var_decl.VarId)]
     if type := getValueOf(var_decl.VarType):
         type = groupTypeExprOfAst(type)
-    if when := getValueOf(var_decl.VarWhen):
-        when = clockExprOfAst(when)
     if default := getValueOf(var_decl.VarDefault):
         default = expressionOfAst(default)
     if last := getValueOf(var_decl.VarLast):
         last = expressionOfAst(last)
 
-    return Swan.VarDecl(id, is_clock, is_modified, place, type, when, default, last, pragmas)
+    return Swan.VarDecl(
+        id, is_modified, place, type, init_type, causality_type, default, last, pragmas
+    )
 
 
 def sizeParameterOfAst(ast) -> Swan.SizeParameter:
@@ -1054,7 +1036,10 @@ def equationOfAst(ast):
             luid = luidOfAst(luid)
         lhs = equationLhsOfAst(ast.Item2)
         expr = expressionOfAst(ast.Item3)
-        return Swan.ExprEquation(lhs, expr, luid)
+        expr = Swan.ExprEquation(lhs, expr, luid)
+        pragmas = getPragmas(ast.Item5)
+        expr.set_pragmas(pragmas)
+        return expr
     if ast.IsSetSensorEquation:
         return Swan.SetSensorEquation(pathIdentifierOfAst(ast.Item1), expressionOfAst(ast.Item2))
     # def_by_case = automaton or activate
@@ -1062,18 +1047,24 @@ def equationOfAst(ast):
 
 
 def defByCaseOfAst(ast):
-    if ast.IsDAutomaton:  # of Lhs option * StateMachine * SourcePosition.t
-        if lhs := getValueOf(ast.Item1):
-            lhs = equationLhsOfAst(lhs)
-        return stateMachineOfAst(lhs, ast.Item2)
+    def build_def_by_case():
+        if ast.IsDAutomaton:  # of Lhs option * StateMachine * SourcePosition.t
+            if lhs := getValueOf(ast.Item1):
+                lhs = equationLhsOfAst(lhs)
+            return stateMachineOfAst(lhs, ast.Item2)
 
-    if ast.DActivate:  # of Lhs option * Activate * SourcePosition.t
-        if lhs := getValueOf(ast.Item1):
-            lhs = equationLhsOfAst(lhs)
-        if ast.Item2.IsActivateIf:
-            return activateIfOfAst(lhs, ast.Item2)
-        # ast.Item2.IsActivateWhen
-        return activateWhenOfAst(lhs, ast.Item2)
+        if ast.DActivate:  # of Lhs option * Activate * SourcePosition.t
+            if lhs := getValueOf(ast.Item1):
+                lhs = equationLhsOfAst(lhs)
+            if ast.Item2.IsActivateIf:
+                return activateIfOfAst(lhs, ast.Item2)
+            # ast.Item2.IsActivateWhen
+            return activateWhenOfAst(lhs, ast.Item2)
+
+    def_by_case = build_def_by_case()
+    if lunum := def_by_case.lunum:
+        LunumCollector().add_object(def_by_case, lunum)
+    return def_by_case
 
 
 # Activate
@@ -1088,7 +1079,10 @@ def activateIfOfAst(lhs, ast):
     if name := getValueOf(ast.Item2):
         name = luidOfAst(name)
     activation = ifActivationOfAst(ast.Item3)
-    return Swan.ActivateIf(activation, lhs, lunum, name)
+    pragmas = getPragmas(ast.Item4)
+    activate = Swan.ActivateIf(activation, lhs, lunum, name)
+    activate.set_pragmas(pragmas)
+    return activate
 
 
 def ifActivationOfAst(ast):
@@ -1122,7 +1116,10 @@ def activateWhenOfAst(lhs, ast):
         name = luidOfAst(name)
     condition = exprOrRawOfAst(ast.Item3.AWExpr)
     branches = [activateWhenBranchOfAst(branch) for branch in ast.Item3.AWMatches]
-    return Swan.ActivateWhen(condition, branches, lhs, lunum, name)
+    pragmas = getPragmas(ast.Item4)
+    activate = Swan.ActivateWhen(condition, branches, lhs, lunum, name)
+    activate.set_pragmas(pragmas)
+    return activate
 
 
 def activateWhenBranchOfAst(ast):
@@ -1172,8 +1169,9 @@ def stateMachineOfAst(lhs, ast):
 
     # Process all items (states and transition declarations)
     items = [stateMachineItemOfAst(item) for item in ast.Item3]
+    pragmas = getPragmas(ast.Item4)
     machine = Swan.StateMachine(lhs, items, lunum, name)
-
+    machine.set_pragmas(pragmas)
     return machine
 
 
@@ -1224,13 +1222,15 @@ def stateOfAst(ast) -> Swan.State:
     body = stateBodyOfAst(ast.StateBody)
     pragmas = getPragmas(ast.StatePragmas)
     state = Swan.State(id, lunum, strong, body, weak, is_initial, pragmas)
+    if lunum:
+        LunumCollector().add_object(state, lunum)
     return state
 
 
 def stateBodyOfAst(ast):
     # StateBody : actually stored as a Scope
     # even if grammar says StateBody of ScopeSection list
-    sections = [scopeSectionOfAst(section) for section in ast.Item1]
+    sections = [scopeSectionWithPragmaOfAst(section) for section in ast.Item1]
     return Swan.Scope(sections)
 
 
@@ -1310,81 +1310,87 @@ def diagramObjectOfAst(ast, is_local=False):
 
     description = ast.ObjDescription
 
-    if description.IsBExpr:  # ExprOrRaw
-        expr = exprOrRawOfAst(description.Item)
-        if isinstance(expr, Swan.GroupConstructor):
-            group = expr.group
-            # todo : check if group is made of lunums
-            is_concat = hasattr(group, "items") and all(
-                hasattr(item, "expr")
-                and isinstance(item.expr, Swan.PortExpr)
-                and getattr(item.expr, "lunum", None) is not None
-                for item in group.items
-            )
-            if is_concat:
-                return Swan.Concat(group, lunum, luid, locals, pragmas)
+    def build_diagram_object():
+        if description.IsBExpr:  # ExprOrRaw
+            expr = exprOrRawOfAst(description.Item)
+            if isinstance(expr, Swan.GroupConstructor):
+                group = expr.group
+                # todo : check if group is made of lunums
+                is_concat = hasattr(group, "items") and all(
+                    hasattr(item, "expr")
+                    and isinstance(item.expr, Swan.PortExpr)
+                    and getattr(item.expr, "lunum", None) is not None
+                    for item in group.items
+                )
+                if is_concat:
+                    return Swan.Concat(group, lunum, luid, locals, pragmas)
 
-        return Swan.ExprBlock(expr, lunum, luid, locals, pragmas)
+            return Swan.ExprBlock(expr, lunum, luid, locals, pragmas)
 
-    if description.IsBDef:  # Lhs * SourcePosition.t
-        lhs = equationLhsOfAst(description.Item1)
-        return Swan.DefBlock(lhs, lunum, luid, locals, pragmas)
+        if description.IsBDef:  # Lhs * SourcePosition.t
+            lhs = equationLhsOfAst(description.Item1)
+            return Swan.DefBlock(lhs, lunum, luid, locals, pragmas)
 
-    if description.IsBRawDef:  # Raw.t
-        protected = protectedItemOfAst(description.Item)
-        return Swan.DefBlock(protected, lunum, luid, locals, pragmas)
+        if description.IsBRawDef:  # Raw.t
+            protected = protectedItemOfAst(description.Item)
+            return Swan.DefBlock(protected, lunum, luid, locals, pragmas)
 
-    if description.IsBBlock:  # OperatorBlock * SourcePosition.t
-        op_block = operatorBlockOfAst(description.Item1)
-        old_block_pragmas = getPragmas(description.Item1.OBPragmas)
-        pragmas.extend(old_block_pragmas)
-        return Swan.Block(op_block, lunum=lunum, luid=luid, locals=locals, pragmas=pragmas)
+        if description.IsBBlock:  # OperatorBlock * SourcePosition.t
+            op_block = operatorBlockOfAst(description.Item1)
+            old_block_pragmas = getPragmas(description.Item1.OBPragmas)
+            pragmas.extend(old_block_pragmas)
+            return Swan.Block(op_block, lunum=lunum, luid=luid, locals=locals, pragmas=pragmas)
 
-    if description.IsBWire:  # Connection * Connection list
-        source = connectionOfAst(description.Item1)
-        targets = [connectionOfAst(conn) for conn in description.Item2]
-        return Swan.Wire(source, targets, lunum, luid, locals, pragmas)
+        if description.IsBWire:  # Connection * Connection list
+            source = connectionOfAst(description.Item1)
+            targets = [connectionOfAst(conn) for conn in description.Item2]
+            return Swan.Wire(source, targets, lunum, luid, locals, pragmas)
 
-    if description.IsBGroup:  # GroupOperation * SourcePosition.t
-        ast_op = description.Item1
-        if ast_op.IsGByName:
-            return Swan.ByName(lunum, luid, locals, pragmas)
-        elif ast_op.IsGByPos:
-            return Swan.ByPos(lunum, luid, locals, pragmas)
-        elif ast_op.IsGNoOp:
-            return (
-                Swan.Bar(lunum, luid, locals, pragmas)
-                if not is_local
-                else Swan.GroupBlock(lunum, luid, locals, pragmas)
-            )
-        elif ast_op.IsGNorm:
-            return Swan.GroupNormalize(lunum, luid, locals, pragmas)
+        if description.IsBGroup:  # GroupOperation * SourcePosition.t
+            ast_op = description.Item1
+            if ast_op.IsGByName:
+                return Swan.ByName(lunum, luid, locals, pragmas)
+            elif ast_op.IsGByPos:
+                return Swan.ByPos(lunum, luid, locals, pragmas)
+            elif ast_op.IsGNoOp:
+                return (
+                    Swan.Bar(lunum, luid, locals, pragmas)
+                    if not is_local
+                    else Swan.GroupBlock(lunum, luid, locals, pragmas)
+                )
+            elif ast_op.IsGNorm:
+                return Swan.GroupNormalize(lunum, luid, locals, pragmas)
 
-    if description.IsBDefByCase:
-        def_by_case = defByCaseOfAst(description.Item)
-        if isinstance(def_by_case, Swan.StateMachine):
-            return Swan.StateMachineBlock(def_by_case, locals, pragmas)
-        elif isinstance(def_by_case, Swan.ActivateIf):
-            return Swan.ActivateIfBlock(def_by_case, locals, pragmas)
-        else:
-            return Swan.ActivateWhenBlock(def_by_case, locals, pragmas)
+        if description.IsBDefByCase:
+            def_by_case = defByCaseOfAst(description.Item)
+            if isinstance(def_by_case, Swan.StateMachine):
+                return Swan.StateMachineBlock(def_by_case, locals, pragmas)
+            elif isinstance(def_by_case, Swan.ActivateIf):
+                return Swan.ActivateIfBlock(def_by_case, locals, pragmas)
+            else:
+                return Swan.ActivateWhenBlock(def_by_case, locals, pragmas)
 
-    if description.IsBScopeSection:  # ScopeSection
-        section = scopeSectionOfAst(description.Item)
-        return Swan.SectionObject(section, locals, pragmas)
+        if description.IsBScopeSection:  # ScopeSection
+            section = scopeSectionOfAst(description.Item)
+            return Swan.SectionObject(section, locals, pragmas)
 
-    # BSensorLhs of PathId * SourcePosition.t
-    # BRawSensorLhs of Raw.t
-    if description.IsBSensorLhs:
-        path_id = pathIdentifierOfAst(description.Item1)
-        return Swan.SetSensorBlock(path_id, lunum, luid, locals, pragmas)
+        # BSensorLhs of PathId * SourcePosition.t
+        # BRawSensorLhs of Raw.t
+        if description.IsBSensorLhs:
+            path_id = pathIdentifierOfAst(description.Item1)
+            return Swan.SetSensorBlock(path_id, lunum, luid, locals, pragmas)
 
-    # BRawSensorLhs of Raw.t
-    elif description.IsBRawSensorLhs:
-        protected = protectedItemOfAst(description.Item)
-        return Swan.SetSensorBlock(protected, lunum, luid, locals, pragmas)
+        # BRawSensorLhs of Raw.t
+        elif description.IsBRawSensorLhs:
+            protected = protectedItemOfAst(description.Item)
+            return Swan.SetSensorBlock(protected, lunum, luid, locals, pragmas)
 
-    assert False, "Unexpected diagram object"
+        assert False, "Unexpected diagram object"
+
+    diagram_object = build_diagram_object()
+    if lunum:
+        LunumCollector().add_object(diagram_object, lunum)
+    return diagram_object
 
 
 def connectionOfAst(ast):
@@ -1414,6 +1420,13 @@ def assertionsOfAst(ast):
         Swan.Assertion(luidOfAst(prop.VTag), expressionOfAst(prop.VExpr), getPragmas(prop.VPragmas))
         for prop in ast
     ]
+
+
+def scopeSectionWithPragmaOfAst(ast):
+    scope_section = scopeSectionOfAst(ast.Item1)
+    pragmas = getPragmas(ast.Item2)
+    scope_section.set_pragmas(pragmas)
+    return scope_section
 
 
 def scopeSectionOfAst(ast):
@@ -1474,7 +1487,7 @@ def scopeOfAst(ast):
         return equationOfAst(ast.Item)
 
     if ast.IsSDSections:
-        sections = [scopeSectionOfAst(section) for section in ast.Item1]
+        sections = [scopeSectionWithPragmaOfAst(section) for section in ast.Item1]
         # diagram context
         pragmas = getPragmas(ast.Item3)
         scope = Swan.Scope(sections, pragmas)
@@ -1494,10 +1507,12 @@ def operatorOfAst(ast):
         pragmas,
     ) = operatorInterfaceElementsOfAst(ast)
 
-    def delayed_body(owner: Swan.SwanItem):
+    def delayed_body(owner: Swan.OperatorDefinition):
+        LunumCollector().clear()
         if body := scopeOfAst(ast.OpBody):
             # body can be None
             body.owner = owner
+            LunumCollector().set_lunum_manager(owner)
         return body
 
     return Swan.OperatorDefinition(
@@ -1517,10 +1532,12 @@ def operatorOfAst(ast):
 def harnessOfAst(ast):
     name = Swan.Identifier(stringOfStringWithSP(ast.HId))
 
-    def delayed_body(owner: Swan.SwanItem):
+    def delayed_body(owner: Swan.TestHarness):
+        LunumCollector().clear()
         if body := scopeOfAst(ast.HBody):
             # body can be None
             body.owner = owner
+            LunumCollector().set_lunum_manager(owner)
         return body
 
     pragmas = getPragmas(ast.HPragmas)
@@ -1666,3 +1683,12 @@ def testOfAst(name: str, ast):
     pragmas = getPragmas(ast.MPragmas)
     test = Swan.TestModule(path_id, use_list, decl_list, pragmas)
     return test
+
+
+def delayOfAst(ast) -> Swan.VarInitDelay:
+    if ast.IsDelayNone:
+        return Swan.VarInitDelay.DelayNone
+    elif ast.IsDelay0:
+        return Swan.VarInitDelay.Delay0
+    elif ast.IsDelay1:
+        return Swan.VarInitDelay.Delay1

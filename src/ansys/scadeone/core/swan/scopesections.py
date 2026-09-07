@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -35,9 +35,10 @@ from typing import List, Optional, Union
 
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
+from ansys.scadeone.core.svc.swan_creator.scopesections_creator import LetCreator
 
 
-class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
+class LetSection(scopes.ScopeSection, LetCreator):  # numpydoc ignore=PR01
     """Implements:
 
     **let** {{*equation* ;}} section.
@@ -46,7 +47,7 @@ class LetSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def __init__(self, equations: List[common.Equation]) -> None:
         super().__init__()
         self._equations = equations
-        common.SwanItem.set_owner(self, equations)
+        common.SwanItem.set_owner(self, self._equations)
 
     @property
     def equations(self) -> List[common.Equation]:
@@ -62,7 +63,7 @@ class VarSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def __init__(self, var_decls: List[common.Variable]) -> None:
         super().__init__()
         self._var_decls = var_decls
-        common.SwanItem.set_owner(self, var_decls)
+        common.SwanItem.set_owner(self, self._var_decls)
 
     @property
     def var_decls(self) -> List[common.Variable]:
@@ -87,6 +88,9 @@ class EmissionBody(common.SwanItem):  # numpydoc ignore=PR01
         self._flows = flows
         self._condition = condition
         self._luid = luid
+        common.SwanItem.set_owner(self, self._flows)
+        common.SwanItem.set_owner(self, self._condition)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def flows(self) -> List[common.Identifier]:
@@ -112,7 +116,7 @@ class EmitSection(scopes.ScopeSection):  # numpydoc ignore=PR01
     def __init__(self, emissions: List[EmissionBody]) -> None:
         super().__init__()
         self._emissions = emissions
-        common.SwanItem.set_owner(self, emissions)
+        common.SwanItem.set_owner(self, self._emissions)
 
     @property
     def emissions(self) -> List[EmissionBody]:
@@ -129,6 +133,8 @@ class Assertion(common.HasPragma):  # numpydoc ignore=PR01
         super().__init__(pragmas)
         self._luid = luid
         self._expr = expr
+        common.SwanItem.set_owner(self, self._luid)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def luid(self) -> common.Luid:
@@ -147,7 +153,7 @@ class AssertionBase(scopes.ScopeSection):  # numpydoc ignore=PR01
     def __init__(self, assertions: List[Assertion]) -> None:
         super().__init__()
         self._assertions = assertions
-        common.SwanItem.set_owner(self, assertions)
+        common.SwanItem.set_owner(self, self._assertions)
 
     @property
     def assertions(self) -> List[Assertion]:

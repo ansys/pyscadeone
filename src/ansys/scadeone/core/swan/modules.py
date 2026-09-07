@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -34,7 +34,7 @@ from ansys.scadeone.core.svc.swan_creator.module_creator import (
     ModuleBodyCreator,
 )
 import ansys.scadeone.core.swan.common as common
-
+from ansys.scadeone.core.interfaces import IProject
 
 from .globals import ConstDecl, SensorDecl
 from .groupdecl import GroupDecl
@@ -129,6 +129,8 @@ class UseDirective(common.HasPragma, common.ModuleItem):  # numpydoc ignore=PR01
         common.HasPragma.__init__(self, pragmas)
         self._path = path
         self._alias = alias
+        common.SwanItem.set_owner(self, self._path)
+        common.SwanItem.set_owner(self, self._alias)
 
     @property
     def path(self) -> common.PathIdentifier:
@@ -211,6 +213,8 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         self._uses = use_directives if use_directives else []
         self._declarations = declarations if declarations else []
         self._source = None
+        self._project = None
+        common.SwanItem.set_owner(self, self._name)
         common.SwanItem.set_owner(self, self._uses)
         common.SwanItem.set_owner(self, self._declarations)
 
@@ -228,6 +232,16 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
     def source(self, path: str) -> None:
         "Set source of the module"
         self._source = path
+
+    @property
+    def project(self) -> Optional[IProject]:
+        """Project of the module."""
+        return self._project
+
+    @project.setter
+    def project(self, project: IProject) -> None:
+        """Set project of the module."""
+        self._project = project
 
     @property
     def declarations(self) -> List[common.ModuleItem]:
@@ -336,13 +350,33 @@ class Module(common.ModuleBase):  # numpydoc ignore=PR01
         """Full Swan path of module."""
         return self.name.as_string
 
-    def get_declaration(self, name: str) -> Optional[common.Declaration]:
-        """Return the type, sensor, group, constant, or operator declaration searching by namespace."""
+    def get_declaration(self, name: str, local_only: bool = False) -> Optional[common.Declaration]:
+        """Return the type, sensor, group, constant, or operator declaration looking by name in the module.
+
+        If the name does not contain '::', search in the given module in groups, types, constants, sensors, operators
+        in the current module, looking for it in the body or the interface.
+
+        If the name contains '::', consider it as a *path_id* to get the module and search in it.
+        A *path_id* can be name from a **use** directive or a module name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the declaration to look for.
+        local_only : bool
+            If true, only search in the module, without looking in the peer module (interface or body).
+
+        Returns
+        -------
+        Declaration or None
+            The declaration with the given name, or None if not found.
+        """
         from .namespace import ModuleNamespace
 
-        m_ns = ModuleNamespace(self)
+        m_ns = ModuleNamespace(self, stop_search=local_only)
         decl = m_ns.get_declaration(name)
-        return cast(common.Declaration, decl) if decl else None
+
+        return decl if decl else None
 
     def get_use_directive(self, module_name: str) -> Optional[UseDirective]:
         """Return the **use** directive searching by module name or alias name.
@@ -400,6 +434,11 @@ class ModuleInterface(Module, ModuleInterfaceCreator):  # numpydoc ignore=PR01
         """Return the module body if it exists."""
         return self.model.get_module_body(self.name.as_string)
 
+    @property
+    def is_interface(self) -> bool:
+        """True when module is an interface."""
+        return True
+
 
 class ModuleBody(Module, ModuleBodyCreator):  # numpydoc ignore=PR01
     """Module body definition."""
@@ -434,3 +473,8 @@ class ModuleBody(Module, ModuleBodyCreator):  # numpydoc ignore=PR01
     def interface(self) -> Optional[ModuleInterface]:
         """Return the module interface if it exists."""
         return self.model.get_module_interface(self.name.as_string)
+
+    @property
+    def is_body(self) -> bool:
+        """True when module is a body."""
+        return True

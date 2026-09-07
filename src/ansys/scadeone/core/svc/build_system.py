@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,16 +20,99 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import annotations
+
+from abc import ABC
 from enum import Enum, auto
 from pathlib import Path
+import platform
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.dotnet import load_dll
+from ansys.scadeone.core.interfaces import IScadeOne
 
 if TYPE_CHECKING:
     import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
     from System.Collections.Generic import List as NetList  # type:ignore
+    from System.Collections.Generic import HashSet as NetSet  # type:ignore
+    from System.Collections.Generic import IEnumerable as NetEnumerable  # type:ignore
+    from System import String as NetString  # type:ignore
+
+
+class _NetUtils:
+    """Utilities for converting Python data structures to .NET data structures."""
+
+    @staticmethod
+    def to_net_str_set(py_str_list: List[str]) -> NetSet[NetString]:
+        """Convert a Python list of strings to a .NET set of strings.
+
+        Parameters
+        ----------
+        py_str_list : List[str]
+            Python list of strings to convert.
+
+        Returns
+        -------
+        NetSet[NetString]
+            .NET set of strings.
+        """
+        from System import String as NetString  # type:ignore
+        from System.Collections.Generic import HashSet as NetSet  # type:ignore
+
+        net_set = NetSet[NetString]()
+        for s in py_str_list:
+            net_set.Add(s)
+        return net_set
+
+    @staticmethod
+    def to_net_str_list(py_str_list: List[str]) -> NetList:
+        """Convert a Python list of strings to a .NET list of strings.
+
+        Parameters
+        ----------
+        py_str_list : List[str]
+            Python list of strings to convert.
+
+        Returns
+        -------
+        NetList
+            .NET list of strings.
+        """
+        from System import String as NetString  # type:ignore
+        from System.Collections.Generic import List as NetList  # type:ignore
+
+        net_list = NetList[NetString]()
+        for s in py_str_list:
+            net_list.Add(s)
+        return net_list
+
+
+class _PyUtils:
+    """Utilities for converting .NET data structures to Python data structures."""
+
+    @staticmethod
+    def to_py_str_list(net_str_set: NetEnumerable[str]) -> List[str]:
+        py_list = []
+        for s in net_str_set:
+            py_list.append(s)
+        return py_list
+
+
+class BuildToolkitLoader(ABC):
+    """Load .NET Build Toolkit library."""
+
+    _dll_loaded = False
+
+    def __init__(self, app: IScadeOne) -> None:
+        if BuildToolkitLoader._dll_loaded:
+            return
+        simulator_dir = app.get_tool_path(IScadeOne.Tool.SIMULATOR)
+        if not simulator_dir or not simulator_dir.exists():
+            raise ScadeOneException("Scade Installation path is not valid")
+        references = ["ANSYS.SONE.Build.Toolkit", "System.Collections"]
+        load_dll(simulator_dir, references)
+        BuildToolkitLoader._dll_loaded = True
 
 
 class BuildResult:
@@ -41,16 +124,18 @@ class BuildResult:
         .NET build result.
     """
 
-    def __init__(self, net_result: "Toolkit.BuildResult") -> None:
+    def __init__(self, net_result: Toolkit.BuildResult) -> None:
         self._is_succeeded = net_result.Success
         self._messages = [str(m) for m in net_result.Messages]
 
     @property
     def is_succeeded(self) -> bool:
+        """Return True if the build succeeded, False otherwise."""
         return self._is_succeeded
 
     @property
     def messages(self) -> List[str]:
+        """Build result messages."""
         return self._messages
 
     def __str__(self) -> str:
@@ -62,111 +147,62 @@ class BuildResult:
         return res
 
 
+class CompilerConfig:
+    """Compiler configuration.
+
+    Parameters
+    ----------
+    net_build_cfg : Optional[Toolkit.CompilerConfig]
+        Compiler configuration.
+    """
+
+    def __init__(self, net_build_cfg: Optional[Toolkit.CompilerConfig] = None) -> None:
+        self._compiler_mk_path = net_build_cfg.MkPath if net_build_cfg else ""
+        self._make_cmd_path = net_build_cfg.MakeCmdPath if net_build_cfg else ""
+
+    @property
+    def compiler_mk_path(self) -> str:
+        """Makefile include path"""
+        return self._compiler_mk_path
+
+    @property
+    def make_cmd_path(self) -> str:
+        """Make command path"""
+        return self._make_cmd_path
+
+
 class BuildConfig:
     """Build configuration for building C source files.
 
     Attributes
     ----------
-    working_dir : str
-        Working directory.
-    c_files : List[str]
-        List of C source files.
-    h_files : List[str]
-        List of header files.
-    o_files : List[str]
-        List of object files.
+    user_config_header_files : List[str]
+        List of user configuration header files to be included in the build.
     include_dirs : List[str]
-        List of include directories.
-    proto_files : List[str]
-        List of protocol buffer files.
-    preproc_defs : List[str]
-        List of preprocessor definitions.
-    lib_files : List[str]
-        List of library files.
-    targets : List[Target]
-        List of build targets.
-    mingw_dir : Optional[str]
-        Path to the MinGW directory.
+        List of include directories for the compiler.
+    env_path_dirs : List[str]
+        List of directories to append to the environment PATH for analysis.
+    preprocessor_defs : List[str]
+        List of preprocessor definitions for the compiler.
+    compiler_flags : Optional[str]
+        Additional compiler flags.
+    linker_flags : Optional[str]
+        Additional linker flags.
+    object_files : List[str]
+        List of object files to be linked with the build.
     compiler_config : Optional[CompilerConfig]
-        Compiler configuration.
-    incremental : bool
-        Incremental build.
+        Optional compiler configuration.
     """
 
     def __init__(self) -> None:
-        self.working_dir: str = ""
-        self.c_files: List[str] = []
-        self.h_files: List[str] = []
-        self.o_files: List[str] = []
+        self.user_config_header_files: List[str] = []
         self.include_dirs: List[str] = []
-        self.proto_files: List[str] = []
-        self.preproc_defs: List[str] = []
-        self.lib_files: List[str] = []
-        self.targets: List[Target] = []
-        self.mingw_dir: Optional[str] = None
+        self.env_path_dirs: List[str] = []
+        self.preprocessor_defs: List[str] = []
+        self.compiler_flags: Optional[str] = None
+        self.linker_flags: Optional[str] = None
+        self.object_files: List[str] = []
         self.compiler_config: Optional[CompilerConfig] = None
-        self.incremental: bool = False
-
-
-class BuildSystem:
-    """Build an executable or a shared library from C source files.
-
-    Parameters
-    ----------
-    sone_install_dir : Union[Path, str]
-        Path to the Scade One installation directory.
-    """
-
-    _dll_loaded = False
-
-    def __init__(self, sone_install_dir: Union[Path, str]) -> None:
-        self._result = None
-        if not sone_install_dir:
-            raise ScadeOneException("Scade One installation directory not provided.")
-        if isinstance(sone_install_dir, str):
-            self._sone_install_dir = Path(sone_install_dir)
-        else:
-            self._sone_install_dir = sone_install_dir
-        if not self._sone_install_dir.exists():
-            raise ScadeOneException(
-                f"Scade One installation directory not found: {self._sone_install_dir}"
-            )
-        self._register_build_system_dll()
-
-    @property
-    def result(self) -> BuildResult:
-        """Return the build result."""
-        return self._result
-
-    def build(self, config: BuildConfig) -> BuildResult:
-        """Build the C source files according to the build configuration.
-
-        Parameters
-        ----------
-        config : BuildConfig
-            Build configuration.
-
-        Returns
-        -------
-        BuildResult
-            Build result.
-        """
-        import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
-
-        net_config = NetBuildConfig(config, self._sone_install_dir)
-        bld = Toolkit.Builder()
-        self._result = BuildResult(bld.Build(net_config.config))
-        return self._result
-
-    def _register_build_system_dll(self) -> None:
-        if self._dll_loaded:
-            return
-        simulator_dir = self._sone_install_dir / "tools/simulator"
-        if not simulator_dir.exists():
-            raise ScadeOneException(f"Simulator directory not found: {simulator_dir}")
-        references = ["ANSYS.SONE.Build.Toolkit", "System.Collections"]
-        load_dll(simulator_dir, references)
-        self._dll_loaded = True
 
 
 class TargetKind(Enum):
@@ -196,35 +232,27 @@ class Target:
 
     @property
     def base_name(self) -> str:
+        """Name of the target."""
         return self._base_name
 
     @property
     def kind(self) -> TargetKind:
+        """Kind of the target."""
         return self._kind
 
 
-class CompilerConfig:
-    """Compiler configuration.
+class BuildRequest:
+    """Build request for building C source files."""
 
-    Parameters
-    ----------
-    compiler_mk_path : str
-        Path to the compiler configuration file.
-    make_cmd_path : str
-        Path to the make command.
-    """
-
-    def __init__(self, compiler_mk_path: str, make_cmd_path: str) -> None:
-        self._compiler_mk_path = compiler_mk_path
-        self._make_cmd_path = make_cmd_path
-
-    @property
-    def compiler_mk_path(self) -> str:
-        return self._compiler_mk_path
-
-    @property
-    def make_cmd_path(self) -> str:
-        return self._make_cmd_path
+    def __init__(self):
+        self.working_dir: str = ""
+        self.c_files: List[str] = []
+        self.h_files: List[str] = []
+        self.targets: List[Target] = []
+        self.mingw_dir: Optional[str] = None
+        self.build_config_path: Union[Path, str, None] = None
+        self.build_config: Optional[BuildConfig] = None
+        self.incremental: bool = False
 
 
 class NetBuildConfig:
@@ -236,47 +264,73 @@ class NetBuildConfig:
         Python build configuration.
     """
 
-    def __init__(self, config: BuildConfig, sone_install_dir: Optional[Path] = None) -> None:
+    def __init__(self, config: BuildConfig) -> None:
         import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
-        from System.Collections.Generic import List as NetList  # type:ignore
 
-        self._net_config = Toolkit.BuildConfig()
-        self._net_config.WorkingDir = config.working_dir
-        self._net_config.CFiles = self._to_net_str_list(config.c_files)
-        self._net_config.HFiles = self._to_net_str_list(config.h_files)
-        self._net_config.OFiles = self._to_net_str_list(config.o_files)
-        self._net_config.IncludeDirs = self._to_net_str_list(config.include_dirs)
-        self._net_config.ProtoFiles = self._to_net_str_list(config.proto_files)
-        self._net_config.PreprocDefs = self._to_net_str_list(config.preproc_defs)
-        self._net_config.LibFiles = self._to_net_str_list(config.lib_files)
-        self._net_config.Targets = NetList[Toolkit.Target]()
-        for target in config.targets:
-            self._net_config.Targets.Add(NetTarget(target).target)
-        if config.mingw_dir:
-            self._net_config.MingwDir = str(config.mingw_dir)
-        elif sone_install_dir:
-            self._net_config.MingwDir = str(sone_install_dir / "contrib/mingw64")
-        else:
-            raise ScadeOneException("MinGW directory not provided.")
+        self._config = Toolkit.BuildConfig()
+        self._config.UserConfigHeaderFiles = _NetUtils.to_net_str_set(
+            config.user_config_header_files
+        )
+        self._config.IncludeDirs = _NetUtils.to_net_str_set(config.include_dirs)
+        self._config.EnvPathDirs = _NetUtils.to_net_str_set(config.env_path_dirs)
+        self._config.PreprocessorDefs = _NetUtils.to_net_str_list(config.preprocessor_defs)
+        self._config.CompilerFlags = config.compiler_flags
+        self._config.LinkerFlags = config.linker_flags
+        self._config.ObjectFiles = _NetUtils.to_net_str_set(config.object_files)
         if config.compiler_config:
-            self._net_config.CompilerConfig = NetCompilerConfig(config.compiler_config).config
-        self._net_config.Incremental = config.incremental
+            self._config.CompilerConfig = NetCompilerConfig(config.compiler_config).config
 
     @property
-    def config(self) -> "Toolkit.BuildConfig":
+    def config(self) -> Toolkit.BuildConfig:
         """Return the .NET build configuration."""
-        return self._net_config
+        return self._config
 
-    @staticmethod
-    def _to_net_str_list(py_str_list: List[str]) -> "NetList":
-        """Convert a Python list of strings to a .NET list of strings."""
-        from System import String as NetString  # type:ignore
-        from System.Collections.Generic import List as NetList  # type:ignore
 
-        net_list = NetList[NetString]()
-        for s in py_str_list:
-            net_list.Add(s)
-        return net_list
+class NetBuildRequest:
+    """Convert a Python BuildRequest to a .NET BuildRequest.
+
+    Parameters
+    ----------
+    request : BuildRequest
+        Python build request.
+    app : IScadeOne
+        Scade One application instance.
+    """
+
+    def __init__(self, request: BuildRequest, app: IScadeOne) -> None:
+        import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
+
+        self._request = Toolkit.BuildRequest()
+        self._request.WorkingDir = request.working_dir
+        self._request.CFiles = _NetUtils.to_net_str_list(request.c_files)
+        self._request.HFiles = _NetUtils.to_net_str_list(request.h_files)
+        for target in request.targets:
+            self._request.Targets.Add(NetTarget(target).target)
+        if platform.system() == "Windows":
+            # Mingw is requested only for this platform
+            if request.mingw_dir:
+                self._request.MingwDir = str(request.mingw_dir)
+            else:
+                mingw_dir = app.get_tool_path(IScadeOne.Tool.MINGW)
+                if mingw_dir:
+                    self._request.MingwDir = str(mingw_dir)
+                else:
+                    raise ScadeOneException("MinGW directory not provided.")
+
+        if request.build_config_path and request.build_config:
+            raise ScadeOneException(
+                "Both build_config_path and build_config are provided. Please provide only one of them."
+            )
+        if request.build_config_path:
+            net_build_cfg, _ = Toolkit.BuildConfigLoader.Load(str(request.build_config_path))
+            self._request.BuildConfig = net_build_cfg
+        if request.build_config:
+            self._request.BuildConfig = NetBuildConfig(request.build_config).config
+
+    @property
+    def request(self) -> Toolkit.BuildRequest:
+        """Return the .NET build request."""
+        return self._request
 
 
 class NetTarget:
@@ -300,7 +354,7 @@ class NetTarget:
         self._net_target = Toolkit.Target(target.base_name, kind)
 
     @property
-    def target(self) -> "Toolkit.Target":
+    def target(self) -> Toolkit.Target:
         """Return the .NET target."""
         return self._net_target
 
@@ -322,6 +376,102 @@ class NetCompilerConfig:
         )
 
     @property
-    def config(self) -> "Toolkit.CompilerConfig":
+    def config(self) -> Toolkit.CompilerConfig:
         """Return the .NET compiler configuration."""
         return self._net_compiler_config
+
+
+class BuildSystem(BuildToolkitLoader):
+    """Build an executable or a shared library from C source files.
+
+    Parameters
+    ----------
+    app : IScadeOne
+        Scade One application instance.
+    """
+
+    def __init__(self, app: IScadeOne) -> None:
+        self._result = None
+        self._app = app
+        super().__init__(app)
+
+    @property
+    def result(self) -> BuildResult:
+        """Return the build result."""
+        if self._result is None:
+            raise ScadeOneException("Build has not been executed yet.")
+        return self._result
+
+    def build(self, request: BuildRequest) -> BuildResult:
+        """Build the C source files according to the build configuration.
+
+        Parameters
+        ----------
+        request : BuildRequest
+            Build request containing the build configuration.
+
+        Returns
+        -------
+        BuildResult
+            Build result.
+        """
+        import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
+
+        net_request = NetBuildRequest(request, self._app)
+        bld = Toolkit.Builder()
+        self._result = BuildResult(bld.Build(net_request.request))
+        return self._result
+
+
+class GenResult:
+    """Generator result.
+
+    Parameters
+    ----------
+    net_result : Toolkit.GenResult
+        .NET generator result.
+    """
+
+    def __init__(self, net_result: Toolkit.GenResult):
+        self.success: bool = net_result.Success
+        self.messages: List[object] = [m for m in net_result.Messages]
+        self.generated_files: List[str] = _PyUtils.to_py_str_list(net_result.GeneratedFiles)
+
+    def __str__(self) -> str:
+        res = "Generation " + ("succeeded" if self.success else "failed")
+        if self.messages:
+            res += "\nGeneration messages: "
+            for m in self.messages:
+                res += "\n - " + str(m)
+        if self.generated_files:
+            res += "\nGenerated files: "
+            for f in self.generated_files:
+                res += "\n - " + f
+        return res
+
+
+class Generator(BuildToolkitLoader):
+    def __init__(self, app: IScadeOne, cg_map_path: str | Path) -> None:
+        super().__init__(app)
+
+        import ANSYS.SONE.Build.Toolkit as Toolkit  # type:ignore
+
+        self._net_generator = Toolkit.Generator(str(cg_map_path))
+
+    def generate_remote_debug_lib(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateRemoteDebugLib(dest_dir, True))
+
+    def generate_remote_debug_watch(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateRemoteDebugWatch(dest_dir))
+
+    def generate_sensor_globals_decl(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateSensorGlobalsDecl(dest_dir))
+
+    def generate_sensor_globals_def(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateSensorGlobalsDef(dest_dir))
+
+    def generate_root_interface_globals_decl(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateRootInterfaceGlobalsDecl(dest_dir))
+
+    def generate_root_interface_globals_def(self, dest_dir: str) -> GenResult:
+        return GenResult(self._net_generator.GenerateRootInterfaceGlobalsDef(dest_dir))

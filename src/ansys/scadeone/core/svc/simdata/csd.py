@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# cSpell: ignore vsize ndarray
-
 import abc
 import numbers
 from typing import Tuple, Optional, Any, List
@@ -37,6 +35,7 @@ class SimDataFactory:
 
     @classmethod
     def load_type(cls, type_id: int) -> Optional[defs.Type]:
+        """Load a type from its id"""
         # Predefined type => return it
         predefined_type = defs.PredefinedType.get(type_id)
         if predefined_type is not None:
@@ -57,7 +56,7 @@ class SimDataFactory:
             base_type_id = dll_wrap.sdt_array_get_base_type(type_id)
             base_type = cls.load_type(base_type_id)
             dims = dll_wrap.sdt_array_get_dims(type_id)
-            return defs.ArrayType(type_id, base_type, dims)
+            return defs.ArrayType(type_id, base_type, dims, name)
         elif type_class == core.TypeClass.ENUM:
             base_type_id = dll_wrap.sdt_enum_get_base_type(type_id)
             nb_values = dll_wrap.sdt_enum_get_n_values(type_id)
@@ -84,16 +83,17 @@ class SimDataFactory:
                     defs.VariantTypeConstructor(constructor_name, constructor_value_type)
                 )
             return defs.VariantType(type_id, constructors, name)
-        elif type_class == core.TypeClass.IMPORTED:
+        elif type_class == core.TypeClass.EXTERNAL:
             mem_size = dll_wrap.sdt_get_size(type_id)
             vsize = dll_wrap.sdt_imported_is_variable_size(type_id)
-            return defs.ImportedType(type_id, mem_size, vsize, name)
+            return defs.ExternalType(type_id, mem_size, vsize, name)
         return None
 
     @classmethod
     def load_element(
         cls, file: defs.FileBase, parent: Optional[defs.ElementBase], elem_id: int
     ) -> defs.ElementBase:
+        """Load an element from its id. Values are not loaded."""
         elem_name = dll_wrap.sde_get_name(elem_id)
         elem_type_id = dll_wrap.sde_get_type(elem_id)
         elem_type = cls.load_type(elem_type_id)
@@ -104,6 +104,25 @@ class SimDataFactory:
 
     @classmethod
     def build_core_sd_value(cls, py_value: Any, sd_type: defs.Type) -> Optional[core.sd_value_t]:
+        """Build a `core.sd_value` from a Python value.
+
+        Parameters
+        ----------
+        py_value : Any
+            Value to encode in the *sd_type*.
+        sd_type : defs.Type
+            Type of the value.
+
+        Returns
+        -------
+        Optional[core.sd_value_t]
+            Internal binary value.
+
+        Raises
+        ------
+        ScadeOneException
+            Raised in case of failure to convert.
+        """
         if py_value is None:
             return dll_wrap.sdd_value_create_none()
         if isinstance(sd_type, defs.PredefinedType):
@@ -233,7 +252,7 @@ class SimDataFactory:
             else:
                 return None
             return dll_wrap.sdd_value_create_variant(ctor_name, csd_value)
-        elif isinstance(sd_type, defs.ImportedType):
+        elif isinstance(sd_type, defs.ExternalType):
             return dll_wrap.sdd_value_create_imported(py_value)
         return None
 
@@ -319,7 +338,7 @@ class SimDataFactory:
             return defs.VariantValue(name, sd_value)
         if value_class is core.DataClass.UNTYPED_VARIANT_CONSTRUCTOR:
             return defs.UntypedVariantConstructorValue()
-        if value_class is core.DataClass.IMPORTED:
+        if value_class is core.DataClass.EXTERNAL:
             byte_values = dll_wrap.sdd_value_get_imported_value(csd_value)
             return defs.ImportedValue(byte_values)
         return defs.NoneValue()
@@ -442,6 +461,25 @@ class Element(defs.ElementBase):
     def append_value(self, py_value: Any) -> None:
         """Add a value to an element or appends to the last sequence of values if any.
 
+        Correspondence between Python types and SimData types is as follows:
+
+        - ``None`` is converted to a SimData `none` value.
+        - :py:class:`defs.PredefinedType` values are converted to their corresponding SimData predefined value.
+        - :py:class:`defs.StructType` values are given as a list or tuple of their fields values in the same order
+          as the fields in the struct type definition, and are converted to SimData list value.
+        - :py:class:`defs.ArrayType` values:
+
+          - if the value has a `shape` attribute (e.g. :py:func:`numpy.array` function), it is converted to SimData list value
+            if its shape corresponds to the array type dimensions, and its items are converted according
+            to the array base type.
+          - else, the value is expected to be a list or tuple and is converted to SimData list value if
+            its length corresponds to the array type first dimension, and its items are converted according
+            to the array base type.
+        - :py:class:`defs.EnumType` values are given as the enum tag name (string) and are converted to SimData enum value.
+        - :py:class:`defs.VariantType` values are given as a tuple with the first item being the constructor name (string)
+          and the second item being the constructor value (if any), and are converted to SimData variant value.
+        - :py:class:`defs.ExternalType` values are given as bytes and are converted to SimData external value.
+
         Parameters
         ----------
         py_value : Any
@@ -449,7 +487,7 @@ class Element(defs.ElementBase):
 
         Raises
         ------
-        ScadeOneException
+        :py:class:`ScadeOneException`
             value is invalid or could not be added
         """
 
@@ -496,6 +534,9 @@ class Element(defs.ElementBase):
 
     def append_values_sequence(self, py_values: List[Any], repeat_factor: int = 1) -> None:
         """Create and append a new sequence of 'values' with repeat factor.
+
+        See :py:func:`append_value` for the correspondence between Python types and SimData types.
+
         Do not use repeat factor for array and structure types.
         Do not use this for structure or array types that already have any value,
         use append_value() instead in such case.
@@ -554,7 +595,10 @@ class Element(defs.ElementBase):
     def read_values(
         self, start: Optional[int] = None, n: Optional[int] = None
     ) -> defs.Iterator[defs.Value]:
-        """Read element values
+        """Read element values.
+
+        Values are read in the order they were added, including values in sequences (repeated according to their repeat factor).
+        Use `str(v)` to get the string representation of a value.
 
         Parameters
         ----------
@@ -713,6 +757,13 @@ class File(defs.FileBase):
         for elem in self._elements:
             s += str(elem)
         return s
+
+    # Context manager support
+    def __enter__(self) -> "File":
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.close()
 
 
 def open_file(file_path: str) -> defs.FileBase:
@@ -1009,49 +1060,49 @@ def create_variant_type(constructors: List[Tuple], name: str = "") -> defs.Varia
     return defs.VariantType(variant_type_id, variant_constructors, name)
 
 
-def create_imported_type(mem_size: int, name: str = "") -> defs.ImportedType:
-    """Create an imported type
+def create_external_type(mem_size: int, name: str = "") -> defs.ExternalType:
+    """Create an external type
 
     Parameters
     ----------
     mem_size : int
         memory size
     name : str, optional
-        imported type name
+        external type name
 
     Returns
     -------
-    ImportedType
-        Created imported type
+    ExternalType
+        Created external type
 
     Raises
     ------
     ScadeOneException
-        could not create imported type, argument type error or argument type error
+        could not create external type, argument type error or argument type error
     """
     if not isinstance(mem_size, int) or mem_size is None:
-        raise ScadeOneException("argument type error in creation of imported type")
-    imported_type_id = dll_wrap.sdt_imported_create(mem_size)
-    if imported_type_id == core.SD_ID_INVALID:
-        raise ScadeOneException("cannot create imported type")
-    dll_wrap.sdt_set_name(imported_type_id, name)
-    return defs.ImportedType(imported_type_id, mem_size, False, None, None, name)
+        raise ScadeOneException("argument type error in creation of external type")
+    external_type_id = dll_wrap.sdt_imported_create(mem_size)
+    if external_type_id == core.SD_ID_INVALID:
+        raise ScadeOneException("cannot create external type")
+    dll_wrap.sdt_set_name(external_type_id, name)
+    return defs.ExternalType(external_type_id, mem_size, False, None, None, name)
 
 
-def create_vsize_imported_type(
+def create_vsize_external_type(
     mem_size: int,
     pfn_vsize_get_bytes_size: defs.PfnVsizeGetBytesSize,
     pfn_vsize_to_bytes: defs.PfnVsizeToBytes,
     name: str = "",
-) -> defs.ImportedType:
+) -> defs.ExternalType:
     if not isinstance(mem_size, int):
-        raise ScadeOneException("argument type error in creation of imported type")
-    imported_type_id = dll_wrap.sdt_vsize_imported_create(
+        raise ScadeOneException("argument type error in creation of external type")
+    external_type_id = dll_wrap.sdt_vsize_imported_create(
         mem_size, pfn_vsize_get_bytes_size, pfn_vsize_to_bytes
     )
-    if imported_type_id == core.SD_ID_INVALID:
-        raise ScadeOneException("cannot create imported type")
-    dll_wrap.sdt_set_name(imported_type_id, name)
-    return defs.ImportedType(
-        imported_type_id, mem_size, True, pfn_vsize_get_bytes_size, pfn_vsize_to_bytes, name
+    if external_type_id == core.SD_ID_INVALID:
+        raise ScadeOneException("cannot create external type")
+    dll_wrap.sdt_set_name(external_type_id, name)
+    return defs.ExternalType(
+        external_type_id, mem_size, True, pfn_vsize_get_bytes_size, pfn_vsize_to_bytes, name
     )

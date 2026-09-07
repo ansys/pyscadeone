@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,10 +24,10 @@ import ctypes
 
 import ansys.scadeone.core.svc.simdata as sd
 from test_common import (
-    Imported,
-    VSizeImported,
-    vsize_imported_get_bytes_size,
-    vsize_imported_to_bytes,
+    External,
+    VSizeExternal,
+    vsize_external_get_bytes_size,
+    vsize_external_to_bytes,
 )
 
 try:
@@ -46,11 +46,11 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
     t_enum1 = sd.create_enum_type(["RED", "GREEN", "BLUE"], "p1::tEnum1")
     t_variant1 = sd.create_variant_type([("c1", sd.Bool), ("c2", None)], "p1::tVariant1")
     t_variant2 = sd.create_variant_type([("c3", None), ("c4", t_struct1)], "p1::tVariant2")
-    t_imported1 = sd.create_imported_type(ctypes.sizeof(Imported), "p1::tImported1")
-    t_imported2 = sd.create_vsize_imported_type(
-        ctypes.sizeof(VSizeImported),
-        vsize_imported_get_bytes_size,
-        vsize_imported_to_bytes,
+    t_external1 = sd.create_external_type(ctypes.sizeof(External), "p1::tImported1")
+    t_external2 = sd.create_vsize_external_type(
+        ctypes.sizeof(VSizeExternal),
+        vsize_external_get_bytes_size,
+        vsize_external_to_bytes,
         "p1::tImported2",
     )
 
@@ -76,8 +76,8 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
     e_enum1 = f.add_element("eEnum1", t_enum1)
     e_variant1 = f.add_element("eVariant1", t_variant1)
     e_variant2 = f.add_element("eVariant2", t_variant2)
-    e_imported1 = f.add_element("eImported1", t_imported1)
-    e_imported2 = f.add_element("eImported2", t_imported2)
+    e_external1 = f.add_element("eImported1", t_external1)
+    e_external2 = f.add_element("eImported2", t_external2)
     e_sequences = f.add_element("eSequences", sd.Float32)
 
     e_a = f.add_element("A", None, sd.ElementKind.OPERATOR)
@@ -98,7 +98,7 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
     v_enum = "RED"
     v_variant1 = ("c1", True)
     v_variant2 = "c3"
-    v_imported2 = VSizeImported("tny")
+    v_external2 = VSizeExternal("tny")
     for i in range(0, nb_cycles):
         mod = i % 3
         if mod == 0:
@@ -106,17 +106,17 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
             v_enum = "RED"
             v_variant1 = ("c1", True)
             v_variant2 = "c3"
-            v_imported2 = VSizeImported("tny")
+            v_external2 = VSizeExternal("tny")
         elif mod == 1:
             v_enum = "GREEN"
             v_variant1 = ("c1", False)
             v_variant2 = ("c4", [True, i + 19])
-            v_imported2 = VSizeImported("short")
+            v_external2 = VSizeExternal("short")
         elif mod == 2:
             v_enum = "BLUE"
             v_variant1 = "c2"
             v_variant2 = ("c4", [False, i + 19])
-            v_imported2 = VSizeImported("very long")
+            v_external2 = VSizeExternal("very long")
         e_char.append_value(chr(ord("a") + i % 26))
         e_bool.append_value(clock3)
         e_int8.append_value(4 + i)
@@ -160,8 +160,8 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
         e_enum1.append_value(v_enum)
         e_variant1.append_value(v_variant1)
         e_variant2.append_value(v_variant2)
-        e_imported1.append_value(Imported(i + 20, i + 21))
-        e_imported2.append_value(v_imported2)
+        e_external1.append_value(External(i + 20, i + 21))
+        e_external2.append_value(v_external2)
     e_sequences.append_values_sequence([1, 2], 2)
     e_sequences.append_nones_sequence(3)
     e_sequences.append_values_sequence([3, 4], 3)

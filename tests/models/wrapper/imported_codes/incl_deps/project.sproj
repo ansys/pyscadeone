@@ -1,0 +1,8 @@
+{
+  "Version": "1.0",
+  "Name": "project",
+  "Dependencies": [
+    "$(SCADE_ONE_LIBRARIES_DIR)\\Math\\Math.sproj"
+  ],
+  "Resources": []
+}

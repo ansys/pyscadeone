@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,8 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# cSpell: ignore vsize
 
 import abc
 from typing import List, Optional, Any, Iterator
@@ -224,8 +222,8 @@ class EnumType(Type):
 
     def __str__(self) -> str:
         return (
-            self.name
-            + " enum{"
+            (f"{self.name} " if self.name else "")
+            + "enum{"
             + ",".join([v.name + ":" + str(v.int_value) for v in self.values])
             + "}"
         )
@@ -284,8 +282,8 @@ PfnVsizeGetBytesSize = core.sd_pfn_vsize_get_bytes_size_t
 PfnVsizeToBytes = core.sd_pfn_vsize_to_bytes_t
 
 
-class ImportedType(Type):
-    """Imported Types (stored as byte arrays)"""
+class ExternalType(Type):
+    """External Types (stored as byte arrays)"""
 
     def __init__(
         self,
@@ -304,7 +302,7 @@ class ImportedType(Type):
 
     @property
     def mem_size(self) -> int:
-        "Memory size in bytes for fixed-size imported types"
+        "Memory size in bytes for fixed-size external types"
         return self._mem_size
 
     @property
@@ -328,7 +326,7 @@ class ImportedType(Type):
         self._pfn_vsize_to_bytes = pfn_vsize_to_bytes
 
     def __str__(self) -> str:
-        return "<variable size imported>" if self.is_vsize else "<imported>"
+        return "<variable size external>" if self.is_vsize else "<external>"
 
 
 class Value:

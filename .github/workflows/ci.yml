@@ -90,7 +90,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-postargs: 'tests/test_smoke.py'
           use-uv: true
- 
+
   build-library:
     name: Build
     if: ${{ !contains(github.event.pull_request.title, '[skip tests]') }}
@@ -103,7 +103,7 @@ jobs:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           use-uv: true
-           
+
   doc-deploy-dev:
     name: "Deploy development documentation"
     # Deploy development only when merging or pushing to the 'main' branch
@@ -150,7 +150,7 @@ jobs:
       id-token: write # Adding write permission to id-token to allow publishing to PyPI
       contents: write # Adding write permission to contents to allow creating releases
     steps:
-    
+
       # Not working yet since PyScadeOne does not have PDF documentation
       # - name: "Release to GitHub"
       #   uses: ansys/actions/release-github@v10

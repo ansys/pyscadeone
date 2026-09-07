@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -192,6 +192,7 @@ class PathIdExpr(common.Expression):  # numpydoc ignore=PR01
     def __init__(self, path_id: common.PathIdentifier) -> None:
         super().__init__()
         self._path_id = path_id
+        common.SwanItem.set_owner(self, self._path_id)
 
     @property
     def path_id(self) -> common.PathIdentifier:
@@ -205,6 +206,7 @@ class LastExpr(common.Expression):  # numpydoc ignore=PR01
     def __init__(self, id: common.Identifier) -> None:
         super().__init__()
         self._id = id
+        common.SwanItem.set_owner(self, self._id)
 
     @property
     def id(self) -> common.Identifier:
@@ -269,6 +271,8 @@ class FloatLiteral(Literal):
 
     def to_float(self) -> float:
         """Convert the float literal to a Python float."""
+        if (index := self.value.find("_")) != -1:
+            return float(self.value[:index])
         return float(self.value)
 
 
@@ -284,6 +288,8 @@ class IntegerLiteral(Literal):
 
     def to_int(self) -> int:
         """Convert the integer literal to a Python int."""
+        if (index := self.value.find("_")) != -1:
+            return int(self.value[:index])
         return int(self.value)
 
 
@@ -302,43 +308,6 @@ class ProtectedPattern(Pattern, common.ProtectedItem):  # numpydoc ignore=PR01
         common.ProtectedItem.__init__(self, data)
 
 
-class ClockExpr(common.SwanItem):  # numpydoc ignore=PR01
-    """Clock expressions:
-
-    - Id
-    - **not** Id
-    - ( Id **match** *pattern*)
-    """
-
-    def __init__(
-        self,
-        id: common.Identifier,
-        is_not: bool = False,
-        pattern: Optional[Pattern] = None,
-    ) -> None:
-        super().__init__()
-        self._id = id
-        self._is_not = is_not
-        self._pattern = pattern
-        if is_not and pattern:
-            raise ScadeOneException("ClockExpr: not and pattern together")
-
-    @property
-    def id(self) -> common.Identifier:
-        """Clock identifier."""
-        return self._id
-
-    @property
-    def is_not(self) -> bool:
-        """**not** id clock expression."""
-        return self._is_not
-
-    @property
-    def pattern(self) -> Union[Pattern, None]:
-        """Matching pattern or None."""
-        return self._pattern
-
-
 class UnaryExpr(common.Expression):  # numpydoc ignore=PR01
     """Expression with unary operators
     :py:class`ansys.scadeone.core.swan.expressions.UnaryOp`."""
@@ -347,6 +316,7 @@ class UnaryExpr(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._operator = operator
         self._expr = expr
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def operator(self) -> UnaryOp:
@@ -383,6 +353,8 @@ class BinaryExpr(common.Expression):  # numpydoc ignore=PR01
         self._operator = operator
         self._left = left
         self._right = right
+        common.SwanItem.set_owner(self, self._left)
+        common.SwanItem.set_owner(self, self._right)
 
     @property
     def operator(self) -> BinaryOp:
@@ -440,52 +412,15 @@ class InitialValueExpr(BinaryExpr):  # numpydoc ignore=PR01
         return self.right
 
 
-class WhenClockExpr(common.Expression):  # numpydoc ignore=PR01
-    """*expr* **when** *clock_expr* expression"""
-
-    def __init__(self, expr: common.Expression, clock: ClockExpr) -> None:
-        super().__init__()
-        self._expr = expr
-        self._clock = clock
-
-    @property
-    def expr(self) -> common.Expression:
-        """Expression"""
-        return self._expr
-
-    @property
-    def clock(self) -> ClockExpr:
-        """Clock expression"""
-        return self._clock
-
-
-class WhenMatchExpr(common.Expression):  # numpydoc ignore=PR01
-    """*expr* **when match** *path_id* expression"""
-
-    def __init__(self, expr: common.Expression, when: common.PathIdentifier) -> None:
-        super().__init__()
-        self._expr = expr
-        self._when = when
-
-    @property
-    def expr(self) -> common.Expression:
-        """Expression"""
-        return self._expr
-
-    @property
-    def when(self) -> common.PathIdentifier:
-        """When expression"""
-        return self._when
-
-
 class NumericCast(common.Expression):  # numpydoc ignore=PR01
     """Cast expression: ( *expr* :> *type_expr*)."""
 
     def __init__(self, expr: common.Expression, type: common.TypeExpression) -> None:
         super().__init__()
-
         self._expr = expr
         self._type = type
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._type)
 
     @property
     def expr(self) -> common.Expression:
@@ -505,6 +440,8 @@ class GroupItem(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._expr = expr
         self._label = label
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._label)
 
     @property
     def expr(self) -> common.Expression:
@@ -527,6 +464,7 @@ class Group(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, items: List[GroupItem]) -> None:
         super().__init__()
         self._items = items
+        common.SwanItem.set_owner(self, self._items)
 
     @property
     def items(self) -> List[GroupItem]:
@@ -542,6 +480,7 @@ class GroupConstructor(common.Expression):  # numpydoc ignore=PR01
     def __init__(self, group: Group) -> None:
         super().__init__()
         self._group = group
+        common.SwanItem.set_owner(self, self._group)
 
     @property
     def group(self) -> Group:
@@ -587,6 +526,8 @@ class GroupRenaming(GroupRenamingBase):  # numpydoc ignore=PR01
         self._source = source
         self._renaming = renaming
         self._is_shortcut = is_shortcut
+        common.SwanItem.set_owner(self, self._source)
+        common.SwanItem.set_owner(self, self._renaming)
 
     @property
     def source(self) -> Union[common.Identifier, Literal]:
@@ -603,7 +544,7 @@ class GroupRenaming(GroupRenamingBase):  # numpydoc ignore=PR01
         """True when renaming is a shortcut with no renaming, or a renaming with no shortcut."""
         if self._renaming and self.is_shortcut:
             # check both id are the same
-            return self._source.id == self._renaming.id
+            return isinstance(self._source, common.Identifier) and self._source == self._renaming
         return True
 
     @property
@@ -648,7 +589,7 @@ class ProtectedGroupRenaming(GroupRenamingBase, common.ProtectedItem):  # numpyd
     Source is an adaptation such as: .( {syntax%renaming%syntax} ).
     """
 
-    def __init__(self, data: str, markup: Optional[str] = common.Markup.Syntax) -> None:
+    def __init__(self, data: str, markup: str = common.Markup.Syntax) -> None:
         common.ProtectedItem.__init__(self, data, markup)
 
     @property
@@ -683,6 +624,7 @@ class GroupAdaptation(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, renamings: List[GroupRenamingBase]) -> None:
         super().__init__()
         self._renamings = renamings
+        common.SwanItem.set_owner(self, self._renamings)
 
     @property
     def renamings(self) -> List[GroupRenamingBase]:
@@ -706,6 +648,8 @@ class GroupProjection(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._expr = expr
         self._adaptation = adaptation
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._adaptation)
 
     @property
     def expr(self) -> common.Expression:
@@ -718,6 +662,28 @@ class GroupProjection(common.Expression):  # numpydoc ignore=PR01
         return self._adaptation
 
 
+class LabelOrIndex(common.Expression):  # numpydoc ignore=PR01
+    """Stores an index as:
+
+    - a label :py:class:`ansys.scadeone.swan.Identifier` or,
+    - an expression :py:class:`ansys.scadeone.swan.Expression`.
+    """
+
+    def __init__(self, value: Union[common.Identifier, common.Expression]) -> None:
+        super().__init__()
+        self._value = value
+        common.SwanItem.set_owner(self, self._value)
+
+    @property
+    def is_label(self) -> bool:
+        return isinstance(self.value, common.Identifier)
+
+    @property
+    def value(self) -> Union[common.Identifier, common.Expression]:
+        """Return the index (expression or label)."""
+        return self._value
+
+
 # Composite
 # Array
 
@@ -725,10 +691,12 @@ class GroupProjection(common.Expression):  # numpydoc ignore=PR01
 class ArrayProjection(common.Expression):  # numpydoc ignore=PR01
     """Static projection: *expr* [*index*], where index is a static expression."""
 
-    def __init__(self, expr: common.Expression, index: common.Expression) -> None:
+    def __init__(self, expr: common.Expression, index: LabelOrIndex) -> None:
         super().__init__()
         self._expr = expr
         self._index = index
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._index)
 
     @property
     def expr(self) -> common.Expression:
@@ -736,7 +704,7 @@ class ArrayProjection(common.Expression):  # numpydoc ignore=PR01
         return self._expr
 
     @property
-    def index(self) -> common.Expression:
+    def index(self) -> LabelOrIndex:
         """Index expression."""
         return self._index
 
@@ -751,6 +719,9 @@ class Slice(common.Expression):  # numpydoc ignore=PR01
         self._expr = expr
         self._start = start
         self._end = end
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._start)
+        common.SwanItem.set_owner(self, self._end)
 
     @property
     def expr(self) -> common.Expression:
@@ -775,6 +746,8 @@ class ArrayRepetition(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._expr = expr
         self._size = size
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._size)
 
     @property
     def expr(self) -> common.Expression:
@@ -793,6 +766,7 @@ class ArrayConstructor(common.Expression):  # numpydoc ignore=PR01
     def __init__(self, group: Group) -> None:
         super().__init__()
         self._group = group
+        common.SwanItem.set_owner(self, self._group)
 
     @property
     def group(self) -> Group:
@@ -813,10 +787,12 @@ class ArrayConcatExpr(BinaryExpr):
 class StructProjection(common.Expression):  # numpydoc ignore=PR01
     """Static structure field access: *expr* . *label*."""
 
-    def __init__(self, expr: common.Expression, label: common.Identifier) -> None:
+    def __init__(self, expr: common.Expression, label: LabelOrIndex) -> None:
         super().__init__()
         self._expr = expr
         self._label = label
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._label)
 
     @property
     def expr(self) -> common.Expression:
@@ -824,7 +800,7 @@ class StructProjection(common.Expression):  # numpydoc ignore=PR01
         return self._expr
 
     @property
-    def label(self) -> common.Identifier:
+    def label(self) -> LabelOrIndex:
         """Field name."""
         return self._label
 
@@ -837,6 +813,8 @@ class StructDestructor(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._group_id = group_id
         self._expr = expr
+        common.SwanItem.set_owner(self, self._group_id)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def expr(self) -> common.Expression:
@@ -847,27 +825,6 @@ class StructDestructor(common.Expression):  # numpydoc ignore=PR01
     def group_id(self) -> common.PathIdentifier:
         """Group type."""
         return self._group_id
-
-
-class LabelOrIndex(common.Expression):  # numpydoc ignore=PR01
-    """Stores an index as:
-
-    - a label :py:class:`ansys.scadeone.swan.Identifier` or,
-    - an expression :py:class:`ansys.scadeone.swan.Expression`.
-    """
-
-    def __init__(self, value: Union[common.Identifier, common.Expression]) -> None:
-        super().__init__()
-        self._value = value
-
-    @property
-    def is_label(self) -> bool:
-        return isinstance(self.value, common.Identifier)
-
-    @property
-    def value(self) -> Union[common.Identifier, common.Expression]:
-        """Return the index (expression or label)."""
-        return self._value
 
 
 class ProjectionWithDefault(common.Expression):  # numpydoc ignore=PR01
@@ -883,6 +840,9 @@ class ProjectionWithDefault(common.Expression):  # numpydoc ignore=PR01
         self._expr = expr
         self._indices = indices
         self._default = default
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._indices)
+        common.SwanItem.set_owner(self, self._default)
 
     @property
     def expr(self) -> common.Expression:
@@ -901,15 +861,17 @@ class ProjectionWithDefault(common.Expression):  # numpydoc ignore=PR01
 
 
 class StructConstructor(common.Expression):  # numpydoc ignore=PR01
-    """Structure expression, with optional type for cast
+    """Structure expression, with type for cast
     to structure from a group: { *group* } [[ : *path_id*]].
 
     """
 
-    def __init__(self, group: Group, type: Optional[common.PathIdentifier] = None) -> None:
+    def __init__(self, group: Group, type: common.PathIdentifier) -> None:
         super().__init__()
         self._group = group
         self._type = type
+        common.SwanItem.set_owner(self, self._group)
+        common.SwanItem.set_owner(self, self._type)
 
     @property
     def group(self) -> Group:
@@ -955,6 +917,11 @@ class Modifier(common.SwanItem):  # numpydoc ignore=PR01
         self._modifier = modifier
         self._expr = expr
         self._is_protected = isinstance(modifier, str)
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(
+            self,
+            list(filter(lambda e: isinstance(e, LabelOrIndex), self._modifier)),  # type: ignore
+        )
 
     @property
     def expr(self) -> common.Expression:
@@ -987,6 +954,8 @@ class FunctionalUpdate(common.Expression):  # numpydoc ignore=PR01
         self._expr = expr
         self._is_starred = is_starred
         self._modifiers = modifiers
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._modifiers)
 
     @property
     def expr(self) -> common.Expression:
@@ -1020,6 +989,9 @@ class IfteExpr(common.Expression):  # numpydoc ignore=PR01
         self._cond = cond_expr
         self._then = then_expr
         self._else = else_expr
+        common.SwanItem.set_owner(self, self._cond)
+        common.SwanItem.set_owner(self, self._then)
+        common.SwanItem.set_owner(self, self._else)
 
     @property
     def cond_expr(self) -> common.Expression:
@@ -1046,6 +1018,8 @@ class CaseBranch(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._pattern = pattern
         self._expr = expr
+        common.SwanItem.set_owner(self, self._pattern)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def pattern(self) -> Pattern:
@@ -1065,6 +1039,8 @@ class CaseExpr(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._expr = expr
         self._branches = branches
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._branches)
 
     @property
     def expr(self) -> common.Expression:
@@ -1083,6 +1059,7 @@ class PathIdPattern(Pattern):  # numpydoc ignore=PR01
     def __init__(self, path_id: common.PathIdentifier) -> None:
         super().__init__()
         self._path_id = path_id
+        common.SwanItem.set_owner(self, self._path_id)
 
     @property
     def path_id(self) -> common.PathIdentifier:
@@ -1114,6 +1091,8 @@ class VariantPattern(Pattern):  # numpydoc ignore=PR01
         self._path_id = path_id
         self._captured = captured
         self._is_underscore = is_underscore
+        common.SwanItem.set_owner(self, self._path_id)
+        common.SwanItem.set_owner(self, self._captured)
 
     @property
     def path_id(self) -> common.PathIdentifier:
@@ -1244,7 +1223,8 @@ class PortExpr(common.Expression):  # numpydoc ignore=PR01
         super().__init__()
         self._lunum = lunum
         self._luid = luid
-        self._is_self = is_self
+        common.SwanItem.set_owner(self, self._lunum)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def lunum(self) -> Optional[common.Lunum]:
@@ -1253,10 +1233,6 @@ class PortExpr(common.Expression):  # numpydoc ignore=PR01
     @property
     def luid(self) -> Optional[common.Luid]:
         return self._luid
-
-    @property
-    def is_self(self) -> bool:
-        return self._is_self
 
 
 class Window(common.Expression):  # numpydoc ignore=PR01
@@ -1267,6 +1243,9 @@ class Window(common.Expression):  # numpydoc ignore=PR01
         self._size = size
         self._params = params
         self._init = init
+        common.SwanItem.set_owner(self, self._size)
+        common.SwanItem.set_owner(self, self._params)
+        common.SwanItem.set_owner(self, self._init)
 
     @property
     def size(self) -> common.Expression:
@@ -1290,10 +1269,30 @@ class Merge(common.Expression):  # numpydoc ignore=PR01
     def __init__(self, params: List[Group]) -> None:
         super().__init__()
         self._params = params
+        common.SwanItem.set_owner(self, self._params)
 
     @property
     def params(self) -> List[Group]:
         return self._params
+
+
+class AtExpr(common.Expression):  # numpydoc ignore=PR01
+    """At expression: (*expr* **at** *ID*)."""
+
+    def __init__(self, expr: common.Expression, at: common.Identifier) -> None:
+        super().__init__()
+        self._expr = expr
+        self._at = at
+
+    @property
+    def expr(self) -> common.Expression:
+        """Expression."""
+        return self._expr
+
+    @property
+    def at(self) -> common.Identifier:
+        """Memory constrained location."""
+        return self._at
 
 
 # =============================================
@@ -1304,7 +1303,7 @@ class Merge(common.Expression):  # numpydoc ignore=PR01
 class ProtectedExpr(common.Expression, common.ProtectedItem):  # numpydoc ignore=PR01
     """Protected expression, i.e., saved as string if syntactically incorrect."""
 
-    def __init__(self, data: str, markup: Optional[str] = common.Markup.Syntax) -> None:
+    def __init__(self, data: str, markup: str = common.Markup.Syntax) -> None:
         common.ProtectedItem.__init__(self, data, markup)
         # Calling common.Expression.__init__() does not work, as it calls super().__init__()
         # which is given the same parameters as ProtectedItem.__init__()

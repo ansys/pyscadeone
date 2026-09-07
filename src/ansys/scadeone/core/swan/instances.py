@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -31,7 +31,7 @@ from typing import List, Optional, Union
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
 
-from .expressions import ClockExpr, Group, GroupItem
+from .expressions import Group, GroupItem
 from .variable import VarDecl
 
 
@@ -42,6 +42,7 @@ class OperatorInstance(common.SwanItem, ABC):  # numpydoc ignore=PR01  # numpydo
         common.SwanItem.__init__(self)
         self._sizes = sizes
         self._is_text = False
+        common.SwanItem.set_owner(self, self._sizes)
 
     @property
     def sizes(self) -> List[common.Expression]:
@@ -68,6 +69,7 @@ class NamedInstance(OperatorInstance):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(sizes)
         self._path_id = path_id
+        common.SwanItem.set_owner(self, self._path_id)
 
     @property
     def path_id(self) -> common.PathIdentifier:
@@ -142,6 +144,7 @@ class OperatorExpressionInstance(OperatorInstance):  # numpydoc ignore=PR01
     def __init__(self, op_expr: OperatorExpression, sizes: List[common.Expression]) -> None:
         super().__init__(sizes)
         self._op_expr = op_expr
+        common.SwanItem.set_owner(self, self._op_expr)
 
     @property
     def op_expr(self) -> OperatorExpression:
@@ -168,7 +171,7 @@ class IteratorKind(Enum):
     Mapfoldi = auto()
 
     @staticmethod
-    def to_str(value: "IteratorKind") -> str:
+    def to_str(value: "IteratorKind") -> Optional[str]:
         if value == IteratorKind.Map:
             return "map"
         elif value == IteratorKind.Fold:
@@ -181,6 +184,7 @@ class IteratorKind(Enum):
             return "foldi"
         elif value == IteratorKind.Mapfoldi:
             return "mapfoldi"
+        return None
 
 
 class Iterator(OperatorExpression):  # numpydoc ignore=PR01
@@ -192,6 +196,7 @@ class Iterator(OperatorExpression):  # numpydoc ignore=PR01
         super().__init__()
         self._kind = kind
         self._operator = operator
+        common.SwanItem.set_owner(self, self._operator)
 
     @property
     def kind(self) -> IteratorKind:
@@ -202,25 +207,6 @@ class Iterator(OperatorExpression):  # numpydoc ignore=PR01
     def operator(self) -> Union[OperatorInstance, "ProtectedOpExpr"]:
         """Iterated operator."""
         return self._operator
-
-
-class ActivateClock(OperatorExpression):  # numpydoc ignore=PR01
-    """**activate** *operator* **every** *clock_expr*"""
-
-    def __init__(self, operator: OperatorInstance, clock: ClockExpr) -> None:
-        super().__init__()
-        self._operator = operator
-        self._clock = clock
-
-    @property
-    def operator(self) -> OperatorInstance:
-        """Operator under activation"""
-        return self._operator
-
-    @property
-    def clock(self) -> ClockExpr:
-        """Activation clock expression"""
-        return self._clock
 
 
 class ActivateEvery(OperatorExpression):  # numpydoc ignore=PR01
@@ -239,6 +225,9 @@ class ActivateEvery(OperatorExpression):  # numpydoc ignore=PR01
         self._condition = condition
         self._is_last = is_last
         self._expr = expr
+        common.SwanItem.set_owner(self, self._operator)
+        common.SwanItem.set_owner(self, self._condition)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def operator(self) -> OperatorInstance:
@@ -268,6 +257,8 @@ class RestartOperator(OperatorExpression):  # numpydoc ignore=PR01
         super().__init__()
         self._operator = operator
         self._condition = condition
+        common.SwanItem.set_owner(self, self._operator)
+        common.SwanItem.set_owner(self, self._condition)
 
     @property
     def operator(self) -> OperatorInstance:
@@ -286,6 +277,7 @@ class OptGroupItem(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, item: Optional[GroupItem] = None) -> None:
         super().__init__()
         self._item = item
+        common.SwanItem.set_owner(self, self._item)
 
     @property
     def is_underscore(self) -> bool:
@@ -305,6 +297,8 @@ class PartialOperator(OperatorExpression):  # numpydoc ignore=PR01
         super().__init__()
         self._operator = operator
         self._partial_group = partial_group
+        common.SwanItem.set_owner(self, self._operator)
+        common.SwanItem.set_owner(self, self._partial_group)
 
     @property
     def operator(self) -> OperatorInstance:
@@ -341,7 +335,7 @@ class NaryOp(Enum):
     Concat = auto()
 
     @staticmethod
-    def to_str(value: "NaryOp") -> str:
+    def to_str(value: "NaryOp") -> Optional[str]:
         if value == NaryOp.Plus:
             return "+"
         elif value == NaryOp.Mult:
@@ -360,6 +354,7 @@ class NaryOp(Enum):
             return "lxor"
         elif value == NaryOp.Concat:
             return "@"
+        return None
 
 
 class NAryOperator(OperatorExpression):  # numpydoc ignore=PR01
@@ -391,6 +386,9 @@ class AnonymousOperatorWithExpression(OperatorExpression):  # numpydoc ignore=PR
         self._params = params
         self._sections = sections
         self._expr = expr
+        common.SwanItem.set_owner(self, self._params)
+        common.SwanItem.set_owner(self, self._sections)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def is_node(self) -> bool:
@@ -429,6 +427,9 @@ class AnonymousOperatorWithDataDefinition(OperatorExpression):  # numpydoc ignor
         self._inputs = inputs
         self._outputs = outputs
         self._data_def = data_def
+        common.SwanItem.set_owner(self, self._inputs)
+        common.SwanItem.set_owner(self, self._outputs)
+        common.SwanItem.set_owner(self, self._data_def)
 
     @property
     def is_node(self) -> bool:
@@ -465,6 +466,9 @@ class OperatorInstanceApplication(common.Expression):  # numpydoc ignore=PR01
         self._operator = operator
         self._params = params
         self._luid = luid
+        common.SwanItem.set_owner(self, self._operator)
+        common.SwanItem.set_owner(self, self._params)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def operator(self) -> OperatorInstance:
@@ -493,3 +497,4 @@ class ProtectedOpExpr(OperatorExpression, common.ProtectedItem):  # numpydoc ign
 
     def __init__(self, data: str, markup: str) -> None:
         common.ProtectedItem.__init__(self, data, markup)
+        OperatorExpression.__init__(self)

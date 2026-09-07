@@ -1,5 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2024 ANSYS, Inc.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -49,9 +48,7 @@ class OperatorFactory:
         self,
         name: Optional[str] = None,
         var_type: Union[str, "swan.Declaration"] = None,
-        is_clock: bool = False,
         is_probe: bool = False,
-        when: Optional[str] = None,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,
@@ -83,8 +80,6 @@ class OperatorFactory:
             if not id.is_valid:
                 raise ScadeOneException(f"Invalid variable name: {name}")
             declaration = f"{name}: {var_type}"
-            if when:
-                declaration += f" when {when}"
             if default:
                 declaration += f" default = {default}"
             if last:
@@ -103,7 +98,6 @@ class OperatorFactory:
             var = cast(VarDecl, op.outputs[0])
         else:
             var = cast(VarDecl, op.inputs[0])
-        var._is_clock = is_clock
         var._is_probe = is_probe
         return var
 
@@ -324,4 +318,5 @@ class OperatorCreator(OperatorDeclarationCreator):
             self._body = scope
             return diag
         self._body._sections.append(diag)
+        diag._owner = self.body
         return diag

@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,13 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# cSpell: ignore autouse
-
 import os
+import platform
 import subprocess
 import shutil
 from pathlib import Path
 import pytest
+
 
 PYTHON = Path(__file__).parents[2] / ".venv/Scripts/python.exe"
 
@@ -39,7 +39,7 @@ def clean_up():
     """Cleanup any unnecessary files or directories
     Complete the list as needed.
     """
-    for d in ("QuadFlight_FMU_ME", "QuadFlight_FMU_CS", "project1"):
+    for d in ("project1",):
         if Path(d).exists():
             shutil.rmtree(d, ignore_errors=True)
 
@@ -58,13 +58,20 @@ def setup_teardown():
     clean_up()
 
 
-def check_example(example: Path):
-    """Return True if Scade One is not required for example or if it is installed."""
-    with example.open() as fd:
-        for line in fd:
-            if line.find(s_one_install) > 0:
-                return s_one_exists
-    return True
+if platform.system() == "Windows":
+
+    def check_example(example: Path):
+        """Return True if Scade One is not required for example or if it is installed."""
+        with example.open() as fd:
+            for line in fd:
+                if line.find(s_one_install) > 0:
+                    return s_one_exists
+        return True
+else:
+
+    def check_example(example: Path):
+        """Documentation examples work on Windows only."""
+        return False
 
 
 @pytest.fixture(scope="module")
@@ -114,6 +121,7 @@ class TestDocExamples:
             self.write("SKIPPED: requires Scade One")
             self.success += 1
 
+    @pytest.mark.skip("Wait Scade One examples in 2027.0")
     def test_examples(self, examples, capsys):
         self.success = 0
         nb_examples = len(examples)

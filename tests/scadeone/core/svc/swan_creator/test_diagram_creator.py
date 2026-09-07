@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,9 @@
 
 import pytest
 
-import tools
+import test_tools
+from typing import cast
+
 from ansys.scadeone.core import swan
 from ansys.scadeone.core.common.versioning import ScadeOneException
 from ansys.scadeone.core.model.model import Model
@@ -47,7 +49,7 @@ class TestDiagramCreator:
         assert isinstance(block.instance, swan.NamedInstance)
         assert swan.swan_to_str(block.instance) == "op1"
 
-    def test_create_block_from_imported_operators(
+    def test_create_block_from_external_operators(
         self, model: Model, module_factory, diagram_factory
     ):
         # Create a 1st module and an operator in the model
@@ -84,8 +86,9 @@ class TestDiagramCreator:
         def_block = diagram_factory.create_def_block(output)
         assert def_block is not None
         assert isinstance(def_block, swan.DefBlock)
-        assert len(def_block.lhs.lhs_items) == 1
-        assert swan.swan_to_str(def_block.lhs.lhs_items[0]) == "var1"
+        lhs = cast(swan.EquationLHS, def_block.lhs)
+        assert len(lhs.lhs_items) == 1
+        assert swan.swan_to_str(lhs.lhs_items[0]) == "var1"
 
     def test_create_expr_block(self, module_factory, diagram_factory):
         module = module_factory.create_module_body("m0")
@@ -272,8 +275,8 @@ class TestDiagramCreator:
         assert isinstance(wire, swan.Wire)
         assert swan.swan_to_str(wire) == "(#2 wire #0 .(in0) => #1 .(out0))"
 
-    def test_create_block_in_existing_diagram(self, parser, operator_factory):
-        code = tools.versioned_swan_str(
+    def test_create_block_in_sub_diagram(self, parser, capsys):
+        code = test_tools.versioned_swan_str(
             """
                 node operator0 (i0: int32)
                   returns (o0: int32)
@@ -282,6 +285,33 @@ class TestDiagramCreator:
                       (#0 expr i0)
                       (#20 def o0)
                       (#10 expr i1)
+                  }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op0 = body.operator_definitions[0]
+        diag = op0.diagrams[0]
+        # create a sub-diagram in the diagram of the operator
+        # the sub-diagram is created as a section object in the main diagram
+        sub_diag = swan.Diagram()
+        section_block = swan.SectionObject(section=sub_diag)
+        diag.objects.append(section_block)
+        section_block.owner = diag
+        # add a block in the sub-diagram
+        sub_diag.add_expr_block(op0.inputs[0])
+        assert swan.swan_to_str(sub_diag) == "diagram\n  (#1 expr i0)"
+
+    def test_create_block_in_existing_diagram(self, parser, operator_factory):
+        code = test_tools.versioned_swan_str(
+            """
+                node operator0 (i0: int32)
+                  returns (o0: int32)
+                  {
+                    diagram
+                      (#0 expr i0)
+                      (#3 def o0)
+                      (#4 expr i1)
                   }
                 node operator1 (i0: int32)
                   returns (o0: int32);
@@ -295,4 +325,55 @@ class TestDiagramCreator:
         diag.add_block(op1)
         assert len(diag.objects) == 4
         assert isinstance(diag.objects[3], swan.Block)
-        assert swan.swan_to_str(diag.objects[3]) == "(#21 block operator1)"
+        assert swan.swan_to_str(diag.objects[3]) == "(#1 block operator1)"
+        diag.add_expr_block(op0.inputs[0])
+        assert swan.swan_to_str(diag.objects[4]) == "(#2 expr i0)"
+        diag.add_expr_block(op0.inputs[0])
+        assert swan.swan_to_str(diag.objects[5]) == "(#5 expr i0)"
+
+    def test_create_empty_automaton(self, parser):
+        code = test_tools.versioned_swan_str(
+            """
+                node operator0 (i0: int32)
+                  returns (o0: int32)
+                  {
+                    diagram
+                  }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op0 = body.operator_definitions[0]
+        diag = op0.diagrams[0]
+        sm0 = diag.add_automaton("automaton0")
+        diag.add_automaton("")
+        assert len(diag.objects) == 2
+        assert isinstance(diag.objects[0], swan.StateMachineBlock)
+        assert sm0.luid.value == "automaton0"
+        assert diag.objects[1].state_machine.lunum.value == "#1"
+
+    def test_create_automaton_in_state(self, parser):
+        code = test_tools.versioned_swan_str(
+            """
+                node operator0 (i0: int32)
+                  returns (o0: int32)
+                  {
+                    diagram
+                      (automaton #0
+                        initial state #1 state0:
+                      )
+                  }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op0 = body.operator_definitions[0]
+        diag = op0.diagrams[0]
+        sm0 = diag.objects[0].state_machine
+        s0 = sm0.states[0]
+        s0_diag = s0.diagram
+        sm1 = s0_diag.add_automaton("automaton1")
+        assert len(s0_diag.objects) == 1
+        assert isinstance(s0_diag.objects[0], swan.StateMachineBlock)
+        assert sm1.lunum.value == "#2"
+        assert sm1.luid.value == "automaton1"

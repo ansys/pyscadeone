@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,16 +26,17 @@ from typing import cast
 
 import pytest
 
-from ansys.scadeone.core import ProjectFile, ScadeOne
+from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.common.exception import ScadeOneException
-from ansys.scadeone.core.project import ResourceKind
+from ansys.scadeone.core.project import Project, ProjectFile, ResourceKind
+from ansys.scadeone.core.job import JobType
+from ansys.scadeone.core.swan import swan_to_str
 
 
 class TestProject:
     def test_wrong_project(self):
         app = ScadeOne()
-        asset = ProjectFile("foo")
-        project = app.load_project(asset)
+        project = app.load_project("foo")
         assert project is None
 
     @staticmethod
@@ -44,8 +45,7 @@ class TestProject:
 
     def test_assets(self, cc_project):
         app = ScadeOne()
-        asset = ProjectFile(cc_project)
-        project = app.load_project(asset)
+        project = app.load_project(cc_project)
         sources = [swan_file.source for swan_file in project.swan_sources()]
         oracle = [
             TestProject.resolve(p)
@@ -54,12 +54,12 @@ class TestProject:
                 "examples/models/CC/CruiseControl/assets/CC.swan",
             ]
         ]
-        assert sources == oracle
+        # Linux is case-sensitive, while Windows not
+        assert sorted(sources) == sorted(oracle)
 
-    def tests_all_assets(self, cc_project):
+    def test_all_assets(self, cc_project):
         app = ScadeOne()
-        asset = ProjectFile(cc_project)
-        project = app.load_project(asset)
+        project = app.load_project(cc_project)
         sources = [swan_file.source for swan_file in project.swan_sources(all=True)]
         oracle = [
             TestProject.resolve(p)
@@ -69,16 +69,14 @@ class TestProject:
                 "examples/models/CC/CruiseControl/../utils/assets/Utils.swan",
             ]
         ]
-        assert sources == oracle
+        assert sorted(sources) == sorted(oracle)
 
     def test_project_assets(self, cc_project):
         app = ScadeOne()
-        asset = cc_project
-        p1 = app.load_project(asset)
-        asset = Path(cc_project)
-        p2 = app.load_project(asset)
-        asset = ProjectFile(cc_project)
-        p3 = app.load_project(asset)
+        p1 = app.load_project(cc_project)
+        p2 = app.load_project(Path(cc_project))
+        p3 = app.load_project(Project(app=app, project=ProjectFile(cc_project)))
+        assert p1 and p2 and p3
         assert cast(ProjectFile, p1.storage).source == cast(ProjectFile, p2.storage).source
         assert cast(ProjectFile, p1.storage).source == cast(ProjectFile, p3.storage).source
 
@@ -88,6 +86,10 @@ class TestProject:
         swans = [swan_file.source for swan_file in project.swan_sources(True)]
         oracle = []
         for dirname, dirs, files in os.walk("tests/models/multi_projects"):
+            if "circular" in dirname.split(os.sep):  # skip circular project used for another test
+                continue
+            if "other" in dirname.split(os.sep):  # skip other project used for another test
+                continue
             for f in files:
                 if os.path.splitext(f)[1] == ".swan":
                     p = Path(dirname) / f
@@ -95,6 +97,48 @@ class TestProject:
         swans.sort()
         oracle.sort()
         assert swans == oracle
+
+    def test_multi_projects_loads(self):
+        app = ScadeOne()
+        # Get top_level_project
+        top_level = app.load_project("tests/models/multi_projects/top_level/top_level.sproj")
+        assert top_level is not None
+        # check that the projects are loaded
+        assert len(app.projects) == 4
+        # Get other_project
+        other_project = app.load_project("tests/models/multi_projects/other/other.sproj")
+        assert other_project is not None
+        # check that only the new project is loaded.
+        assert len(app.projects) == 5
+        assert len(top_level.model.constants) == 2
+        assert len(other_project.model.constants) == 3
+        # check names
+        assert ["top_level::const0", "utils::C"] == sorted(
+            [c.get_full_path() for c in top_level.model.constants]
+        )
+        assert ["other::C", "other::C2", "utils::C"] == sorted(
+            [c.get_full_path() for c in other_project.model.constants]
+        )
+        # check that the two utils::C are different objects
+        C1 = [c for c in top_level.model.constants if c.get_full_path() == "utils::C"][0]
+        C2 = [c for c in other_project.model.constants if c.get_full_path() == "utils::C"][0]
+        assert C1 is not C2
+        assert swan_to_str(C1) == "C: int32 = 42"
+        assert swan_to_str(C2) == "C: float32 = 4.2"
+
+    def test_cyclic_projects(self):
+        app = ScadeOne()
+        assert app.load_project("tests/models/multi_projects/circular/A/A.sproj") is not None
+        assert ["A", "B"] == [p.directory.stem for p in app.projects]
+
+    def test_all_modules(self, cc_project):
+        app = ScadeOne()
+        project = app.load_project(cc_project)
+        assert project is not None
+        modules = project.model.all_modules
+        assert len(modules) == 3
+        names = [str(m.name) for m in modules]
+        assert sorted(names) == sorted(["CarTypes", "CC", "Utils"])
 
     def test_create_project_in_empty_path(self):
         app = ScadeOne()
@@ -141,3 +185,16 @@ class TestProject:
         project.save()
         project_loading = app.load_project(project_path)
         assert project.resources == project_loading.resources
+
+    def test_add_delete_job(self, cc_project):
+        app = ScadeOne()
+        project = app.load_project(cc_project)
+        assert project is not None
+        assert isinstance(project, Project)
+        assert len(project.assets) == 4
+        # add a job
+        jb = project.add_job(JobType.CODE_GENERATION, "asset_codegen0")
+        assert len(project.assets) == 6
+        # delete job
+        project.delete_job(jb)
+        assert len(project.assets) == 4

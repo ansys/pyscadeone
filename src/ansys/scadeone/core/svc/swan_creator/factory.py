@@ -1,5 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2024 ANSYS, Inc.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,15 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import TYPE_CHECKING
-
 from .diagram_creator import DiagramFactory
 from .module_creator import DeclarationFactory, ModuleFactory
 from .operator_creator import OperatorFactory
 from .project_creator import ProjectFactory
-
-if TYPE_CHECKING:
-    pass
+from .state_machine_creator import StateMachineFactory
 
 
 class ScadeOneFactory:
@@ -45,4 +40,5 @@ class ScadeOneFactory:
             cls.decl = DeclarationFactory()
             cls.operator = OperatorFactory()
             cls.diagram = DiagramFactory()
+            cls.state_machine = StateMachineFactory()
         return cls._instance

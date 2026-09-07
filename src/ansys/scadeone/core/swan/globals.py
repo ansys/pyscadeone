@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -36,15 +36,22 @@ class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
     def __init__(
         self,
         id: common.Identifier,
+        is_elaborated: bool,
         type: Optional[common.TypeExpression],
         value: Optional[common.Expression] = None,
         pragmas: Optional[list[common.Pragma]] = None,
     ) -> None:
         super().__init__(id, pragmas)
+        self._is_elaborated = is_elaborated
         self._type_expr = type
         self._value = value
         common.SwanItem.set_owner(self, self._type_expr)
         common.SwanItem.set_owner(self, self._value)
+
+    @property
+    def is_elaborated(self) -> bool:
+        """True if constant is elaborated."""
+        return self._is_elaborated
 
     @property
     def type(self) -> Union[common.TypeExpression, None]:
@@ -55,6 +62,11 @@ class ConstDecl(common.Declaration):  # numpydoc ignore=PR01
     def value(self) -> Union[common.Expression, None]:
         """Constant optional value. None if undefined."""
         return self._value
+
+    @property
+    def has_definition(self) -> bool:
+        """True if constant has a value."""
+        return self._value is not None
 
 
 class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
@@ -74,3 +86,8 @@ class SensorDecl(common.Declaration):  # numpydoc ignore=PR01
     def type(self) -> common.TypeExpression:
         """Sensor type."""
         return self._type
+
+    @property
+    def is_external(self) -> bool:
+        """A sensor cannot be external."""
+        return False

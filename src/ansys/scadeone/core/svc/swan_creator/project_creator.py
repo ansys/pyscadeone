@@ -1,5 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2024 ANSYS, Inc.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,9 +23,8 @@
 from abc import ABC
 from typing import TYPE_CHECKING, cast
 
-from ansys.scadeone.core.common.storage import ProjectStorage
+from ansys.scadeone.core.common.storage import ProjectFile
 from ansys.scadeone.core.interfaces import IScadeOne
-from ansys.scadeone.core.common.exception import ScadeOneException
 
 if TYPE_CHECKING:
     from ansys.scadeone.core.project import Project
@@ -39,7 +37,7 @@ class ProjectFactory:
     """Project factory class."""
 
     @staticmethod
-    def create_project(app: "IScadeOne", storage: ProjectStorage) -> "Project":
+    def create_project(app: "IScadeOne", storage: ProjectFile) -> "Project":
         """Create a project."""
         from ansys.scadeone.core.project import Project
 
@@ -53,7 +51,7 @@ class ProjectAdder:
     @staticmethod
     def add_project(app: "ScadeOne", project: "Project") -> None:
         """Add a project to the application."""
-        app.projects.append(project)
+        app._projects[project.storage.path] = project
 
 
 class ProjectCreator(ABC):
@@ -62,8 +60,6 @@ class ProjectCreator(ABC):
     @staticmethod
     def _set_module_source(project: "Project", module: "Module") -> None:
         project_dir = project.directory
-        if not project_dir:
-            raise ScadeOneException("Cannot add module to project without directory.")
         swan_file_name = module.file_name
         module_path = project_dir / "assets" / swan_file_name
         module.source = str(module_path)
@@ -84,6 +80,7 @@ class ProjectCreator(ABC):
         from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
 
         module = ModuleFactory.create_module_body(name)
+        module.project = cast("Project", self)
         ModuleAdder.add_module(self.model, module)
         ProjectCreator._set_module_source(cast("Project", self), module)
         return module
@@ -105,6 +102,7 @@ class ProjectCreator(ABC):
         from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
 
         module = ModuleFactory.create_module_interface(name)
+        module.project = cast("Project", self)
         ModuleAdder.add_module(self.model, module)
         ProjectCreator._set_module_source(cast("Project", self), module)
         return module
@@ -125,6 +123,7 @@ class ProjectCreator(ABC):
         from ansys.scadeone.core.svc.swan_creator.module_creator import ModuleAdder, ModuleFactory
 
         module = ModuleFactory.create_test_module(name)
+        module.project = cast("Project", self)
         ModuleAdder.add_module(self.model, module)
         ProjectCreator._set_module_source(cast("Project", self), module)
         return module

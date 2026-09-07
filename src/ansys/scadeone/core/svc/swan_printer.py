@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,9 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# pylint: disable=too-many-lines, pointless-statement
-# pyright: reportUnusedExpression=false
 
 from io import IOBase, StringIO
 from typing import Any, List, Optional, Union, cast
@@ -262,29 +259,6 @@ class PPrinter(SwanVisitor):
                 _doc << "@M"
             _doc << " "
 
-    @classmethod
-    def _expr_at_property(cls, expr: Swan.Expression, decl: R.DElt) -> R.DElt:
-        """Check if expr as "at" property and return "(expr at ID)",
-        or return decl
-
-        Parameters
-        ----------
-        expr : Swan.Expression
-            Expression to check
-        decl : R.DElt
-            Expression document
-
-        Returns
-        -------
-        R.DElt
-            A document with "(expr at ID)" or decl
-        """
-        if at := expr.at:
-            _at = R.DBlock()
-            _at << "(" << decl << " at " << str(at) << ")"
-            return _at
-        return decl
-
     @staticmethod
     def _doc_or_list(inp: Union[List[Any], R.DElt]) -> R.DElt:
         """
@@ -357,38 +331,6 @@ class PPrinter(SwanVisitor):
         # Visit Swan declaration.
         self._visit(swan_obj, self, self.__own_property)  # type: ignore
 
-    def visit_ActivateClock(
-        self,
-        swan_obj: Swan.ActivateClock,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        ActivateClock visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.ActivateClock
-            Visited Swan object, it's a ActivateClock instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"operator": None, "clock": None})
-        # Visit properties
-        self._visit(swan_obj.operator, swan_obj, "operator")
-        self._visit(swan_obj.clock, swan_obj, "clock")
-        _doc = R.DBlock()
-        _doc << "activate "
-        _doc << _p_data["operator"]
-        _doc << " every "
-        _doc << _p_data["clock"]
-        # Update property
-        self._pop_and_set_doc_data(owner_property, _doc)
-
     def visit_ActivateIf(
         self,
         swan_obj: Swan.ActivateIf,
@@ -409,13 +351,20 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"if_activation": None, "luid": None, "lunum": None})
+        _p_data = self._push_and_get_doc_data(
+            {"if_activation": None, "luid": None, "lunum": None, "pragmas": []}
+        )
         # Visit properties
         _doc = R.DBlock()
-        if not isinstance(owner, Swan.DefByCaseBlockBase):
-            # indentation from the beginning of the keyword
-            _doc << "@m"
+        # Pragmas locates before the "activate" keyword.
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        _doc << "@m"
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"]
+            _doc << "@n"
         _doc << "activate"
+        if _p_data["pragmas"]:
+            _doc << "@M"
         if swan_obj.lunum:
             self._visit(swan_obj.lunum, swan_obj, "lunum")
             _doc << " " << _p_data["lunum"]
@@ -510,14 +459,19 @@ class PPrinter(SwanVisitor):
 
         # Init data buffer
         _p_data = self._push_and_get_doc_data(
-            {"condition": None, "branches": [], "lunum": None, "luid": None}
+            {"condition": None, "branches": [], "lunum": None, "luid": None, "pragmas": []}
         )
         # Visit properties
         _doc = R.DBlock()
-        if not isinstance(owner, Swan.DefByCaseBlockBase):
-            # indentation from the beginning of the keyword
-            _doc << "@m"
+        _doc << "@m"
+        # Pragmas locates before the "activate" keyword .
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"]
+            _doc << "@n"
         _doc << "activate"
+        if _p_data["pragmas"]:
+            _doc << "@M"
         if swan_obj.lunum:
             self._visit(swan_obj.lunum, swan_obj, "lunum")
             _doc << " " << _p_data["lunum"]
@@ -711,8 +665,6 @@ class PPrinter(SwanVisitor):
         _doc << "["
         _doc << _p_data["group"]
         _doc << "]"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -743,8 +695,6 @@ class PPrinter(SwanVisitor):
         _doc = R.DBlock()
         _doc << _p_data["expr"]
         _doc << _p_data["index"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -776,8 +726,6 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["expr"]
         _doc << "^"
         _doc << _p_data["size"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -991,17 +939,11 @@ class PPrinter(SwanVisitor):
         owner_property : OwnerProperty
             Owner property name to know the visit context, 'None' for the root visited object
         """
+        _p_data = self._push_and_get_doc_data({"group": None})
+        self._visit(swan_obj.group, swan_obj, "group")
         _doc = R.DBlock()
-        _doc << "expr ("
-        lunums = []
-        for item in getattr(swan_obj.group, "items", []):
-            expr = getattr(item, "expr", None)
-            if isinstance(expr, Swan.PortExpr) and expr.lunum is not None:
-                lunums.append(str(expr.lunum))
-        _doc << ", ".join(lunums)
-        _doc << ")"
+        _doc << "expr (" << _p_data["group"] << ")"
 
-        _p_data = self._push_and_get_doc_data({})
         _p_data["description"] = _doc
         self.visit_DiagramObject(swan_obj, owner, owner_property)
 
@@ -1030,14 +972,13 @@ class PPrinter(SwanVisitor):
         self._visit(swan_obj.operator, swan_obj, "operator")
         self._visit(swan_obj.left, swan_obj, "left")
         self._visit(swan_obj.right, swan_obj, "right")
+        # It would be better to not add spaces for +, -, *, /
         _doc = R.DBlock()
         _doc << _p_data["left"]
         _doc << " "
         _doc << _p_data["operator"]
         _doc << " "
         _doc << _p_data["right"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -1255,13 +1196,10 @@ class PPrinter(SwanVisitor):
             self._visit(item, swan_obj, "branches")
 
         _doc = R.DBlock()
-        _doc << "(case "
+        _doc << "case "
         _doc << _p_data["expr"]
         _doc << " of"
         _doc << R.doc_list(*(cast(List[R.DElt], _p_data["branches"])), sep="")
-        _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -1307,47 +1245,6 @@ class PPrinter(SwanVisitor):
         """
 
         self._set_doc_data(owner_property, R.text(str(swan_obj)))
-
-    def visit_ClockExpr(
-        self,
-        swan_obj: Swan.ClockExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        Clock Expression visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.ClockExpr
-            Visited Swan object, it's a ClockExpr instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"id": None, "is_not": None, "pattern": None})
-
-        # Visit properties
-        self._visit(swan_obj.id, swan_obj, "id")
-        _doc = R.DBlock()
-        if swan_obj.pattern:
-            self._visit(swan_obj.pattern, swan_obj, "pattern")
-            _doc << "("
-            _doc << _p_data["id"]
-            _doc << " match "
-            _doc << _p_data["pattern"]
-            _doc << ")"
-        elif swan_obj.is_not:
-            self.visit_builtin(swan_obj.is_not, swan_obj, "is_not")
-            _doc << "not "
-            _doc << _p_data["id"]
-        else:
-            _doc << _p_data["id"]
-        # Update property
-        self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_Connection(
         self,
@@ -1412,6 +1309,8 @@ class PPrinter(SwanVisitor):
         super().visit_ConstDecl(swan_obj, owner, owner_property)
         # Visit properties
         _doc = R.DBlock()
+        if swan_obj.is_elaborated:
+            _doc << "elaborate "
         self._decl_pragmas(swan_obj, _doc)
         _doc << _p_data["id"]
         if _p_data["type"]:
@@ -1531,11 +1430,9 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["defbycase_"]
         if not isinstance(owner, Swan.DefByCaseBlockBase):
             _doc << ";"
-        if isinstance(swan_obj, Swan.ActivateIf):
+        if isinstance(swan_obj, (Swan.ActivateIf, Swan.ActivateWhen)):
             _doc << "@u"
-            if not isinstance(owner, Swan.DefByCaseBlockBase):
-                # indentation from the beginning of the keyword
-                _doc << "@u"
+            _doc << "@M"
 
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
@@ -1665,8 +1562,7 @@ class PPrinter(SwanVisitor):
                 _doc << R.doc_list(*_lc, sep="@n") << "@u" << "@u"
         self.visit_HasPragma(swan_obj, owner, owner_property)
         if _p_data["pragmas"]:
-            _doc << "@n"
-            _doc << _p_data["pragmas"]
+            _doc << "@n" << _p_data["pragmas"]
         _doc << ")"
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
@@ -1691,14 +1587,17 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"emissions": []})
+        _p_data = self._push_and_get_doc_data({"emissions": [], "pragmas": []})
+        _doc = R.DBlock()
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"] << "@n"
         # Visit properties
         for item in swan_obj.emissions:
             self._visit(item, swan_obj, "emissions")
-
-        self._pop_and_set_doc_data(
-            owner_property, PPrinter._format_list("emit", cast(List[R.DElt], _p_data["emissions"]))
-        )
+        _doc << PPrinter._format_list("emit", cast(List[R.DElt], _p_data["emissions"]))
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_EmissionBody(
         self,
@@ -1884,7 +1783,9 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"lhs": None, "expr": None, "luid": None})
+        _p_data = self._push_and_get_doc_data(
+            {"lhs": None, "expr": None, "luid": None, "pragmas": []}
+        )
         # Visit properties
         self._visit(swan_obj.lhs, swan_obj, "lhs")
         self._visit(swan_obj.expr, swan_obj, "expr")
@@ -1893,6 +1794,9 @@ class PPrinter(SwanVisitor):
         if swan_obj.luid:
             self._visit(swan_obj.luid, swan_obj, "luid")
             _doc << " " << _p_data["luid"]
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << " " << _p_data["pragmas"] << " "
         _doc << " = " << _p_data["expr"] << ";"
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
@@ -2073,10 +1977,8 @@ class PPrinter(SwanVisitor):
             _doc << R.doc_list(*cast(List[R.DElt], _p_data["dimensions"]), sep="@n")
         _doc << _p_data["body"] << "@n" << "returns ("
         if _p_data["returns"]:
-            _doc << R.doc_list(*cast(List[R.DElt], _p_data["returns"]), sep=", ")
+            (_doc << "@m" << R.doc_list(*cast(List[R.DElt], _p_data["returns"]), sep=", ") << "@M")
         _doc << ")" << "@u"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2111,6 +2013,34 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["luid"]
         _doc << ": "
         _doc << _p_data["expr"]
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
+
+    def visit_AtExpr(
+        self,
+        swan_obj: Swan.AtExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """
+        AtExpr visitor
+
+        Parameters
+        ----------
+        swan_obj : Swan.AtExpr
+            Visited Swan object, it's a AtExpr instance
+        owner : Owner
+            Owner of the swan_obj, 'None' for the root visited object
+        owner_property : OwnerProperty
+            Owner property name to know the visit context, 'None' for the root visited object
+        """
+        # Init data buffer
+        _p_data = self._push_and_get_doc_data({"expr": None, "at": None})
+        # Visit properties
+        self._visit(swan_obj.expr, swan_obj, "expr")
+        self._visit(swan_obj.at, swan_obj, "at")
+        _doc = R.DBlock()
+        _doc << _p_data["expr"] << " at " << _p_data["at"]
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2166,13 +2096,13 @@ class PPrinter(SwanVisitor):
 
         # Init data buffer
         _p_data = self._push_and_get_doc_data(
-            {"body": None, "unless_expr": None, "until_expr": None}
+            {"sections": None, "unless_expr": None, "until_expr": None}
         )
         _bdy = []
         # Visit properties
-        for item in swan_obj.body:
-            self._visit(item, swan_obj, "body")
-            _bdy.append(_p_data["body"])
+        for item in swan_obj.sections:
+            self._visit(item, swan_obj, "sections")
+            _bdy.append(_p_data["sections"])
         _doc = R.DBlock()
         if swan_obj.unless_expr:
             self._visit(swan_obj.unless_expr, swan_obj, "unless_expr")
@@ -2209,23 +2139,23 @@ class PPrinter(SwanVisitor):
         # Init data buffer
         _p_data = self._push_and_get_doc_data(
             {
-                "expr": None,
+                "size": None,
                 "dim_id": None,
                 "elems": [],
                 "protected": None,
             },
         )
         # Visit properties
-        if swan_obj.expr:
-            self._visit(swan_obj.expr, swan_obj, "expr")
 
         if swan_obj.is_protected and swan_obj.protected:
             _doc = R.DText(Swan.Markup.to_str(swan_obj.protected, markup=Swan.Markup.Dim))
         else:
-            _doc = R.DBlock()
-            _doc << "<<"
-            _doc << _p_data["expr"]
-            _doc << ">>"
+            if swan_obj.size:
+                self._visit(swan_obj.size, swan_obj, "size")
+                _doc = R.DBlock()
+                _doc << "<<"
+                _doc << _p_data["size"]
+                _doc << ">>"
             if swan_obj.dim_id or swan_obj.elems:
                 _doc << " with "
             if swan_obj.dim_id:
@@ -2240,19 +2170,19 @@ class PPrinter(SwanVisitor):
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
-    def visit_ForwardElement(
+    def visit_ForwardCurrentElement(
         self,
-        swan_obj: Swan.ForwardElement,
+        swan_obj: Swan.ForwardCurrentElement,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
         """
-        Forward Element visitor
+        Forward current element visitor
 
         Parameters
         ----------
-        swan_obj : Swan.ForwardElement
-            Visited Swan object, it's a ForwardElement instance
+        swan_obj : Swan.ForwardCurrentElement
+            Visited Swan object, it's a ForwardCurrentElement instance
         owner : Owner
             Owner of the swan_obj, 'None' for the root visited object
         owner_property : OwnerProperty
@@ -2272,14 +2202,14 @@ class PPrinter(SwanVisitor):
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
-    def visit_ForwardItemClause(
+    def visit_ForwardAccuClause(
         self,
-        swan_obj: Swan.ForwardItemClause,
+        swan_obj: Swan.ForwardAccuClause,
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
         """
-        Forward Item Clause visitor
+        Forward accumulator clause visitor
 
         Parameters
         ----------
@@ -2292,57 +2222,12 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"id": None, "last_default": None})
+        _p_data = self._push_and_get_doc_data({"id": None, "last_expr": None})
         # Visit properties
         self._visit(swan_obj.id, swan_obj, "id")
+        self._visit(swan_obj.last_expr, swan_obj, "last_expr")
         _doc = R.DBlock()
-        _doc << _p_data["id"]
-        if swan_obj.last_default:
-            self._visit(swan_obj.last_default, swan_obj, "last_default")
-            _doc << ": "
-            _doc << _p_data["last_default"]
-        # Update property
-        self._pop_and_set_doc_data(owner_property, _doc)
-
-    def visit_ForwardLastDefault(
-        self,
-        swan_obj: Swan.ForwardLastDefault,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        Forward Last Default visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.ForwardLastDefault
-            Visited Swan object, it's a ForwardLastDefault instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"last": None, "default": None, "shared": None})
-        # Visit properties
-        _doc = R.DBlock()
-        if swan_obj.shared:
-            self._visit(swan_obj.shared, swan_obj, "shared")
-            _doc << "last = default = "
-            _doc << _p_data["shared"]
-        else:
-            if swan_obj.last:
-                self._visit(swan_obj.last, swan_obj, "last")
-                _doc << "last = "
-                _doc << _p_data["last"]
-            if swan_obj.last and swan_obj.default:
-                _doc << " "
-            if swan_obj.default:
-                self._visit(swan_obj.default, swan_obj, "default")
-                _doc << "default = "
-                _doc << _p_data["default"]
-
+        _doc << _p_data["id"] << ": last = " << _p_data["last_expr"]
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2380,6 +2265,67 @@ class PPrinter(SwanVisitor):
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
+    def visit_ForwardArrayClauseExpr(
+        self,
+        swan_obj: Swan.ForwardArrayClauseExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """
+        Forward Array Clause Expr visitor
+
+        Parameters
+        ----------
+        swan_obj : Swan.ForwardArrayClauseExpr
+            Visited Swan object, it's a ForwardArrayClauseExpr instance
+        owner : Owner
+            Owner of the swan_obj, 'None' for the root visited object
+        owner_property : OwnerProperty
+            Owner property name to know the visit context, 'None' for the root visited object
+        """
+
+        # Init data buffer
+        _p_data = self._push_and_get_doc_data({"expr_no_bracket": None, "default_expr": None})
+        # Visit properties
+        self._visit(swan_obj.expr_no_bracket, swan_obj, "expr_no_bracket")
+        if swan_obj.default_expr:
+            self._visit(swan_obj.default_expr, swan_obj, "default_expr")
+        _doc = R.DBlock()
+        _doc << _p_data["expr_no_bracket"]
+        if swan_obj.default_expr:
+            _doc << " default "
+            _doc << _p_data["default_expr"]
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
+
+    def visit_ForwardArrayClauseElement(
+        self,
+        swan_obj: Swan.ForwardArrayClauseElement,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """
+        Forward Array Clause Element visitor
+
+        Parameters
+        ----------
+        swan_obj : Swan.ForwardArrayClauseElement
+            Visited Swan object, it's a ForwardArrayClauseElement instance
+        owner : Owner
+            Owner of the swan_obj, 'None' for the root visited object
+        owner_property : OwnerProperty
+            Owner property name to know the visit context, 'None' for the root visited object
+        """
+
+        # Init data buffer
+        _p_data = self._push_and_get_doc_data({"array_clause": None})
+        # Visit properties
+        self._visit(swan_obj.array_clause, swan_obj, "array_clause")
+        _doc = R.DBlock()
+        _doc << "[" << _p_data["array_clause"] << "]"
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
+
     def visit_ForwardReturnArrayClause(
         self,
         swan_obj: Swan.ForwardReturnArrayClause,
@@ -2400,43 +2346,15 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"array_clause": None, "return_id": None})
+        _p_data = self._push_and_get_doc_data({"array_clause": None, "id": None})
         # Visit properties
         self._visit(swan_obj.array_clause, swan_obj, "array_clause")
         _doc = R.DBlock()
-        if swan_obj.return_id:
-            self._visit(swan_obj.return_id, swan_obj, "return_id")
-            _doc << _p_data["return_id"]
-            _doc << " = "
+        if swan_obj.id:
+            self._visit(swan_obj.id, swan_obj, "id")
+            _doc << _p_data["id"] << ": "
         _doc << _p_data["array_clause"]
-        # Update property
-        self._pop_and_set_doc_data(owner_property, _doc)
 
-    def visit_ForwardReturnItemClause(
-        self,
-        swan_obj: Swan.ForwardReturnItemClause,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        Forward Return Item Clause visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.ForwardReturnItemClause
-            Visited Swan object, it's a ForwardReturnItemClause instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"item_clause": None})
-        # Visit properties
-        self._visit(swan_obj.item_clause, swan_obj, "item_clause")
-        _doc = R.DBlock()
-        _doc << _p_data["item_clause"]
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2467,13 +2385,11 @@ class PPrinter(SwanVisitor):
             self._visit(item, swan_obj, "modifiers")
 
         _doc = R.DBlock()
-        _doc << "("
         _doc << _p_data["expr"]
         _doc << (" with * " if swan_obj.is_starred else " with ")
         _doc << R.doc_list(*cast(List[R.DElt], _p_data["modifiers"]), sep="; ")
-        _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
+        if len(swan_obj.modifiers) > 1:
+            _doc << ";"
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2569,8 +2485,6 @@ class PPrinter(SwanVisitor):
         _doc << "("
         _doc << _p_data["group"]
         _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2671,34 +2585,6 @@ class PPrinter(SwanVisitor):
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
-    def visit_GroupOperation(
-        self,
-        swan_obj: Swan.GroupOperation,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        Group Operation visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.GroupOperation
-            Visited Swan object, it's a GroupOperation instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        self._push_and_get_doc_data({})
-        if swan_obj == Swan.GroupOperation.Normalize:
-            _doc = R.text("()")
-        elif swan_obj == Swan.GroupOperation.NoOp:
-            _doc = R.text("")
-        else:
-            _doc = R.text(Swan.GroupOperation.to_str(swan_obj))
-        self._pop_and_set_doc_data(owner_property, _doc)
-
     def visit_GroupRenaming(
         self,
         swan_obj: Swan.GroupRenaming,
@@ -2761,8 +2647,6 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["expr"]
         _doc << " "
         _doc << _p_data["adaptation"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -2995,8 +2879,6 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["then_expr"]
         _doc << " else "
         _doc << _p_data["else_expr"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -3235,8 +3117,7 @@ class PPrinter(SwanVisitor):
         _doc = R.DBlock()
         _doc << "last "
         _doc << _p_data["id"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
+        # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_LetSection(
@@ -3259,14 +3140,19 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"equations": None})
+        _p_data = self._push_and_get_doc_data({"equations": None, "pragmas": []})
         _eqt = []
+        _doc = R.DBlock()
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"] << "@n"
         # Visit properties
         for item in swan_obj.equations:
             self._visit(item, swan_obj, "equations")
             _eqt.append(_p_data["equations"])
-        _let = PPrinter._format_list("let", _eqt, "", len(_eqt) == 1)
-        self._pop_and_set_doc_data(owner_property, _let)
+        _doc << PPrinter._format_list("let", _eqt, "", len(_eqt) == 1)
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_LHSItem(
         self,
@@ -3316,8 +3202,7 @@ class PPrinter(SwanVisitor):
         """
 
         _doc = R.text(swan_obj.value)
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
+        # Update property
         self._set_doc_data(owner_property, _doc)
 
     def visit_Luid(self, swan_obj: Swan.Luid, owner: Owner, owner_property: OwnerProperty) -> None:
@@ -3395,8 +3280,6 @@ class PPrinter(SwanVisitor):
             _doc = R.DBlock()
             _doc << "merge "
             _doc << R.doc_list(*[R.DBlock() << "(" << itm << ")" for itm in _prm], sep=" ")
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -3690,13 +3573,9 @@ class PPrinter(SwanVisitor):
         self._visit(swan_obj.expr, swan_obj, "expr")
         self._visit(swan_obj.type, swan_obj, "type")
         _doc = R.DBlock()
-        _doc << "("
         _doc << _p_data["expr"]
         _doc << " :> "
         _doc << _p_data["type"]
-        _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -3799,22 +3678,30 @@ class PPrinter(SwanVisitor):
             Owner property name to know the visit context, 'None' for the root visited object
         """
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"operator": None, "params": None, "luid": None})
+        _p_data = self._push_and_get_doc_data(
+            {"operator": None, "params": None, "luid": None, "pragmas": []}
+        )
         # Visit properties
         self._visit(swan_obj.operator, swan_obj, "operator")
         self._visit(swan_obj.params, swan_obj, "params")
+        self.visit_HasPragma(swan_obj, owner, owner_property)
         _doc = R.DBlock()
         _doc << _p_data["operator"]
-        _doc << " "
+        need_space = False
         if swan_obj.luid:
             self._visit(swan_obj.luid, swan_obj, "luid")
-            _doc << _p_data["luid"]
+            _doc << " " << _p_data["luid"]
+            need_space = True
+        if _p_data["pragmas"]:
+            _doc << " " << "@m" << _p_data["pragmas"] << "@M"
+            need_space = True
+        if len(swan_obj.operator.sizes) > 0:
+            need_space = True
+        if need_space:
             _doc << " "
         _doc << "("
         _doc << _p_data["params"]
         _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -4067,8 +3954,6 @@ class PPrinter(SwanVisitor):
         self._visit(swan_obj.path_id, swan_obj, "path_id")
         _doc = R.DBlock()
         _doc << _p_data["path_id"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -4152,13 +4037,9 @@ class PPrinter(SwanVisitor):
         if swan_obj.lunum:
             self._visit(swan_obj.lunum, swan_obj, "lunum")
             _doc << _p_data["lunum"]
-        if swan_obj.is_self:
-            _doc << "self"
         if swan_obj.luid:
             self._visit(swan_obj.luid, swan_obj, "luid")
             _doc << _p_data["luid"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -4183,10 +4064,7 @@ class PPrinter(SwanVisitor):
         self._set_doc_data(owner_property, R.text(str(swan_obj)))
 
     def visit_HasPragma(
-        self,
-        swan_obj: Swan.HasPragma,
-        owner: Owner,
-        owner_property: OwnerProperty,
+        self, swan_obj: Swan.HasPragma, owner: Owner, owner_property: OwnerProperty
     ) -> None:
         """
         HasPragma visitor
@@ -4208,8 +4086,9 @@ class PPrinter(SwanVisitor):
             return
         for item in swan_obj.pragmas:
             self.visit_Pragma(item, swan_obj, "pragmas")
-        _doc = R.doc_list(*cast(List[R.DElt], _p_data["pragmas"]), sep="@n")
-        _p_data.update({"pragmas": _doc})
+        if _p_data["pragmas"]:
+            _doc = R.doc_list(*cast(List[R.DElt], _p_data["pragmas"]), sep="@n")
+            _p_data.update({"pragmas": _doc})
 
     def visit_PredefinedType(
         self,
@@ -4371,15 +4250,11 @@ class PPrinter(SwanVisitor):
         self._visit(swan_obj.default, swan_obj, "default")
         _indices = cast(List[R.DElt], _p_data["indices"])
         _doc = R.DBlock()
-        _doc << "("
         _doc << _p_data["expr"]
         _doc << " . "
         _doc << R.doc_list(*_indices, sep="")
         _doc << " default "
         _doc << _p_data["default"]
-        _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -4481,7 +4356,7 @@ class PPrinter(SwanVisitor):
 
         _doc = R.DBlock()
         _doc << "{" << swan_obj.markup << "%"
-        _dta = [R.DText(_itm) for _itm in swan_obj.data.split("\n")]
+        _dta = [R.DText(_itm) for _itm in (swan_obj.data or "").split("\n")]
         _doc << R.doc_list(*_dta, sep=R.DLineBreak(False))
         _doc << "%" << swan_obj.markup << "}"
         # Update property
@@ -4656,8 +4531,18 @@ class PPrinter(SwanVisitor):
         _p_data = self._push_and_get_doc_data({"interface_": None})
         self.visit_OperatorDeclarationDefinitionBase(swan_obj, owner, "interface_")
         _doc = R.DBlock()
+        # Choose markup according to context:
+        # - {text%...%text} for operator declarations in a module body
+        # - {signature%...%signature} for declarations in a module interface (fallback to signature)
+        if isinstance(owner, Swan.ModuleBody):
+            tag = "text"
+        elif isinstance(owner, Swan.ModuleInterface):
+            tag = "signature"
+        else:
+            tag = "signature"
+
         if swan_obj.is_text:
-            _doc << "{signature%" << _p_data["interface_"] << ";%signature}"
+            _doc << "{" << tag << "%" << _p_data["interface_"] << ";%" << tag << "}"
         else:
             _doc << _p_data["interface_"] << ";"
         _doc << "@n"
@@ -4856,6 +4741,42 @@ class PPrinter(SwanVisitor):
         _p_data["description"] = _doc
         # Visit base class(es)
         self.visit_DiagramObject(swan_obj, owner, owner_property)
+
+    def visit_SetSensorEquation(
+        self,
+        swan_obj: Swan.SetSensorEquation,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """
+        Pretty prints a set sensor equation
+
+        Parameters
+        ----------
+        swan_obj : Swan.SetSensorEquation
+            Visited Swan object, it's a SetSensorEquation instance
+        owner : Owner
+            Owner of the swan_obj, 'None' for the root visited object
+        owner_property : OwnerProperty
+            Owner property name to know the visit context, 'None' for the root visited object
+        """
+        # Init data buffer
+        _p_data = self._push_and_get_doc_data({"sensor": None, "value": None})
+        # Visit properties
+        self._visit(
+            swan_obj.sensor,
+            swan_obj,
+            "sensor",
+        )
+        self._visit(
+            swan_obj.value,
+            swan_obj,
+            "value",
+        )
+        _doc = R.DBlock()
+        _doc << _p_data["sensor"] << " := " << _p_data["value"] << ";"
+        # Update property
+        self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_Slice(
         self,
@@ -5071,6 +4992,7 @@ class PPrinter(SwanVisitor):
         # # Init data buffer
         _p_data = self._push_and_get_doc_data(
             {
+                "pragmas": [],
                 "lunum": None,
                 "luid": None,
                 "items": [],
@@ -5084,10 +5006,12 @@ class PPrinter(SwanVisitor):
         )
 
         _doc = R.DBlock()
-
-        if not isinstance(owner, Swan.DefByCaseBlockBase):
-            # automaton in let: indentation from the beginning of the keyword
-            _doc << "@m"
+        _doc << "@m"
+        # Pragmas are printed before the "automaton" keyword
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"]
+            _doc << "@n"
 
         _doc << "automaton" << "@i"
         if swan_obj.lunum:
@@ -5101,9 +5025,7 @@ class PPrinter(SwanVisitor):
                 self._visit(item, swan_obj, "items")
             (_doc << "@n" << R.doc_list(*cast(List[R.DElt], _p_data["items"]), sep="@n"))
         _doc << "@u"
-        if not isinstance(owner, Swan.DefByCaseBlockBase):
-            # automaton in let: reset indentation
-            _doc << "@u"
+        _doc << "@M"
         # Pass data to DefByCaseBlockBase visitor
         _p_data["defbycase_"] = _doc
         # Visit base class(es)
@@ -5158,12 +5080,9 @@ class PPrinter(SwanVisitor):
         _doc << "{"
         _doc << _p_data["group"]
         _doc << "}"
-        if swan_obj.type:
-            self._visit(swan_obj.type, swan_obj, "type")
-            _doc << " : "
-            _doc << _p_data["type"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
+        self._visit(swan_obj.type, swan_obj, "type")
+        _doc << ": "
+        _doc << _p_data["type"]
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -5196,8 +5115,6 @@ class PPrinter(SwanVisitor):
         _doc << " group ("
         _doc << _p_data["expr"]
         _doc << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -5263,8 +5180,6 @@ class PPrinter(SwanVisitor):
         _doc = R.DBlock()
         _doc << _p_data["expr"]
         _doc << _p_data["label"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -5716,8 +5631,6 @@ class PPrinter(SwanVisitor):
                 pass
 
         _doc << _p_data["expr"]
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)  # Update property
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -5823,7 +5736,7 @@ class PPrinter(SwanVisitor):
             {
                 "id": None,
                 "type": None,
-                "when": None,
+                "causality_type": None,
                 "default": None,
                 "last": None,
                 "place": None,
@@ -5832,8 +5745,6 @@ class PPrinter(SwanVisitor):
         # Visit properties
         self._visit(swan_obj.id, swan_obj, "id")
         _doc = R.DBlock()
-        if swan_obj.is_clock:
-            _doc << "clock "
         self.visit_HasPragma(swan_obj, owner, owner_property)
         if _p_data["pragmas"]:
             _doc << _p_data["pragmas"] << " "
@@ -5855,10 +5766,16 @@ class PPrinter(SwanVisitor):
                 _doc << " "  # add a space after "*"
             _doc << ": "
             _doc << _p_data["type"]
-        if swan_obj.when:
-            self._visit(swan_obj.when, swan_obj, "when")
-            _doc << " when "
-            _doc << _p_data["when"]
+        if swan_obj.init_type != Swan.VarInitDelay.DelayNone:
+            _doc << " " << str(swan_obj.init_type)
+
+        causality_type = []
+        for item in swan_obj.causality_type:
+            self._visit(item, swan_obj, "causality_type")
+            causality_type.append(_p_data["causality_type"])
+        if causality_type:
+            _doc << " loopback " << R.doc_list(*causality_type, sep=", ")
+
         if swan_obj.default:
             self._visit(swan_obj.default, swan_obj, "default")
             _doc << " default = "
@@ -6103,8 +6020,6 @@ class PPrinter(SwanVisitor):
         _doc << " {"
         _doc << _p_data["group"]
         _doc << "}"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 
@@ -6128,76 +6043,18 @@ class PPrinter(SwanVisitor):
         """
 
         # Init data buffer
-        _p_data = self._push_and_get_doc_data({"var_decls": None})
+        _p_data = self._push_and_get_doc_data({"var_decls": None, "data": []})
         _vr = []
+        _doc = R.DBlock()
+        self.visit_HasPragma(swan_obj, owner, owner_property)
+        if _p_data["pragmas"]:
+            _doc << _p_data["pragmas"] << "@n"
         # Visit properties
         for item in swan_obj.var_decls:
             self._visit(item, swan_obj, "var_decls")
             _vr.append(_p_data["var_decls"])
         # Update property
-        var_decl = PPrinter._format_list("var", _vr)
-        self._pop_and_set_doc_data(owner_property, var_decl)
-
-    def visit_WhenClockExpr(
-        self,
-        swan_obj: Swan.WhenClockExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        When Clock Expression visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.WhenClockExpr
-            Visited Swan object, it's a WhenClockExpr instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"expr": None, "clock": None})
-        # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.clock, swan_obj, "clock")
-        _doc = R.DBlock()
-        _doc << _p_data["expr"]
-        _doc << " when "
-        _doc << _p_data["clock"]
-        # Update property
-        self._pop_and_set_doc_data(owner_property, _doc)
-
-    def visit_WhenMatchExpr(
-        self,
-        swan_obj: Swan.WhenMatchExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """
-        When Match Expression visitor
-
-        Parameters
-        ----------
-        swan_obj : Swan.WhenMatchExpr
-            Visited Swan object, it's a WhenMatchExpr instance
-        owner : Owner
-            Owner of the swan_obj, 'None' for the root visited object
-        owner_property : OwnerProperty
-            Owner property name to know the visit context, 'None' for the root visited object
-        """
-
-        # Init data buffer
-        _p_data = self._push_and_get_doc_data({"expr": None, "when": None})
-        # Visit properties
-        self._visit(swan_obj.expr, swan_obj, "expr")
-        self._visit(swan_obj.when, swan_obj, "when")
-        _doc = R.DBlock()
-        _doc << _p_data["expr"]
-        _doc << " when match "
-        _doc << _p_data["when"]
-        # Update property
+        _doc << PPrinter._format_list("var", _vr)
         self._pop_and_set_doc_data(owner_property, _doc)
 
     def visit_Window(
@@ -6232,8 +6089,6 @@ class PPrinter(SwanVisitor):
         _doc << _p_data["init"]
         _doc << ") " << "("
         _doc << _p_data["params"] << ")"
-        # Check "at" property
-        _doc = self._expr_at_property(swan_obj, _doc)
         # Update property
         self._pop_and_set_doc_data(owner_property, _doc)
 

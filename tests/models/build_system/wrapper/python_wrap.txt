@@ -1,0 +1,9 @@
+# Use this example to generate code for the build system tests
+
+## Windows
+pyscadeone pycodewrap --target-dir jobs/codegen/python_win --job CodeGen wrapper.sproj
+
+## Linux
+pyscadeone pycodewrap --target-dir jobs/codegen/python_linux --job CodeGen wrapper.sproj
+
+## Cleanup

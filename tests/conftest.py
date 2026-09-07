@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,23 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import logging
+import os
 import platform
+from pathlib import Path
+import shutil
 
 import pytest
 from ansys.scadeone.core import ScadeOne
 import ansys.scadeone.core.swan as Swan
-from ansys.scadeone.core.model.model import SwanParser
+from ansys.scadeone.core.model.loader import SwanParser
+from ansys.scadeone.core.common.logger import LOGGER
+
+
+# Swan parser preconfigured with ScadeOne logger dedicated to unit tests (log details in file)
+@pytest.fixture(scope="session")
+def parser(unit_test_logger):
+    return SwanParser(unit_test_logger)
 
 
 # Unit test logger => './unit_tests.log'
 @pytest.fixture(scope="session")
 def unit_test_logger():
-    logger = logging.getLogger("test_logger")
-    fh = logging.FileHandler("unit_tests.log", mode="w")
-    fh.setLevel(logging.DEBUG)
-    logger.addHandler(fh)
-    return logger
+    LOGGER.log_to_file(filename="unit_tests.log")
+    return LOGGER
 
 
 # CC model path
@@ -45,17 +51,45 @@ def cc_project():
     return "examples/models/CC/CruiseControl/CruiseControl.sproj"
 
 
+# Temporary copy of the CC model for tests that modify the project (e.g. add/remove assets, jobs, etc.)
+# The original CC model is not modified, and the temporary copy is deleted at the end of the test session.
+@pytest.fixture(scope="session")
+def tmp_cc_project(cc_project):
+    _tmp = Path("tests/tmp")
+    _tmp.mkdir(exist_ok=True)
+    _cc_tmp = _tmp / "CC"
+    shutil.rmtree(_cc_tmp, ignore_errors=True)
+    shutil.copytree("examples/models/CC", _cc_tmp)
+    _new_cc_project = _cc_tmp / "CruiseControl/CruiseControl.sproj"
+    yield _new_cc_project
+    shutil.rmtree(_cc_tmp, ignore_errors=True)
+
+
+# CC_Tests model path
+@pytest.fixture(scope="session")
+def cc_tests_project():
+    return "examples/models/CC/CC_Tests/CC_Tests.sproj"
+
+
 # scadeone "installation" path for tests
 # Note: on linux, one can install Scade One somewhere and create a symbolic link
 # with "ln -s <my location> /usr/local/lib/ScadeOne"
 @pytest.fixture(scope="session")
 def scadeone_install_path():
+    if install_path := os.getenv("TEST_SCADE_ONE_INSTALL_PATH"):
+        return install_path
     return "C:/Scade One" if platform.system() == "Windows" else "/usr/local/lib/ScadeOne"
 
 
 @pytest.fixture(scope="session")
 def app(scadeone_install_path):
     return ScadeOne(scadeone_install_path)
+
+
+@pytest.fixture
+def model(app, tmp_path):
+    project = app.new_project(tmp_path / "empty.sproj")
+    return project.model
 
 
 #######################################
@@ -172,8 +206,3 @@ def make_let(make_lhs, make_path_identifier):
         return Swan.LetSection([eq1, eq2])
 
     return _make_let
-
-
-@pytest.fixture
-def swan_parser() -> SwanParser:
-    return SwanParser(logger=logging.getLogger("test_logger"))

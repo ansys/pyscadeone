@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1 swant: 1.1
+-- version swan: 2027.0 graph: 2.1 swant: 1.1
 use module0;
 
 use TypesModule;

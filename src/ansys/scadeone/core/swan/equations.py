@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,21 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# cSpell:ignore prio
-# pylint: disable=too-many-arguments
-
 from abc import ABC
-from typing import List, Optional, Union, Set, cast
+from typing import List, Optional, Union, Set, cast, TYPE_CHECKING
 from collections import deque
 from collections.abc import Generator
 from functools import cache
 
-from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
-from ansys.scadeone.core.swan.pragmas import CGPragma, CGPragmaKind
-
+from ansys.scadeone.core.common.exception import ScadeOneException
+from .pragmas import CGPragma, CGPragmaKind
 from .expressions import Literal, Pattern
+
+from ansys.scadeone.core.svc.swan_creator.state_machine_creator import (
+    StateMachineCreator,
+    StateCreator,
+    TransitionCreator,
+    ForkCreator,
+)
+
+if TYPE_CHECKING:
+    from ansys.scadeone.core import swan
 
 
 class LHSItem(common.SwanItem):  # numpydoc ignore=PR01
@@ -49,6 +55,7 @@ class LHSItem(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, id: Optional[common.Identifier] = None) -> None:
         super().__init__()
         self._id = id
+        common.SwanItem.set_owner(self, self._id)
 
     @property
     def id(self) -> Optional[common.Identifier]:
@@ -72,6 +79,7 @@ class EquationLHS(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._lhs_items = lhs_items
         self._is_partial_lhs = is_partial_lhs
+        common.SwanItem.set_owner(self, self._lhs_items)
 
     @property
     def is_partial_lhs(self) -> bool:
@@ -99,7 +107,9 @@ class ExprEquation(common.Equation):  # numpydoc ignore=PR01
         self._lhs = lhs
         self._expr = expr
         self._luid = luid
-        common.SwanItem.set_owner(self, expr)
+        common.SwanItem.set_owner(self, self._lhs)
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def lhs(self) -> EquationLHS:
@@ -132,6 +142,9 @@ class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
         self._lhs = lhs
         self._lunum = lunum
         self._luid = luid
+        common.SwanItem.set_owner(self, self._lhs)
+        common.SwanItem.set_owner(self, self._lunum)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def lhs(self) -> Union[EquationLHS, None]:
@@ -147,13 +160,6 @@ class DefByCase(common.Equation, ABC):  # numpydoc ignore=PR01
     def lunum(self) -> Union[common.Lunum, None]:
         """Return lunum or None if no lunum."""
         return self._lunum
-
-    @property
-    def pragmas(self) -> List[common.Pragma]:
-        """Pragmas associated to this Def by case."""
-        if isinstance(self.owner, common.HasPragma):
-            return self.owner.pragmas
-        return []
 
 
 # State Machines
@@ -192,6 +198,8 @@ class StateRef(common.SwanItem):
             raise ScadeOneException("StateRef cannot have both an id and a lunum.")
         self._id = id
         self._lunum = lunum
+        common.SwanItem.set_owner(self, self._id)
+        common.SwanItem.set_owner(self, self._lunum)
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, StateRef):
@@ -225,7 +233,7 @@ class StateMachineItem(common.HasPragma):
         super().__init__(pragmas)
 
 
-class Transition(StateMachineItem):  # numpydoc ignore=PR01
+class Transition(StateMachineItem, TransitionCreator):  # numpydoc ignore=PR01
     """Transition definition between states or forks.
 
     A transition can be between two states, or from a state to a fork,
@@ -271,18 +279,16 @@ class Transition(StateMachineItem):  # numpydoc ignore=PR01
         self._priority = priority
         self._guard = guard
         self._action = action
-        self._target = target
+        self._target = target  # type: ignore [bad-assignment]
         self._source = source
         self._is_strong = is_strong
         self._is_resume = is_resume
         # ownership
-        if guard:
-            common.SwanItem.set_owner(self, guard)
-        if action:
-            common.SwanItem.set_owner(self, action)
-        if source:
-            common.SwanItem.set_owner(self, source)
-        common.SwanItem.set_owner(self, target)
+        common.SwanItem.set_owner(self, self._priority)
+        common.SwanItem.set_owner(self, self._guard)
+        common.SwanItem.set_owner(self, self._action)
+        common.SwanItem.set_owner(self, self._source)
+        common.SwanItem.set_owner(self, self._target)
 
     @staticmethod
     def sort_key(transition: "Transition") -> Union[int, float]:
@@ -290,7 +296,7 @@ class Transition(StateMachineItem):  # numpydoc ignore=PR01
         This key can be used in sort() or sorted() functions."""
         try:
             return int(transition.priority.value)  # type: ignore
-        except (ValueError, TypeError):
+        except (AttributeError, ValueError, TypeError):
             return float("inf")
 
     @property
@@ -303,15 +309,25 @@ class Transition(StateMachineItem):  # numpydoc ignore=PR01
         """Transition guard or None. Apply to transition start, or to *else* branch of a fork."""
         return self._guard
 
+    @guard.setter
+    def guard(self, guard: Union[common.Expression, None]) -> None:
+        """Setter transition guard."""
+        self._guard = guard
+
     @property
     def is_guarded(self) -> bool:
-        "Check whether the transition has a guard."
+        """Check whether the transition has a guard."""
         return self.guard is not None
 
     @property
     def action(self) -> Union[scopes.Scope, None]:
         """Transition action or None."""
         return self._action
+
+    @action.setter
+    def action(self, action: Union[scopes.Scope, None]) -> None:
+        """Setter for transition action."""
+        self._action = action
 
     @property
     def priority(self) -> Union[Literal, None]:
@@ -379,7 +395,7 @@ class Transition(StateMachineItem):  # numpydoc ignore=PR01
         return target
 
 
-class Fork(common.SwanItem):  # numpydoc ignore=PR01
+class Fork(common.SwanItem, ForkCreator):  # numpydoc ignore=PR01
     """Base class for fork-related classes.
     Transitions are ordered by priority, with the first transition having the highest priority.
 
@@ -389,7 +405,7 @@ class Fork(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, transitions: List[Transition]) -> None:
         super().__init__()
         self._transitions = transitions
-        common.SwanItem.set_owner(self, transitions)
+        common.SwanItem.set_owner(self, self._transitions)
 
     @property
     def transitions(self) -> List[Transition]:
@@ -412,7 +428,7 @@ class Fork(common.SwanItem):  # numpydoc ignore=PR01
                 raise ScadeOneException("Fork owner is not a Transition.")
 
 
-class State(StateMachineItem):  # numpydoc ignore=PR01
+class State(StateMachineItem, StateCreator):  # numpydoc ignore=PR01
     """State definition.
 
     .. note::
@@ -466,6 +482,8 @@ class State(StateMachineItem):  # numpydoc ignore=PR01
             in_state_weak_transition_decls if in_state_weak_transition_decls else []
         )
         self._is_initial = is_initial
+        common.SwanItem.set_owner(self, self._id)
+        common.SwanItem.set_owner(self, self._lunum)
         common.SwanItem.set_owner(self, self._strong_transitions)
         common.SwanItem.set_owner(self, self._weak_transitions)
         common.SwanItem.set_owner(self, self._body)
@@ -478,6 +496,25 @@ class State(StateMachineItem):  # numpydoc ignore=PR01
     @property
     def lunum(self) -> Union[common.Lunum, None]:
         return self._lunum
+
+    @property
+    def diagram(self) -> "swan.Diagram":
+        """State's diagram."""
+        from ansys.scadeone.core.swan import Diagram, Scope
+
+        if not self.body or not self.body.sections:
+            diag = Diagram()
+            scope = Scope([diag])
+            diag.owner = scope
+            scope.owner = self
+            self._body = scope  # type: ignore missing-attribute: owner is a StateMachine and has a _body attribute
+            return diag
+        if diagram := next(filter(lambda sec: isinstance(sec, Diagram), self.body.sections), None):
+            return cast(Diagram, diagram)
+        diag = Diagram()
+        diag.owner = self.body
+        self._body._sections.append(diag)
+        return diag
 
     @property
     def in_state_strong_transition_decls(self) -> List[Transition]:
@@ -553,6 +590,23 @@ class State(StateMachineItem):  # numpydoc ignore=PR01
         """True when state is initial."""
         return self._is_initial
 
+    @property
+    def is_default(self) -> bool:
+        """True when state is default, i.e., marked with a pragma of kind CGPragmaKind.DEFAULT."""
+        return any(
+            isinstance(pragma, CGPragma) and pragma.kind == CGPragmaKind.DEFAULT
+            for pragma in self.pragmas
+        )
+
+    def set_as_initial(self) -> None:
+        """Set the state as initial in the automaton, unsetting any other initial state."""
+        automaton = self.owner
+        if not automaton or not isinstance(automaton, StateMachine):
+            raise ScadeOneException("State has no parent StateMachine.")
+        for s in automaton.states:
+            s._is_initial = False
+        self._is_initial = True
+
     def get_targets(self) -> Set["State"]:
         """Get direct target states of the state.
 
@@ -575,7 +629,7 @@ class State(StateMachineItem):  # numpydoc ignore=PR01
         return targets
 
 
-class StateMachine(DefByCase):  # numpydoc ignore=PR01
+class StateMachine(DefByCase, StateMachineCreator):  # numpydoc ignore=PR01
     """State machine definition.
 
     A state machine contains states and transition declarations defined as *items*.
@@ -640,6 +694,10 @@ class StateMachine(DefByCase):  # numpydoc ignore=PR01
             transitions.extend(state.strong_transitions)
             transitions.extend(state.weak_transitions)
         return transitions
+
+    def _has_initial_state(self) -> bool:
+        """Check whether the state machine has an initial state."""
+        return any(state.is_initial for state in self.states)
 
     @cache
     def get_state(
@@ -721,8 +779,8 @@ class IfActivationBranch(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._condition = condition
         self._branch = branch
-        common.SwanItem.set_owner(self, branch)
-        common.SwanItem.set_owner(self, condition)
+        common.SwanItem.set_owner(self, self._branch)
+        common.SwanItem.set_owner(self, self._condition)
 
     @property
     def condition(self) -> Union[common.Expression, None]:
@@ -747,7 +805,7 @@ class IfActivation(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, branches: List[IfActivationBranch]) -> None:
         super().__init__()
         self._branches = branches
-        common.SwanItem.set_owner(self, branches)
+        common.SwanItem.set_owner(self, self._branches)
 
     @property
     def branches(self) -> List[IfActivationBranch]:
@@ -782,7 +840,7 @@ class IfteDataDef(IfteBranch):  # numpydoc ignore=PR01
     def __init__(self, data_def: Union[common.Equation, scopes.Scope]) -> None:
         super().__init__()
         self._data_def = data_def
-        common.SwanItem.set_owner(self, data_def)
+        common.SwanItem.set_owner(self, self._data_def)
 
     @property
     def data_def(self) -> Union[common.Equation, scopes.Scope]:
@@ -799,7 +857,7 @@ class IfteIfActivation(IfteBranch):  # numpydoc ignore=PR01
     def __init__(self, if_activation: IfActivation) -> None:
         super().__init__()
         self._if_activation = if_activation
-        common.SwanItem.set_owner(self, if_activation)
+        common.SwanItem.set_owner(self, self._if_activation)
 
     @property
     def if_activation(self) -> IfActivation:
@@ -826,7 +884,7 @@ class ActivateIf(DefByCase):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lhs, lunum, luid)
         self._if_activation = if_activation
-        common.SwanItem.set_owner(self, if_activation)
+        common.SwanItem.set_owner(self, self._if_activation)
 
     @property
     def if_activation(self) -> IfActivation:
@@ -848,8 +906,8 @@ class ActivateWhenBranch(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._pattern = pattern
         self._data_def = data_def
-        common.SwanItem.set_owner(self, pattern)
-        common.SwanItem.set_owner(self, data_def)
+        common.SwanItem.set_owner(self, self._pattern)
+        common.SwanItem.set_owner(self, self._data_def)
 
     @property
     def pattern(self) -> Pattern:
@@ -884,8 +942,8 @@ class ActivateWhen(DefByCase):  # numpydoc ignore=PR01
         super().__init__(lhs, lunum, luid)
         self._condition = condition
         self._branches = branches
-        common.SwanItem.set_owner(self, condition)
-        common.SwanItem.set_owner(self, branches)
+        common.SwanItem.set_owner(self, self._condition)
+        common.SwanItem.set_owner(self, self._branches)
 
     @property
     def is_valid(self) -> bool:

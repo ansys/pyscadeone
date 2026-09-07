@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,14 +23,7 @@
 import pytest
 
 from ansys.scadeone.core import ScadeOne
-from ansys.scadeone.core.model.model import Model
-from ansys.scadeone.core.model.loader import SwanParser
 from ansys.scadeone.core.svc.swan_creator import ScadeOneFactory
-
-
-@pytest.fixture(scope="session")
-def app():
-    return ScadeOne()
 
 
 @pytest.fixture
@@ -49,10 +42,7 @@ def operator_factory():
 
 
 @pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
-
-
-@pytest.fixture
-def model(app):
-    return Model(app)
+def model(tmp_path):
+    app = ScadeOne()
+    project = app.new_project(tmp_path / "empty.sproj")
+    return project.model

@@ -1,0 +1,13 @@
+# Common variables used by pipelines
+
+variables:
+  VersionBase: '0.9.0' # update version in file "__intit__.py" too
+  PYTHON_PATH: 'C:\ANSYSDEV\CPython\3_13\winx64\Release\python'
+  VersionFile: 'src\ansys\scadeone\core\__init__.py'
+  ACL_version: '27.1.*'
+  AUTOLAYOUT_version: '*'
+  LIBRARIES_version: '*'
+  SCADEIMPORTER_version: '*'
+  releaseID: '2026 R2'
+  DrozenDependenciesList_Path: $(Build.ArtifactStagingDirectory)\frozen-dependencies
+  ContainerBuildEnvWin: '2027R1'

@@ -1,5 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2024 ANSYS, Inc.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -129,9 +128,7 @@ class TestHarnessDiagramCreator(OperatorCreator):
         self,
         name: Optional[str] = None,
         output_type: Union[str, "swan.Declaration"] = None,
-        is_clock: bool = False,
         is_probe: bool = False,
-        when: Optional[str] = None,
         default: Optional[str] = None,
         last: Optional[str] = None,
         declaration: Optional[str] = None,

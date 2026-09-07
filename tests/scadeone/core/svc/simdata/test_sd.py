@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,9 +23,11 @@
 import argparse
 import random
 import traceback
+from pathlib import Path
 
 import pytest
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.versioning import FormatVersions
 from test_common import *  # noqa
 from os import remove
 import sys
@@ -325,6 +327,59 @@ def test_big_array():
     print(f)  # checks that this doesn't raise a Windows error
     f.close()
     remove(file_path)
+
+
+def test_with_statement(tmp_path: Path):
+    file_path_1: str = str(tmp_path / "test_with_statement_1.sd")
+
+    # Data as cycles * size
+    # [[0, 1, 2, 3], [4, 5, 6, 7], ...]
+    size = 4
+    cycles = 2
+    vals = []
+    for i in range(cycles):
+        for j in range(size):
+            row = [i * size + j for j in range(size)]
+        vals.append(row)
+
+    t = sd.create_array_type(sd.UInt64, [size], f"ArrayOf{size}UInt64")
+
+    # create .sd file using with statement:
+    with sd.create_file(file_path_1) as fcreate:
+        i0 = fcreate.add_element("i0", t)
+        i0.append_values_sequence(vals)
+    # check file content:
+    with sd.open_file(file_path_1) as fopen:
+        assert fopen.get_version() == FormatVersions.version("simdata")
+        i0 = fopen.find_element("i0")
+        assert i0
+        assert isinstance(i0.sd_type, sd.ArrayType)
+        assert i0.sd_type.name == f"ArrayOf{size}UInt64"
+        assert i0.sd_type.base_type == sd.UInt64
+        assert i0.sd_type.dims == [size]
+        read_vals = [[int(x) for x in str(v)[1:-1].split(",")] for v in i0.read_values()]
+        assert read_vals == vals
+    # edit file content:
+    with sd.edit_file(file_path_1) as fedit:
+        t_struct = sd.create_struct_type([("f1", sd.Bool), ("f2", sd.Int32)], "p1::tStruct")
+        t_variant = sd.create_variant_type([("v1", None), ("v2", t_struct)], "p1::tVariant")
+        e_struct = fedit.add_element("eStruct", t_struct)
+        e_struct.append_values_sequence([(True, 42), (False, -1)])
+        e_variant = fedit.add_element("eVariant", t_variant)
+        e_variant.append_values_sequence(["v1", ("v2", (True, 42))])
+    with sd.open_file(file_path_1) as fopen:
+        # struct element
+        elt = fopen.find_element("eStruct")
+        assert elt.sd_type.name == "p1::tStruct"
+        assert [(f.name, f.sd_type) for f in elt.sd_type.fields] == [
+            ("f1", sd.Bool),
+            ("f2", sd.Int32),
+        ]
+        assert ["(true,42)", "(false,-1)"] == [str(s_val) for s_val in elt.read_values()]
+        # variant element
+        elt = fopen.find_element("eVariant")
+        assert elt.sd_type.name == "p1::tVariant"
+        assert ["v1{}", "v2{(true,42)}"] == [str(v) for v in elt.read_values()]
 
 
 if __name__ == "__main__":

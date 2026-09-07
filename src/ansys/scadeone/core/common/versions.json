@@ -1,15 +1,27 @@
 {
     "swan": {
         "description": "Swan language version",
-        "version": "2025.2"
+        "version": "2027.0"
     },
     "swant": {
         "description": "Swan Test Harness",
         "version": "1.1"
     },
+    "sproj": {
+        "description": "Scade One project",
+        "version": "1.0"
+    },
     "graph": {
         "description": "Graphical information format",
         "version": "2.1"
+    },
+    "cgmap": {
+        "description": "Code generation mapping",
+        "version": "1.0"
+    },
+    "sjob": {
+        "description": "Project jobs",
+        "version": "2.3"
     },
     "simdata": {
         "description": "Simulation data format",
@@ -18,14 +30,6 @@
     "test_results": {
         "description": "Test results format",
         "version": "1.0"
-    },
-    "sproj": {
-        "description": "Scade One project",
-        "version": "1.0"
-    },
-    "sjob": {
-        "description": "Project jobs",
-        "version": "2.2"
     },
     "wrapper": {
         "description": "PyScadeOne Wrapper",

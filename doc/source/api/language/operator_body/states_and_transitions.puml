@@ -7,7 +7,7 @@ DefByCase <|-- StateMachine
 
 HasPragma <|-- StateMachineItem
 
-Transition <|-- StateMachineItem
+StateMachineItem <|-- Transition
 
 class Transition {
    is_strong: bool

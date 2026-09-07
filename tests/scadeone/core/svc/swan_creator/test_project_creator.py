@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,6 +23,7 @@
 import json
 import os
 from pathlib import Path
+from typing import Union
 
 import pytest
 
@@ -42,6 +43,25 @@ def project(cc_project):
 
 
 class TestProjectCreator:
+    @staticmethod
+    def check_exists(project: Project, parent_path: Union[Path, str]) -> bool:
+        """Return true if any of the project modules or sproj already exists
+
+        .. warning::
+
+           Dependencies may not be checked."""
+
+        storage = project.storage
+        if isinstance(storage, ProjectFile) and Path(storage.source).exists():
+            return True
+        for module in project.model.modules:
+            if not module.source:
+                continue
+            file_path = parent_path / Path(module.source)
+            if file_path.exists():
+                return True
+        return False
+
     def test_create_project(self):
         app = ScadeOne()
         project_path = Path(r"C:\project0\project0.sproj")
@@ -55,19 +75,20 @@ class TestProjectCreator:
         assert project.model.is_all_modules_loaded
         module = project.add_module_body("NewModule")
         assert module is not None
-        assert len(project.modules) == 4
-        assert swan.swan_to_str(project.modules[2].name) == "NewModule"
+        assert len(project.modules) == 3
+        assert swan.swan_to_str(project.modules[1].name) == "NewModule"
         assert module.file_name == "NewModule.swan"
         project_path = project.storage.path.parent
         assert module.source == str(project_path / "assets" / module.file_name)
+        assert module.project is project
 
     def test_add_module_interface(self, project: Project):
         project.model.load_all_modules()
         assert project.model.is_all_modules_loaded
         module = project.add_module_interface("NewModuleInterface")
         assert module is not None
-        assert len(project.modules) == 4
-        assert swan.swan_to_str(project.modules[3].name) == "NewModuleInterface"
+        assert len(project.modules) == 3
+        assert swan.swan_to_str(project.modules[2].name) == "NewModuleInterface"
         assert module.file_name == "NewModuleInterface.swani"
         project_path = project.storage.path.parent
         assert module.source == str(project_path / "assets" / module.file_name)
@@ -77,8 +98,8 @@ class TestProjectCreator:
         assert project.model.is_all_modules_loaded
         module = project.add_module_body("lib::sublib::module0")
         assert module is not None
-        assert len(project.modules) == 4
-        assert swan.swan_to_str(project.modules[2].name) == "lib::sublib::module0"
+        assert len(project.modules) == 3
+        assert swan.swan_to_str(project.modules[1].name) == "lib::sublib::module0"
         assert module.file_name == "lib-sublib-module0.swan"
         project_path = project.storage.path.parent
         assert module.source == str(project_path / "assets" / module.file_name)
@@ -91,11 +112,11 @@ class TestProjectCreator:
         storage = ProjectFile(project_path)
         project = ProjectFactory.create_project(app, storage)
         project.add_module_body("OneModule")
-        assert not project.check_exists(parent_dir)
+        assert not TestProjectCreator.check_exists(project, parent_dir)
         assert not project.storage.exists()
         project.save()
-        assert app.model.is_all_modules_loaded
-        assert project.check_exists(parent_dir)
+        assert project.model.is_all_modules_loaded
+        assert TestProjectCreator.check_exists(project, parent_dir)
         assert project.storage.exists()
         assert os.listdir(str(assets_dir)) == ["OneModule.swan"]
         module1 = project.add_module_body("SameName")
@@ -134,27 +155,46 @@ class TestProjectCreator:
             assert lines_swant[1] == "const const_save1: type1 = 17;\n"
         app2 = ScadeOne()
         project2 = app2.load_project(project_path)
-        assert not app2.model.is_all_modules_loaded
+        assert not project2.model.is_all_modules_loaded
         project2.save()
-        assert app2.model.is_all_modules_loaded
+        assert project2.model.is_all_modules_loaded
 
     def test_add_dependency(self, tmp_path: Path):
         """Test adding project dependencies."""
         app = ScadeOne()
 
-        # Create two test projects
+        # Create five test projects: project 2, 3, 4 and 5 added as dependency of project 1
         project1 = app.new_project(Path(tmp_path / "Project1" / "project1.sproj"))
         project2 = app.new_project(Path(tmp_path / "Project2" / "project2.sproj"))
+        project3 = app.new_project(Path("X:/Project3/project3.sproj"))
+        project4 = app.new_project(Path(r"X:\Project4\project4.sproj"))
+        project5 = app.new_project(Path("X:\\Project5\\project5.sproj"))
 
         # Test successful dependency add
         project1.add_dependency(project2)
+        project1.add_dependency(project3)
+        project1.add_dependency(project4)
+        project1.add_dependency(project5)
+
         project2_rel_path = os.path.relpath(project2.storage.source, project1.directory)
         assert project2_rel_path in project1._dependencies
-        assert len(project1._dependencies) == 1
+
+        project3_abs_path = os.path.abspath(project3.storage.source)
+        assert project3_abs_path in project1._dependencies
+
+        project4_abs_path = os.path.abspath(project4.storage.source)
+        assert project4_abs_path in project1._dependencies
+
+        project5_abs_path = os.path.abspath(project5.storage.source)
+        assert project5_abs_path in project1._dependencies
+        assert len(project1._dependencies) == 4
 
         # Test adding same dependency twice - should not duplicate
         project1.add_dependency(project2)
-        assert len(project1._dependencies) == 1
+        project1.add_dependency(project3)
+        project1.add_dependency(project4)
+        project1.add_dependency(project5)
+        assert len(project1._dependencies) == 4
 
         # Test cannot add self as dependency
         with pytest.raises(ScadeOneException, match="A project cannot depend on itself"):
@@ -167,15 +207,23 @@ class TestProjectCreator:
         # Create test projects
         project1 = app.new_project(Path(r"C:\Project1\project1.sproj"))
         project2 = app.new_project(Path(r"C:\Project2\project2.sproj"))
+        project3 = app.new_project(Path("X:/Project3/project3.sproj"))
+        project4 = app.new_project(Path(r"X:\Project4\project4.sproj"))
+        project5 = app.new_project(Path("X:\\Project5\\project5.sproj"))
 
         # Add dependency first
-        project2_rel_path = os.path.relpath(project2.storage.source, project1.directory)
         project1.add_dependency(project2)
-        assert project2_rel_path in project1._dependencies
+        project1.add_dependency(project3)
+        project1.add_dependency(project4)
+        project1.add_dependency(project5)
+        assert len(project1._dependencies) == 4
 
         # Test successful dependency removal
         project1.remove_dependency(project2)
-        assert project2_rel_path not in project1._dependencies
+        project1.remove_dependency(project5)
+        project1.remove_dependency(project3)
+        project1.remove_dependency(project4)
+        assert len(project1._dependencies) == 0
 
         # Test removing non-existent dependency raises error
         with pytest.raises(ScadeOneException, match="The project is not a dependency"):

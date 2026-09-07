@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,11 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# %%
 from pathlib import Path
 from typing import cast
 
-from ansys.scadeone.core import ProjectFile, ScadeOne
+from ansys.scadeone.core import ScadeOne
 
 
 def smoke():
@@ -33,18 +32,11 @@ def smoke():
     script_dir = Path(__file__).parents[1]
     cc_project = script_dir / "examples/models/CC/CruiseControl/CruiseControl.sproj"
     # %%
-    app.load_project(cc_project)
-
-    asset = ProjectFile(cc_project)
-    CC = app.load_project(asset)
+    CC = app.load_project(cc_project)
 
     # %%
     projects = app.projects
     assert len(projects) == 2
-    assert (
-        cast(ProjectFile, projects[0].storage).source  # noqa: W504
-        == cast(ProjectFile, projects[1].storage).source
-    )
 
     # %%
     model = CC.model
@@ -78,6 +70,11 @@ def smoke():
     assert "CC::tCruiseState" in type_list
 
     assert model.is_all_modules_loaded
+
+    # %%
+    module = model.get_module_body("CC")
+    assert module is not None
+    assert module.project is CC
 
 
 def test_smoke(capsys):

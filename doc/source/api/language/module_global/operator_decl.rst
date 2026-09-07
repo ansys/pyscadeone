@@ -16,8 +16,8 @@ Operator declaration
 
 Declares an operator, giving its interface only. In a module interface, an operator declaration can be the declaration of an operator 
 which body definition is given in the module body, or it can declare a public imported operator. 
-In a module body, an operator declaration is the declaration of a private imported operator if the module has an interface,
-otherwise it is the declaration of a public imported operator.
+In a module body, an operator declaration is the declaration of a private external operator if the module has an interface,
+otherwise it is the declaration of a public external operator.
 
 The class :py:class:`SizeParameter` defines size parameters that can be used for array sizes.
 

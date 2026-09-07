@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,11 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This module contains the classes and functions that are necessary to
-# manipulate Scade One model elements retrieved from the mapping file.
-
-# flake8: noqa: E101
-
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 import functools
@@ -37,6 +32,7 @@ from typing import Generator, List, Optional, Tuple, Union
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.project import Project
 from ansys.scadeone.core.common.exception import LOGGER
+from ansys.scadeone.core.svc.cgmapping.mapping import MappingRole
 
 MapElem = List[Union[str, dict]]
 CodeElem = Tuple[str, dict, int]
@@ -59,7 +55,7 @@ class MappingObject(ABC):
 class CDeclaration(MappingObject):
     """
     Base class for C declaration
-    (function, global, macro, predefined_type, struct, array, enum, union, typedef, imported_type).
+    (function, global, macro, predefined_type, struct, array, enum, union, typedef, external_type).
 
     - gen_code: *GeneratedCode* object
     - decl_elem: mapping file element
@@ -143,7 +139,7 @@ class CParameter(MappingObject):
         return f"{is_const}{self.type_name}{is_pointer}"
 
 
-class CFunction(CDeclaration):
+class CFunc(CDeclaration):
     """
     Class for a generated C function.
 
@@ -186,6 +182,9 @@ class CFunction(CDeclaration):
                     self._gen_code.get_code_elem(code_id)
                 )
         return self._return_type
+
+
+CFunction = CFunc  # alias for better readability
 
 
 class ModelObject(MappingObject):
@@ -526,7 +525,7 @@ class ModelOperator(ModelOperatorBase):
     def __init__(self, gen_code: "GeneratedCode", oper_elem: dict) -> None:
         super().__init__(gen_code, oper_elem)
         self._is_root = oper_elem.get("root", False)
-        self._is_imported = oper_elem.get("imported", False)
+        self._is_external = oper_elem.get("external", False)
         self._is_expanded = oper_elem.get("expanded", False)
         self._is_specialized = oper_elem.get("specialized", 0)
 
@@ -536,9 +535,9 @@ class ModelOperator(ModelOperatorBase):
         return self._is_root
 
     @property
-    def is_imported(self) -> bool:
-        """Returns True if the operator is an imported operator"""
-        return self._is_imported
+    def is_external(self) -> bool:
+        """Returns True if the operator is an external operator"""
+        return self._is_external
 
     @property
     def is_expanded(self) -> bool:
@@ -908,7 +907,7 @@ class GeneratedCode(object):
         """Returns True if the code is generated for the job."""
         return self._mapping_path.exists()
 
-    def decompose_code_type(self, ctype: dict) -> dict:
+    def decompose_code_type(self, ctype: dict, type_name: str = "") -> dict:
         """
         Returns as a dictionary with the C type name, category, and sub elements of a given type element.
 
@@ -995,14 +994,18 @@ class GeneratedCode(object):
                     }
                 )
         elif category == "typedef":
-            return self.decompose_code_type(self.get_code_elem(content["type"]))
+            ctype_typedef = self.get_code_elem(content["type"])
+            if ctype_typedef["category"] in ("struct", "enum", "union"):
+                return self.decompose_code_type(ctype_typedef, content["name"])
+            else:
+                return self.decompose_code_type(ctype_typedef)
         elif category == "predefined_type":
             type_content = None
         else:
             type_content = content
 
         return {
-            "name": content.get("name", ""),
+            "name": type_name if type_name else content.get("name", ""),
             "category": category,
             "elements": type_content,
         }
@@ -1527,12 +1530,11 @@ class GeneratedCode(object):
     def get_elaboration_function(self) -> Optional["CFunction"]:
         """Returns the elaboration C function for the operator,
         if any or None."""
-        elaboration = next(self.get_model_elements("elaboration"))
-        if not elaboration:
-            return None
-        method_elem = self.get_code_elem(elaboration[1]["id"])
-        return (
-            CFunction(self, method_elem["content"], method_elem["code_index"])
-            if method_elem
-            else None
-        )
+
+        for _, const in self.get_model_elements("const"):
+            model_id = const["id"]
+            code_id = self.get_code_id(model_id, MappingRole.ELABORATED_FUNCTION.value, silent=True)
+            if code_id != -1:
+                if method_elem := self.get_code_elem(code_id):
+                    return CFunction(self, method_elem["content"], method_elem["code_index"])
+        return None

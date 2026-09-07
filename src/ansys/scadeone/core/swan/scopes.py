@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 from typing import List, Optional
-from .common import Pragma, HasPragma, SwanItem, Declaration
+from itertools import chain
+from .common import Pragma, HasPragma, SwanItem, Declaration, Variable
 
 
 class Scope(HasPragma):  # numpydoc ignore=PR01
@@ -46,6 +46,15 @@ class Scope(HasPragma):  # numpydoc ignore=PR01
         """Scope sections."""
         return self._sections
 
+    @property
+    def local_variables(self) -> List[Variable]:
+        """Local variables declared in the scope."""
+        from ansys.scadeone.core.swan.scopesections import VarSection
+
+        var_sections = [obj for obj in self._sections if isinstance(obj, VarSection)]
+        variables = chain.from_iterable(map(lambda var: var.var_decls, var_sections))
+        return list(variables)
+
     def get_declaration(self, name: str) -> Optional[Declaration]:
         """Returns the type, global, operator or variable declaration searching by namespace."""
         from ansys.scadeone.core.swan.namespace import ScopeNamespace
@@ -54,11 +63,11 @@ class Scope(HasPragma):  # numpydoc ignore=PR01
         return ns.get_declaration(name)
 
 
-class ScopeSection(SwanItem):  # numpydoc ignore=PR01
+class ScopeSection(HasPragma):  # numpydoc ignore=PR01
     """Base class for scopes."""
 
     def __init__(self) -> None:
-        SwanItem.__init__(self)
+        HasPragma.__init__(self)
         self._is_text = False
 
     @property
@@ -76,9 +85,7 @@ class ScopeSection(SwanItem):  # numpydoc ignore=PR01
         ns = ScopeNamespace(self)
         return ns.get_declaration(name)
 
-    @property
-    def pragmas(self) -> List[Pragma]:
-        """Pragmas associated to this scope section."""
-        if isinstance(self.owner, HasPragma):
-            return self.owner.pragmas
-        return []
+    def set_pragmas(self, pragmas: List[Pragma]) -> None:
+        """Sets pragmas for the scope section."""
+        self._pragmas = pragmas
+        SwanItem.set_owner(self, self._pragmas)

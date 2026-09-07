@@ -1,27 +1,39 @@
 @startuml
 ' Forward return
-skinparam groupInheritance 2
 
 
-class ForwardItemClause {
+' Accumulation
+ForwardReturnItem <|-- ForwardAccuClause
+
+class ForwardAccuClause {
     id: Identifier
+    last_expr: Expression
 }
-ForwardItemClause *-- ForwardLastDefault
 
-ForwardArrayClause *-- ForwardItemClause 
-ForwardArrayClause *-- ForwardArrayClause
-
-ForwardReturnItem <|-- ForwardReturnItemClause
-ForwardReturnItemClause *-- ForwardItemClause
-
+' Array clause
 ForwardReturnItem <|-- ForwardReturnArrayClause
-ForwardReturnArrayClause *-- ForwardArrayClause
-class ForwardReturnArrayClause {
-    ret_id: Identifier (optional)
-}
 
+class ForwardReturnArrayClause {
+    id: Identifier, optional
+}
+ForwardReturnArrayClause *-- ForwardArrayClause
+' array clause expr
+
+ForwardArrayClause <|--- ForwardArrayClauseExpr
+
+class ForwardArrayClauseExpr {
+    expr_no_bracket: Expression
+    default: Expression, optional
+}
+' array clause element
+class ForwardArrayClauseElement {
+    array_clause
+}
+ForwardArrayClause <|--- ForwardArrayClauseElement
+
+ForwardArrayClauseElement::array_clause ---> ForwardArrayClause
+
+' Protected return item
 ForwardReturnItem <|-- ProtectedForwardReturnItem
 
 @enduml
-
-

@@ -1,5 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2024 ANSYS, Inc.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -41,7 +40,8 @@ class DiagramFactory:
             from ansys.scadeone.core.model.loader import SwanParser
 
             cls._instance = super(DiagramFactory, cls).__new__(cls)
-            cls._instance._parser = SwanParser(LOGGER)
+            cls._instance._parser = SwanParser(LOGGER)  # type: ignore
+
         return cls._instance
 
     @staticmethod
@@ -158,7 +158,6 @@ class DiagramAdder:
 
     def __init__(self, owner: "swan.Diagram") -> None:
         self._owner = owner
-        self._lunum = -1
 
     def add_block(self, block: "swan.Block") -> None:
         """Add a block to the diagram."""
@@ -222,25 +221,27 @@ class DiagramAdder:
 
     def _add_diagram_object(self, object: "swan.DiagramObject") -> None:
         """Add a diagram object to the diagram."""
-        from ansys.scadeone.core.swan import Lunum
+        from ansys.scadeone.core.swan import StateMachineBlock
 
-        self._generate_next_lunum()
-        object._lunum = Lunum(f"#{self._lunum}")
-        self._lunum += 1
+        next_lunum = self._generate_next_lunum()
+        if isinstance(object, StateMachineBlock):
+            object.state_machine._lunum = next_lunum
+        else:
+            object._lunum = next_lunum
         object.owner = self._owner
         if not self._owner._objects:
             self._owner._objects = [object]
         else:
             self._owner._objects.append(object)
 
-    def _generate_next_lunum(self) -> None:
+    def _generate_next_lunum(self) -> "swan.Lunum":
         """Generate the next lunum for the diagram objects."""
-        if not self._lunum == -1:
-            return
-        if not self._owner._objects:
-            self._lunum = 0
-        else:
-            self._lunum = max([int(obj.lunum.value[1:]) for obj in self._owner._objects]) + 1
+        from ansys.scadeone.core.swan import LunumManager
+
+        manager = LunumManager.get_lunum_manager(self._owner)
+        if manager:
+            return manager.get_next_lunum()
+        raise ScadeOneException("Lunum manager not found for the diagram.")
 
 
 class DiagramCreator:
@@ -452,3 +453,28 @@ class DiagramCreator:
         set_sensor = TestHarnessDiagramFactory.create_set_sensor(self, instance)
         self._diagram_adder.add_set_sensor(set_sensor)
         return set_sensor
+
+    def add_automaton(self, name: str) -> "swan.StateMachine":
+        """Add an automaton to the operator diagram.
+
+        Parameters
+        ----------
+        name : str
+            Automaton name.
+
+        Returns
+        -------
+        StateMachine
+            The created state machine instance.
+        """
+        from ansys.scadeone.core.swan import StateMachine, StateMachineBlock, Luid
+
+        # Create a new StateMachine
+        sm = StateMachine(luid=Luid(name) if name else None)
+        # Create a corresponding StateMachineBlock and add it to the diagram
+        sm_block = StateMachineBlock(sm)
+        # Add the StateMachineBlock to the diagram
+        self._diagram_adder._add_diagram_object(sm_block)
+
+        # Return the created StateMachine
+        return sm

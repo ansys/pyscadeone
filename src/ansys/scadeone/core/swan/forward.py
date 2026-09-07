@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -27,7 +27,6 @@ This module contains the classes for forward expression
 
 from typing import List, Optional, Union
 
-from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.swan.common as common
 import ansys.scadeone.core.swan.scopes as scopes
 
@@ -42,6 +41,7 @@ class ForwardLHS(common.SwanItem):  # numpydoc ignore=PR01
     def __init__(self, lhs: Union[common.Identifier, "ForwardLHS"]) -> None:
         super().__init__()
         self._lhs = lhs
+        common.SwanItem.set_owner(self, self._lhs)
 
     @property
     def lhs(self) -> Union[common.Identifier, "ForwardLHS"]:
@@ -54,7 +54,7 @@ class ForwardLHS(common.SwanItem):  # numpydoc ignore=PR01
         return isinstance(self.lhs, common.Identifier)
 
 
-class ForwardElement(common.SwanItem):  # numpydoc ignore=PR01
+class ForwardCurrentElement(common.SwanItem):  # numpydoc ignore=PR01
     """Forward current element:
 
     *current_elt* ::= *current_lhs* = *expr* ;"""
@@ -63,6 +63,8 @@ class ForwardElement(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._lhs = lhs
         self._expr = expr
+        common.SwanItem.set_owner(self, self._lhs)
+        common.SwanItem.set_owner(self, self._expr)
 
     @property
     def lhs(self) -> ForwardLHS:
@@ -78,7 +80,7 @@ class ForwardElement(common.SwanItem):  # numpydoc ignore=PR01
 class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
     """**forward** construct dimension:
 
-    *dim* ::= << *expr* >> [[ **with** (( << *id* >> | *current_elt* )) {{ *current_elt* }} ]]
+    *dim* ::= << *size* >> [[ **with** (( << *id* >> | *current_elt* )) {{ *current_elt* }} ]]
 
     Note that:
 
@@ -90,13 +92,13 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
 
     Parameters
     ----------
-    expr: common.Expression
-       Dimension expression.
+    size: common.Expression
+       Dimension size.
 
     id: common.Identifier (optional)
        **with** ID.
 
-    elems: List[ForwardElement] (optional)
+    elems: List[ForwardCurrentElement] (optional)
        **with** elements part.
 
     protected: str (optional)
@@ -107,17 +109,20 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
 
     def __init__(
         self,
-        expr: Optional[common.Expression] = None,
+        size: Optional[common.Expression] = None,
         dim_id: Optional[common.Identifier] = None,
-        elems: Optional[List[ForwardElement]] = None,
+        elems: Optional[List[ForwardCurrentElement]] = None,
         protected: Optional[str] = None,
     ) -> None:
         super().__init__()
-        self._expr = expr
+        self._size = size
         self._dim_id = dim_id
         self._elems = elems
         self._is_protected = protected is not None
         self._protected = protected
+        common.SwanItem.set_owner(self, self._size)
+        common.SwanItem.set_owner(self, self._dim_id)
+        common.SwanItem.set_owner(self, self._elems)
 
     @property
     def is_protected(self) -> bool:
@@ -125,9 +130,9 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
         return self._is_protected
 
     @property
-    def expr(self) -> common.Expression:
-        """**forward** dimension expression."""
-        return self._expr
+    def size(self) -> Union[common.Expression, None]:
+        """**forward** dimension size."""
+        return self._size
 
     @property
     def dim_id(self) -> Union[common.Identifier, None]:
@@ -135,7 +140,7 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
         return self._dim_id
 
     @property
-    def elems(self) -> Union[List[ForwardElement], None]:
+    def elems(self) -> Union[List[ForwardCurrentElement], None]:
         """**forward** dimension elements or None."""
         return self._elems
 
@@ -156,105 +161,6 @@ class ForwardDim(common.SwanItem):  # numpydoc ignore=PR01
         return self._protected
 
 
-class ForwardLastDefault(common.SwanItem):  # numpydoc ignore=PR01
-    """**forward** construct: *last_default*.
-
-    *last_default* ::= **last** = *expr*
-                   | **default** = *expr*
-                   | **last** = *expr* **default** = *expr*
-                   | **last** = **default** = *expr*
-
-    Parameters
-    ----------
-    last: common.Expression (optional)
-        **last** expression.
-
-    default: common.Expression (optional)
-        **default** expression.
-
-    shared: common.Expression (optional)
-        **last** and **default** share the same expression.
-        *shared* cannot be used with *last* or *default*.
-    """
-
-    def __init__(
-        self,
-        last: Optional[common.Expression] = None,
-        default: Optional[common.Expression] = None,
-        shared: Optional[common.Expression] = None,
-    ) -> None:
-        super().__init__()
-        self._last = last
-        self._default = default
-        self._shared = shared
-        if (shared and (last or default)) or not (shared or last or default):
-            raise ScadeOneException("Invalid ForwardLastDefault construction")
-
-    @property
-    def is_shared(self) -> bool:
-        """True when **last** = **default** = *expr*."""
-        return self._shared is not None
-
-    @property
-    def last(self) -> Union[common.Expression, None]:
-        """Returns **last** expression or shared one."""
-        if self._last:
-            return self._last
-        return self._shared
-
-    @property
-    def default(self) -> Union[common.Expression, None]:
-        """Returns **default** expression or shared one."""
-        if self._default:
-            return self._default
-        return self._shared
-
-    @property
-    def shared(self) -> Union[common.Expression, None]:
-        """Return **shared** expression."""
-        return self._shared
-
-
-class ForwardItemClause(common.SwanItem):  # numpydoc ignore=PR01
-    """**forward** construct:
-
-    *item_clause* ::= *id* [[ : *last_default* ]]"""
-
-    def __init__(
-        self, id: common.Identifier, last_default: Optional[ForwardLastDefault] = None
-    ) -> None:
-        super().__init__()
-        self._id = id
-        self._last_default = last_default
-
-    @property
-    def id(self) -> common.Identifier:
-        """Item_clause identifier."""
-        return self._id
-
-    @property
-    def last_default(self) -> Union[ForwardLastDefault, None]:
-        """Item_clause last default."""
-        return self._last_default
-
-
-class ForwardArrayClause(common.SwanItem):  # numpydoc ignore=PR01
-    """**forward** construct:
-
-    *returns_clause* ::= (( *item_clause* | *array_clause* ))
-    *array_clause* ::= [ *returns_clause* ]
-    """
-
-    def __init__(self, return_clause: Union[ForwardItemClause, "ForwardArrayClause"]) -> None:
-        super().__init__()
-        self._return_clause = return_clause
-
-    @property
-    def return_clause(self) -> Union[ForwardItemClause, "ForwardArrayClause"]:
-        """Return *array_clause* content."""
-        return self._return_clause
-
-
 class ForwardReturnItem(common.SwanItem):  # numpydoc ignore=PR01
     """Base class for *returns_item*."""
 
@@ -262,32 +168,105 @@ class ForwardReturnItem(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
 
 
-class ForwardReturnItemClause(ForwardReturnItem):  # numpydoc ignore=PR01
-    """**forward** construct: *returns_item* ::= *item_clause*."""
+# Accu clause
+# ======================================================================
 
-    def __init__(self, item_clause: ForwardItemClause) -> None:
+
+class ForwardAccuClause(ForwardReturnItem):  # numpydoc ignore=PR01
+    """**forward** accumulator construct:
+
+    *accu_clause* ::= *id* : **last** = *expr*"""
+
+    def __init__(self, id: common.Identifier, last_expr: common.Expression) -> None:
         super().__init__()
-        self._item_clause = item_clause
+        self._id = id
+        self._last_expr = last_expr
+        common.SwanItem.set_owner(self, self._id)
+        common.SwanItem.set_owner(self, self._last_expr)
 
     @property
-    def item_clause(self) -> ForwardItemClause:
-        """Item clause."""
-        return self._item_clause
+    def id(self) -> common.Identifier:
+        """Item_clause identifier."""
+        return self._id
+
+    @property
+    def last_expr(self) -> common.Expression:
+        """Item_clause last expression."""
+        return self._last_expr
+
+
+# Array clauses
+# ======================================================================
+
+
+class ForwardArrayClause(common.SwanItem):  # numpydoc ignore=PR01
+    """Base class for forward *array_clause*."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class ForwardArrayClauseExpr(ForwardArrayClause):  # numpydoc ignore=PR01
+    """**forward** construct:
+
+    *array_clause* ::=  *expr_no_bracket* [[ **default** *expr* ]]"""
+
+    def __init__(
+        self,
+        expr_no_bracket: common.Expression,
+        default_expr: Optional[common.Expression] = None,
+    ) -> None:
+        super().__init__()
+        self._expr_no_bracket = expr_no_bracket
+        self._default_expr = default_expr
+        common.SwanItem.set_owner(self, self._expr_no_bracket)
+        common.SwanItem.set_owner(self, self._default_expr)
+
+    @property
+    def expr_no_bracket(self) -> common.Expression:
+        """Expression without brackets."""
+        return self._expr_no_bracket
+
+    @property
+    def default_expr(self) -> Union[common.Expression, None]:
+        """Default expression, or None."""
+        return self._default_expr
+
+
+class ForwardArrayClauseElement(ForwardArrayClause):  # numpydoc ignore=PR01
+    """**forward** construct:
+
+    *array_clause* ::= [ *array_clause* ]]"""
+
+    def __init__(
+        self,
+        array_clause: ForwardArrayClause,
+    ) -> None:
+        super().__init__()
+        self._array_clause = array_clause
+        common.SwanItem.set_owner(self, self._array_clause)
+
+    @property
+    def array_clause(self) -> ForwardArrayClause:
+        """Array clause."""
+        return self._array_clause
 
 
 class ForwardReturnArrayClause(ForwardReturnItem):  # numpydoc ignore=PR01
     """**forward** construct:
 
-    *returns_item* ::= [[ *id* = ]] *array_clause*"""
+    *returns_item* ::= [[ *id* : ]] *array_clause*"""
 
     def __init__(
         self,
         array_clause: ForwardArrayClause,
-        return_id: Optional[common.Identifier] = None,
+        id: Optional[common.Identifier] = None,
     ) -> None:
         super().__init__()
         self._array_clause = array_clause
-        self._return_id = return_id
+        self._id = id
+        common.SwanItem.set_owner(self, self._array_clause)
+        common.SwanItem.set_owner(self, self._id)
 
     @property
     def array_clause(self) -> ForwardArrayClause:
@@ -295,11 +274,13 @@ class ForwardReturnArrayClause(ForwardReturnItem):  # numpydoc ignore=PR01
         return self._array_clause
 
     @property
-    def return_id(self) -> Union[common.Identifier, None]:
+    def id(self) -> Union[common.Identifier, None]:
         """Identifier of clause, or None."""
-        return self._return_id
+        return self._id
 
 
+# Protected items
+# =====================================================================
 class ProtectedForwardReturnItem(common.ProtectedItem, ForwardReturnItem):  # numpydoc ignore=PR01
     """**forward** construct: protected *returns_item* with {syntax% ... %syntax} markup."""
 
@@ -307,6 +288,8 @@ class ProtectedForwardReturnItem(common.ProtectedItem, ForwardReturnItem):  # nu
         super().__init__(data)
 
 
+# Forward body
+# =====================================================================
 class ForwardBody(common.SwanItem):  # numpydoc ignore=PR01
     """
     **forward** construct:
@@ -316,19 +299,21 @@ class ForwardBody(common.SwanItem):  # numpydoc ignore=PR01
 
     def __init__(
         self,
-        body: List[scopes.ScopeSection],
+        sections: List[scopes.ScopeSection],
         unless_expr: Optional[common.Expression] = None,
         until_expr: Optional[common.Expression] = None,
     ) -> None:
         super().__init__()
-        self._body = body
+        self._sections = sections
         self._unless_expr = unless_expr
         self._until_expr = until_expr
-        common.SwanItem.set_owner(self, body)
+        common.SwanItem.set_owner(self, self._sections)
+        common.SwanItem.set_owner(self, self._unless_expr)
+        common.SwanItem.set_owner(self, self._until_expr)
 
     @property
-    def body(self) -> List[scopes.ScopeSection]:
-        return self._body
+    def sections(self) -> List[scopes.ScopeSection]:
+        return self._sections
 
     @property
     def unless_expr(self) -> Optional[common.Expression]:
@@ -361,7 +346,10 @@ class Forward(common.Expression):  # numpydoc ignore=PR01
         self._body = body
         self._returns = returns
         self._luid = luid
-        common.SwanItem.set_owner(self, body)
+        common.SwanItem.set_owner(self, self._dimensions)
+        common.SwanItem.set_owner(self, self._body)
+        common.SwanItem.set_owner(self, self._returns)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def restart(self) -> Optional[bool]:

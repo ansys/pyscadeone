@@ -1,0 +1,7 @@
+{
+  "JobsOrder": [],
+  "ModulesOrder": [
+    "assets\\other.swan",
+    "assets\\utils.swan"
+  ]
+}

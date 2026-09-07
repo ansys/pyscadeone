@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -52,11 +52,14 @@ class Parser(ABC):
 
     @classmethod
     def get_source(cls) -> SwanStorage:
+        if not cls._SwanSource:
+            raise ScadeOneException("Swan source not set.")
         return cls._SwanSource
 
     @classmethod
     def set_source(cls, swan: SwanStorage) -> SwanStorage:
         cls._SwanSource = swan
+        return swan
 
     @abstractmethod
     def module_body(self, source: SwanStorage) -> Swan.ModuleBody:
@@ -99,7 +102,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def declaration(self, source: SwanStorage) -> Swan.Declaration:
+    def declaration(self, source: SwanStorage) -> Swan.ModuleItem:
         """Parse a Swan declaration:
           type, const, sensor, group, use, operator (declaration or definition).
 
@@ -116,7 +119,7 @@ class Parser(ABC):
         pass
 
     @abstractmethod
-    def equation(self, source: SwanStorage) -> Swan.equations:
+    def equation(self, source: SwanStorage) -> Swan.Equation:
         """Parse a Swan equation.
 
         Parameters
@@ -201,7 +204,7 @@ class Parser(ABC):
     @abstractmethod
     def operator_decl_or_def(
         self, source: SwanStorage
-    ) -> Union[Swan.OperatorDefinition, Swan.OperatorDeclaration]:
+    ) -> Union[Swan.OperatorDefinition, Swan.OperatorDeclaration, None]:
         """Parse a Swan operator
 
         Parameters

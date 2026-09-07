@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,17 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import pytest
-
 from ansys.scadeone.core import swan
 from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.common.storage import SwanString
-from ansys.scadeone.core.model.loader import SwanParser
-
-
-@pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
 
 
 def gen_code(swan: str, module: str) -> SwanString:
@@ -182,3 +174,59 @@ class TestOperator:
         wire = op0.diagrams[0].objects[2]
         assert isinstance(wire, swan.Wire)
         assert swan.swan_to_str(wire) == "(#2 wire #1 => #0)"
+
+    def test_get_local_variables(self, parser):
+        code = gen_code(
+            """
+                node operator0 (i0: int32;)
+                  returns (o0: int32;)
+                {
+                    var x1: int32; x2: in32;
+                    let o0 = i0;
+                    var x3: int32;
+                    emit 'i0 if i0 > 0;
+                    diagram
+                        (var
+                            temperature: int32;)
+                        (let
+                            t_max = temperature > temp_max;)
+                        (var
+                            temp_max: int32;
+                            temp_min: int32;)
+                        (let
+                            t_min = temperature < temp_min;)
+                    diagram
+                        (var
+                            frequency: int32;)
+                    diagram
+                        (var
+                            local_var1: int32;)
+                        (diagram $Diagram1
+                            (var
+                                diagram1_var1: int32;)
+                            (var
+                                diagram1_var2: float32;)
+                           (diagram $Diagram2
+                              (var
+                                  diagram2_var1: int32;)
+                              (var
+                                  diagram2_var2: float32;)
+                              (diagram $Diagram3
+                                 (var
+                                    diagram3_var1: int32;)
+                                 (var
+                                    diagram3_var2: float32;)
+                              )
+                           )
+                        )
+                }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op0 = body.operator_definitions[0]
+        # Get all local variables from both Scope and Diagram (including subdiagrams)
+        local_variables = op0.get_local_variables()
+        assert len(local_variables) == 14
+        assert all(isinstance(lv, swan.VarDecl) for lv in local_variables)
+        assert all(isinstance(lv.owner, swan.VarSection) for lv in local_variables)

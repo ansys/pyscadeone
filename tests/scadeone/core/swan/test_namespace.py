@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 from typing import List
 
 import pytest
@@ -31,17 +32,12 @@ import ansys.scadeone.core.swan as swan
 
 
 @pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
-
-
-@pytest.fixture
 def cc_module(cc_project):
     app = ScadeOne()
     project = app.load_project(cc_project)
     model = project.model
     model.load_all_modules()
-    return model.modules[0]
+    return model.get_module_body("CC")
 
 
 def gen_code(swan: str, module: str) -> SwanString:
@@ -143,7 +139,7 @@ class TestScopeNamespace:
         assert isinstance(group0, swan.GroupDecl)
         assert group0.id.value == "group0"
 
-    def test_get_imported_group(self, parser: SwanParser):
+    def test_get_external_group(self, parser: SwanParser):
         module0 = gen_code(
             """
             group group0 = (i0: int32, i1:int32);
@@ -446,7 +442,7 @@ class TestScopeNamespace:
         assert isinstance(x0, swan.VarDecl)
         assert x0.id.value == "x0"
 
-    def test_get_imported_op(self, parser: SwanParser):
+    def test_get_external_op(self, parser: SwanParser):
         module0 = gen_code(
             """
             node operator0 (i0: int32;)
@@ -488,7 +484,7 @@ class TestScopeNamespace:
         assert op0.id.value == "operator0"
         assert op0.module.name.as_string == "module0"
 
-    def test_get_imported_type(self, parser: SwanParser):
+    def test_get_external_type(self, parser: SwanParser):
         module0 = gen_code(
             """
             type type0 = int32;
@@ -693,7 +689,7 @@ class TestScopeNamespace:
         body = parser.module_body(code)
         op1 = body.declarations[1]
         assert isinstance(op1, swan.OperatorDefinition)
-        scope_section = op1.body.sections[0].equations[0].expr.body.body[0]
+        scope_section = op1.body.sections[0].equations[0].expr.body.sections[0]
         op0 = scope_section.get_declaration("operator0")
         assert isinstance(op0, swan.OperatorDefinition)
         assert op0.id.value == "operator0"

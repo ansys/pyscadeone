@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -48,18 +48,10 @@ class TestOperatorCreator:
         assert swan.swan_to_str(variable) == "var1: int32"
 
     def test_create_variable_expr(self, operator_factory):
-        variable = operator_factory.create_variable(
-            declaration="var1: int32 when x0 default = 0 last = 0"
-        )
+        variable = operator_factory.create_variable(declaration="var1: int32 default = 0 last = 0")
         assert variable is not None
         assert isinstance(variable, swan.VarDecl)
-        assert swan.swan_to_str(variable) == "var1: int32 when x0 default = 0 last = 0"
-
-    def test_create_variable_with_when(self, operator_factory):
-        variable = operator_factory.create_variable(name="var2", var_type="int32", when="x0")
-        assert variable is not None
-        assert isinstance(variable, swan.VarDecl)
-        assert swan.swan_to_str(variable) == "var2: int32 when x0"
+        assert swan.swan_to_str(variable) == "var1: int32 default = 0 last = 0"
 
     def test_create_variable_with_default(self, operator_factory):
         variable = operator_factory.create_variable(name="var3", var_type="int32", default="0")

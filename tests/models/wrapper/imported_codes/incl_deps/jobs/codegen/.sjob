@@ -1,0 +1,25 @@
+{
+  "Version": "2.3",
+  "Kind": "CodeGeneration",
+  "Properties": {
+    "RootDeclarations": [
+      "M::root"
+    ],
+    "Name": "CodeGenerationJob0",
+    "CustomArguments": "",
+    "Expansion": "None",
+    "ExpansionExp": "",
+    "ExpansionNoExp": "",
+    "NameLength": "200",
+    "KeepAssume": "False",
+    "GlobalsPrefix": "",
+    "UseMacros": "False",
+    "StaticLocals": "False",
+    "Probes": "False",
+    "RootInterfaceAsGlobals": "False",
+    "MaxFunctionParameters": ""
+  },
+  "InputPaths": [
+    "assets/M.swan"
+  ]
+}

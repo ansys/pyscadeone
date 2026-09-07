@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# %%
 import re
 from typing import Iterator, Union
 
@@ -33,16 +32,6 @@ from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as swan
 from ansys.scadeone.core.svc.swan_creator import ScadeOneFactory
 from ansys.scadeone.core.swan import OperatorDefinition
-
-
-@pytest.fixture
-def model():
-    return ScadeOne().model
-
-
-@pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
 
 
 def gen_code(swan: str, module: str) -> SwanString:
@@ -60,6 +49,23 @@ def operator(parser):
     )
     body = parser.module_body(code)
     return body.operator_declarations[0]
+
+
+@pytest.fixture
+def empty_diagram(parser):
+    code = gen_code(
+        """
+            node operator0 (i0: int32;)
+               returns (o0: int32;)
+            {
+                diagram
+            }
+            """,
+        "module0",
+    )
+    body = parser.module_body(code)
+    op = body.operator_definitions[0]
+    return op.diagrams[0]
 
 
 class TestDiagram:
@@ -91,7 +97,7 @@ class TestDiagram:
         assert len(diag.objects) == 1
 
     # B1200675: Bar without connections has no owner
-    def test_empty_bar_owner(self, parser):
+    def test_empty_bar_owner(self, parser: SwanParser):
         code = gen_code(
             """
             function emptyBar ()
@@ -114,8 +120,8 @@ class TestDiagNav:
     @pytest.fixture(scope="session")
     def model(self, cc_project):
         app = ScadeOne()
-        app.load_project(cc_project)
-        return app.model
+        project = app.load_project(cc_project)
+        return project.model
 
     @pytest.fixture(scope="session")
     def regulation(self, model):
@@ -348,3 +354,122 @@ class TestDiagNav:
             print("Targets:", target_adaptations)
         assert source_adaptation == ".(typeField)"
         assert {".(typeField_in1)", ".(typeField_in2)"}.issubset(target_adaptations)
+
+
+class TestDiagramVariables:
+    """Class focused on access of property **local_variables** of a **Diagram** object"""
+
+    @pytest.fixture
+    def diagram(self, parser):
+        code = gen_code(
+            """
+                node operator0 (i0: int32;)
+                  returns (o0: int32;)
+                {
+                  diagram
+                    (var
+                        temperature: int32;
+                        temp_max: int32;
+                        temp_min: int32;)
+                    (let
+                        delta_max = temp_max - temperature;)
+                    (emit
+                        'delta_max if true;)
+                    (assume
+                        $t: temperature > temp_max;)
+                }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op = body.operator_definitions[0]
+        return op.diagrams[0]
+
+    @pytest.fixture
+    def diagram_several_var_sections(self, parser):
+        code = gen_code(
+            """
+                node operator0 (i0: int32;)
+                  returns (o0: int32;)
+                {
+                  diagram
+                    (emit
+                        'delta_max if true;)
+                    (var
+                        temperature: int32;
+                        temp_max: int32;
+                        temp_min: int32;)
+                    (let
+                        t_max = temperature > temp_max;)
+                    (let
+                        t_min = temperature < temp_min;)
+                    (assume
+                        $t: temperature > temp_max;)
+                    (var
+                        frequency: int32;
+                        freq_max: int32;
+                        freq_min: int32;)
+                }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op = body.operator_definitions[0]
+        return op.diagrams[0]
+
+    def test_diagrams_variables(self, diagram):
+        diag_variables = diagram.local_variables
+        assert len(diag_variables) == 3
+        assert diag_variables[0].id.value == "temperature"
+        assert diag_variables[1].id.value == "temp_max"
+        assert diag_variables[2].id.value == "temp_min"
+
+    def test_diagrams_variables_from_several_sections(self, diagram_several_var_sections):
+        diag_variables = diagram_several_var_sections.local_variables
+        assert len(diag_variables) == 6
+        assert diag_variables[3].id.value == "frequency"
+        assert diag_variables[4].id.value == "freq_max"
+        assert diag_variables[5].id.value == "freq_min"
+
+    def test_diagrams_with_no_variables(self, empty_diagram):
+        diag_variables = empty_diagram.local_variables
+        assert len(diag_variables) == 0
+
+
+class TestDiagramSubdiagrams:
+    """Class focused on access of property **diagrams** of a **Diagram** object"""
+
+    @pytest.fixture
+    def diagram(self, parser):
+        code = gen_code(
+            """
+                node operator0 (i0: int32;)
+                  returns (o0: int32;)
+                {
+                  diagram
+                    (diagram $Subdiagram1
+                        (diagram $NotReachable1)
+                    )
+                    (diagram $Subdiagram2
+                        (diagram $NotReachable2)
+                    )
+                    (diagram $Subdiagram3
+                        (diagram $NotReachable3)
+                    )
+                }
+                """,
+            "module0",
+        )
+        body = parser.module_body(code)
+        op = body.operator_definitions[0]
+        return op.diagrams[0]
+
+    def test_diagrams_without_subdiagrams(self, empty_diagram):
+        subdiagrams = empty_diagram.diagrams
+        assert not subdiagrams
+
+    def test_diagrams_subdiagrams(self, diagram):
+        subdiagrams = diagram.diagrams
+        assert len(subdiagrams) == 3
+        assert all(isinstance(diag.owner, swan.SectionObject) for diag in subdiagrams)
+        assert all(diag.owner.owner == diagram for diag in subdiagrams)

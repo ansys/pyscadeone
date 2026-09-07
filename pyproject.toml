@@ -85,7 +85,6 @@ pyscadeone = "ansys.scadeone.core.cli:main"
 [tool.flit.module]
 name = "ansys.scadeone.core"
 
-
 [tool.codespell]
 skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
 ignore-words = "./doc/styles/config/vocabularies/ANSYS/accept.txt"
@@ -225,13 +224,18 @@ title_format = "`{version} <https://github.com/ansys/pyscadeone/releases/tag/v{v
 issue_format = "`#{issue} <https://github.com/ansys/pyscadeone/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking"
+showcontent = true
+
+[[tool.towncrier.type]]
 directory = "added"
 name = "Added"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
+directory = "fixed"
+name = "Fixed"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -240,8 +244,18 @@ name = "Documentation"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -252,16 +266,6 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "miscellaneous"
 name = "Miscellaneous"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]

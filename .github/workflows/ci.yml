@@ -14,8 +14,8 @@ permissions:
   pull-requests: read # Adding read permission to pull-requests to allow checking PR details
 
 env:
-  MAIN_PYTHON_VERSION: '3.10'
-  PYTHON_VERSION: '3.10'
+  MAIN_PYTHON_VERSION: '3.12'
+  PYTHON_VERSION: '3.12'
   LIBRARY_NAME: 'ansys-scadeone-core'
   DOCUMENTATION_CNAME: 'scadeone.docs.pyansys.com'
   PACKAGE_NAMESPACE: 'ansys.scadeone.core'

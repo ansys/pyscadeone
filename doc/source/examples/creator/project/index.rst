@@ -1,4 +1,4 @@
-.. _ref_creator_ex:
+.. _ref_creator_proj_ex:
 
 Create a Scade One project
 ==========================

@@ -3,7 +3,7 @@
 Project creation
 ================
 This section provides the elements for creating or modifying a Scade One project.
-An example is provided in :ref:`ref_creator_ex`.
+An example is provided in :ref:`ref_creator_proj_ex`.
 
 .. currentmodule:: ansys.scadeone.core.svc.swan_creator.factory
 

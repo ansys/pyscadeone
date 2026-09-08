@@ -1,0 +1,13 @@
+.. Generated files from conf.py
+
+The versions for the supported format/code are:
+
+- Swan language version: 2027.0
+- Swan Test Harness: 1.1
+- Scade One project: 1.0
+- Graphical information format: 2.1
+- Code generation mapping: 1.0
+- Project jobs: 2.3
+- Simulation data format: 1.2
+- Test results format: 1.0
+- PyScadeOne Wrapper: 1.0

@@ -1,0 +1,143 @@
+########################################################
+# Pipeline used to build releases and develop branches.
+########################################################
+trigger:
+  branches:
+    include:
+      - releases/*
+      - develop
+
+resources:
+  repositories:
+    - repository: DevOps
+      type: git
+      name: ANSYS.SONE.DevOps
+      ref: releases/release-27.1
+
+
+parameters:
+  # by default, the prerelease label is enabled
+  - name: DisablePrereleaseLabel
+    type: boolean
+    default: false
+    displayName: "Disable Prerelease Label"
+  - name: UseContainer
+    displayName: Use Container(s)
+    default: true
+    type: boolean
+  - name: DeleteContainer
+    displayName: Delete Container(s) (No Debugging)
+    default: true
+    type: boolean
+
+variables:
+  - name: VersionNumber
+    value: $(Build.BuildNumber)
+  - group: globalaccesstoken
+  - group: Artifactory Information
+  - group: SMTP Information
+  - group: AzureSignTool
+  - name: DisablePrereleaseLabel
+    value: ${{ parameters.DisablePrereleaseLabel }}
+  - template: "/.pipelines/CommonVariables.yml"
+  - ${{ if eq(parameters.UseContainer, true) }}:
+    - group: Artifactory Information - Overload
+    - group: K8s
+
+# VersionBase: is defined in CommonVariables.yml
+name: $(VersionBase)+$(Rev:r)
+
+stages:
+  - stage: Build
+    jobs:
+      - job: PythonAPI
+        pool:
+          ${{ if eq(parameters.UseContainer, false) }}:
+            name: SBU-SCADE-DevPool
+          ${{ if eq(parameters.UseContainer, true) }}:
+            name: $(BUILD_WIN_AGENT_POOL)
+            demands:
+              - DeleteContainer -equals ${{ parameters.DeleteContainer }}
+              - ContainerBuildEnv -equals $(ContainerBuildEnvWin)
+
+        steps:
+          - template: /.pipelines/CommonBuildTasks.yml
+
+          - powershell: |
+              $(PYTHON_PATH)\python.exe -m pip install pkginfo
+              Expand-Archive -Path "dist\ansys_scadeone_core-$(VersionNumber).zip" -DestinationPath $(Build.ArtifactStagingDirectory)\pyscadeone
+              cd $(Build.ArtifactStagingDirectory)\pyscadeone
+              $getWHLfile=Get-ChildItem -Path .\*.whl -Recurse -Force
+              $WHLpackage=$getWHLfile.Name
+              write-host "Find file: $WHLpackage"
+              $info = $(PYTHON_PATH)\Scripts\pkginfo.exe -f requires_dist $WHLpackage
+              #write-host $info
+              $info=$info.Replace('requires_dist: [','')
+              $info=$info.Replace(']','')
+              $info=$info.Replace('''','')
+              $info=$info.Replace(' ','')
+              $info=$info.Replace('"','')
+              $info=$info.Replace('==','=')
+              $data = $info.split(",")
+              $dep_data=@()
+              foreach ($dep_info_line in $data)
+              {
+              if ($dep_info_line -match "frozen-dependencies") 
+                {
+                Write-Host "Working on: $dep_info_line"
+                $dep_info_part = $dep_info_line -split ";"
+                $dep_info=$dep_info_part[0] -split "="
+                $newElement = @{"name"=$dep_info[0];"version"=$dep_info[1]}
+                $dep_data += $newElement
+                }
+              }
+              # Convert into JSON
+              $json = $dep_data | ConvertTo-Json -Depth 1
+              # Save JSON to file
+              if (Test-Path "$(DrozenDependenciesList_Path)") {Remove-Item "$(DrozenDependenciesList_Path)" -Force}
+              New-Item -ItemType "Directory" -Path "$(DrozenDependenciesList_Path)"
+              $json | Out-File -FilePath "$(DrozenDependenciesList_Path)\frozen-dependencies_packages_list_pyscadeone.json" -encoding ASCII
+            displayName: "Produce frozen-dependencies list"
+            workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: frozen-dependencies_packages_list'
+            inputs:
+              PathtoPublish: '$(DrozenDependenciesList_Path)'
+              ArtifactName: 'dependencies_packages_list'
+
+          - template: templates/AddBuildLinkInWorkitems.yml@DevOps
+
+          - checkout: DevOps
+            path: s/ANSYS.SONE.DevOps
+            fetchDepth: 1
+
+          - template: templates/UpdateReleaseNotesWiki.yml@DevOps
+            parameters:
+              Version: "$(VersionNumber)"
+              PageFolder: "/Releases/Release-Notes/APIpyscadeone/"
+
+          - template: templates/Publish/PublishToArtifactory.yml@DevOps
+            parameters:
+              pattern: "$(Pipeline.Workspace)/s/ANSYS.SONE.API.pyscadeone/dist/ansys_scadeone_core-$(VersionNumber).zip"
+              target: "S-One_Releases/APIpyscadeone/APIpyscadeone-$(VersionNumber).zip"
+
+          - task: benjhuser.tfs-extensions-build-tasks.trigger-build-task.TriggerBuild@4
+            enabled: true
+            displayName: 'Trigger a new build of S-One Tools build status'
+            inputs:
+              definitionIsInCurrentTeamProject: false
+              tfsServer: 'https://tfs.ansys.com:8443/tfs/ANSYS_Development'
+              teamProject: Portfolio
+              buildDefinition: 'S-One Tools build status'
+              buildParameters: 'NEW_NAME: pyscadeone $(VersionNumber)'
+              password: $(globalaccesstoken)
+
+          - task: benjhuser.tfs-extensions-build-tasks.trigger-build-task.TriggerBuild@4
+            displayName: "Trigger Automated Tests"
+            inputs:
+              buildDefinition: "API.pyscadeone Automated Tests - Windows"
+              ignoreSslCertificateErrors: true
+              templateParameters: "buildIDToTest: $(VersionNumber)"
+              authenticationMethod: "OAuth Token"
+            continueOnError: true

@@ -1,0 +1,1088 @@
+{
+  "version" : "1.0",
+  "model" : [
+    [ "predefined_type", { "id" : 18, "name" : "bool" } ],
+    [ "predefined_type", { "id" : 19, "name" : "char" } ],
+    [ "predefined_type", { "id" : 20, "name" : "int8" } ],
+    [ "predefined_type", { "id" : 21, "name" : "int16" } ],
+    [ "predefined_type", { "id" : 22, "name" : "int32" } ],
+    [ "predefined_type", { "id" : 23, "name" : "int64" } ],
+    [ "predefined_type", { "id" : 24, "name" : "uint8" } ],
+    [ "predefined_type", { "id" : 25, "name" : "uint16" } ],
+    [ "predefined_type", { "id" : 26, "name" : "uint32" } ],
+    [ "predefined_type", { "id" : 27, "name" : "uint64" } ],
+    [ "predefined_type", { "id" : 28, "name" : "float32" } ],
+    [ "predefined_type", { "id" : 29, "name" : "float64" } ],
+    [ "array", { "id" : 657, "base_type" : 33, "size" : 12 } ],
+    [ "array", { "id" : 656, "base_type" : 18, "size" : 1 } ],
+    [ "array", { "id" : 655, "base_type" : 654, "size" : 4 } ],
+    [ "array", { "id" : 654, "base_type" : 653, "size" : 2 } ],
+    [ "array", { "id" : 653, "base_type" : 22, "size" : 3 } ],
+    [
+      "operator",
+      {
+        "id" : 59,
+        "path" : "module0::operator1",
+        "inputs" : [
+          { "id" : 232, "name" : "i0" },
+          { "id" : 233, "name" : "i1" },
+          { "id" : 234, "name" : "i2" },
+          { "id" : 235, "name" : "i3" }
+        ],
+        "outputs" : [
+          { "id" : 236, "name" : "o0" },
+          { "id" : 237, "name" : "o1" },
+          { "id" : 238, "name" : "o2" },
+          { "id" : 239, "name" : "o3" }
+        ],
+        "root" : true,
+        "instances" : [
+          [ "operator", { "id" : 264, "path" : "#0:", "operator" : 636 } ],
+          [ "operator", { "id" : 258, "path" : "#5:", "operator" : 622 } ],
+          [ "operator", { "id" : 256, "path" : "#10:", "operator" : 42 } ],
+          [ "operator", { "id" : 250, "path" : "#15:", "operator" : 42 } ]
+        ]
+      }
+    ],
+    [
+      "mono",
+      {
+        "id" : 636,
+        "path" : "module0::genericSquare[N0=2][T0=int32]",
+        "src" : 57,
+        "inputs" : [ { "id" : 638, "src" : 222 } ],
+        "outputs" : [ { "id" : 639, "src" : 223 } ],
+        "type_parameters" : [ { "id" : 221, "name" : "T0", "type" : 22 } ],
+        "size_parameters" : [ { "id" : 220, "name" : "N0", "value" : 2 } ]
+      }
+    ],
+    [
+      "mono",
+      {
+        "id" : 622,
+        "path" : "module0::genericSquare[N0=3][T0=int64]",
+        "src" : 57,
+        "inputs" : [ { "id" : 624, "src" : 222 } ],
+        "outputs" : [ { "id" : 625, "src" : 223 } ],
+        "type_parameters" : [ { "id" : 221, "name" : "T0", "type" : 23 } ],
+        "size_parameters" : [ { "id" : 220, "name" : "N0", "value" : 3 } ]
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 57,
+        "path" : "module0::genericSquare",
+        "inputs" : [ { "id" : 222, "name" : "i0" } ],
+        "outputs" : [ { "id" : 223, "name" : "o0" } ]
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 42,
+        "path" : "module0::oneOutput",
+        "inputs" : [ { "id" : 208, "name" : "i0" } ],
+        "outputs" : [ { "id" : 209, "name" : "o0" } ]
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 38,
+        "path" : "module0::operator0",
+        "inputs" : [ { "id" : 163, "name" : "i0" } ],
+        "outputs" : [ { "id" : 164, "name" : "o0" } ],
+        "root" : true
+      }
+    ],
+    [ "const", { "id" : 31, "path" : "module0::C1", "type" : 657 } ],
+    [ "const", { "id" : 32, "path" : "module0::C2", "type" : 33 } ],
+    [
+      "named_type",
+      { "id" : 33, "path" : "module0::T_Variant", "definition" : 1098 }
+    ],
+    [
+      "variant",
+      {
+        "id" : 1098,
+        "constructors" : [
+          { "id" : 34, "name" : "T_int", "type" : 22 },
+          { "id" : 35, "name" : "T_bool_box", "type" : 656 }
+        ]
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 37,
+        "path" : "module0::node0",
+        "inputs" : [
+          { "id" : 121, "name" : "i0" },
+          { "id" : 122, "name" : "i1" },
+          { "id" : 527, "name" : "i2", "projection" : [ 1 ] },
+          { "id" : 528, "name" : "i2", "projection" : [ 2 ] }
+        ],
+        "outputs" : [
+          { "id" : 124, "name" : "o0" },
+          { "id" : 125, "name" : "o1" },
+          { "id" : 529, "name" : "o2", "projection" : [ 1 ] },
+          { "id" : 530, "name" : "o2", "projection" : [ 2 ] }
+        ],
+        "probes" : [
+          { "id" : 530, "path" : "o2", "projection" : [ 2 ], "kind" : "Output" },
+          { "id" : 529, "path" : "o2", "projection" : [ 1 ], "kind" : "Output" },
+          { "id" : 121, "path" : "i0", "kind" : "Input" },
+          { "id" : 129, "path" : "x0", "kind" : "Local" },
+          { "id" : 532, "path" : "x1", "projection" : [ 2 ], "kind" : "Local" },
+          { "id" : 531, "path" : "x1", "projection" : [ 1 ], "kind" : "Local" }
+        ],
+        "root" : true
+      }
+    ],
+    [
+      "operator",
+      {
+        "id" : 36,
+        "path" : "module0::function0",
+        "inputs" : [
+          { "id" : 64, "name" : "i0" },
+          { "id" : 65, "name" : "i1" },
+          { "id" : 66, "name" : "i2" },
+          { "id" : 67, "name" : "iEnum" },
+          { "id" : 68, "name" : "iStruct" },
+          { "id" : 69, "name" : "iArray" },
+          { "id" : 70, "name" : "iComplex" },
+          { "id" : 71, "name" : "iArrays" },
+          { "id" : 72, "name" : "iBools" },
+          { "id" : 458, "name" : "iGroup", "projection" : [ 1 ] },
+          { "id" : 459, "name" : "iGroup", "projection" : [ 2 ] },
+          { "id" : 460, "name" : "iGroup", "projection" : [ "falsy" ] },
+          { "id" : 461, "name" : "iGroup", "projection" : [ "group1", 1 ] },
+          { "id" : 462, "name" : "iGroup", "projection" : [ "group1", "x" ] },
+          { "id" : 463, "name" : "iGroup", "projection" : [ "group1", "y" ] },
+          { "id" : 464, "name" : "iGroup", "projection" : [ "size" ] }
+        ],
+        "outputs" : [
+          { "id" : 74, "name" : "o0" },
+          { "id" : 75, "name" : "o1" },
+          { "id" : 76, "name" : "o2" },
+          { "id" : 77, "name" : "o3" },
+          { "id" : 78, "name" : "oEnum" },
+          { "id" : 79, "name" : "oStruct" },
+          { "id" : 80, "name" : "oArray" },
+          { "id" : 81, "name" : "oComplex" },
+          { "id" : 82, "name" : "oArrays" },
+          { "id" : 83, "name" : "oBools" },
+          { "id" : 465, "name" : "oGroup", "projection" : [ 1 ] },
+          { "id" : 466, "name" : "oGroup", "projection" : [ 2 ] },
+          { "id" : 467, "name" : "oGroup", "projection" : [ "falsy" ] },
+          { "id" : 468, "name" : "oGroup", "projection" : [ "group1", 1 ] },
+          { "id" : 469, "name" : "oGroup", "projection" : [ "group1", "x" ] },
+          { "id" : 470, "name" : "oGroup", "projection" : [ "group1", "y" ] },
+          { "id" : 471, "name" : "oGroup", "projection" : [ "size" ] }
+        ],
+        "root" : true
+      }
+    ],
+    [ "sensor", { "id" : 40, "path" : "module0::sensor0", "type" : 22 } ],
+    [ "named_type", { "id" : 60, "path" : "module0::array1", "definition" : 655 } ],
+    [
+      "named_type",
+      { "id" : 53, "path" : "module0::complexStruct", "definition" : 1094 }
+    ],
+    [
+      "struct",
+      {
+        "id" : 1094,
+        "fields" : [
+          { "id" : 54, "name" : "a", "type" : 45 },
+          { "id" : 55, "name" : "b", "type" : 52 },
+          { "id" : 56, "name" : "c", "type" : 49 }
+        ]
+      }
+    ],
+    [ "named_type", { "id" : 52, "path" : "module0::array0", "definition" : 653 } ],
+    [
+      "named_type",
+      { "id" : 49, "path" : "module0::struct0", "definition" : 1095 }
+    ],
+    [
+      "struct",
+      {
+        "id" : 1095,
+        "fields" : [
+          { "id" : 50, "name" : "x", "type" : 22 },
+          { "id" : 51, "name" : "y", "type" : 18 }
+        ]
+      }
+    ],
+    [ "named_type", { "id" : 45, "path" : "module0::enum0", "definition" : 1139 } ],
+    [
+      "enum",
+      {
+        "id" : 1139,
+        "values" : [
+          { "id" : 46, "path" : "module0::RED" },
+          { "id" : 47, "path" : "module0::GREEN" },
+          { "id" : 48, "path" : "module0::BLUE" }
+        ]
+      }
+    ],
+    [ "named_type", { "id" : 44, "path" : "module0::type0", "definition" : 18 } ]
+  ],
+  "code" : [
+    {
+      "interface_file" : "swan_elaboration.h",
+      "implementation_file" : "swan_elaboration.c",
+      "declarations" : [
+        [ "macro", { "id" : 1085, "name" : "SWAN_swan_elaboration_H_" } ],
+        [ "function", { "id" : 0, "name" : "swan_elaboration" } ]
+      ]
+    },
+    {
+      "interface_file" : "operator1_module0.h",
+      "implementation_file" : "operator1_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1083, "name" : "SWAN_operator1_module0_H_" } ],
+        [
+          "function",
+          {
+            "id" : 59,
+            "name" : "operator1_module0",
+            "parameters" : [
+              { "id" : 232, "name" : "i0", "type" : 968 },
+              { "id" : 233, "name" : "i1", "type" : 969 },
+              { "id" : 234, "name" : "i2", "type" : 968 },
+              { "id" : 235, "name" : "i3", "type" : 968 },
+              { "id" : 236, "name" : "o0", "type" : 968, "pointer" : true },
+              { "id" : 237, "name" : "o1", "type" : 969, "pointer" : true },
+              { "id" : 238, "name" : "o2", "type" : 968, "pointer" : true },
+              { "id" : 239, "name" : "o3", "type" : 968, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "genericSquare_module0_N02_T0i32.h",
+      "implementation_file" : "genericSquare_module0_N02_T0i32.c",
+      "declarations" : [
+        [
+          "macro",
+          { "id" : 1081, "name" : "SWAN_genericSquare_module0_N02_T0i32_H_" }
+        ],
+        [
+          "function",
+          {
+            "id" : 636,
+            "name" : "genericSquare_module0_N02_T0i32",
+            "return_type" : 968,
+            "parameters" : [ { "id" : 638, "name" : "i0", "type" : 968 } ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "genericSquare_module0_N03_T0i64.h",
+      "implementation_file" : "genericSquare_module0_N03_T0i64.c",
+      "declarations" : [
+        [
+          "macro",
+          { "id" : 1079, "name" : "SWAN_genericSquare_module0_N03_T0i64_H_" }
+        ],
+        [
+          "function",
+          {
+            "id" : 622,
+            "name" : "genericSquare_module0_N03_T0i64",
+            "return_type" : 969,
+            "parameters" : [ { "id" : 624, "name" : "i0", "type" : 969 } ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "oneOutput_module0.h",
+      "implementation_file" : "oneOutput_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1077, "name" : "SWAN_oneOutput_module0_H_" } ],
+        [
+          "function",
+          {
+            "id" : 42,
+            "name" : "oneOutput_module0",
+            "return_type" : 968,
+            "parameters" : [ { "id" : 208, "name" : "i0", "type" : 968 } ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "operator0_module0.h",
+      "implementation_file" : "operator0_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1075, "name" : "SWAN_operator0_module0_H_" } ],
+        [
+          "function",
+          {
+            "id" : 38,
+            "name" : "operator0_module0",
+            "return_type" : 968,
+            "parameters" : [ { "id" : 163, "name" : "i0", "type" : 1004 } ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "node0_module0.h",
+      "implementation_file" : "node0_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1073, "name" : "SWAN_node0_module0_H_" } ],
+        [
+          "struct",
+          {
+            "id" : 1066,
+            "name" : "swan_tag_outC_node0_module0",
+            "fields" : [
+              { "id" : 668, "name" : "g2_x1_reg", "type" : 968 },
+              { "id" : 704, "name" : "ini_reg", "type" : 1004 }
+            ]
+          }
+        ],
+        [ "typedef", { "id" : 1065, "name" : "outC_node0_module0", "type" : 1066 } ],
+        [
+          "struct",
+          {
+            "id" : 1072,
+            "name" : "swan_tag_obsS_node0_module0",
+            "fields" : [
+              { "id" : 949, "name" : "i0", "type" : 968 },
+              { "id" : 950, "name" : "x0", "type" : 968 },
+              { "id" : 951, "name" : "g1_o2", "type" : 975 },
+              { "id" : 952, "name" : "g2_o2", "type" : 968 },
+              { "id" : 953, "name" : "g1_x1", "type" : 975 },
+              { "id" : 954, "name" : "g2_x1", "type" : 968 }
+            ]
+          }
+        ],
+        [ "typedef", { "id" : 938, "name" : "obsS_node0_module0", "type" : 1072 } ],
+        [
+          "function",
+          {
+            "id" : 37,
+            "name" : "node0_module0",
+            "parameters" : [
+              { "id" : 121, "name" : "i0", "type" : 968 },
+              { "id" : 122, "name" : "i1", "type" : 975 },
+              { "id" : 527, "name" : "g1_i2", "type" : 975 },
+              { "id" : 528, "name" : "g2_i2", "type" : 968 },
+              { "id" : 124, "name" : "o0", "type" : 968, "pointer" : true },
+              { "id" : 125, "name" : "o1", "type" : 975, "pointer" : true },
+              { "id" : 529, "name" : "g1_o2", "type" : 975, "pointer" : true },
+              { "id" : 530, "name" : "g2_o2", "type" : 968, "pointer" : true },
+              { "id" : 955, "name" : "obsS", "type" : 938, "pointer" : true },
+              { "id" : 1067, "name" : "outC", "type" : 1065, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1068,
+            "name" : "node0_reset_module0",
+            "parameters" : [
+              { "id" : 1069, "name" : "outC", "type" : 1065, "pointer" : true }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1070,
+            "name" : "node0_init_module0",
+            "parameters" : [
+              { "id" : 1071, "name" : "outC", "type" : 1065, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "function0_module0.h",
+      "implementation_file" : "function0_module0.c",
+      "declarations" : [
+        [ "macro", { "id" : 1063, "name" : "SWAN_function0_module0_H_" } ],
+        [
+          "function",
+          {
+            "id" : 36,
+            "name" : "function0_module0",
+            "parameters" : [
+              { "id" : 64, "name" : "i0", "type" : 968 },
+              { "id" : 65, "name" : "i1", "type" : 975 },
+              { "id" : 66, "name" : "i2", "type" : 44 },
+              { "id" : 67, "name" : "iEnum", "type" : 45 },
+              {
+                "id" : 68,
+                "name" : "iStruct",
+                "type" : 49,
+                "pointer" : true,
+                "const" : true
+              },
+              { "id" : 69, "name" : "iArray", "type" : 52, "pointer" : true, "const" : true },
+              {
+                "id" : 70,
+                "name" : "iComplex",
+                "type" : 53,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 71,
+                "name" : "iArrays",
+                "type" : 60,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 72,
+                "name" : "iBools",
+                "type" : 1010,
+                "pointer" : true,
+                "const" : true
+              },
+              { "id" : 458, "name" : "g1_iGroup", "type" : 968 },
+              { "id" : 459, "name" : "g2_iGroup", "type" : 1004 },
+              { "id" : 460, "name" : "g3_iGroup", "type" : 1004 },
+              { "id" : 461, "name" : "g4_iGroup", "type" : 1004 },
+              { "id" : 462, "name" : "g5_iGroup", "type" : 968 },
+              { "id" : 463, "name" : "g6_iGroup", "type" : 968 },
+              { "id" : 464, "name" : "g7_iGroup", "type" : 969 },
+              { "id" : 74, "name" : "o0", "type" : 968, "pointer" : true },
+              { "id" : 75, "name" : "o1", "type" : 975, "pointer" : true },
+              { "id" : 76, "name" : "o2", "type" : 44, "pointer" : true },
+              { "id" : 77, "name" : "o3", "type" : 968, "pointer" : true },
+              { "id" : 78, "name" : "oEnum", "type" : 45, "pointer" : true },
+              { "id" : 79, "name" : "oStruct", "type" : 49, "pointer" : true },
+              { "id" : 80, "name" : "oArray", "type" : 52, "pointer" : true },
+              { "id" : 81, "name" : "oComplex", "type" : 53, "pointer" : true },
+              { "id" : 82, "name" : "oArrays", "type" : 60, "pointer" : true },
+              { "id" : 83, "name" : "oBools", "type" : 1010, "pointer" : true },
+              { "id" : 465, "name" : "g1_oGroup", "type" : 968, "pointer" : true },
+              { "id" : 466, "name" : "g2_oGroup", "type" : 1004, "pointer" : true },
+              { "id" : 467, "name" : "g3_oGroup", "type" : 1004, "pointer" : true },
+              { "id" : 468, "name" : "g4_oGroup", "type" : 1004, "pointer" : true },
+              { "id" : 469, "name" : "g5_oGroup", "type" : 968, "pointer" : true },
+              { "id" : 470, "name" : "g6_oGroup", "type" : 968, "pointer" : true },
+              { "id" : 471, "name" : "g7_oGroup", "type" : 969, "pointer" : true }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_config.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "predefined_type", { "id" : 966, "name" : "swan_int8" } ],
+        [ "predefined_type", { "id" : 967, "name" : "swan_int16" } ],
+        [ "predefined_type", { "id" : 968, "name" : "swan_int32" } ],
+        [ "predefined_type", { "id" : 969, "name" : "swan_int64" } ],
+        [ "predefined_type", { "id" : 970, "name" : "swan_uint8" } ],
+        [ "predefined_type", { "id" : 971, "name" : "swan_uint16" } ],
+        [ "predefined_type", { "id" : 972, "name" : "swan_uint32" } ],
+        [ "predefined_type", { "id" : 973, "name" : "swan_uint64" } ],
+        [ "predefined_type", { "id" : 974, "name" : "swan_size" } ],
+        [ "predefined_type", { "id" : 975, "name" : "swan_float32" } ],
+        [ "predefined_type", { "id" : 976, "name" : "swan_float64" } ],
+        [ "macro", { "id" : 996, "name" : "swan_assign" } ],
+        [ "macro", { "id" : 999, "name" : "swan_guarantee" } ],
+        [ "macro", { "id" : 1000, "name" : "swan_assume" } ],
+        [ "macro", { "id" : 1001, "name" : "swan_assert" } ],
+        [ "macro", { "id" : 1002, "name" : "swan_false" } ],
+        [ "macro", { "id" : 1003, "name" : "swan_true" } ],
+        [ "predefined_type", { "id" : 1004, "name" : "swan_bool" } ],
+        [ "predefined_type", { "id" : 1005, "name" : "swan_char" } ],
+        [ "macro", { "id" : 1028, "name" : "swan_lit_i8" } ],
+        [ "macro", { "id" : 1029, "name" : "swan_lit_i16" } ],
+        [ "macro", { "id" : 1030, "name" : "swan_lit_i32" } ],
+        [ "macro", { "id" : 1031, "name" : "swan_lit_i64" } ],
+        [ "macro", { "id" : 1032, "name" : "swan_lsl_u8" } ],
+        [ "macro", { "id" : 1033, "name" : "swan_lnot_u8" } ],
+        [ "macro", { "id" : 1034, "name" : "swan_lit_u8" } ],
+        [ "macro", { "id" : 1035, "name" : "swan_lsl_u16" } ],
+        [ "macro", { "id" : 1036, "name" : "swan_lnot_u16" } ],
+        [ "macro", { "id" : 1037, "name" : "swan_lit_u16" } ],
+        [ "macro", { "id" : 1038, "name" : "swan_lsl_u32" } ],
+        [ "macro", { "id" : 1039, "name" : "swan_lnot_u32" } ],
+        [ "macro", { "id" : 1040, "name" : "swan_lit_u32" } ],
+        [ "macro", { "id" : 1041, "name" : "swan_lsl_u64" } ],
+        [ "macro", { "id" : 1042, "name" : "swan_lnot_u64" } ],
+        [ "macro", { "id" : 1043, "name" : "swan_lit_u64" } ],
+        [ "macro", { "id" : 1044, "name" : "swan_lit_f32" } ],
+        [ "macro", { "id" : 1045, "name" : "swan_lit_f64" } ],
+        [ "macro", { "id" : 1046, "name" : "swan_lit_char" } ]
+      ]
+    },
+    {
+      "interface_file" : "swan_types.h",
+      "implementation_file" : "swan_types.c",
+      "declarations" : [
+        [ "macro", { "id" : 981, "name" : "SWAN_TYPES_H_" } ],
+        [
+          "enum",
+          {
+            "id" : 1139,
+            "name" : "swan_tag_enum0_module0",
+            "values" : [
+              { "id" : 46, "name" : "RED" },
+              { "id" : 47, "name" : "GREEN" },
+              { "id" : 48, "name" : "BLUE" }
+            ]
+          }
+        ],
+        [ "typedef", { "id" : 45, "name" : "enum0_module0", "type" : 1139 } ],
+        [
+          "enum",
+          {
+            "id" : 1096,
+            "name" : "swan_kind_T_Variant_module0",
+            "values" : [
+              { "id" : 34, "name" : "T_int" },
+              { "id" : 35, "name" : "T_bool_box" }
+            ]
+          }
+        ],
+        [
+          "typedef",
+          { "id" : 1097, "name" : "kind_T_Variant_module0", "type" : 1096 }
+        ],
+        [
+          "array",
+          {
+            "id" : 1010,
+            "name" : "array_bool_9",
+            "base_type" : 1004,
+            "size" : 9,
+            "copy" : 1011,
+            "equality" : 1012,
+            "equality_use" : "swan_use_array_bool_9"
+          }
+        ],
+        [
+          "array",
+          {
+            "id" : 1006,
+            "name" : "array_bool_1",
+            "base_type" : 1004,
+            "size" : 1,
+            "copy" : 1007,
+            "equality" : 1008,
+            "equality_use" : "swan_use_array_bool_1"
+          }
+        ],
+        [
+          "struct",
+          {
+            "id" : 1099,
+            "name" : "swan_variant_T_bool_box",
+            "fields" : [
+              { "id" : 1060, "name" : "swan_tag", "type" : 1097 },
+              { "id" : 1061, "name" : "swan_value", "type" : 1006 }
+            ]
+          }
+        ],
+        [ "typedef", { "id" : 1100, "name" : "variant_T_bool_box", "type" : 1099 } ],
+        [
+          "struct",
+          {
+            "id" : 1101,
+            "name" : "swan_variant_T_int",
+            "fields" : [
+              { "id" : 1057, "name" : "swan_tag", "type" : 1097 },
+              { "id" : 1058, "name" : "swan_value", "type" : 968 }
+            ]
+          }
+        ],
+        [ "typedef", { "id" : 1102, "name" : "variant_T_int", "type" : 1101 } ],
+        [
+          "array",
+          {
+            "id" : 52,
+            "name" : "array0_module0",
+            "base_type" : 968,
+            "size" : 3,
+            "copy" : 1017,
+            "equality" : 1018,
+            "equality_use" : "swan_use_array0_module0"
+          }
+        ],
+        [
+          "array",
+          {
+            "id" : 1024,
+            "name" : "array_i32_3_2",
+            "base_type" : 52,
+            "size" : 2,
+            "copy" : 1025,
+            "equality" : 1026,
+            "equality_use" : "swan_use_array_i32_3_2"
+          }
+        ],
+        [
+          "array",
+          {
+            "id" : 60,
+            "name" : "array1_module0",
+            "base_type" : 1024,
+            "size" : 4,
+            "copy" : 1014,
+            "equality" : 1015,
+            "equality_use" : "swan_use_array1_module0"
+          }
+        ],
+        [
+          "struct",
+          {
+            "id" : 1095,
+            "name" : "swan_tag_struct0_module0",
+            "fields" : [
+              { "id" : 50, "name" : "x", "type" : 968 },
+              { "id" : 51, "name" : "y", "type" : 1004 }
+            ],
+            "copy" : 1047,
+            "equality" : 1048,
+            "equality_use" : "swan_use_struct0_module0"
+          }
+        ],
+        [
+          "typedef",
+          {
+            "id" : 49,
+            "name" : "struct0_module0",
+            "type" : 1095,
+            "copy" : 1047,
+            "equality" : 1048,
+            "equality_use" : "swan_use_struct0_module0"
+          }
+        ],
+        [
+          "struct",
+          {
+            "id" : 1094,
+            "name" : "swan_tag_complexStruct_module0",
+            "fields" : [
+              { "id" : 54, "name" : "a", "type" : 45 },
+              { "id" : 55, "name" : "b", "type" : 52 },
+              { "id" : 56, "name" : "c", "type" : 49 }
+            ],
+            "copy" : 1050,
+            "equality" : 1051,
+            "equality_use" : "swan_use_complexStruct_module0"
+          }
+        ],
+        [
+          "typedef",
+          {
+            "id" : 53,
+            "name" : "complexStruct_module0",
+            "type" : 1094,
+            "copy" : 1050,
+            "equality" : 1051,
+            "equality_use" : "swan_use_complexStruct_module0"
+          }
+        ],
+        [ "typedef", { "id" : 44, "name" : "type0_module0", "type" : 1004 } ],
+        [
+          "union",
+          {
+            "id" : 1098,
+            "name" : "swan_union_T_Variant_module0",
+            "variants" : [
+              { "id" : 1056, "name" : "T_int", "enum_value" : 34, "type" : 1102 },
+              { "id" : 1059, "name" : "T_bool_box", "enum_value" : 35, "type" : 1100 }
+            ],
+            "copy" : 1053,
+            "equality" : 1054,
+            "equality_use" : "swan_use_T_Variant_module0"
+          }
+        ],
+        [
+          "typedef",
+          {
+            "id" : 33,
+            "name" : "T_Variant_module0",
+            "type" : 1098,
+            "copy" : 1053,
+            "equality" : 1054,
+            "equality_use" : "swan_use_T_Variant_module0"
+          }
+        ],
+        [
+          "array",
+          {
+            "id" : 1020,
+            "name" : "array_1",
+            "base_type" : 33,
+            "size" : 12,
+            "copy" : 1021,
+            "equality" : 1022,
+            "equality_use" : "swan_use_array_1"
+          }
+        ],
+        [ "macro", { "id" : 1047, "name" : "swan_cp_struct0_module0" } ],
+        [ "macro", { "id" : 1050, "name" : "swan_cp_complexStruct_module0" } ],
+        [ "macro", { "id" : 1007, "name" : "swan_cp_array_bool_1" } ],
+        [ "macro", { "id" : 1011, "name" : "swan_cp_array_bool_9" } ],
+        [ "macro", { "id" : 1014, "name" : "swan_cp_array1_module0" } ],
+        [ "macro", { "id" : 1017, "name" : "swan_cp_array0_module0" } ],
+        [ "macro", { "id" : 1021, "name" : "swan_cp_array_1" } ],
+        [ "macro", { "id" : 1025, "name" : "swan_cp_array_i32_3_2" } ],
+        [ "macro", { "id" : 1053, "name" : "swan_cp_T_Variant_module0" } ],
+        [
+          "function",
+          {
+            "id" : 1048,
+            "name" : "swan_eq_struct0_module0",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1119,
+                "name" : "swan_c1",
+                "type" : 49,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1120,
+                "name" : "swan_c2",
+                "type" : 49,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1051,
+            "name" : "swan_eq_complexStruct_module0",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1117,
+                "name" : "swan_c1",
+                "type" : 53,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1118,
+                "name" : "swan_c2",
+                "type" : 53,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1008,
+            "name" : "swan_eq_array_bool_1",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1115,
+                "name" : "swan_c1",
+                "type" : 1006,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1116,
+                "name" : "swan_c2",
+                "type" : 1006,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1012,
+            "name" : "swan_eq_array_bool_9",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1113,
+                "name" : "swan_c1",
+                "type" : 1010,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1114,
+                "name" : "swan_c2",
+                "type" : 1010,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1015,
+            "name" : "swan_eq_array1_module0",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1111,
+                "name" : "swan_c1",
+                "type" : 60,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1112,
+                "name" : "swan_c2",
+                "type" : 60,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1018,
+            "name" : "swan_eq_array0_module0",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1109,
+                "name" : "swan_c1",
+                "type" : 52,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1110,
+                "name" : "swan_c2",
+                "type" : 52,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1022,
+            "name" : "swan_eq_array_1",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1107,
+                "name" : "swan_c1",
+                "type" : 1020,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1108,
+                "name" : "swan_c2",
+                "type" : 1020,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1026,
+            "name" : "swan_eq_array_i32_3_2",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1105,
+                "name" : "swan_c1",
+                "type" : 1024,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1106,
+                "name" : "swan_c2",
+                "type" : 1024,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ],
+        [
+          "function",
+          {
+            "id" : 1054,
+            "name" : "swan_eq_T_Variant_module0",
+            "return_type" : 1004,
+            "parameters" : [
+              {
+                "id" : 1103,
+                "name" : "swan_c1",
+                "type" : 33,
+                "pointer" : true,
+                "const" : true
+              },
+              {
+                "id" : 1104,
+                "name" : "swan_c2",
+                "type" : 33,
+                "pointer" : true,
+                "const" : true
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "interface_file" : "swan_consts.h",
+      "implementation_file" : "swan_consts.c",
+      "declarations" : [
+        [ "macro", { "id" : 980, "name" : "SWAN_CONSTS_H_" } ],
+        [ "global", { "id" : 32, "name" : "C2_module0", "type" : 33 } ],
+        [ "global", { "id" : 31, "name" : "C1_module0", "type" : 1020 } ]
+      ]
+    },
+    {
+      "interface_file" : "swan_sensors.h",
+      "user_provided" : true,
+      "declarations" : [
+        [ "global", { "id" : 40, "name" : "sensor0_module0", "type" : 968 } ]
+      ]
+    }
+  ],
+  "mapping" : [
+    { "model_id" : 18, "code_id" : 1004 },
+    { "model_id" : 19, "code_id" : 1005 },
+    { "model_id" : 20, "code_id" : 966 },
+    { "model_id" : 21, "code_id" : 967 },
+    { "model_id" : 22, "code_id" : 968 },
+    { "model_id" : 23, "code_id" : 969 },
+    { "model_id" : 24, "code_id" : 970 },
+    { "model_id" : 25, "code_id" : 971 },
+    { "model_id" : 26, "code_id" : 972 },
+    { "model_id" : 27, "code_id" : 973 },
+    { "model_id" : 28, "code_id" : 975 },
+    { "model_id" : 29, "code_id" : 976 },
+    { "model_id" : 31, "code_id" : 0, "role" : "ElaborationFunction" },
+    { "model_id" : 31, "code_id" : 31 },
+    { "model_id" : 32, "code_id" : 32 },
+    { "model_id" : 33, "code_id" : 33 },
+    { "model_id" : 34, "code_id" : 34 },
+    { "model_id" : 35, "code_id" : 35 },
+    { "model_id" : 36, "code_id" : 36, "role" : "CycleMethod" },
+    { "model_id" : 37, "code_id" : 37, "role" : "CycleMethod" },
+    { "model_id" : 37, "code_id" : 938, "role" : "ObsStructType" },
+    { "model_id" : 37, "code_id" : 1065, "role" : "ContextType" },
+    { "model_id" : 37, "code_id" : 1068, "role" : "ResetMethod" },
+    { "model_id" : 37, "code_id" : 1070, "role" : "InitMethod" },
+    { "model_id" : 38, "code_id" : 38, "role" : "CycleMethod" },
+    { "model_id" : 40, "code_id" : 40 },
+    { "model_id" : 42, "code_id" : 42, "role" : "CycleMethod" },
+    { "model_id" : 44, "code_id" : 44 },
+    { "model_id" : 45, "code_id" : 45 },
+    { "model_id" : 46, "code_id" : 46 },
+    { "model_id" : 47, "code_id" : 47 },
+    { "model_id" : 48, "code_id" : 48 },
+    { "model_id" : 49, "code_id" : 49 },
+    { "model_id" : 50, "code_id" : 50 },
+    { "model_id" : 51, "code_id" : 51 },
+    { "model_id" : 52, "code_id" : 52 },
+    { "model_id" : 53, "code_id" : 53 },
+    { "model_id" : 54, "code_id" : 54 },
+    { "model_id" : 55, "code_id" : 55 },
+    { "model_id" : 56, "code_id" : 56 },
+    { "model_id" : 59, "code_id" : 59, "role" : "CycleMethod" },
+    { "model_id" : 60, "code_id" : 60 },
+    { "model_id" : 64, "code_id" : 64 },
+    { "model_id" : 65, "code_id" : 65 },
+    { "model_id" : 66, "code_id" : 66 },
+    { "model_id" : 67, "code_id" : 67 },
+    { "model_id" : 68, "code_id" : 68 },
+    { "model_id" : 69, "code_id" : 69 },
+    { "model_id" : 70, "code_id" : 70 },
+    { "model_id" : 71, "code_id" : 71 },
+    { "model_id" : 72, "code_id" : 72 },
+    { "model_id" : 74, "code_id" : 74 },
+    { "model_id" : 75, "code_id" : 75 },
+    { "model_id" : 76, "code_id" : 76 },
+    { "model_id" : 77, "code_id" : 77 },
+    { "model_id" : 78, "code_id" : 78 },
+    { "model_id" : 79, "code_id" : 79 },
+    { "model_id" : 80, "code_id" : 80 },
+    { "model_id" : 81, "code_id" : 81 },
+    { "model_id" : 82, "code_id" : 82 },
+    { "model_id" : 83, "code_id" : 83 },
+    { "model_id" : 121, "code_id" : 121 },
+    { "model_id" : 121, "code_id" : 949, "role" : "ObsStructField" },
+    { "model_id" : 122, "code_id" : 122 },
+    { "model_id" : 124, "code_id" : 124 },
+    { "model_id" : 125, "code_id" : 125 },
+    { "model_id" : 129, "code_id" : 950, "role" : "ObsStructField" },
+    { "model_id" : 163, "code_id" : 163 },
+    { "model_id" : 208, "code_id" : 208 },
+    { "model_id" : 232, "code_id" : 232 },
+    { "model_id" : 233, "code_id" : 233 },
+    { "model_id" : 234, "code_id" : 234 },
+    { "model_id" : 235, "code_id" : 235 },
+    { "model_id" : 236, "code_id" : 236 },
+    { "model_id" : 237, "code_id" : 237 },
+    { "model_id" : 238, "code_id" : 238 },
+    { "model_id" : 239, "code_id" : 239 },
+    { "model_id" : 458, "code_id" : 458 },
+    { "model_id" : 459, "code_id" : 459 },
+    { "model_id" : 460, "code_id" : 460 },
+    { "model_id" : 461, "code_id" : 461 },
+    { "model_id" : 462, "code_id" : 462 },
+    { "model_id" : 463, "code_id" : 463 },
+    { "model_id" : 464, "code_id" : 464 },
+    { "model_id" : 465, "code_id" : 465 },
+    { "model_id" : 466, "code_id" : 466 },
+    { "model_id" : 467, "code_id" : 467 },
+    { "model_id" : 468, "code_id" : 468 },
+    { "model_id" : 469, "code_id" : 469 },
+    { "model_id" : 470, "code_id" : 470 },
+    { "model_id" : 471, "code_id" : 471 },
+    { "model_id" : 527, "code_id" : 527 },
+    { "model_id" : 528, "code_id" : 528 },
+    { "model_id" : 529, "code_id" : 529 },
+    { "model_id" : 529, "code_id" : 951, "role" : "ObsStructField" },
+    { "model_id" : 530, "code_id" : 530 },
+    { "model_id" : 530, "code_id" : 952, "role" : "ObsStructField" },
+    { "model_id" : 531, "code_id" : 953, "role" : "ObsStructField" },
+    { "model_id" : 532, "code_id" : 954, "role" : "ObsStructField" },
+    { "model_id" : 622, "code_id" : 622, "role" : "CycleMethod" },
+    { "model_id" : 624, "code_id" : 624 },
+    { "model_id" : 636, "code_id" : 636, "role" : "CycleMethod" },
+    { "model_id" : 638, "code_id" : 638 },
+    { "model_id" : 955, "code_id" : 955 },
+    { "model_id" : 1094, "code_id" : 1094 },
+    { "model_id" : 1095, "code_id" : 1095 },
+    { "model_id" : 1098, "code_id" : 1098 },
+    { "model_id" : 1139, "code_id" : 1139 }
+  ]
+}

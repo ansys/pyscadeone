@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,11 +25,11 @@ import ctypes
 import sys
 
 
-class Imported(ctypes.Structure):
+class External(ctypes.Structure):
     _fields_ = [("f1", ctypes.c_int8), ("f2", ctypes.c_int16)]
 
 
-class VSizeImported(ctypes.Structure):
+class VSizeExternal(ctypes.Structure):
     _fields_ = [("eLen", ctypes.c_short), ("eValue", ctypes.c_void_p)]
 
     def __init__(self, str_value: str, *args, **kw) -> None:
@@ -40,13 +41,13 @@ class VSizeImported(ctypes.Structure):
         self.eValue = ctypes.addressof(self.c_bytes)
 
 
-def vsize_imported_get_bytes_size(src_data: ctypes.c_void_p) -> int:
-    vsi_data = ctypes.cast(src_data, ctypes.POINTER(VSizeImported)).contents
+def vsize_external_get_bytes_size(src_data: ctypes.c_void_p) -> int:
+    vsi_data = ctypes.cast(src_data, ctypes.POINTER(VSizeExternal)).contents
     return ctypes.sizeof(ctypes.c_short) + vsi_data.eLen
 
 
-def vsize_imported_to_bytes(src_data: ctypes.c_void_p, dst_bytes: ctypes.c_void_p) -> None:
-    vsi_data = ctypes.cast(src_data, ctypes.POINTER(VSizeImported)).contents
+def vsize_external_to_bytes(src_data: ctypes.c_void_p, dst_bytes: ctypes.c_void_p) -> None:
+    vsi_data = ctypes.cast(src_data, ctypes.POINTER(VSizeExternal)).contents
     src_bytes = ctypes.cast(vsi_data.eValue, ctypes.POINTER(ctypes.c_uint8))
     dst_bytes = ctypes.cast(dst_bytes, ctypes.POINTER(ctypes.c_uint8))
 

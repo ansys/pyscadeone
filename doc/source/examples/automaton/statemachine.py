@@ -1,5 +1,6 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,8 +33,8 @@ os.chdir(Path(__file__).parents[4] / "examples" / "models" / "Position")
 
 # Load project and get Position automaton
 app = ScadeOne()
-app.load_project("Position.sproj")
-model = app.model
+project = app.load_project("Position.sproj")
+model = project.model
 op = model.operator_definitions[0]
 diagram = op.diagrams[0]
 # automaton is the 1st object in the diagram

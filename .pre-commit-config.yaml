@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.4.4
+    rev: v0.8.0
     hooks:
       - id: add-license-headers
         exclude: ".*.j2"
@@ -8,7 +8,7 @@ repos:
           - --start_year=2024
 
   - repo: https://github.com/numpy/numpydoc
-    rev: v1.8.0
+    rev: v1.10.0
     hooks:
       - id: numpydoc-validation
         files: \.py$
@@ -23,8 +23,13 @@ repos:
       # Run the formatter.
       - id: ruff-format
 
+  - repo: https://github.com/facebook/pyrefly-pre-commit
+    rev: 0.52.0
+    hooks:
+      - id: pyrefly-check
+
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.3
     hooks:
       - id: codespell
         args: ["--toml", "pyproject.toml"]

@@ -1,5 +1,6 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -221,6 +222,7 @@ class DiagramPragma(Pragma):
         self._wire_path_info = None
         self._transition_path_info = None
         self._is_detached = False
+        self._is_graphical_variant = False
 
     @property
     def coordinates(self) -> Optional["Coordinates"]:
@@ -263,6 +265,12 @@ class DiagramPragma(Pragma):
         return self._is_detached
 
     @property
+    def is_graphical_variant(self) -> bool:
+        """Return whether the construct must be rendered as a dedicated
+        graphical variant (ex: group adaptation)."""
+        return self._is_graphical_variant
+
+    @property
     def data(self) -> str:
         """Return a string representation of a property given."""
         if self._is_detached:
@@ -280,6 +288,8 @@ class DiagramPragma(Pragma):
             params.append(f'"wp":"{self._wire_path_info}"')
         if self._transition_path_info:
             params.append(f'"tp":"{self._transition_path_info}"')
+        if self._is_graphical_variant:
+            params.append('"IsGraphicalVariant":true')
         return f"{{{','.join(params)}}}"
 
 
@@ -804,6 +814,11 @@ class DiagramPragmaParser:
     """Parser for diagram pragma."""
 
     _instance = None
+    _coordinates_parser = None
+    _size_parser = None
+    _direction_parser = None
+    _orientation_parser = None
+    _path_info_parser = None
 
     def __new__(cls, *args, **kwargs) -> "DiagramPragmaParser":
         if not cls._instance:
@@ -985,6 +1000,7 @@ class DiagramPragmaParser:
             Pragma diagram parameters.
             This is a string that contains either a JSON expression with the following properties:
 
+            - "IsGraphicalVariant": bool
             - "xy": Coordinates
             - "wh": Size
             - "dir": Direction
@@ -995,7 +1011,8 @@ class DiagramPragmaParser:
             or a string that contains "detached" to indicate that the diagram content
             should not be displayed.
 
-            Each property's value is parsed by the corresponding parser.
+            Each property's value is parsed by the corresponding parser exception done for the *IsGraphicalVariant*
+            property already resolved by the json parsing.
 
         Returns
         -------
@@ -1035,6 +1052,8 @@ class DiagramPragmaParser:
             pragma_diag._transition_path_info = cast(
                 PathInfo, self._path_info_parser.parse(params["tp"])
             )
+        if "IsGraphicalVariant" in params:
+            pragma_diag._is_graphical_variant = params["IsGraphicalVariant"]
         return pragma_diag
 
 

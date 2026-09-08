@@ -1,8 +1,8 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 function function0 (i0: int32;
-                    i1 : float32;)
+                    i1: float32;)
   returns (o0: int32;
-           o1 : float32;)
+           o1: float32;)
 {
   diagram
     (#0 expr i0
@@ -18,10 +18,10 @@ function function0 (i0: int32;
     (#5 wire #3 => #4)
 }
 
-node node0 (i0 : int32;
-            i1 : float32;)
+node node0 (i0: int32;
+            i1: float32;)
   returns (o0: int32;
-           o1 : float32;)
+           o1: float32;)
 {
   diagram
     (#5 def o0
@@ -37,7 +37,7 @@ node node0 (i0 : int32;
         (#4 group)
         (#6 group)
     #pragma diagram {"xy":"H-43800;V3250"} #end)
-    (#7 expr (#8 :> int32)
+    (#7 expr #8 :> int32
       where
         (#8 group)
     #pragma diagram {"xy":"H-44800;V-8050","wh":"14000;7000"} #end)
@@ -51,7 +51,7 @@ node node0 (i0 : int32;
         (#13 group)
         (#14 group)
     #pragma diagram {"xy":"H-20800;V-6150"} #end)
-    (#15 expr (#16 :> float32)
+    (#15 expr #16 :> float32
       where
         (#16 group)
     #pragma diagram {"xy":"H4200;V-6150","wh":"16000;7000"} #end)
@@ -81,7 +81,7 @@ function opSensor0 ()
     #pragma diagram {"xy":"H-28850;V-1450","wh":"12000;3200"} #end)
     (#4 expr sensor1
     #pragma diagram {"xy":"H-54850;V4150","wh":"12000;3200"} #end)
-    (#5 expr (#6 :> int32)
+    (#5 expr #6 :> int32
       where
         (#6 group)
     #pragma diagram {"xy":"H-29850;V4150","wh":"14000;7000"} #end)

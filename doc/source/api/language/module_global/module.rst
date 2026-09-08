@@ -41,6 +41,6 @@ Use directive
 Module item
 -----------
 
-Base classe for module items. 
+Base class for module items. 
 
 .. autoclass:: ModuleItem

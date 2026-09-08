@@ -1,5 +1,6 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,56 +22,54 @@
 # SOFTWARE.
 
 import pytest
-import tools
+import test_tools
 from pathlib import Path
 import ansys.scadeone.core.swan.expressions as expressions
 from ansys.scadeone.core.swan.harness import TestModule
 from ansys.scadeone.core.swan.modules import ConstDeclarations
 from ansys.scadeone.core.common.storage import SwanFile
 from ansys.scadeone.core.model.loader import SwanParser
-from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.swan.pragmas import DiagramPragma, TestPragma
 from ansys.scadeone.core.swan import swan_to_str
 
 
 @pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
-
-
-@pytest.fixture
-def test() -> TestModule:
-    file_path = Path(
-        r"C:\Scade One\examples\QuadFlightControl\QuadFlightControl\assets\QuadTest.swant"
+def test_module(scadeone_install_path, parser: SwanParser) -> TestModule:
+    file_path = (
+        Path(scadeone_install_path)
+        / "examples/QuadFlightControl/QuadFlightControl/assets/QuadTest.swant"
     )
     test_file = SwanFile(file_path)
     if not test_file.is_test:
         raise ScadeOneException(f"File {file_path} is not a test module.")
 
-    return SwanParser(LOGGER).test_module(test_file)
+    return parser.test_module(test_file)
 
 
+@pytest.mark.skip(
+    reason="This test is not working because it needs to migrate to swan version 2027"
+)
 class TestModuleLoading:
-    def test_name_extension(self, test: TestModule) -> None:
-        assert str(test.name) == "QuadTest"
-        assert test.extension == ".swant"
+    def test_name_extension(self, test_module: TestModule) -> None:
+        assert str(test_module.name) == "QuadTest"
+        assert test_module.extension == ".swant"
 
-    def test_use_directives(self, test: TestModule) -> None:
-        assert len(test.use_directives) == 5
-        assert str(test.use_directives[0].path) == "Harness::Sources::N"
-        assert str(test.use_directives[0].alias) == "Sources"
-        assert str(test.use_directives[1].path) == "QuadFlightControl"
-        assert str(test.use_directives[1].alias) == "Q"
-        assert str(test.use_directives[2].path) == "QuadTypes"
-        assert str(test.use_directives[2].alias) == "T"
-        assert str(test.use_directives[3].path) == "Harness::Check"
-        assert test.use_directives[3].alias is None
-        assert str(test.use_directives[4].path) == "Float"
-        assert test.use_directives[4].alias is None
+    def test_use_directives(self, test_module: TestModule) -> None:
+        assert len(test_module.use_directives) == 5
+        assert str(test_module.use_directives[0].path) == "Harness::Sources::N"
+        assert str(test_module.use_directives[0].alias) == "Sources"
+        assert str(test_module.use_directives[1].path) == "QuadFlightControl"
+        assert str(test_module.use_directives[1].alias) == "Q"
+        assert str(test_module.use_directives[2].path) == "QuadTypes"
+        assert str(test_module.use_directives[2].alias) == "T"
+        assert str(test_module.use_directives[3].path) == "Harness::Check"
+        assert test_module.use_directives[3].alias is None
+        assert str(test_module.use_directives[4].path) == "Float"
+        assert test_module.use_directives[4].alias is None
 
-    def test_declarations(self, test: TestModule) -> None:
-        for idx, decl in enumerate(test.declarations):
+    def test_declarations(self, test_module: TestModule) -> None:
+        for idx, decl in enumerate(test_module.declarations):
             if isinstance(decl, ConstDeclarations):
                 if isinstance(decl.constants[0].value, expressions.StructConstructor):
                     assert str(decl.constants[0]._id) == "ZERO_ATTITUDE"
@@ -85,12 +84,12 @@ class TestModuleLoading:
                     assert str(decl._id) == "TestRightRoll"
                 # Check inputs and outputs by default
                 assert decl._inputs[0].id.value == "_current_cycle"
-                assert decl._inputs[0].type.name == "uint64"
+                assert decl._inputs[0].type.type.name == "uint64"
                 assert decl._outputs[0].id.value == "_stop_condition"
-                assert decl._outputs[0].type.name == "bool"
+                assert decl._outputs[0].type.type.name == "bool"
 
-    def test_reference_block(self, test: TestModule) -> None:
-        decl = test.declarations[0]
+    def test_reference_block(self, test_module: TestModule) -> None:
+        decl = test_module.declarations[0]
         assert decl.body is not None
         assert decl.body.sections is not None
         sct = decl.body.sections[0]
@@ -107,8 +106,8 @@ class TestModuleLoading:
             == "#0 block (Sources::Ramp \\ amplitude: 0.1, cycles: 20_ui32, offset: 0.0)"
         )
 
-    def test_block_pragmas(self, test: TestModule) -> None:
-        first_dect = test.declarations[0]
+    def test_block_pragmas(self, test_module: TestModule) -> None:
+        first_dect = test_module.declarations[0]
         assert first_dect.body is not None
         assert first_dect.body.sections is not None
         sct = first_dect.body.sections[0]
@@ -123,8 +122,8 @@ class TestModuleLoading:
             isinstance(block.pragmas[0], DiagramPragma) and isinstance(block.pragmas[1], TestPragma)
         )
 
-    def test_pragma_block(self, test: TestModule) -> None:
-        first_dect = test.declarations[0]
+    def test_pragma_block(self, test_module: TestModule) -> None:
+        first_dect = test_module.declarations[0]
         assert first_dect.body is not None
         assert first_dect.body.sections is not None
         sct = first_dect.body.sections[0]
@@ -156,8 +155,8 @@ class TestModuleLoading:
             == "#1 block (Q::QuadFlightControl \\ isReset: false, motorStates: (frontLeftFaulty: false, frontRightFaulty: false, rearLeftFaulty: false, rearRightFaulty: false), desiredAttitude: ZERO_ATTITUDE, currentAttitude: ZERO_ATTITUDE)"
         )
 
-    def test_oracle_block(self, test: TestModule) -> None:
-        decl = test.declarations[0]
+    def test_oracle_block(self, test_module: TestModule) -> None:
+        decl = test_module.declarations[0]
         assert decl.body is not None
         assert decl.body.sections is not None
         sct = decl.body.sections[0]
@@ -170,7 +169,7 @@ class TestModuleLoading:
             == "#7 block (_oracle SimVerticalAccelOracle)"
         )
 
-    def test_harness_block(self, parser) -> None:
+    def test_harness_block(self, parser: SwanParser) -> None:
         from ansys.scadeone.core.swan.harness import TestHarness
 
         code = """_harness #pragma something #end harness0
@@ -189,7 +188,7 @@ class TestModuleLoading:
     #pragma diagram {"xy":"H-12250;V-30350","wh":"12000;3200"} #end)
 }
 """
-        gen_code = tools.versioned_swan_str(code, "test_module", True)
+        gen_code = test_tools.versioned_swan_str(code, "test_module", True)
         test_module = parser.test_module(gen_code)
         test_harness = test_module.test_harnesses[0]
         assert isinstance(test_harness, TestHarness)

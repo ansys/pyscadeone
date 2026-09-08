@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 type #pragma cg C:name FLAG #end flag = enum {#pragma cg C:enum_val 4 #end Blue, Green};
 
 {signature%node decl_as_text (i0: int32)

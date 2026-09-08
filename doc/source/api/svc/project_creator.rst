@@ -3,7 +3,7 @@
 Project creation
 ================
 This section provides the elements for creating or modifying a Scade One project.
-An example is provided in :ref:`ref_creator_ex`.
+An example is provided in :ref:`ref_creator_proj_ex`.
 
 .. currentmodule:: ansys.scadeone.core.svc.swan_creator.factory
 
@@ -144,14 +144,31 @@ Following :py:class:`OperatorDefinition` methods are used for creation:
 .. automethod:: OperatorDefinition.add_diagram
 
 
+Equation content creation
+--------------------------
+Equations are grouped in a **let** section. For more information about LetSection, see :ref:`ref_equations`.
+
+.. currentmodule:: ansys.scadeone.core.swan.scopesections
+
+Following :py:class:`LetSection` methods are used for creation:
+
+.. currentmodule:: ansys.scadeone.core.svc.swan_creator.scopesections_creator
+
+.. automethod:: LetCreator.add_automaton
+
+.. automethod:: LetCreator.remove_automaton
+
+
 .. _ref_diagram_creation:
 
 Diagram content creation
 -------------------------
 
-.. currentmodule:: ansys.scadeone.core.svc.swan_creator.diagram_creator
+.. currentmodule:: ansys.scadeone.core.swan.diagram
 
-Following :py:class:`DiagramCreator` methods are used for creation:
+Following :py:class:`Diagram` methods are used for creation:
+
+.. currentmodule:: ansys.scadeone.core.svc.swan_creator.diagram_creator
 
 .. automethod:: DiagramCreator.add_block
 
@@ -161,7 +178,60 @@ Following :py:class:`DiagramCreator` methods are used for creation:
 
 .. automethod:: DiagramCreator.add_bar
 
+.. automethod:: DiagramCreator.add_automaton
+
 .. automethod:: DiagramCreator.connect
+
+State machine creation
+----------------------
+
+.. currentmodule:: ansys.scadeone.core.swan.equations
+
+Following :py:class:`StateMachine` methods are used for creation:
+
+.. currentmodule:: ansys.scadeone.core.svc.swan_creator.state_machine_creator
+
+.. automethod:: StateMachineCreator.add_state
+
+.. automethod:: StateMachineCreator.add_weak_transition
+
+.. automethod:: StateMachineCreator.add_strong_transition
+
+.. automethod:: StateMachineCreator.remove_transition
+
+
+State content creation
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: ansys.scadeone.core.swan.equations
+
+Following :py:class:`State` methods are used for creation:
+
+.. currentmodule:: ansys.scadeone.core.svc.swan_creator.state_machine_creator
+
+.. automethod:: StateCreator.add_local_variable
+
+.. automethod:: StateCreator.add_section
+
+
+Transition content creation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Following :py:class:`Transition` methods are used for creation:
+
+.. automethod:: TransitionCreator.add_fork
+
+
+Fork content creation
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: ansys.scadeone.core.swan.equations
+
+Following :py:class:`Fork` methods are used for creation:
+
+.. currentmodule:: ansys.scadeone.core.svc.swan_creator.state_machine_creator
+
+.. automethod:: ForkCreator.add_fork_transition
+
 
 Test creation
 -------------

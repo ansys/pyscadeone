@@ -1,4 +1,4 @@
--- version swan: 2025.1 graph: 2.0
+-- version swan: 2027.0 graph: 2.0
 type t_struct1 = {a: int8, b: float32};
 
 type t_enum1 = enum { value1, value2};

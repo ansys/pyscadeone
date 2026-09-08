@@ -3,7 +3,6 @@
 # cSpell:disable
 
 import os
-from datetime import datetime
 import sys
 from pathlib import Path
 
@@ -22,7 +21,7 @@ from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
 
 # Project information
 project = "PyScadeOne"
-copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
+copyright = "© 2026-2027 Synopsys, Inc. and ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 version = f"{version_info.major}.{version_info.minor}"
 release = f"{version}{' - Prerelease' if version_info.pre_release else ''}"
@@ -80,7 +79,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     # kept here as an example
     # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    "numpy": ("https://numpy.org/doc/stable", None),
+    # "numpy": ("https://numpy.org/doc/stable", None),
     # "matplotlib": ("https://matplotlib.org/stable", None),
     # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     # "pyvista": ("https://docs.pyvista.org/", None),

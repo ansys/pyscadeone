@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,47 +21,67 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import List, Union, Callable, cast
+from typing import List, Optional, Set, Union, Callable, cast
 
-from ansys.scadeone.core import project  # noqa: F401
-from ansys.scadeone.core.interfaces import IScadeOne, IModel
+from ansys.scadeone.core.interfaces import IScadeOne, IModel, IProject
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.storage import SwanFile
 import ansys.scadeone.core.swan as swan
 
-from .loader import SwanParser
+from .parser import Parser
+
+
+class _PreModule:
+    """Class used to store a module before it is loaded. It contains the Swan file of the module, and the module name."""
+
+    def __init__(self, swan_file: SwanFile, project: IProject | None):
+        self.swan_file = swan_file
+        self.name = swan.Module.module_name_from_path(swan_file.path)
+        self.project = project
 
 
 class Model(IModel):
-    """Model handling class.
-    A model contains module and interface declarations.
+    """Per-project model.
+
+    A :py:class:`Model` describes the Swan content of a single :py:class:`Project`
+    (modules in its own ``assets/*.swan|.swani|.swant``). Cross-project lookups
+    (``use`` directives, ``Lib::M::id`` paths) are resolved by walking into the
+    project's dependencies' models, with cycle protection.
 
     Loading of Swan sources is lazy: when a module body or interface is needed,
     it is loaded from the Swan source file.
-
-    The IModel base class is an empty interface implemented by the Model class.
     """
 
-    def __init__(self, app: IScadeOne) -> None:
+    def __init__(self, project: IProject) -> None:
         # dictionaries of Swan module, interface and test module
         # Key is the Swan name of the module, interface or test module
-        self._bodies = {}  # _bodies["N1::N2::M"] = ModuleBody | SwanFile
-        self._interfaces = {}
-        self._test_modules = {}
-        self._app = app
-        self._parser = SwanParser(self.app.logger)  # type: ignore # link Python / DOTNET
+        self._bodies: dict[
+            str, swan.ModuleBody | _PreModule
+        ] = {}  # _bodies["N1::N2::M"] = ModuleBody | SwanFile
+        self._interfaces: dict[str, swan.ModuleInterface | _PreModule] = {}
+        self._test_modules: dict[str, swan.TestModule | _PreModule] = {}
+        self._project = project
+
+    @property
+    def project(self) -> IProject:
+        """Project this model belongs to."""
+        return self._project
 
     @property
     def app(self) -> IScadeOne:
         """Scade One application instance."""
-        return self._app
+        return self._project.app
 
-    def _add_module(self, swan_elt: Union[SwanFile, swan.Module], where: dict) -> None:
-        """Add a SwanFile (content will be possible loaded later) or a Module to its
+    @property
+    def parser(self) -> Parser:
+        """Swan parser (shared at app level)."""
+        return self.app.parser
+
+    def _add_module(self, module: swan.Module, where: dict) -> None:
+        """Add Module to its
         proper dictionary *where* (bodies, interfaces, test modules). If Module is given, updates ownership."""
-        where[Model._get_swan_name(swan_elt)] = swan_elt
-        if isinstance(swan_elt, swan.Module):
-            swan_elt.owner = self
+        where[Model._get_swan_name(module)] = module
+        module.owner = self
 
     def add_body(self, swan_elt: swan.ModuleBody) -> None:
         """Add a module body to the model.
@@ -82,12 +103,23 @@ class Model(IModel):
         """
         self._add_module(swan_elt, self._interfaces)
 
-    def module_exists(self, module: swan.Module) -> bool:
+    def add_test_module(self, swan_elt: Union[SwanFile, swan.TestModule]) -> None:
+        """
+        Add a test module to the model.
+
+        Parameters
+        ----------
+        swan_elt : Union[swan.SwanFile, swan.TestModule]
+            Content of the test module
+        """
+        self._add_module(swan_elt, self._test_modules)
+
+    def module_exists(self, module: swan.Module | SwanFile) -> bool:
         """Check if a module exists by its path in the model.
 
         Parameters
         ----------
-        module : swan.Module
+        module : swan.Module | SwanFile
             Module source or module object to check. In case of a source, it is not loaded.
 
         Returns
@@ -105,12 +137,13 @@ class Model(IModel):
             elif isinstance(module, swan.TestModule):
                 where = self._test_modules
         else:
-            module_name = Model._get_swan_name(module)
-            if cast(SwanFile, module).is_module:
+            swan_file = cast(SwanFile, module)
+            module_name = swan_file.name.replace("-", "::")
+            if swan_file.is_module:
                 where = self._bodies
-            elif cast(SwanFile, module).is_interface:
+            elif swan_file.is_interface:
                 where = self._interfaces
-            elif cast(SwanFile, module).is_test:
+            elif swan_file.is_test:
                 where = self._test_modules
         if where:
             return module_name in where.keys()
@@ -122,7 +155,7 @@ class Model(IModel):
 
         Parameters
         ----------
-        swan_elt : Union[swan.SwanFile, swan.TestModule]
+        swan_elt : Union[SwanFile, swan.Module]
             Swan element
 
         Returns
@@ -134,53 +167,58 @@ class Model(IModel):
             return swan.Module.module_name_from_path(swan_elt.path)
         return swan_elt.name.as_string.replace("-", "::")
 
-    def load_project(self, project_instance: "project.IProject") -> "Model":
-        """Add model information from a given project. It
-        prepares internal data to store module bodies and interfaces.
+    def load_project(self, project_instance: IProject) -> "Model":
+        """Register the model's bound project Swan sources as lazy ``_PreModule``
+        entries.
 
         Parameters
         ----------
         project_instance : IProject
-            Project instance to load.
+            Must be the project this model is bound to.
 
         Returns
         -------
         Model
             Itself, for chaining.
+
+        Raises
+        ------
+        ScadeOneException
+            If ``project_instance`` is not the project bound to this model.
         """
 
+        if project_instance is not self._project:
+            raise ScadeOneException(
+                "Model.load_project: a per-project model only loads its own project."
+            )
+
         if project_instance.storage and project_instance.storage.exists():
-            for swan_file in project_instance.swan_sources(all=True):
+            for swan_file in project_instance.swan_sources():
                 module_name = swan.Module.module_name_from_path(swan_file.path)
+
                 if swan_file.is_module:
-                    self._bodies[module_name] = swan_file
+                    dest = self._bodies
                 elif swan_file.is_interface:
-                    self._interfaces[module_name] = swan_file
+                    dest = self._interfaces
                 elif swan_file.is_test:
-                    self._test_modules[module_name] = swan_file
+                    dest = self._test_modules
+                else:
+                    raise ScadeOneException(f"Unexpected Swan file kind for file {swan_file.path}.")
+                if module_name not in dest.keys():
+                    # FIXME: Support only one module with a given name.
+                    dest[module_name] = _PreModule(swan_file, project_instance)
         return self
-
-    def configure(self, project_instance: "project.IProject") -> "Model":
-        """Configure the model with a project instance.
-
-        .. deprecated:: 0.7, use :py:meth:`load_project` instead."""
-        self.load_project(project_instance)
-        return self
-
-    @property
-    def parser(self) -> SwanParser:
-        """Swan parser."""
-        return self._parser
 
     def _load_source(
         self,
-        swan_f: Union[SwanFile, swan.ModuleBody, swan.ModuleInterface, swan.TestModule],
+        swan_item: Union[_PreModule, swan.ModuleBody, swan.ModuleInterface, swan.TestModule],
     ) -> swan.Module:
-        """Read a Swan file (.swan or .swani or .swant)
+        """Read a Swan file (.swan or .swani or .swant).
+        Can be called on a Module, in which case it does nothing.
 
         Parameters
         ----------
-        swan_f : Union[SwanFile, swan.ModuleBody, swan.ModuleInterface, swan.TestModule]
+        swan_item : Union[_PreModule, swan.ModuleBody, swan.ModuleInterface, swan.TestModule]
             Swan source code or module
 
         Returns
@@ -195,68 +233,152 @@ class Model(IModel):
             - Parse error
         """
         if (
-            isinstance(swan_f, swan.ModuleBody)
-            or isinstance(swan_f, swan.ModuleInterface)
-            or isinstance(swan_f, swan.TestModule)
+            isinstance(swan_item, swan.ModuleBody)
+            or isinstance(swan_item, swan.ModuleInterface)
+            or isinstance(swan_item, swan.TestModule)
         ):
-            return swan_f
-        elif swan_f.is_module:
+            return swan_item
+
+        swan_f = swan_item.swan_file
+        if swan_f.is_module:
             ast = self.parser.module_body(swan_f)
-            ast.source = str(swan_f.path)
         elif swan_f.is_interface:
             ast = self.parser.module_interface(swan_f)
-            ast.source = str(swan_f.path)
         elif swan_f.is_test:
             ast = self.parser.test_module(swan_f)
-            ast.source = str(swan_f.path)
         else:
             raise ScadeOneException(f"Model.load_source: unexpected file kind {swan_f.path}.")
+        ast.source = str(swan_f.path)
         ast.owner = self
+        ast.project = swan_item.project
         return ast
+
+    def _load_module(self, name: str, mod_dict: dict) -> None:
+        item = mod_dict.get(name)
+        if item and isinstance(item, _PreModule):
+            mod_dict[name] = self._load_source(item)
+
+    def load_all_modules(
+        self,
+        *,
+        bodies: bool = True,
+        interfaces: bool = True,
+        test_modules: bool = True,
+        dependencies: bool = True,
+    ) -> None:
+        """Loads systematically all modules.
+
+        Parameters
+        ----------
+        bodies : bool, optional
+            Includes module bodies
+        interfaces : bool, optional
+            Includes module interfaces
+        test_modules : bool, optional
+            Includes test modules
+        dependencies : bool, optional
+            Includes modules from dependencies
+        """
+        for cond, data in [
+            (bodies, self._bodies),
+            (interfaces, self._interfaces),
+            (test_modules, self._test_modules),
+        ]:
+            if cond:
+                for name in data.keys():
+                    self._load_module(name, data)
+        if dependencies:
+            for dep in self._project.dependencies(all=True):  # type: ignore[attr-defined]
+                dep.model.load_all_modules(
+                    bodies=bodies,
+                    interfaces=interfaces,
+                    test_modules=test_modules,
+                    dependencies=True,
+                )
 
     @property
     def is_all_modules_loaded(self) -> bool:
         """Returns True when all Swan modules have been loaded."""
-        for module in self.all_modules:
-            if not (
-                isinstance(module, swan.ModuleBody)
-                or isinstance(module, swan.ModuleInterface)
-                or isinstance(module, swan.TestModule)
-            ):
+        for mod_dict in [self._bodies, self._interfaces, self._test_modules]:
+            for item in mod_dict.values():
+                if isinstance(item, _PreModule):
+                    return False
+        for dep in self._project.dependencies(all=True):  # type: ignore[attr-defined]
+            if not cast("Model", dep.model).is_all_modules_loaded:
                 return False
         return True
 
     @property
     def modules(self) -> List[swan.Module]:
-        """Returns all *loaded* Module objects (module body, module interface interface, test module) as a list."""
-        modules_list = [mod for mod in self.all_modules if isinstance(mod, swan.Module)]
-        return modules_list
-
-    @property
-    def all_modules(self) -> List[Union[swan.Module, SwanFile]]:
-        """Returns *all* modules (loaded Module objects, or not-yet-loaded module files) as a list."""
+        """Returns Module objects of the current Model (module body, module interface, test module) as a list."""
+        # Load our modules only.
+        self.load_all_modules()
         modules = (
             list(self._bodies.values())
             + list(self._interfaces.values())
             + list(self._test_modules.values())
         )
+
         return modules
 
+    @property
+    def all_modules(self) -> List[swan.Module]:
+        """Returns *all* modules (loaded Module objects, or not-yet-loaded module files) as a list."""
+        modules = set(self.modules)
+        for dep in self._project.dependencies(all=True):  # type: ignore[attr-defined]
+            dep_modules = cast("Model", dep.model).modules
+            modules.update(dep_modules)
+        return list(modules)
+
     def get_module_body(self, name: str) -> Union[swan.ModuleBody, None]:
-        """Returns module body of name 'name'"""
-        if name not in self._bodies:
-            return None
-        if isinstance(self._bodies.get(name), SwanFile):
-            self._bodies[name] = self._load_source(self._bodies[name])
-        return self._bodies[name]
+        """Returns module body of name 'name', searching dependencies on miss."""
+        return cast(
+            Optional[swan.ModuleBody],
+            self._lookup_module(name, "_bodies", set()),
+        )
 
     def get_module_interface(self, name: str) -> Union[swan.ModuleInterface, None]:
-        """Returns module interface of name 'name'"""
-        if name not in self._interfaces:
+        """Returns module interface of name 'name', searching dependencies on miss."""
+        return cast(
+            Optional[swan.ModuleInterface],
+            self._lookup_module(name, "_interfaces", set()),
+        )
+
+    def get_test_module(self, name: str) -> Union[swan.TestModule, None]:
+        """Returns test module of name 'name', searching dependencies on miss."""
+        return cast(
+            Optional[swan.TestModule],
+            self._lookup_module(name, "_test_modules", set()),
+        )
+
+    def _lookup_module(
+        self,
+        name: str,
+        dict_attr: str,
+        visited: Set,
+    ) -> Union[swan.Module, None]:
+        """Look up a module by name in this model, then recurse into
+        the project's direct dependencies. ``visited`` is keyed by project
+        storage path to break dependency cycles.
+        """
+        own = getattr(self, dict_attr)
+        if name in own:
+            # call the loader to load the module if it is not loaded yet (i.e. if it is a _PreModule)
+            self._load_module(name, own)  # side effect: module is loaded in own dict
+            entry = own[name]
+            if isinstance(entry, swan.Module):
+                return entry
             return None
-        if isinstance(self._interfaces.get(name), SwanFile):
-            self._interfaces[name] = self._load_source(self._interfaces[name])
-        return self._interfaces[name]
+        proj_path = self._project.storage.path
+        if proj_path in visited:
+            return None
+        visited.add(proj_path)
+        for dep in self._project.dependencies(all=False):  # type: ignore[attr-defined]
+            dep_model = cast("Model", dep.model)
+            result = dep_model._lookup_module(name, dict_attr, visited)
+            if result is not None:
+                return result
+        return None
 
     def get_module_from_pathid(self, pathid: str, module: swan.Module) -> Union[swan.Module, None]:
         """Return the :py:class:`Module` instance for a given *pathid*
@@ -383,7 +505,11 @@ class Model(IModel):
 
     @property
     def types(self) -> List[swan.TypeDecl]:
-        """Returns a list of type declarations."""
+        """Returns a list of type declarations.
+
+        Note that this includes all types, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         types = []
         for decls in self.filter_declarations(lambda x: isinstance(x, swan.TypeDeclarations)):
             for type in cast(swan.TypeDeclarations, decls).types:
@@ -392,7 +518,11 @@ class Model(IModel):
 
     @property
     def sensors(self) -> List[swan.SensorDecl]:
-        """Returns a list of sensor declarations."""
+        """Returns a list of sensor declarations.
+
+        Note that this includes all sensors, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         sensors = []
         for decls in self.filter_declarations(lambda x: isinstance(x, swan.SensorDeclarations)):
             for sensor in cast(swan.SensorDeclarations, decls).sensors:
@@ -401,7 +531,11 @@ class Model(IModel):
 
     @property
     def constants(self) -> List[swan.ConstDecl]:
-        """Returns a list of constant declarations."""
+        """Returns a list of constant declarations.
+
+        Note that this includes all constants, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         consts = []
         for decls in self.filter_declarations(lambda x: isinstance(x, swan.ConstDeclarations)):
             for const in cast(swan.ConstDeclarations, decls).constants:
@@ -410,7 +544,11 @@ class Model(IModel):
 
     @property
     def groups(self) -> List[swan.GroupDecl]:
-        """Returns a list of group declarations."""
+        """Returns a list of group declarations.
+
+        Note that this includes all groups, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         groups = []
         for decls in self.filter_declarations(lambda x: isinstance(x, swan.GroupDeclarations)):
             for group in cast(swan.GroupDeclarations, decls).groups:
@@ -419,7 +557,11 @@ class Model(IModel):
 
     @property
     def operator_definitions(self) -> List[swan.OperatorDefinition]:
-        """Returns a list of operator definitions."""
+        """Returns a list of operator definitions.
+
+        Note that this includes all operator definitions, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         return [
             cast(swan.OperatorDefinition, operator)
             for operator in self.filter_declarations(
@@ -429,78 +571,67 @@ class Model(IModel):
 
     @property
     def operator_declarations(self) -> List[swan.OperatorDeclaration]:
-        """Returns a list of operator declarations."""
+        """Returns a list of operator declarations.
+
+        Note that this includes all operator declarations, including those from model project dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
+        """
         return [
             cast(swan.OperatorDeclaration, op_decl)
             for op_decl in self.filter_declarations(
-                lambda x: isinstance(x, swan.OperatorDeclaration)
-                and not isinstance(x, swan.OperatorDefinition)
+                lambda x: (
+                    isinstance(x, swan.OperatorDeclaration)
+                    and not isinstance(x, swan.OperatorDefinition)
+                )
             )
         ]
 
-    def _load_module(self, name: str, mod_dict: dict) -> None:
-        swan_file = mod_dict.get(name)
-        if swan_file and isinstance(swan_file, SwanFile):
-            mod_dict[name] = self._load_source(swan_file)
-
-    def load_module_body(self, name: str) -> None:
-        self._load_module(name, self._bodies)
-
-    def load_module_interface(self, name: str) -> None:
-        self._load_module(name, self._interfaces)
-
-    def load_test_module(self, name: str) -> None:
-        self._load_module(name, self._test_modules)
-
-    def load_all_modules(
-        self, bodies: bool = True, interfaces: bool = True, test_modules: bool = True
-    ) -> None:
-        """Loads systematically all modules.
+    def get_declarations(self, all: bool = True) -> List[swan.GlobalDeclaration]:
+        """Returns a list of declarations in the model, including those from model project dependencies if *all* is True
 
         Parameters
         ----------
-        bodies : bool, optional
-            Includes module bodies
-        interfaces : bool, optional
-            Includes module interfaces
-        test_modules : bool, optional
-            Includes test modules
+        all : bool, optional
+            If True, include declarations from dependencies, by default True.
+
+        Returns
+        -------
+        List[swan.GlobalDeclaration]
+            List of all declarations.
         """
-        for cond, data, load_fn in [
-            (bodies, self._bodies, self.load_module_body),
-            (interfaces, self._interfaces, self.load_module_interface),
-            (test_modules, self._test_modules, self.load_test_module),
+        declarations = []
+        for mod_dict, load_fn in [
+            (self._interfaces, self.get_module_interface),
+            (self._bodies, self.get_module_body),
+            (self._test_modules, self.get_test_module),
         ]:
-            if cond:
-                for name in data.keys():
-                    load_fn(name)
+            for mod_name, module in mod_dict.items():
+                if not isinstance(module, swan.Module):
+                    module = load_fn(mod_name)
+                for decl in module.declarations:  # type: ignore
+                    declarations.append(cast(swan.GlobalDeclaration, decl))
+        # Explore dependencies if requested.
+        if all:
+            # Explore dependencies if requested.
+            # project.dependencies(all=True) returns all dependencies, including transitive ones.
+            # as a unique list (no duplicates), so we don't need to worry about cycles here.
+            # Then one need *local* declarations of each model.
+            for dep in self._project.dependencies(all=True):  # type: ignore[attr-defined]
+                dep_decls = cast("Model", dep.model).get_declarations(all=False)
+                declarations.extend(dep_decls)
+        return declarations
 
     @property
     def declarations(self) -> List[swan.GlobalDeclaration]:
-        """Declarations found in all modules as a list.
+        """Declarations in the model.
 
-        The Swan code of a module is loaded if not yet loaded.
+        Note that this includes all declarations, including those from dependencies.
+        Consider using :py:meth:`Model.get_declarations` or :py:meth:`Model.filter_declarations` for more general queries.
         """
-
-        declarations = []
-        for data, load_fn in [
-            (self._interfaces, self.load_module_interface),
-            (self._bodies, self.load_module_body),
-            (self._test_modules, self.load_test_module),
-        ]:
-            for swan_code, swan_object in data.items():
-                if isinstance(swan_object, SwanFile):
-                    swan_object = self._load_source(swan_object)
-                    data[swan_code] = swan_object
-                elif swan_object is None:
-                    swan_object = load_fn(swan_code)
-                    data[swan_code] = swan_object
-                for decl in swan_object.declarations:  # type: ignore
-                    declarations.append(cast(swan.GlobalDeclaration, decl))
-        return declarations
+        return self.get_declarations(all=True)
 
     def filter_declarations(
-        self, filter_fn: Callable[[swan.GlobalDeclaration], bool]
+        self, filter_fn: Callable[[swan.GlobalDeclaration], bool], all: bool = True
     ) -> List[swan.GlobalDeclaration]:
         """Returns declarations matched by a filter.
 
@@ -508,49 +639,36 @@ class Model(IModel):
         ----------
         filter_fn : Callable[[GlobalDeclaration], bool]
             A function of one argument of type GlobalDeclaration, returning True or False.
+        all : bool, optional
+            If True, include declarations from dependencies, by default True, else only declarations
+            from the modules of the model project are included.
 
         Returns
         -------
         List[GlobalDeclaration]
             List of matching declarations.
         """
-        return list(filter(filter_fn, self.declarations))
+        return list(filter(filter_fn, self.get_declarations(all=all)))
 
     def find_declaration(
-        self, predicate_fn: Callable[[swan.GlobalDeclaration], bool]
+        self, predicate_fn: Callable[[swan.GlobalDeclaration], bool], all: bool = True
     ) -> Union[swan.GlobalDeclaration, None]:
-        """Finds a declaration for which predicate_fn returns True.
+        """Finds a declaration for which predicate_fn returns True,  else only declarations
+            from the modules of the model project are included.
 
         Parameters
         ----------
         predicate_fn : Callable[[GlobalDeclaration], bool]
             Function taking one GlobalDeclaration as argument and
             returning True when some property holds, else False.
+        all : bool, optional
+            If True, include declarations from dependencies, by default True.
 
         Returns
         -------
         Union[GlobalDeclaration, None]
             Found declaration or None.
         """
-        for decl in self.filter_declarations(predicate_fn):
+        for decl in self.filter_declarations(predicate_fn, all=all):
             return decl
         return None
-
-    def add_test_module(self, swan_elt: Union[SwanFile, swan.TestModule]) -> None:
-        """
-        Add a test module to the model.
-
-        Parameters
-        ----------
-        swan_elt : Union[swan.SwanFile, swan.TestModule]
-            Content of the test module
-        """
-        self._add_module(swan_elt, self._test_modules)
-
-    def get_test_module(self, name: str) -> Union[swan.TestModule, None]:
-        """Returns test module of name 'name'"""
-        if name not in self._test_modules:
-            return None
-        if isinstance(self._test_modules.get(name), SwanFile):
-            self._test_modules[name] = self._load_source(self._test_modules[name])
-        return self._test_modules[name]

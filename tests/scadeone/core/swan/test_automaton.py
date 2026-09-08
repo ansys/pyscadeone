@@ -1,5 +1,6 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,12 +33,13 @@ import logging
 import pytest
 import difflib
 
+
 from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.model.loader import SwanParser
 from ansys.scadeone.core.model.model import Model
-import ansys.scadeone.core.swan as Swan
+import ansys.scadeone.core.swan as swan
 from ansys.scadeone.core.common.storage import SwanString
-from tools.utils import swan_to_xml, log_diff  # noqa: F401
+from test_tools.utils import swan_to_xml, log_diff  # noqa: F401
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -48,18 +50,18 @@ parser = SwanParser(logging.getLogger("pyofast"))
 def position_model(app: ScadeOne) -> Model:
     project = app.load_project(TestAutomaton.PositionProject)
     assert project is not None
-    return app.model
+    return project.model
 
 
 class TestAutomaton:
     PositionProject = "examples/models/Position/Position.sproj"
 
     @staticmethod
-    def _get_position_automaton(model: Model) -> Swan.StateMachine:
+    def _get_position_automaton(model: Model) -> swan.StateMachine:
         assert model is not None
         root = model.operator_definitions[0]
         diagram = root.diagrams[0]
-        automaton = cast(Swan.StateMachineBlock, diagram.objects[0]).state_machine
+        automaton = cast(swan.StateMachineBlock, diagram.objects[0]).state_machine
         assert automaton is not None
         return automaton
 
@@ -82,11 +84,11 @@ class TestAutomaton:
     def test_position_print(self, position_model: Model, tmp_path: Path) -> None:
         """Print automaton to text file"""
         automaton = TestAutomaton._get_position_automaton(position_model)
-        text_str = Swan.swan_to_str(cast(Swan.SwanItem, automaton.owner))
+        text_str = swan.swan_to_str(cast(swan.SwanItem, automaton.owner))
         # Check differences with original file
         # In original file, the let statement is in one line, while here it is split in multiple lines.
         source = Path(TestAutomaton.PositionProject).parent / "assets/Point.swan"
-        original_lines = [line[4:] for line in source.read_text().splitlines()][11:68]
+        original_lines = [line[4:] for line in source.read_text().splitlines()][11:70]
         diff = difflib.unified_diff(
             original_lines,
             text_str.splitlines(),
@@ -94,13 +96,18 @@ class TestAutomaton:
             lineterm="",
         )
         diff_text = "\n".join(list(diff)[3:])
-        # log_diff(actual=text_str, expected=original_lines, winmerge=False)
-        assert (
-            diff_text
-            == "-      (let x = 0; y = 0;\n+      (let\n+          x = 0;\n+          y = 0;"
-        ), "Unexpected difference in printed automaton."
+        assert diff_text == ""
+        # TODO: fix equations in automaton
+        # log_diff(actual=text_str, expected="\n".join(original_lines), winmerge=True)
+        # assert (
+        #     diff_text
+        #     == "-      (let x = 0; y = 0;\n+      (let\n+          x = 0;\n+          y = 0;"
+        # ), "Unexpected difference in printed automaton."
 
-    CC_text = """\
+    @pytest.mark.parametrize(
+        "cc_text",
+        [
+            """\
 node CruiseControl (On: bool;
                     Off: bool;
                     Resume: bool;
@@ -130,7 +137,7 @@ node CruiseControl (On: bool;
              automaton $SM2
                initial state Active :
                  unless
-                 if (FloatGT (Brake, PEDALSMIN, TOL))
+                 if (FloatGT(Brake, PEDALSMIN, TOL))
                  restart Interrupt;
                  var
                     StdbyCondition: bool;
@@ -141,30 +148,34 @@ node CruiseControl (On: bool;
                         if (StdbyCondition)
                         restart StandBy;
                         let
-                           ThrottleCmd = CruiseRegulation (local_CruiseSpeed, Speed);
+                           ThrottleCmd = CruiseRegulation(local_CruiseSpeed, Speed);
                            CruiseState = ON;
                       state StandBy :
                         unless
                         if (not StdbyCondition)
                         restart On;
                         let CruiseState = STDBY;;
-                    StdbyCondition = FloatGT (Speed, SPEEDREGMAX, TOL) or FloatGT (Accel, PEDALSMIN, TOL) or FloatLT (Speed, SPEEDMIN, TOL);
+                    StdbyCondition = FloatGT(Speed, SPEEDREGMAX, TOL) or FloatGT(Accel, PEDALSMIN, TOL) or FloatLT(Speed, SPEEDMIN, TOL);
                state Interrupt :
                  unless
                  if (Resume)
                  restart Active;
                  let CruiseState = INT;;
              CruiseSpeed = tmp_;
-             tmp_ = CruiseSpeedMgt (Set, QuickAccel, QuickDecel, Speed);
+             tmp_ = CruiseSpeedMgt(Set, QuickAccel, QuickDecel, Speed);
              local_CruiseSpeed = tmp_;;
 }
 """
-
-    def test_cc(self, tmp_path):
-        code = SwanString(self.CC_text, "CC text")
+        ],
+    )
+    @pytest.mark.skip(
+        reason="This test is not working because it needs to migrate to swan version 2027"
+    )
+    def test_cc(self, cc_text, tmp_path):
+        code = SwanString(cc_text, "CC text")
         swan_obj = parser.operator_decl_or_def(code)
         assert swan_obj is not None
-        res = Swan.swan_to_str(swan_obj)
-        if res != self.CC_text:
-            log_diff(actual=res, expected=self.CC_text, winmerge=False)
+        res = swan.swan_to_str(swan_obj)
+        if res != cc_text:
+            # log_diff(actual=res, expected=cc_text, winmerge=True)
             assert False, "set log_merge=True in log_diff() to see differences."

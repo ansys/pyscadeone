@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,9 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# AUTOMATICALLY GENERATED FILE DO NOT EDIT OR MAKE A COPY OF IT
 
-# pylint: disable=too-many-lines, pointless-statement, invalid-name
 from abc import ABC
 from typing import Any, Optional, Union
 from enum import Enum
@@ -112,7 +111,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """Default visitor method for classes with pragmas."""
         self.visit_SwanItem(swan_obj, owner, owner_property)
-        for pragma in swan_obj.pragmas:
+        for pragma in getattr(swan_obj, "pragmas", []):
             self.visit_Pragma(pragma, swan_obj, "pragmas")
 
     def visit_Pragma(
@@ -121,35 +120,16 @@ class SwanVisitor(ABC):
         owner: Owner,
         owner_property: OwnerProperty,
     ) -> None:
-        """Default Pragma visitor method."""
+        """Default Pragma visitor method.
+
+        Note that pragmas are visited in the visit_HasPragma method,
+        so this method is not called directly in the visit() method.
+
+        This method must be defined to visit pragmas. See the :ref:`ref_pragmas` section
+        for more information about pragmas."""
         pass
 
     # Classes visitors
-
-    def visit_ActivateClock(
-        self,
-        swan_obj: swan.ActivateClock,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ActivateClock visitor method."""
-        # Visit base class(es)
-        self.visit_OperatorExpression(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.operator,
-            swan_obj,
-            "operator",
-        )
-        self._visit(
-            swan_obj.clock,
-            swan_obj,
-            "clock",
-        )
 
     def visit_ActivateEvery(
         self,
@@ -542,6 +522,31 @@ class SwanVisitor(ABC):
             owner_property,
         )
 
+    def visit_AtExpr(
+        self,
+        swan_obj: swan.AtExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default AtExpr visitor method."""
+        # Visit base class(es)
+        self.visit_Expression(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
+        self._visit(
+            swan_obj.at,
+            swan_obj,
+            "at",
+        )
+
     def visit_Bar(
         self,
         swan_obj: swan.Bar,
@@ -813,37 +818,6 @@ class SwanVisitor(ABC):
             owner_property,
         )
 
-    def visit_ClockExpr(
-        self,
-        swan_obj: swan.ClockExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ClockExpr visitor method."""
-        # Visit base class(es)
-        self.visit_SwanItem(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.id,
-            swan_obj,
-            "id",
-        )
-        self.visit_builtin(
-            swan_obj.is_not,
-            swan_obj,
-            "is_not",
-        )
-        if swan_obj.pattern is not None:
-            self._visit(
-                swan_obj.pattern,
-                swan_obj,
-                "pattern",
-            )
-
     def visit_Concat(
         self,
         swan_obj: swan.Concat,
@@ -905,6 +879,11 @@ class SwanVisitor(ABC):
             owner_property,
         )
         # Visit properties
+        self.visit_builtin(
+            swan_obj.is_elaborated,
+            swan_obj,
+            "is_elaborated",
+        )
         if swan_obj.type is not None:
             self._visit(
                 swan_obj.type,
@@ -1230,7 +1209,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """Default Equation visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(
+        self.visit_HasPragma(
             swan_obj,
             owner,
             owner_property,
@@ -1341,7 +1320,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """Default Expression visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(
+        self.visit_HasPragma(
             swan_obj,
             owner,
             owner_property,
@@ -1468,6 +1447,31 @@ class SwanVisitor(ABC):
                 "luid",
             )
 
+    def visit_ForwardAccuClause(
+        self,
+        swan_obj: swan.ForwardAccuClause,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ForwardAccuClause visitor method."""
+        # Visit base class(es)
+        self.visit_ForwardReturnItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.id,
+            swan_obj,
+            "id",
+        )
+        self._visit(
+            swan_obj.last_expr,
+            swan_obj,
+            "last_expr",
+        )
+
     def visit_ForwardArrayClause(
         self,
         swan_obj: swan.ForwardArrayClause,
@@ -1481,12 +1485,52 @@ class SwanVisitor(ABC):
             owner,
             owner_property,
         )
+
+    def visit_ForwardArrayClauseElement(
+        self,
+        swan_obj: swan.ForwardArrayClauseElement,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ForwardArrayClauseElement visitor method."""
+        # Visit base class(es)
+        self.visit_ForwardArrayClause(
+            swan_obj,
+            owner,
+            owner_property,
+        )
         # Visit properties
         self._visit(
-            swan_obj.return_clause,
+            swan_obj.array_clause,
             swan_obj,
-            "return_clause",
-        )  # isinstance(swan_obj.return_clause, [swan.ForwardItemClause, swan.ForwardArrayClause])
+            "array_clause",
+        )
+
+    def visit_ForwardArrayClauseExpr(
+        self,
+        swan_obj: swan.ForwardArrayClauseExpr,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ForwardArrayClauseExpr visitor method."""
+        # Visit base class(es)
+        self.visit_ForwardArrayClause(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.expr_no_bracket,
+            swan_obj,
+            "expr_no_bracket",
+        )
+        if swan_obj.default_expr is not None:
+            self._visit(
+                swan_obj.default_expr,
+                swan_obj,
+                "default_expr",
+            )
 
     def visit_ForwardBody(
         self,
@@ -1502,11 +1546,11 @@ class SwanVisitor(ABC):
             owner_property,
         )
         # Visit properties
-        for item in swan_obj.body:
+        for item in swan_obj.sections:
             self._visit(
                 item,
                 swan_obj,
-                "body",
+                "sections",
             )
         if swan_obj.unless_expr is not None:
             self._visit(
@@ -1520,6 +1564,31 @@ class SwanVisitor(ABC):
                 swan_obj,
                 "until_expr",
             )
+
+    def visit_ForwardCurrentElement(
+        self,
+        swan_obj: swan.ForwardCurrentElement,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default ForwardCurrentElement visitor method."""
+        # Visit base class(es)
+        self.visit_SwanItem(
+            swan_obj,
+            owner,
+            owner_property,
+        )
+        # Visit properties
+        self._visit(
+            swan_obj.lhs,
+            swan_obj,
+            "lhs",
+        )
+        self._visit(
+            swan_obj.expr,
+            swan_obj,
+            "expr",
+        )
 
     def visit_ForwardDim(
         self,
@@ -1535,11 +1604,11 @@ class SwanVisitor(ABC):
             owner_property,
         )
         # Visit properties
-        if swan_obj.expr is not None:
+        if swan_obj.size is not None:
             self._visit(
-                swan_obj.expr,
+                swan_obj.size,
                 swan_obj,
-                "expr",
+                "size",
             )
         if swan_obj.dim_id is not None:
             self._visit(
@@ -1559,57 +1628,6 @@ class SwanVisitor(ABC):
                 swan_obj.protected,
                 swan_obj,
                 "protected",
-            )
-
-    def visit_ForwardElement(
-        self,
-        swan_obj: swan.ForwardElement,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ForwardElement visitor method."""
-        # Visit base class(es)
-        self.visit_SwanItem(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.lhs,
-            swan_obj,
-            "lhs",
-        )
-        self._visit(
-            swan_obj.expr,
-            swan_obj,
-            "expr",
-        )
-
-    def visit_ForwardItemClause(
-        self,
-        swan_obj: swan.ForwardItemClause,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ForwardItemClause visitor method."""
-        # Visit base class(es)
-        self.visit_SwanItem(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.id,
-            swan_obj,
-            "id",
-        )
-        if swan_obj.last_default is not None:
-            self._visit(
-                swan_obj.last_default,
-                swan_obj,
-                "last_default",
             )
 
     def visit_ForwardLHS(
@@ -1632,39 +1650,6 @@ class SwanVisitor(ABC):
             "lhs",
         )  # isinstance(swan_obj.lhs, [swan.Identifier, swan.ForwardLHS])
 
-    def visit_ForwardLastDefault(
-        self,
-        swan_obj: swan.ForwardLastDefault,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ForwardLastDefault visitor method."""
-        # Visit base class(es)
-        self.visit_SwanItem(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        if swan_obj.last is not None:
-            self._visit(
-                swan_obj.last,
-                swan_obj,
-                "last",
-            )
-        if swan_obj.default is not None:
-            self._visit(
-                swan_obj.default,
-                swan_obj,
-                "default",
-            )
-        if swan_obj.shared is not None:
-            self._visit(
-                swan_obj.shared,
-                swan_obj,
-                "shared",
-            )
-
     def visit_ForwardReturnArrayClause(
         self,
         swan_obj: swan.ForwardReturnArrayClause,
@@ -1684,11 +1669,11 @@ class SwanVisitor(ABC):
             swan_obj,
             "array_clause",
         )
-        if swan_obj.return_id is not None:
+        if swan_obj.id is not None:
             self._visit(
-                swan_obj.return_id,
+                swan_obj.id,
                 swan_obj,
-                "return_id",
+                "id",
             )
 
     def visit_ForwardReturnItem(
@@ -1703,26 +1688,6 @@ class SwanVisitor(ABC):
             swan_obj,
             owner,
             owner_property,
-        )
-
-    def visit_ForwardReturnItemClause(
-        self,
-        swan_obj: swan.ForwardReturnItemClause,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default ForwardReturnItemClause visitor method."""
-        # Visit base class(es)
-        self.visit_ForwardReturnItem(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.item_clause,
-            swan_obj,
-            "item_clause",
         )
 
     def visit_FunctionalUpdate(
@@ -2519,6 +2484,15 @@ class SwanVisitor(ABC):
             "value",
         )
 
+    def visit_LunumManager(
+        self,
+        swan_obj: swan.LunumManager,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ) -> None:
+        """Default LunumManager visitor method."""
+        pass
+
     def visit_Merge(
         self,
         swan_obj: swan.Merge,
@@ -3159,26 +3133,6 @@ class SwanVisitor(ABC):
                 swan_obj,
                 "luid",
             )
-        self.visit_builtin(
-            swan_obj.is_self,
-            swan_obj,
-            "is_self",
-        )
-
-    def visit_PragmaKey(
-        self,
-        swan_obj: swan.PragmaKey,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ):
-        """PragmaKey visitor function. Should be overridden."""
-        # Enum values:
-        # SWT
-        # CG
-        # DIAGRAM
-        # REQUIREMENT
-        # DOC
-        pass
 
     def visit_PreExpr(
         self,
@@ -3528,7 +3482,7 @@ class SwanVisitor(ABC):
     ) -> None:
         """Default ScopeSection visitor method."""
         # Visit base class(es)
-        self.visit_SwanItem(
+        self.visit_HasPragma(
             swan_obj,
             owner,
             owner_property,
@@ -3857,12 +3811,11 @@ class SwanVisitor(ABC):
             swan_obj,
             "group",
         )
-        if swan_obj.type is not None:
-            self._visit(
-                swan_obj.type,
-                swan_obj,
-                "type",
-            )
+        self._visit(
+            swan_obj.type,
+            swan_obj,
+            "type",
+        )
 
     def visit_StructDestructor(
         self,
@@ -4387,11 +4340,6 @@ class SwanVisitor(ABC):
         )
         # Visit properties
         self.visit_builtin(
-            swan_obj.is_clock,
-            swan_obj,
-            "is_clock",
-        )
-        self.visit_builtin(
             swan_obj.is_starred,
             swan_obj,
             "is_starred",
@@ -4408,12 +4356,18 @@ class SwanVisitor(ABC):
                 swan_obj,
                 "type",
             )
-        if swan_obj.when is not None:
-            self._visit(
-                swan_obj.when,
-                swan_obj,
-                "when",
-            )
+        self._visit(
+            swan_obj.init_type,
+            swan_obj,
+            "init_type",
+        )
+        if swan_obj.causality_type is not None:
+            for item in swan_obj.causality_type:
+                self._visit(
+                    item,
+                    swan_obj,
+                    "causality_type",
+                )
         if swan_obj.default is not None:
             self._visit(
                 swan_obj.default,
@@ -4426,6 +4380,19 @@ class SwanVisitor(ABC):
                 swan_obj,
                 "last",
             )
+
+    def visit_VarInitDelay(
+        self,
+        swan_obj: swan.VarInitDelay,
+        owner: Owner,
+        owner_property: OwnerProperty,
+    ):
+        """VarInitDelay visitor function. Should be overridden."""
+        # Enum values:
+        # DelayNone
+        # Delay0
+        # Delay1
+        pass
 
     def visit_VarSection(
         self,
@@ -4631,56 +4598,6 @@ class SwanVisitor(ABC):
             swan_obj.group,
             swan_obj,
             "group",
-        )
-
-    def visit_WhenClockExpr(
-        self,
-        swan_obj: swan.WhenClockExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default WhenClockExpr visitor method."""
-        # Visit base class(es)
-        self.visit_Expression(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.expr,
-            swan_obj,
-            "expr",
-        )
-        self._visit(
-            swan_obj.clock,
-            swan_obj,
-            "clock",
-        )
-
-    def visit_WhenMatchExpr(
-        self,
-        swan_obj: swan.WhenMatchExpr,
-        owner: Owner,
-        owner_property: OwnerProperty,
-    ) -> None:
-        """Default WhenMatchExpr visitor method."""
-        # Visit base class(es)
-        self.visit_Expression(
-            swan_obj,
-            owner,
-            owner_property,
-        )
-        # Visit properties
-        self._visit(
-            swan_obj.expr,
-            swan_obj,
-            "expr",
-        )
-        self._visit(
-            swan_obj.when,
-            swan_obj,
-            "when",
         )
 
     def visit_Window(

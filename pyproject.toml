@@ -1,6 +1,6 @@
 # cSpell:disable
 [build-system]
-requires = ["flit_core >=3.2"]
+requires = ["flit_core >=3.12.0"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -8,7 +8,7 @@ name = "ansys-scadeone-core"
 dynamic = ["version"]
 description = "Python interface for Ansys Scade One"
 readme = "README.rst"
-requires-python = ">=3.10,<4"
+requires-python = ">=3.12,<3.15"
 license = { file = "LICENSE" }
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
@@ -20,51 +20,56 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "Jinja2>=3.1.6",
-    "jsonschema>=4.25.1",
-    "platformdirs>=4.4.0",
-    "pythonnet>=3.0.5",
-    "lark>=1.3.0",
+    "jsonschema>=4.26.0",
+    "platformdirs>=4.9.6",
+    "pythonnet>=3.1.0",
+    "lark>=1.3.1",
 ]
 
 [project.optional-dependencies]
 frozen-dependencies = [
     # Indirect dependencies,
-    "attrs==25.3.0",
+    "attrs==26.1.0",
     "cffi==2.0.0",
-    "clr-loader==0.2.7.post0",
+    "clr-loader==0.3.1",
     "jsonschema-specifications==2025.9.1",
-    "markupsafe==3.0.2",
-    "pycparser==2.23",
-    "referencing==0.36.2",
-    "rpds-py==0.27.1",
+    "markupsafe==3.0.3",
+    "pycparser==3.0",
+    "referencing==0.37.0",
+    "rpds-py==0.30.0",
     # Direct dependencies,
     "jinja2==3.1.6",
-    "jsonschema==4.25.1",
-    "platformdirs==4.4.0",
-    "pythonnet==3.0.5",
-    "typing_extensions==4.15.0",
-    "lark==1.3.0",
+    "jsonschema==4.26.0",
+    "platformdirs==4.9.6",
+    "pythonnet==3.1.0",
+    "lark==1.3.1",
 ]
-tests = ["pytest>=8.4.2", "pytest-cov>=3.0.0", "click>=8.1.7", "fmpy>=0.3.21"]
+tests = ["pytest>=9.0.3", "pytest-cov>=7.1.0", "click>=8.3.3", "fmpy>=0.3.29"]
 doc = [
-    "ansys-sphinx-theme==1.2.4",
-    "pillow>=10.1",
-    "sphinx==8.1.3",
+    "ansys-sphinx-theme==1.8.2",
+    "numpydoc==1.10.0",
+    "pillow==12.2.0",
+    "pytest-sphinx==0.7.1",
+    "sphinx==9.1.0",
+    "sphinx-autobuild==2025.8.25",
+    "sphinx-autodoc-typehints==3.10.3",
     "sphinx-copybutton==0.5.2",
-    "sphinx-autobuild==2024.10.3",
-    "sphinx-autodoc-typehints==2.5.0",
-    "sphinx-design==0.6.1",
-    "pytest-sphinx==0.5.0",
-    "sphinx-jinja>=2.0.0",
-    "numpydoc==1.8.0",
+    "sphinx-design==0.7.0",
+    "sphinx-jinja==2.0.2",
 ]
-checks = ["codespell==2.2.6", "ruff==0.8.2", "vale==3.9.1", "pre-commit==4.0.1"]
+checks = [
+    "codespell==2.4.2",
+    "pre-commit==4.6.0",
+    "pyrefly==1.1.1",
+    "ruff==0.15.20",
+    "vale==3.13.0.0",
+]
 
 [project.urls]
 source = "https://github.com/ansys/pyscadeone"
@@ -78,10 +83,10 @@ pyscadeone = "ansys.scadeone.core.cli:main"
 [tool.flit.module]
 name = "ansys.scadeone.core"
 
-
 [tool.codespell]
 skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
 ignore-words = "./doc/styles/config/vocabularies/ANSYS/accept.txt"
+ignore-regex = 'incr ment' # detected in ./tests/scadeone/core/swan/test_pragmas.py:707
 quiet-level = 3
 
 # Test & Coverage
@@ -95,7 +100,7 @@ show_missing = true
 pythonpath = ["src"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
- # not in pytest-tmp, to avoid deletion
+# not in pytest-tmp, to avoid deletion
 log_file = "logs/pytest.log"
 # pytest temporary files are in tests/pytest-tmp to avoid polluting the main tests folder
 # and to shortern the paths from Windows limitations when using model files
@@ -103,13 +108,13 @@ addopts = "--basetemp=tests/pytest-tmp"
 # keep the tmp folder for failed tests only. Other options: "all", "none"
 tmp_path_retention_policy = "failed"
 # avoid collecting tests from imported modules, ex. TestPragma
-collect_imported_tests = false 
+collect_imported_tests = false
 # don't recurse into these directories
 norecursedirs = [".venv", "doc", "examples", "tests/pytest-tmp"]
 
 [tool.ruff]
 line-length = 100
-extend-exclude = ["test_printer.py"]
+extend-exclude = ["test_printer.py", "test_pragmas.py"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E4", "E7", "E9", "F", "W"]
@@ -117,6 +122,35 @@ ignore = ["F403"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[tool.pyrefly]
+project-includes = ["src", "tests", "doc"]
+project-excludes = [
+    "src/ansys/scadeone/core/common/**",
+    "src/ansys/scadeone/core/model/**",
+    "src/ansys/scadeone/core/svc/common/**",
+    "src/ansys/scadeone/core/svc/generated_code/**",
+    "src/ansys/scadeone/core/svc/pywrapper/**",
+    "src/ansys/scadeone/core/svc/simdata/**",
+    "src/ansys/scadeone/core/svc/swan_creator/diagram_creator.py",
+    "src/ansys/scadeone/core/svc/swan_creator/harness_creator.py",
+    "src/ansys/scadeone/core/svc/swan_creator/job_creator.py",
+    "src/ansys/scadeone/core/svc/swan_creator/module_creator.py",
+    "src/ansys/scadeone/core/svc/swan_creator/operator_creator.py",
+    "src/ansys/scadeone/core/svc/swan_creator/project_creator.py",
+    "src/ansys/scadeone/core/svc/swan_visitor/**",
+    "src/ansys/scadeone/core/svc/test/**",
+    "src/ansys/scadeone/core/svc/build_system.py",
+    "src/ansys/scadeone/core/svc/swan_printer.py",
+    "src/ansys/scadeone/core/swan/diagram.py",
+    "src/ansys/scadeone/core/swan/pragmas.py",
+    "src/ansys/scadeone/core/job.py",
+    "src/ansys/scadeone/core/project.py",
+    "src/ansys/scadeone/core/scadeone.py",
+    "tests/**",
+    "doc/**",
+]
+ignore-missing-imports = ["platformdirs"]
 
 [tool.numpydoc_validation]
 checks = [
@@ -188,13 +222,18 @@ title_format = "`{version} <https://github.com/ansys/pyscadeone/releases/tag/v{v
 issue_format = "`#{issue} <https://github.com/ansys/pyscadeone/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking"
+showcontent = true
+
+[[tool.towncrier.type]]
 directory = "added"
 name = "Added"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
+directory = "fixed"
+name = "Fixed"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -203,8 +242,18 @@ name = "Documentation"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -215,16 +264,6 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "miscellaneous"
 name = "Miscellaneous"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]

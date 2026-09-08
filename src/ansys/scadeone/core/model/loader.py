@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +32,7 @@ to interface with the dotnet DLLs and to transform F# data structure into the
 """
 
 import logging
-from typing import Callable, Union
+from typing import Callable, Union, Any
 
 # dotnet configuration
 import ansys.scadeone.core.model.dotnet  # noqa
@@ -62,7 +63,7 @@ from .pyofast import (
     operatorExprOfAst,
     operatorOfAst,
     operatorDeclarationOfAst,
-    scopeSectionOfAst,
+    scopeSectionWithPragmaOfAst,
 )
 
 # version as a comment string for swan files
@@ -125,7 +126,7 @@ class SwanParser(Parser):
     def __init__(self, logger: logging.Logger) -> None:
         self._logger = ParserLogger(logger)
 
-    def _parse(self, rule_fn: Callable, swan: SwanStorage, parse_error_ok: bool = False) -> tuple:
+    def _parse(self, rule_fn: Callable, swan: SwanStorage, parse_error_ok: bool = False) -> Any:
         """Call F# parser with a given rule
 
         Parameters
@@ -151,7 +152,10 @@ class SwanParser(Parser):
         Parser.set_source(swan)
 
         try:
-            result = rule_fn(swan.source, swan.content(), self._logger)
+            # dynamic typing
+            source = swan.source  # type: ignore
+            code = swan.content()  # type: ignore
+            result = rule_fn(source, code, self._logger)
         except Reader.ParseError as e:
             if parse_error_ok:
                 return None
@@ -241,7 +245,7 @@ class SwanParser(Parser):
         result = self._parse(Reader.parse_interface, source)
         return interfaceOfAst(source.name, result.Item1)
 
-    def declaration(self, source: SwanStorage) -> Swan.Declaration:
+    def declaration(self, source: SwanStorage) -> Swan.ModuleItem:
         """Parse a Swan declaration:
           type, const, sensor, group, use, operator (declaration or definition).
 
@@ -272,7 +276,7 @@ class SwanParser(Parser):
             Corresponding Equation object
         """
         ast = self._parse(Reader.parse_equation, source)
-        return equationOfAst(ast)
+        return equationOfAst(ast)  # type: ignore
 
     def expression(self, source: SwanStorage) -> Swan.Expression:
         """Parse a Swan expression
@@ -288,7 +292,10 @@ class SwanParser(Parser):
             Corresponding expression object
         """
         ast = self._parse(Reader.parse_expr, source)
-        return expressionOfAst(ast)
+        expr = expressionOfAst(ast)
+        if not expr:
+            raise ScadeOneException("Failed to build Swan expression.")
+        return expr
 
     def scope_section(self, source: SwanStorage) -> Swan.ScopeSection:
         """Parse a Swan scope section
@@ -304,7 +311,10 @@ class SwanParser(Parser):
             Corresponding scope section object
         """
         ast = self._parse(Reader.parse_scope_section, source)
-        return scopeSectionOfAst(ast)
+        section = scopeSectionWithPragmaOfAst(ast)
+        if not section:
+            raise ScadeOneException("Failed to build Swan scope section.")
+        return section
 
     def op_expr(self, source: SwanStorage) -> Swan.OperatorExpression:
         """Parse a Swan operator expression

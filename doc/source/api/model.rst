@@ -13,7 +13,14 @@ project instance.
     from ansys.scadeone.core import ScadeOne
     with ScadeOne() as app:
         project = app.load_project('project.sproj')
-        model = app.model
+        model = project.model
+
+A model exposes only the modules of its own project. Cross-project
+resolution (for example through ``use`` directives or ``path_id`` references)
+is performed transparently by walking the project's dependencies.
+To iterate over the modules of a project together with the modules
+of its dependencies, use
+:py:meth:`ansys.scadeone.core.project.Project.all_modules`.
 
 
 

@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,11 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# %%
 from pathlib import Path
 
 from ansys.scadeone.core import ScadeOne
-from tools import log_diff, swan_to_xml
+from test_tools import log_diff, swan_to_xml
 
 
 class Test:
@@ -32,11 +32,11 @@ class Test:
         app = ScadeOne()
         script_dir = Path(__file__).parents[4]
         cc_project = script_dir / "examples/models/CC/CruiseControl/CruiseControl.sproj"
-        app.load_project(cc_project)
-        model = app.model
+        project = app.load_project(cc_project)
+        model = project.model
         model.load_all_modules()
         # Get module[0]
-        module = list(model.modules)[0]
+        module = model.get_module_body("CC")
         # Save in file
         result = tmp_path / "test_dump.xml"
         result.write_text(swan_to_xml(module))
@@ -44,6 +44,6 @@ class Test:
         oracle = Path(__file__).parent / "oracle_cc_dump.xml"
         a = oracle.read_text()
         b = result.read_text()
-        log_diff(actual=b, expected=a, winmerge=True)
+        log_diff(actual=b, expected=a, winmerge=False)
         res = a == b
         assert res

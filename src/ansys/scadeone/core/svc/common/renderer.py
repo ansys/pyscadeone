@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,9 +20,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# cspell: ignore startuml enduml unmark
-# pylint: disable=W0621
 
 """
 This module defines a *Document* concept and render a document.
@@ -670,6 +668,8 @@ class Renderer:
     def _pop_indent(self) -> None:
         try:
             self._indent_stack.pop()
+            if len(self._indent_stack) == 0:
+                self._indent_stack = [self._initial_indent]
         except Exception:  # pylint: disable=broad-except
             self._indent_stack = [self._initial_indent]
 

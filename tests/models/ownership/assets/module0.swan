@@ -1,0 +1,393 @@
+-- version swan: 2027.0 graph: 2.1
+use module1 as md1;
+
+node Graph_Op1 (i0: int32^2;
+                i1: int32;
+                i2 at i1: int32;
+                i3* : int32;
+                i4 * at i2: int32;
+                i5: bool;
+                i6 *: Ex_bool;
+                i7 *: (uint32);
+                i8 at i7 : (uint32);
+                i9 *: int32^2^3^4;
+                i10 * at i9: int32^2^3^Ex_C1;
+                i11 *: md1::M1_Ex_arr;
+                i12 *: md1::M1_Ex_str;
+                i13 *: Ex_variant_arr;
+                i14 : md1::M1_Ex_group;
+                i15 *: Ex_variant_struct;
+                i16 *: Ex_variant_int32;
+                i17 : Ex_enum_apple;
+                i18 : Ex_union;)
+  returns (o0: int32^2;
+           o1 : int32;
+           o2 at i2 : int32;
+           o3 *: int32;
+           o4 * at i2: int32;
+           o5* : bool;
+           o6 at i5: Ex_bool;
+           o7 *: (uint32);
+           o8 at i7 : (uint32);
+           o9 *: int32^2^3^4;
+           o10 * at i9: int32^2^3^Ex_C1;
+           o11 *: md1::M1_Ex_arr;
+           o13 *: md1::M1_Ex_str;
+           o15 *: Ex_variant_arr;
+           o17 : md1::M1_Ex_group;
+           o18 : (int32,int32,Ex_bool,(md1::M1_Ex_arr,(md1::M1_Ex_str,(Ex_variant_arr,(bool)))));)
+{
+  diagram
+    (#7 expr !i1
+    #pragma diagram {"xy":"H-265065;V-88783"} #end)
+    (#1 expr i1
+    #pragma diagram {"xy":"H-304908;V-84329"} #end)
+    (let _ = (i0.(1) with * [0] = 1; [1] = 2;);
+    #pragma diagram {"xy":"H-125345;V2376","wh":"46000;3200"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H-284908;V-88879"} #end)
+    (#3 expr i0
+    #pragma diagram {"xy":"H-304908;V-88879"} #end)
+    (#4 def o1
+    #pragma diagram {"xy":"H-284908;V-84329"} #end)
+    (#5 expr i2
+    #pragma diagram {"xy":"H-304908;V-79780"} #end)
+    (#6 def o2
+    #pragma diagram {"xy":"H-284908;V-79780"} #end)
+    (#8 expr i3
+    #pragma diagram {"xy":"H-304908;V-74891"} #end)
+    (#9 def o3
+    #pragma diagram {"xy":"H-284908;V-74891"} #end)
+    (#10 expr i4
+    #pragma diagram {"xy":"H-304908;V-69240"} #end)
+    (#11 def o4
+    #pragma diagram {"xy":"H-284908;V-69240"} #end)
+    (#12 def _
+    #pragma diagram {"xy":"H-245065;V-88783"} #end)
+    (#19 expr !i5
+    #pragma diagram {"xy":"H-304436;V-58089"} #end)
+    (#31 expr x0
+    #pragma diagram {"xy":"H-265065;V19508"} #end)
+    (#21 def _
+    #pragma diagram {"xy":"H-284436;V-58089"} #end)
+    (#22 expr ! #23
+      where
+        (#23 group)
+    #pragma diagram {"xy":"H-294908;V-62238"} #end)
+    (#24 expr i5
+    #pragma diagram {"xy":"H-314908;V-62238"} #end)
+    (#25 def _
+    #pragma diagram {"xy":"H-274908;V-62238"} #end)
+    (#32 def _
+    #pragma diagram {"xy":"H-245065;V19508"} #end)
+    (#36 expr ! last 'i0
+    #pragma diagram {"xy":"H-265065;V8797","wh":"14000;3200"} #end)
+    (#37 expr ! true
+    #pragma diagram {"xy":"H-228485;V-87619","wh":"10000;3200"} #end)
+    (#38 expr ! not ! i6
+    #pragma diagram {"xy":"H-191381;V-69544","wh":"14000;3200"} #end)
+    (#20 expr !12.01_f32
+    #pragma diagram {"xy":"H-228485;V-72603","wh":"14000;3200"} #end)
+    (#26 def _
+    #pragma diagram {"xy":"H-245065;V-82678"} #end)
+    (#27 expr !i1 pre i2
+    #pragma diagram {"xy":"H-190381;V-75569","wh":"14000;3200"} #end)
+    (#35 expr i8 lxor !x1
+    #pragma diagram {"xy":"H-191381;V-62131","wh":"16000;3200"} #end)
+    (#44 def _
+    #pragma diagram {"xy":"H-167381;V-62131"} #end)
+    (#45 expr !i10
+    #pragma diagram {"xy":"H-265065;V-43574"} #end)
+    (#46 expr !Ex_sensor_I32
+    #pragma diagram {"xy":"H-228485;V-77690","wh":"18000;3200"} #end)
+    (#47 expr !Ex_C1
+    #pragma diagram {"xy":"H-232485;V-82678","wh":"10000;3200"} #end)
+    (#48 expr !i11
+    #pragma diagram {"xy":"H-265065;V-37516"} #end)
+    (#33 def x6
+    #pragma diagram {"xy":"H-167970;V-30612"} #end)
+    (#50 expr !i12
+    #pragma diagram {"xy":"H-265065;V-25717"} #end)
+    (#49 def x7
+    #pragma diagram {"xy":"H-75521;V-41760"} #end)
+    (#52 expr !i13
+    #pragma diagram {"xy":"H-265065;V-13936"} #end)
+    (#51 expr !i15 . .l1.M1 default !i16)
+    #pragma diagram {"xy":"H-194847;V19508","wh":"70000;3200"} #end)
+    (#54 expr !i14
+    #pragma diagram {"xy":"H-265065;V176"} #end)
+    (#55 expr !i9
+    #pragma diagram {"xy":"H-265065;V-48282"} #end)
+    (#56 expr !i7
+    #pragma diagram {"xy":"H-265065;V-60971"} #end)
+    (#57 expr !i6
+    #pragma diagram {"xy":"H-265065;V-65996"} #end)
+    (#58 expr !i2
+    #pragma diagram {"xy":"H-265065;V-82678"} #end)
+    (#59 expr !i3
+    #pragma diagram {"xy":"H-265065;V-77715"} #end)
+    (#60 expr !i4
+    #pragma diagram {"xy":"H-265065;V-72463"} #end)
+    (#61 expr !i8
+    #pragma diagram {"xy":"H-265065;V-54161"} #end)
+    (#62 def _
+    #pragma diagram {"xy":"H-245065;V-77715"} #end)
+    (#63 def _
+    #pragma diagram {"xy":"H-245065;V-72463"} #end)
+    (#64 def o8
+    #pragma diagram {"xy":"H-245065;V-54161"} #end)
+    (#65 def o6
+    #pragma diagram {"xy":"H-245065;V-65996"} #end)
+    (#66 def o7
+    #pragma diagram {"xy":"H-245065;V-60971"} #end)
+    (#67 def o10
+    #pragma diagram {"xy":"H-245065;V-43574"} #end)
+    (#68 def o11
+    #pragma diagram {"xy":"H-245065;V-37516"} #end)
+    (#69 def o9
+    #pragma diagram {"xy":"H-245065;V-48282"} #end)
+    (#70 def o13
+    #pragma diagram {"xy":"H-245065;V-25717"} #end)
+    (#53 expr case !i18 of | apple:!i18
+    #pragma diagram {"xy":"H-121521;V-41760","wh":"60000;3200"} #end)
+    (guarantee $A2: if !i5 then !i6 else false;
+    #pragma diagram {"xy":"H-125345;V-27800","wh":"44000;3200"} #end)
+    (#71 def x5
+    #pragma diagram {"xy":"H-143847;V19508"} #end)
+    (#74 def o17
+    #pragma diagram {"xy":"H-245065;V176"} #end)
+    (#75 def o15
+    #pragma diagram {"xy":"H-245065;V-13936"} #end)
+    (#76 def _
+    #pragma diagram {"xy":"H-242065;V8797"} #end)
+    (#77 def o18
+    #pragma diagram {"xy":"H-167034;V-4316"} #end)
+    (#78 def _
+    #pragma diagram {"xy":"H-203485;V-82678"} #end)
+    (#79 def _
+    #pragma diagram {"xy":"H-207485;V-87619"} #end)
+    (#80 def _
+    #pragma diagram {"xy":"H-205485;V-72603"} #end)
+    (#81 def _
+    #pragma diagram {"xy":"H-203485;V-77690"} #end)
+    (#82 def _
+    #pragma diagram {"xy":"H-167381;V-75569"} #end)
+    (#83 def _
+    #pragma diagram {"xy":"H-168381;V-69544"} #end)
+    (#84 expr !i7 + i8
+    #pragma diagram {"xy":"H-191381;V-81594","wh":"12000;3200"} #end)
+    (#85 def _
+    #pragma diagram {"xy":"H-169381;V-81594"} #end)
+    (#86 expr i3 > !i4
+    #pragma diagram {"xy":"H-191382;V-87619","wh":"12000;3200"} #end)
+    (#87 def _
+    #pragma diagram {"xy":"H-169382;V-87619"} #end)
+    (#88 expr !(!i1,!i4,!i5,(!i11,(!i12,(!i13,(true)))))
+    #pragma diagram {"xy":"H-205034;V-4316","wh":"44000;3200"} #end)
+    (#34 expr forward
+      <<4>> with <<i>> [a] = !i9; [b]= !i10;
+      diagram
+        (let s = !i > a[0][1]+b[0][1];
+        #pragma diagram {"xy":"h0;v0","wh":"32000;3200"} #end)
+      returns (s)
+    #pragma diagram {"xy":"H-207770;V-30612","wh":"40600;19200"} #end)
+    (#123 def x0
+    #pragma diagram {"xy":"H-108809;V-13681"} #end)
+    (#124 block (Ref \ i0: !i1)
+    #pragma diagram {"xy":"H-139609;V-13681","wh":"20000;14000"} #end)
+    (assume $A1: (case !i17 of | apple: true);
+    #pragma diagram {"xy":"H-125695;V-34812","wh":"44000;3200"} #end)
+    (#73 def x4
+    #pragma diagram {"xy":"H-174135;V7805"} #end)
+    (#99 expr !1_i32^3
+    #pragma diagram {"xy":"H-196135;V7805","wh":"12000;3200"} #end)
+    (#101 def x2
+    #pragma diagram {"xy":"H-164135;V2376"} #end)
+    (#103 expr !(i13) [1]
+    #pragma diagram {"xy":"H-196135;V2376","wh":"32000;3200"} #end)
+    (#115 def x3
+    #pragma diagram {"xy":"H-158135;V12408"} #end)
+    (#116 expr (!i11 with [Ex_C1] = Ex_C1)
+    #pragma diagram {"xy":"H-203135;V12408","wh":"30000;3200"} #end)
+    
+    (#13 wire #1 => #4)
+    (#14 wire #3 => #2)
+    (#15 wire #5 => #6)
+    (#16 wire #8 => #9)
+    (#17 wire #10 => #11)
+    (#18 wire #7 => #12)
+    (#28 wire #19 => #21)
+    (#29 wire #24 => #23)
+    (#30 wire #22 => #25)
+    (#39 wire #31 => #32)
+    (#89 wire #58 => #26)
+    (#90 wire #35 => #44)
+    (#91 wire #59 => #62)
+    (#92 wire #60 => #63)
+    (#93 wire #57 => #65)
+    (#94 wire #56 => #66)
+    (#95 wire #61 => #64)
+    (#96 wire #55 => #69)
+    (#97 wire #45 => #67)
+    (#98 wire #48 => #68)
+    (#125 wire #34 => #33
+    #pragma diagram {"wp":"v0|#34 #33"} #end)
+    (#100 wire #50 => #70)
+    (#117 wire #53 => #49)
+    (#102 wire #52 => #75)
+    (#118 wire #51 => #71)
+    (#104 wire #88 => #77)
+    (#105 wire #36 => #76)
+    (#126 wire #124 .(o0) => #123
+    #pragma diagram {"wp":"v0|#124 #123"} #end)
+    (#106 wire #37 => #79)
+    (#107 wire #47 => #78)
+    (#108 wire #46 => #81)
+    (#109 wire #20 => #80)
+    (#110 wire #38 => #83)
+    (#111 wire #27 => #82)
+    (#112 wire #84 => #85)
+    (#113 wire #86 => #87)
+    (#119 wire #99 => #73)
+    (#114 wire #54 => #74)
+    (#120 wire #103 => #101)
+    (#121 wire #116 => #115)
+    
+    (var
+        x0 * :int32;
+        x1: uint32 default = 3_ui32;
+        x2: int32;
+        x3 *: int32^3 default = (i11 with [Ex_C1] = Ex_C1);
+        x4 * at i11 : md1::M1_Ex_arr;
+        x5:int32;
+        x6* default = !i5;
+        x7: Ex_enum_apple;)
+    (automaton #41
+      initial state #42 state0
+      #pragma diagram {"xy":"h-16492;v-1888","wh":"29816;13525"} #end :
+        diagram
+          (let _ = !i6;
+          #pragma diagram {"xy":"h-2209;v-200","wh":"16000;3200"} #end)
+      state #43 state1
+      #pragma diagram {"xy":"h17400;v-2391","wh":"28000;14443"} #end :
+        diagram
+          (let _ = !i11;
+          #pragma diagram {"xy":"h-534;v-684","wh":"18000;3200"} #end)
+      :1: #42 until if ((!i5))
+      {
+        emit 'o5;
+      }
+      restart #43
+      #pragma diagram {"tp":"h14908;v-22|#42 h1661 h1661 h-14000;v481|#43"} #end;
+    #pragma diagram {"xy":"H-119112;V-68375","wh":"70800;27226"} #end)
+    (diagram $Diagram0
+       (let _ = !i2;
+       #pragma diagram {"xy":"h0;v0","wh":"16000;3200"} #end)
+     #pragma diagram {"xy":"H-209797;V-53380","wh":"24000;11200"} #end)
+}
+
+{text%node Textual_Op1
+       (i0_t: int32^2;i1_t:int32;i2_t at i1_t:int32;i3_t *:int32; i4_t * at i2_t:int32; i5_t_clk: bool; i7_t_clk: Ex_variant_struct; i8_t: int32^2^2; i9_t: st1; i10_t:structArray;
+       i11_t : st2;)
+      returns (o0_t: int32^2;o1_t: int32;o2_t at i1_t: int32;o3_t *: int32;o4_t * at i2_t: int32; o5_t:int32^2^2; o6_t: bool^3^2; o7_t:struct1^2; o8_t:int32^2^2 ;o9_t: int32^2^2;
+      o10_t:st1; o11_t:st1; o12_t:st2; o13_t:st1; o14_t:st1;)
+      {
+          var x0_t* default = !i5_t_clk;
+          x1_t* at x0_t: Ex_bool;
+          x2_t*: int32;
+          
+          -- arry with
+          var x3_t: int32^2^2 default = (i8_t with * [md1::M1_Ex_C2][Ex_C1] = 1_i32;);
+          assume $A1: ([true, false]^2 with * [0][1] = true; [1][0] = true)[1][0];
+          
+          -- strut with 
+          var x4_t : st1 last = (i9_t with * .l1.l1 = 4_i32; .l2.l2 = md1::M1_Ex_C2 + md1::M1_Ex_C2);
+          guarantee $A2: ( {l1:{l1:true}: st3_1,l2:{l2:false}:st3_2}:st3 with * .l1.l1 = true; .l2.l2 = true;).l2.l2;
+          
+          let 
+          _ = (i0_t.(1) with * [0] = 1; [1] = 2;);
+          _= !i1_t;
+          o0_t=!i0_t;
+          o1_t=!i1_t;
+          o2_t=!i2_t;
+          o3_t=!i3_t;
+          o4_t=!i4_t;
+          _ = !- -!5_i32;
+          x1_t = true;
+          x2_t = (i7_t_clk).l1.M1;
+          
+          -- arry with
+          o5_t = !(i8_t with* [Ex_C1][md1::M1_Ex_C2] = Ex_C1; [1][0] = 3_i32; );
+          o6_t = ([[true,true,true], [false, false, false]] with * [0][+Ex_C1] = true; [1][!i1_t-i1_t] = false;);
+          o7_t = (i10_t with* [0].s1 = 2_i32; [1].s1 = i1_t);
+          o8_t = ((i8_t with* [Ex_C1][md1::M1_Ex_C2] = Ex_C1; [1][0] = i1_t*3_i32;) with * [1][1] = (i8_t with* [Ex_C1][md1::M1_Ex_C2] = Ex_C1; [1][0] = 3_i32;) [1][1]; [0][1] = (window <<2>> (i3_t^2)(3_i32))[1] );
+          x3_t = i1_t^2^2;
+          o9_t = (x3_t with * [0][0] = 5_i32;[1][1] = 8_i32);
+          
+          -- struct with
+          o10_t = (i9_t with * .l1.l1 = md1::M1_Ex_C3; .l2.l2 = md1::M1_Ex_C3 +1_i32;);
+          o11_t = ({l1: {l1:3_i32}:st1_1, l2:{l2:1_i32}:st1_2}: st1 -> pre i9_t with * .l1.l1 =pre !8_i32; .l2.l2 = i9_t.l2.l2;);
+          o12_t = (i11_t with * .l1[0] = -17_i32; .l1[1] = 17_i32;);
+          o13_t = ( (i9_t with * .l1.l1 = md1::M1_Ex_C3; .l2.l2 = md1::M1_Ex_C3;) with * .l1.l1 = ( i11_t with * .l1[0] = -17_i32 ; .l1[1]= 17_i32;).l1[0]; .l2.l2 = (5_i32,l2:6_i32).(l2) );  
+          
+          
+          x4_t = {l1:{l1:1_i32}:st1_1, l2:{l2:3_i32}:st1_2}:st1;
+          o14_t = ( x4_t with * .l1.l1 = 5_i32; .l2.l2 = i9_t.l1.l1); 
+      }%text}
+
+function Ref (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 expr i0
+    #pragma diagram {"xy":"H-49300;V-5650"} #end)
+    (#1 def o0
+    #pragma diagram {"xy":"H-7300;V-3750"} #end)
+    (#2 expr #3 + #4
+      where
+        (#3 group)
+        (#4 group)
+    #pragma diagram {"xy":"H-28300;V-3750"} #end)
+    (#5 expr 1_i32
+    #pragma diagram {"xy":"H-50300;V-1850","wh":"10000;3200"} #end)
+    
+    (#6 wire #0 => #3)
+    (#7 wire #2 => #1)
+    (#8 wire #5 => #4)
+}
+
+type Ex_bool = bool;
+
+const Ex_C1: int32 = 4;
+
+sensor Ex_sensor_I32: int32;
+
+type Ex_variant_arr = either1{int32^3};
+
+type Ex_variant_int32 = either2{int32};
+
+type Ex_variant_struct = either3{l1:Ex_struct,l2:int32};
+
+type Ex_struct = {M1: int32, M2: int32};
+
+type Ex_enum_apple = enum {apple};
+
+type st1_1 = {l1: int32 };
+
+type st1_2 = {l2: int32};
+
+type st2 = {l1:int32^4,l2:bool^3^2};
+
+type st3 = {l1:st3_1,l2:st3_2};
+
+type st3_1 = {l1:bool};
+
+type st3_2 = {l2:bool};
+
+type struct1 = {s1:int32,s2:bool};
+
+type structArray = struct1^2;
+
+type Ex_union = tagA{Ex_enum_apple};
+
+type st1 = {l1: st1_1, l2: st1_2};

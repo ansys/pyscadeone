@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,6 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 import shutil
 import platform
 from collections import namedtuple
@@ -26,7 +28,7 @@ from keyword import iskeyword
 from pathlib import Path
 import os
 import re
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, cast
 
 import jinja2
 
@@ -39,8 +41,11 @@ from ansys.scadeone.core.svc.build_system import (
     BuildSystem,
     Target,
     TargetKind,
+    BuildRequest,
+    Generator,
 )
 import ansys.scadeone.core.svc.generated_code as gc
+from ansys.scadeone.core.svc.common.tools import CodeHelper
 
 # flake8: noqa
 
@@ -116,7 +121,6 @@ class PythonWrapper:
         )
         self._target_path = target_dir
         self._imports = []
-        self._swan_lib = []
 
     def _init_data(self):
         """
@@ -195,8 +199,8 @@ class PythonWrapper:
             return type_base.path
         elif type_base and type_base.is_array:
             pi = self._get_predef_info(type_base.m_name, False)
-            size = " * ".join([str(s) for s in type_base.sizes])
-            return f"{pi.type_name} * {size}"
+            size = " * ".join([str(s) for s in cast(gc.Array, type_base).sizes])
+            return f"{cast(PredefInfo, pi).type_name} * {size}"
         else:
             # TODO with others
             return ""
@@ -220,7 +224,7 @@ class PythonWrapper:
 
         if type_base and (type_base.is_scalar or type_base.is_enum_type):
             pi = self._get_predef_info(type_base.m_name, native)
-            return pi.init_value
+            return cast(PredefInfo, pi).init_value
         elif type_base and type_base.is_array:
             return "()"
         elif type_base and type_base.is_structure:
@@ -230,7 +234,7 @@ class PythonWrapper:
 
     def _get_enum_name(self, type_base: gc.TypeBase) -> str:
         if type_base.is_enum_type:
-            return type_base.enum_name
+            return cast(gc.Enumerate, type_base).enum_name
         return ""
 
     def _get_array_info(self, type_base: gc.TypeBase) -> str:
@@ -275,6 +279,14 @@ class PythonWrapper:
         for _elm in [_in for _in in model_op.inputs]:
             if _elm._id in _io_dct:
                 _typ = self._code_gen.get_type(_mapping[_io_dct[_elm._id]], _io_dct[_elm._id])
+                if not _typ:
+                    raise ScadeOneException(
+                        f"Type {_io_dct[_elm._id]} of input {_elm.name} is not found in the mapping file."
+                    )
+                if isinstance(_typ, gc.Enumerate):
+                    _typ._enum_name = _mapping[_io_dct[_elm._id]][1]["name"]
+                if isinstance(_typ, gc.Structure):
+                    _typ.path = _mapping[_io_dct[_elm._id]][1]["name"]
                 _nm = self._get_python_type_name(_typ, True)
                 _val = self._get_initial_value(_typ, True)
                 _enum = self._get_enum_name(_typ)
@@ -297,6 +309,20 @@ class PythonWrapper:
                 else:
                     _rtn = _io_dct[_elm._id]
             _typ = self._code_gen.get_type(_mapping[_rtn], _rtn)
+            if not _typ:
+                raise ScadeOneException(
+                    f"Type {_rtn} of output {_elm.name} is not found in the mapping file."
+                )
+            if isinstance(_typ, gc.Enumerate):
+                if _elm._id in _io_dct:
+                    _typ._enum_name = _mapping[_io_dct[_elm._id]][1]["name"]
+                else:
+                    _typ._enum_name = _mapping[_rtn][1]["name"]
+            elif isinstance(_typ, gc.Structure):
+                if _elm._id in _io_dct:
+                    _typ.path = _mapping[_io_dct[_elm._id]][1]["name"]
+                else:
+                    _typ.path = _mapping[_rtn][1]["name"]
             _nm = self._get_python_type_name(_typ, True)
             _val = self._get_initial_value(_typ, True)
             _enum = self._get_enum_name(_typ)
@@ -306,7 +332,7 @@ class PythonWrapper:
         return _inputs, _outputs
 
     def _generate_ios_context(
-        self, model_op: gc.ModelOperator, context_data: List[str], _mapping: dict
+        self, model_op: gc.ModelOperator, context_data: list, _mapping: dict
     ) -> List[str]:
         """
         Generate inputs/outputs context
@@ -365,9 +391,16 @@ class PythonWrapper:
                 if self._code_gen.get_role_type(model_op._id, _fld["type"]) == "ContextType":
                     _rtn = "ctypes.c_void_p"
                 else:
-                    _rtn = self._get_python_type_name(
-                        self._code_gen.get_type(_mapping[_fld["type"]], _fld["type"])
-                    )
+                    _typ = self._code_gen.get_type(_mapping[_fld["type"]], _fld["type"])
+                    if not _typ:
+                        raise ScadeOneException(
+                            f"Type {_fld['type']} of parameter {_fld['name']} is not found in the mapping file."
+                        )
+                    if isinstance(_typ, gc.Enumerate):
+                        _typ._enum_name = _mapping[_fld["type"]][1]["name"]
+                    if isinstance(_typ, gc.Structure):
+                        _typ.path = _mapping[_fld["type"]][1]["name"]
+                    _rtn = self._get_python_type_name(_typ)
                 if _fld.get("pointer"):
                     _rtn = f"ctypes.POINTER({_rtn})"
                 _param.append(_rtn)
@@ -411,7 +444,7 @@ class PythonWrapper:
         # Initialize exports data
         _exp = {}
         _id = 1
-        for _model_op in self._model_ops:
+        for _model_op in self._model_ops if self._model_ops else []:
             # Add cycle method data
             if _model_op.cycle_method:
                 _exp[_model_op.cycle_method.name] = _id
@@ -461,7 +494,7 @@ class PythonWrapper:
 
         _data = []
         _sns_data = {}
-        for _model_op in self._model_ops:
+        for _model_op in self._model_ops if self._model_ops else []:
             # Initialize operator data
             _op_dict = {}
             _op_dict["ios_declared"] = []
@@ -608,15 +641,38 @@ class PythonWrapper:
         _code_type_mapping = self._code_gen.get_code_type_id_mapping()
         _model_mapping = self._code_gen.get_model_id_mapping()
         _links = self._code_gen._get_mapping()
-
+        typedef_code_elms = map(
+            lambda typedef_elm: typedef_elm[1],
+            filter(lambda type_elm: type_elm[0] == "typedef", _code_type_mapping.values()),
+        )
         for _elm in _code_type_mapping.values():
             if _elm[0] == "enum":
                 enum_values = []
+                typedef_enum = next(
+                    filter(
+                        lambda typedef_elm: typedef_elm["type"] == _elm[1]["id"], typedef_code_elms
+                    ),
+                    None,
+                )
+                if not typedef_enum:
+                    raise ScadeOneException(
+                        f"Typedef of enum {_elm[1]['name']} is not found in the mapping file."
+                    )
                 for value in _elm[1]["values"]:
                     enum_values.append(value["name"])
-                _enum_data[_elm[1]["name"]] = enum_values
+                _enum_data[typedef_enum["name"]] = enum_values
             elif _elm[0] == "struct":
-                struct_name = _elm[1].get("name")
+                typedef_struct = next(
+                    filter(
+                        lambda typedef_elm: typedef_elm["type"] == _elm[1]["id"], typedef_code_elms
+                    ),
+                    None,
+                )
+                if not typedef_struct:
+                    raise ScadeOneException(
+                        f"Typedef of struct {_elm[1]['name']} is not found in the mapping file."
+                    )
+                struct_name = typedef_struct["name"]
                 struct_values = []
                 model_elt_id = _links.get(_elm[1]["id"])
                 if model_elt_id in _model_mapping.keys():
@@ -685,30 +741,23 @@ class PythonWrapper:
             lstrip_blocks=True,
         )
         template = environment.get_template("swan_config_template.h")
-
-        _includes = "\n".join([f'#include "{inc}"' for inc in self._swan_lib])
-        swan_config = template.render(HOOK_BEGIN="", HOOK_END=_includes if _includes else "")
+        _includes = "\n".join(
+            [
+                f'#include "{inc}"'
+                for inc in CodeHelper.get_H_files(self._imports, config_pathname.parent)
+            ]
+        )
+        swan_config = template.render(
+            SWAN_CONFIG_HOOK_BEGIN="", SWAN_CONFIG_HOOK_END=_includes if _includes else ""
+        )
 
         config_pathname.write_text(swan_config)
 
-    def _collect_imported_code_files(self) -> None:
+    def _collect_external_code_files(self) -> None:
         """
-        Collect imported code files from the project resources and dependencies.
+        Collect external code files from the project resources and dependencies.
         """
-
-        self._imports = [
-            (self._project.directory / resource.path).resolve()
-            for resource in (self._project.resources or [])
-        ]
-
-        scadeone_install = str(self._project.app.install_dir.resolve())
-        for dependency in self._project.dependencies(True) or []:
-            for dep in dependency.resources:
-                resource_path = (dependency.directory / dep.path).resolve()
-                # Check if the resource is a swan library
-                if str(dependency.directory).startswith(scadeone_install):
-                    self._swan_lib.append(resource_path.name)
-                self._imports.append(resource_path)
+        self._imports = CodeHelper.get_external_code(self._project)
 
     def _generate_declaration_files(self) -> List[str]:
         """
@@ -724,7 +773,7 @@ class PythonWrapper:
         for _elm in self._code_gen.code:
             if _elm.get("implementation_file"):
                 _lt.append(_elm["implementation_file"])
-            if _elm.get("interface_file"):
+            if _elm.get("interface_file") and not _elm.get("user_provided"):
                 _lt.append(_elm["interface_file"])
         return _lt
 
@@ -741,29 +790,29 @@ class PythonWrapper:
         because some files are locked by the OS. In this case, the user should remove it.
         A message is logged in the pyscadeone.log file.
         """
-        cfg = BuildConfig()
+        request = BuildRequest()
         build_dir = Path(self._target_dir()) / "build"
         build_dir.mkdir(parents=True, exist_ok=True)
-        cfg.working_dir = str(build_dir)
-        cfg.c_files = [str(file) for file in self._target_dir().glob("*.c")]
-        cfg.c_files.extend(
+        request.working_dir = str(build_dir)
+        request.c_files = [str(file) for file in self._target_dir().glob("*.c")]
+        request.c_files.extend(
             [str(file) for file in Path(self._code_gen.generated_code_dir).glob("*.c")]
         )
-        cfg.include_dirs = [str(self._target_dir()), str(self._code_gen.generated_code_dir)]
-
-        for imported_code in self._imports:
-            if imported_code.suffix in [".h", ".c"]:
-                if str(imported_code.parent) not in cfg.include_dirs:
-                    cfg.include_dirs.append(str(imported_code.parent))
-                if imported_code.suffix == ".c":
-                    cfg.c_files.append(str(imported_code))
+        config = BuildConfig()
+        config.include_dirs = [str(self._target_dir()), str(self._code_gen.generated_code_dir)]
+        # external code
+        # FIXME: is it a good idea to include all the directories of the external code files?
+        # It may cause issues if there are too many files in those directories, and we can have name conflicts.
+        config.include_dirs.extend(CodeHelper.get_I_paths(self._imports))
+        request.c_files.extend(CodeHelper.get_C_files(self._imports))
 
         if platform.system() == "Windows":
-            cfg.o_files = [str(file) for file in self._target_dir().glob("*.def")]
+            config.object_files = [str(file) for file in self._target_dir().glob("*.def")]
 
-        cfg.targets = [Target(self._out_name, TargetKind.SHARED_LIBRARY)]
-        builder = BuildSystem(self._project.app.install_dir)
-        result = builder.build(cfg)
+        request.targets = [Target(self._out_name, TargetKind.SHARED_LIBRARY)]
+        request.build_config = config
+        builder = BuildSystem(self._project.app)
+        result = builder.build(request)
         if not result.is_succeeded:
             raise ScadeOneException(f"Error building wrapper: {result.messages}")
         shutil.copy(build_dir / self._lib_name, self._target_dir())
@@ -808,12 +857,21 @@ class PythonWrapper:
         _py_pathname = self._target_dir() / (f"{self._out_name}.py")
         _files.append(_py_pathname)
         self._generate_python(_py_pathname)
-        # Collect imported code files
-        self._collect_imported_code_files()
+        # Collect external code files
+        self._collect_external_code_files()
         # Generate swan_config.h file
         _conf_pathname = self._target_dir() / "swan_config.h"
         self._generate_swan_config(_conf_pathname)
         _files.append(self._target_dir() / "swan_config.h")
+        # Generate sensor globals declaration
+        generator = Generator(self._project.app, self._code_gen._mapping_path)
+        gen_result = generator.generate_sensor_globals_decl(str(self._target_dir()))
+        if not gen_result.success:
+            raise ScadeOneException(
+                f"Error generating sensor globals declaration: {gen_result.messages}"
+            )
+        for generated_file in gen_result.generated_files:
+            _files.append(Path(generated_file))
         # Generate py_wrapper_files.txt
         _py_wrapper_files = self._target_dir() / "py_wrapper_files.txt"
         _start_file = _py_wrapper_files.parent.absolute()

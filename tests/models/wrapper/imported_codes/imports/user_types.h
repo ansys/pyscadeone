@@ -1,21 +1,15 @@
-#ifndef SWAN_TYPES_H_
-#define SWAN_TYPES_H_
+#ifndef USER_TYPES_H_
+#define USER_TYPES_H_
 
-#include "swan_config.h"
+typedef swan_int8 MyType_module0;
 
-typedef swan_int32 array_int32_4[4];
+extern void MyType_init_module0(MyType_module0 * restrict swan_c1);
 
-#ifndef swan_cp_array_int32_4
-#define swan_cp_array_int32_4(swan_c1, swan_c2)                               \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (array_int32_4)))
-#endif /* swan_cp_array_int32_4 */
+#define swan_cp_MyType_module0(swan_c1, swan_c2)                              \
+  (swan_assign((swan_c1), (swan_c2), sizeof (MyType_module0)))
 
-#ifdef swan_use_array_int32_4
-#ifndef swan_eq_array_int32_4
-extern swan_bool swan_eq_array_int32_4(
-  const array_int32_4 *swan_c1,
-  const array_int32_4 *swan_c2);
-#endif /* swan_eq_array_int32_4 */
-#endif /* swan_use_array_int32_4 */
+extern swan_bool swan_eq_MyType_module0(
+  const MyType_module0 *swan_c1,
+  const MyType_module0 *swan_c2);
 
-#endif
+#endif /* USER_TYPES_H_ */

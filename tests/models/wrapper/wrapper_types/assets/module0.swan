@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 use TypesModule as tType;
 
 node operator0 (i0 : int32;

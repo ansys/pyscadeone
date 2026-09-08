@@ -8,7 +8,7 @@ repos:
           - --start_year=2024
 
   - repo: https://github.com/numpy/numpydoc
-    rev: v1.8.0
+    rev: v1.10.0
     hooks:
       - id: numpydoc-validation
         files: \.py$

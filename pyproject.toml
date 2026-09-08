@@ -8,7 +8,7 @@ name = "ansys-scadeone-core"
 dynamic = ["version"]
 description = "Python interface for Ansys Scade One"
 readme = "README.rst"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.12,<3.15"
 license = { file = "LICENSE" }
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
@@ -20,8 +20,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",

@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,11 +21,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylint: too-many-arguments
-
 from collections import defaultdict
 from enum import Enum, auto
-from typing import List, Optional, Union, cast
+from typing import List, Optional, Union, Any, cast, Self
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.svc.swan_creator.diagram_creator import DiagramCreator
@@ -34,6 +33,7 @@ import ansys.scadeone.core.swan.scopes as scopes
 from .equations import ActivateIf, ActivateWhen, DefByCase, EquationLHS, StateMachine
 from .expressions import GroupAdaptation, PortExpr, Group
 from .instances import OperatorInstance, OperatorExpression
+from .scopesections import VarSection
 
 
 class DiagramObject(common.HasPragma):  # numpydoc ignore=PR01
@@ -65,6 +65,8 @@ class DiagramObject(common.HasPragma):  # numpydoc ignore=PR01
         self._lunum = lunum
         self._luid = luid
         self._locals = locals if locals else []
+        common.SwanItem.set_owner(self, self._lunum)
+        common.SwanItem.set_owner(self, self._luid)
         common.SwanItem.set_owner(self, self._locals)
 
     @property
@@ -104,7 +106,7 @@ class DiagramObject(common.HasPragma):  # numpydoc ignore=PR01
         diagram = self._get_diagram(self.owner)
         return diagram.get_block_targets(self)
 
-    def _get_diagram(self, diag_obj: "DiagramObject") -> "Diagram":
+    def _get_diagram(self, diag_obj: Any) -> "Diagram":
         """Get the diagram from a diagram object."""
         if isinstance(diag_obj, Diagram):
             return diag_obj
@@ -124,7 +126,8 @@ class Diagram(scopes.ScopeSection, DiagramCreator):  # numpydoc ignore=PR01
             self._objects = objects
         self._luid = luid
         self._diag_nav = None
-        common.SwanItem.set_owner(self, objects)
+        common.SwanItem.set_owner(self, self._objects)
+        common.SwanItem.set_owner(self, self._luid)
 
     @property
     def luid(self) -> Optional[common.Luid]:
@@ -135,6 +138,24 @@ class Diagram(scopes.ScopeSection, DiagramCreator):  # numpydoc ignore=PR01
     def objects(self) -> List[DiagramObject]:
         """Diagram objects."""
         return self._objects
+
+    @property
+    def local_variables(self) -> List[common.Variable]:
+        """Local variables declared from the diagram."""
+        vars_list = []
+        for obj in self.objects:
+            if isinstance(obj, SectionObject) and isinstance(obj.section, VarSection):
+                vars_list.extend(cast(VarSection, obj.section).var_decls)
+        return vars_list
+
+    @property
+    def diagrams(self) -> List[Self]:
+        """Return all direct subdiagrams declared from the diagram."""
+        diagram_list = []
+        for obj in self.objects:
+            if isinstance(obj, SectionObject) and isinstance(obj.section, Diagram):
+                diagram_list.append(obj.section)
+        return diagram_list
 
     def get_block_sources(
         self, obj: DiagramObject
@@ -185,6 +206,10 @@ class ExprBlock(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._expr = expr
+        common.SwanItem.set_owner(self, self._expr)
+        common.SwanItem.set_owner(self, self._lunum)
+        common.SwanItem.set_owner(self, self._luid)
+        common.SwanItem.set_owner(self, self._locals)
 
     @property
     def expr(self) -> common.Expression:
@@ -213,6 +238,7 @@ class DefBlock(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._lhs = lhs
+        common.SwanItem.set_owner(self, self._lhs)
 
     @property
     def lhs(self) -> Union[EquationLHS, common.ProtectedItem]:
@@ -246,6 +272,7 @@ class Block(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._instance = instance
+        common.SwanItem.set_owner(self, self._instance)
 
     @property
     def instance(self) -> Union[OperatorInstance, OperatorExpression, common.ProtectedItem]:
@@ -277,6 +304,8 @@ class Connection(common.SwanItem):  # numpydoc ignore=PR01
         super().__init__()
         self._port = port
         self._adaptation = adaptation
+        common.SwanItem.set_owner(self, self._port)
+        common.SwanItem.set_owner(self, self._adaptation)
 
     @property
     def port(self) -> Union[PortExpr, None]:
@@ -320,6 +349,8 @@ class Wire(DiagramObject):  # numpydoc ignore=PR01
         super().__init__(lunum, luid, locals, pragmas)
         self._source = source
         self._targets = targets
+        common.SwanItem.set_owner(self, self._source)
+        common.SwanItem.set_owner(self, self._targets)
 
     @property
     def source(self) -> Connection:
@@ -414,6 +445,7 @@ class Concat(GroupBlock):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._group = group
+        common.SwanItem.set_owner(self, self._group)
 
     @property
     def group(self) -> Group:
@@ -476,7 +508,7 @@ class SectionObject(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(locals=locals, pragmas=pragmas)
         self._section = section
-        common.SwanItem.set_owner(self, section)
+        common.SwanItem.set_owner(self, self._section)
 
     @property
     def section(self) -> scopes.ScopeSection:
@@ -513,7 +545,7 @@ class DefByCaseBlockBase(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(locals=locals, pragmas=pragmas)
         self._def_by_case = def_by_case
-        common.SwanItem.set_owner(self, def_by_case)
+        common.SwanItem.set_owner(self, self._def_by_case)
 
     @property
     def def_by_case(self) -> DefByCase:
@@ -552,7 +584,7 @@ class StateMachineBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     @property
     def state_machine(self) -> StateMachine:
         """State machine object."""
-        return self.def_by_case
+        return cast(StateMachine, self.def_by_case)
 
 
 class ActivateIfBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
@@ -577,7 +609,7 @@ class ActivateIfBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     @property
     def activate_if(self) -> ActivateIf:
         """Activate if object."""
-        return self.def_by_case
+        return cast(ActivateIf, self.def_by_case)
 
 
 class ActivateWhenBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
@@ -602,7 +634,7 @@ class ActivateWhenBlock(DefByCaseBlockBase):  # numpydoc ignore=PR01
     @property
     def activate_when(self) -> ActivateWhen:
         """Activate when object."""
-        return self.def_by_case
+        return cast(ActivateWhen, self.def_by_case)
 
 
 # Diagram navigation
@@ -669,7 +701,7 @@ class DiagramNavigation:
     ) -> List[tuple[DiagramObject, GroupAdaptation, Union[List[GroupAdaptation], None]]]:
         """A block sources list of a Diagram Object."""
         if len(obj.locals) != 0:
-            locals = [local.lunum for local in obj.locals]
+            locals = [local.lunum for local in obj.locals if local.lunum]
             target_wires = []
             for lunum in locals:
                 target_wires.extend(self.with_target(lunum))
@@ -762,13 +794,11 @@ class DiagramNavigation:
                 for target in wire.targets:
                     if not target.is_connected:
                         continue
-                    if target.port.is_self:
-                        continue
                     self._wires_of_target[target.port.lunum.value].append(wire)
                 # process source
                 # _wire_of_source: table which stores wires from
                 # source block found in wire
-                if wire.source.is_connected and not wire.source.port.is_self:
+                if wire.source.is_connected:
                     self._wires_of_source[wire.source.port.lunum.value].append(wire)
             else:
                 lunum = obj.lunum

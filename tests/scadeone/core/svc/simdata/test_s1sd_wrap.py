@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +22,7 @@
 # SOFTWARE.
 
 import ctypes
-from test_common import VSizeImported, vsize_imported_get_bytes_size, vsize_imported_to_bytes
+from test_common import VSizeExternal, vsize_external_get_bytes_size, vsize_external_to_bytes
 import pytest
 from os import remove
 
@@ -84,7 +85,7 @@ def get_value(p_val: ctypes.c_void_p):
         return get_value(v_variant)
     elif val_class == core.DataClass.UNTYPED_VARIANT_CONSTRUCTOR:
         return ""
-    elif val_class == core.DataClass.IMPORTED:
+    elif val_class == core.DataClass.EXTERNAL:
         return dll_wrap.sdd_value_get_imported_value(p_val)
     else:
         assert False
@@ -316,18 +317,18 @@ def test_all_functions():
     sign_vals[2].TS_SOME.tag = 1
     sign_vals[2].TS_SOME.value.SPEED_LIMIT_END.tag = 1
 
-    # create imported type
-    class imported(ctypes.Structure):
+    # create external type
+    class external(ctypes.Structure):
         _fields_ = [("eChar", ctypes.c_char), ("eShort", ctypes.c_short), ("eInt", ctypes.c_int32)]
 
-    imported_type_id = dll_wrap.sdt_imported_create(ctypes.sizeof(imported))
-    assert imported_type_id != core.SD_ID_INVALID
-    assert dll_wrap.sdt_set_name(imported_type_id, "p1::tImported") == core.SD_ERR_NONE
-    vsize_imported_type_id = dll_wrap.sdt_vsize_imported_create(
-        ctypes.sizeof(VSizeImported), vsize_imported_get_bytes_size, vsize_imported_to_bytes
+    external_type_id = dll_wrap.sdt_imported_create(ctypes.sizeof(external))
+    assert external_type_id != core.SD_ID_INVALID
+    assert dll_wrap.sdt_set_name(external_type_id, "p1::tImported") == core.SD_ERR_NONE
+    vsize_external_type_id = dll_wrap.sdt_vsize_imported_create(
+        ctypes.sizeof(VSizeExternal), vsize_external_get_bytes_size, vsize_external_to_bytes
     )
-    assert vsize_imported_type_id != core.SD_ID_INVALID
-    assert dll_wrap.sdt_set_name(vsize_imported_type_id, "p1::tVSizeImported") == core.SD_ERR_NONE
+    assert vsize_external_type_id != core.SD_ID_INVALID
+    assert dll_wrap.sdt_set_name(vsize_external_type_id, "p1::tVSizeExternal") == core.SD_ERR_NONE
 
     # create elements
     sStruct_id = dll_wrap.sde_create(file_id, "M::Sensor1", struct_type_id, core.SdeKind.SENSOR, "")
@@ -342,11 +343,11 @@ def test_all_functions():
     iVariant_id = dll_wrap.sde_create(
         root_op_id, "iVariant", variant_type_2_id, core.SdeKind.INPUT, ""
     )
-    iImported_id = dll_wrap.sde_create(
-        root_op_id, "iImported", imported_type_id, core.SdeKind.INPUT, ""
+    iExternal_id = dll_wrap.sde_create(
+        root_op_id, "iImported", external_type_id, core.SdeKind.INPUT, ""
     )
-    iVSizeImported_id = dll_wrap.sde_create(
-        root_op_id, "iVSizeImported", vsize_imported_type_id, core.SdeKind.INPUT, ""
+    iVSizeExternal_id = dll_wrap.sde_create(
+        root_op_id, "iVSizeExternal", vsize_external_type_id, core.SdeKind.INPUT, ""
     )
     iGroup_id = dll_wrap.sde_create(root_op_id, "iGroup", core.SDT_NONE, core.SdeKind.INPUT, "")
     iGroupItem1Float32_id = dll_wrap.sde_create(
@@ -372,8 +373,8 @@ def test_all_functions():
     if imported_numpy:
         vIArray_2_3_4 = np.empty(shape=(2, 3, 4), dtype=np.int64)
         vIArray_2_3_4_all = []
-    vIImported = imported(0, 0, 0)
-    p_vIImported = ctypes.addressof(vIImported)
+    vIExternal = external(0, 0, 0)
+    p_vIExternal = ctypes.addressof(vIExternal)
     clock3 = False
     for i in range(0, NB_CYCLES):
         vSStruct.eI16 = i
@@ -389,20 +390,20 @@ def test_all_functions():
             clock3 = not clock3
             vIEnum = ctypes.c_int32(enum_val_red)
             vIVariant = sign_vals[0]
-            strIVSizeImported = "tny"
+            strIVSizeExternal = "tny"
         elif mod == 1:
             vIEnum = ctypes.c_int32(enum_val_green)
             vIVariant = sign_vals[1]
-            strIVSizeImported = "short"
+            strIVSizeExternal = "short"
         else:
             vIEnum = ctypes.c_int32(enum_val_blue)
             vIVariant = sign_vals[2]
-            strIVSizeImported = "very long"
+            strIVSizeExternal = "very long"
         vIFloat32 = ctypes.c_float(3.14 + i)
-        vIImported.eChar = ctypes.c_char(i)
-        vIImported.eShort = ctypes.c_short(i)
-        vIImported.eInt = ctypes.c_int32(i)
-        vIVSizeImported = VSizeImported(strIVSizeImported)
+        vIExternal.eChar = ctypes.c_char(i)
+        vIExternal.eShort = ctypes.c_short(i)
+        vIExternal.eInt = ctypes.c_int32(i)
+        vIVSizeExternal = VSizeExternal(strIVSizeExternal)
         vPChar = ctypes.c_char(ord("a") + i % 26)
         vIGroupItem1Float32 = ctypes.c_float(6.28 + i)
         vIGroupItem2Enum = vIEnum
@@ -414,8 +415,8 @@ def test_all_functions():
         dll_wrap.sdd_append_raw_value(iEnum_id, ctypes.addressof(vIEnum))
         dll_wrap.sdd_append_raw_value(iFloat32_id, 0 if clock3 else ctypes.addressof(vIFloat32))
         dll_wrap.sdd_append_raw_value(iVariant_id, ctypes.addressof(vIVariant))
-        dll_wrap.sdd_append_raw_value(iImported_id, p_vIImported)
-        dll_wrap.sdd_append_raw_value(iVSizeImported_id, ctypes.addressof(vIVSizeImported))
+        dll_wrap.sdd_append_raw_value(iExternal_id, p_vIExternal)
+        dll_wrap.sdd_append_raw_value(iVSizeExternal_id, ctypes.addressof(vIVSizeExternal))
         dll_wrap.sdd_append_raw_value(pChar_id, ctypes.addressof(vPChar))
         dll_wrap.sdd_append_raw_value(iGroupItem1Float32_id, ctypes.addressof(vIGroupItem1Float32))
         dll_wrap.sdd_append_raw_value(iGroupItem2Enum_id, ctypes.addressof(vIGroupItem2Enum))
@@ -478,15 +479,15 @@ def test_all_functions():
     assert dll_wrap.sdt_get_name(variant_type_2_id) == "p1::tVariantSignOpt"
     assert dll_wrap.sdt_get_size(variant_type_2_id) == ctypes.sizeof(traffic_sign_opt)
 
-    imported_type_id = types_ids[19]
-    assert dll_wrap.sdt_get_class(imported_type_id) == core.TypeClass.IMPORTED
-    assert dll_wrap.sdt_get_name(imported_type_id) == "p1::tImported"
-    assert not dll_wrap.sdt_imported_is_variable_size(imported_type_id)
+    external_type_id = types_ids[19]
+    assert dll_wrap.sdt_get_class(external_type_id) == core.TypeClass.EXTERNAL
+    assert dll_wrap.sdt_get_name(external_type_id) == "p1::tImported"
+    assert not dll_wrap.sdt_imported_is_variable_size(external_type_id)
 
-    vsize_imported_type_id = types_ids[20]
-    assert dll_wrap.sdt_get_class(vsize_imported_type_id) == core.TypeClass.IMPORTED
-    assert dll_wrap.sdt_get_name(vsize_imported_type_id) == "p1::tVSizeImported"
-    assert dll_wrap.sdt_imported_is_variable_size(vsize_imported_type_id)
+    vsize_external_type_id = types_ids[20]
+    assert dll_wrap.sdt_get_class(vsize_external_type_id) == core.TypeClass.EXTERNAL
+    assert dll_wrap.sdt_get_name(vsize_external_type_id) == "p1::tVSizeExternal"
+    assert dll_wrap.sdt_imported_is_variable_size(vsize_external_type_id)
 
     # find elements
     assert dll_wrap.sde_get_n_children(file_id) == 2
@@ -656,13 +657,13 @@ def test_all_functions():
             [8, 0, 8, 0, 8, 0, 0, 0],
             [9, 0, 9, 0, 9, 0, 0, 0],
         ],
-    )  # [N] imported type, all values
+    )  # [N] external type, all values
     # "tny", "short", "very long"
     read_values(
         file_id,
         0,
         -1,
-        "R::Root/iVSizeImported",
+        "R::Root/iVSizeExternal",
         [
             [3, 0, 116, 110, 121],
             [5, 0, 115, 104, 111, 114, 116],
@@ -675,7 +676,7 @@ def test_all_functions():
             [9, 0, 118, 101, 114, 121, 32, 108, 111, 110, 103],
             [3, 0, 116, 110, 121],
         ],
-    )  # [N] variable size imported type, all values
+    )  # [N] variable size external type, all values
 
     read_values(file_id, 0, 1, "R::Root/invalid_var.eI16", [])  # [E] invalid element path
     read_values(file_id, 0, 1, "R::Root/iStruct.invalid", [])  # [E] invalid struct field

@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 node #pragma cg C:name toto #end op_simple_pragmas (#pragma i0 pragma #end i0: int32;)
   returns (#pragma o0 pragma #end
            #pragma another o0 pragma #end o0: int32;)

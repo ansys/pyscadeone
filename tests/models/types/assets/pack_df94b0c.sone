@@ -1,6 +1,6 @@
 package types
   const C0: int8 = 4;
-  type imported T0;
+  type external T0;
   type T1 = int32;
   type T2 = float32;
   type T3 = unsigned<<12>>;

@@ -1,4 +1,4 @@
--- version swan: 2025.0 graph: 2.0 swant: 1.1
+-- version swan: 2027.0 graph: 2.0 swant: 1.1
 use module0;
 
 _harness harness0

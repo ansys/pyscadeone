@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,6 +36,7 @@ import re
 from typing import Iterable, List, Optional, Tuple, Union, cast
 
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.interfaces import IModel
 
 Owner = Union["SwanItem", IModel, None]
@@ -187,10 +189,10 @@ class Pragma(SwanItem):
     def __str__(self) -> str:
         """Return the pragma as a string."""
         if self.data:
-            ws = "" if self.data[0] == "\n" else " "
+            ws = "" if not self.key else " "
             return f"#pragma {self.key}{ws}{self.data} #end"
         kind = getattr(self, "_kind", None)
-        kind_str = f" {kind}" if kind else ""
+        kind_str = f" {kind}" if kind else " "
         return f"#pragma {self.key}{kind_str} #end"
 
     @staticmethod
@@ -221,12 +223,17 @@ class HasPragma(SwanItem):  # numpydoc ignore=PR01
     def __init__(self, pragmas: Optional[List[Pragma]] = None) -> None:
         super().__init__()
         self._pragmas = pragmas if pragmas is not None else []
-        SwanItem.set_owner(self, self.pragmas)
+        SwanItem.set_owner(self, self._pragmas)
 
     @property
     def pragmas(self) -> List[Pragma]:
         """List of pragmas."""
         return self._pragmas
+
+    def add_pragmas(self, *pragmas) -> None:
+        """Add one or more pragmas to the current object."""
+        self._pragmas.extend(pragmas)
+        SwanItem.set_owner(self, pragmas)
 
 
 class ModuleBase(HasPragma):  # numpydoc ignore=PR01
@@ -238,8 +245,18 @@ class ModuleBase(HasPragma):  # numpydoc ignore=PR01
     def get_use_directive(self, module_name: str) -> Optional["UseDirective"]:  # noqa: F821 # type: ignore
         assert False
 
-    def get_declaration(self, name: str) -> Optional["Declaration"]:
+    def get_declaration(self, name: str, local_only: bool = False) -> Optional["Declaration"]:
         assert False
+
+    @property
+    def is_interface(self) -> bool:
+        """True when module is an interface."""
+        return False
+
+    @property
+    def is_body(self) -> bool:
+        """True when module is a body."""
+        return False
 
 
 # ========================================================
@@ -585,7 +602,7 @@ class Identifier(SwanItem):  # numpydoc ignore=PR01
         comment: str = "",
         is_name: bool = False,
     ) -> None:
-        SwanItem.__init__(self)
+        super().__init__()
         self._value = value
         self._comment = comment
         self._is_name = is_name
@@ -664,6 +681,8 @@ class PathIdentifier(SwanItem):  # numpydoc ignore=PR01
     def __init__(self, path_id: Union[List[Identifier], str]) -> None:
         super().__init__()
         self._path_id = path_id
+        if not isinstance(self._path_id, str):
+            SwanItem.set_owner(self, self._path_id)
         self._is_valid = isinstance(path_id, list) and all(id.is_valid for id in path_id)
 
     def __eq__(self, other) -> bool:
@@ -698,6 +717,22 @@ class PathIdentifier(SwanItem):  # numpydoc ignore=PR01
             PathIdentifier instance.
         """
         return PathIdentifier([Identifier(p) for p in path.split("::") if p])
+
+    @staticmethod
+    def from_identifier(id: Identifier) -> "PathIdentifier":
+        """Create a PathIdentifier from an Identifier.
+
+        Parameters
+        ----------
+        id : Identifier
+            Identifier to create the PathIdentifier from.
+
+        Returns
+        -------
+        PathIdentifier
+            PathIdentifier instance.
+        """
+        return PathIdentifier([id])
 
     @staticmethod
     def split(path: str) -> Tuple[str, str]:
@@ -810,6 +845,7 @@ class Declaration(HasPragma):  # numpydoc ignore=PR01
     def __init__(self, id: Identifier, pragmas: Optional[List[Pragma]] = None) -> None:
         super().__init__(pragmas)
         self._id = id
+        SwanItem.set_owner(self, self._id)
 
     @property
     def id(self) -> Identifier:
@@ -824,23 +860,112 @@ class Declaration(HasPragma):  # numpydoc ignore=PR01
         id_str = self.id.value
         return f"{path}::{id_str}"
 
+    @property
+    def has_definition(self) -> bool:
+        """True if declaration has a definition part."""
+        raise ScadeOneException("has_definition property not implemented for " + str(type(self)))
 
-class Expression(SwanItem):  # numpydoc ignore=PR01
+    @property
+    def is_external(self) -> bool:
+        """True if declaration has no definition.
+
+        Check if there is no alternative declaration in the module (interface or body).
+        Warn if any, and raise an error if inconsistent.
+        """
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for declaration {self.id.value}")
+        # alternative declaration in interface or in body, if any
+        other_decl = None
+        if module.is_interface:
+            # look in body for alternative declaration, if any
+            if (
+                (mod := module.body())  # type: ignore
+                and (decl := mod.get_declaration(self.id.value, local_only=True))
+                and isinstance(decl, type(self))
+            ):
+                other_decl = decl
+        else:
+            # in a body, look in interface for alternative declaration, if any
+            if (
+                (mod := module.interface())  # type: ignore
+                and (decl := mod.get_declaration(self.id.value, local_only=True))
+                and isinstance(decl, type(self))
+            ):
+                other_decl = decl
+        if other_decl is not None:
+            # declaration is in both interface and body, warn if same declaration kind (no check about definition itself!)
+            # error if inconsistent declaration *and* definition
+            # No other checks are done.
+            LOGGER.warning(
+                f"Declaration {self.id.value} is declared in interface and body of module {module.get_full_path()}."
+            )
+            if self.has_definition != other_decl.has_definition:
+                raise ScadeOneException(
+                    f"Inconsistent `is_external` declaration for {self.id.value} in interface and body of module {module.get_full_path()}."
+                )
+        return not (self.has_definition)
+
+    @property
+    def is_public(self) -> bool:
+        """True if declaration is public.
+
+        A declaration is public if:
+
+        - it is declared in a module interface,
+        - or it is declared in a module body, but the module has no interface.
+
+        A declaration is private if it is declared in a module body, and the module has an interface,
+        and there is no declaration with the same name in the module interface.
+
+        If declared in both a module interface and body, the declaration is considered as public,
+        but a warning is issued.
+
+        """
+        # Proceed with simple checks.
+        # Other cases, like multiple declarations of same object
+        # or another object kind with same name is not handled.
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for declaration {self.id.value}")
+
+        elif module.is_interface:
+            # default to public, but check and warn for declaration in body (only check done)
+            if (
+                (body := module.body())  # type: ignore
+                and (decl := body.get_declaration(self.id.value, local_only=True))
+                and isinstance(decl, type(self))
+            ):
+                LOGGER.warning(
+                    f"Declaration {self.id.value} is declared in interface and body of module {module.get_full_path()}."
+                )
+            return True
+        else:  # module body
+            if (interface := module.interface()) is None:  # type: ignore
+                # no interface, so all declarations are public.
+                return True
+            # module has an interface
+            if (decl := interface.get_declaration(self.id.value, local_only=True)) and isinstance(
+                decl, type(self)
+            ):
+                # declaration is in interface, warn if same declaration. No other checks are done.
+                LOGGER.warning(
+                    f"Declaration {self.id.value} is declared in interface and body of module {module.get_full_path()}."
+                )
+                return True
+            else:
+                # declaration is not in interface, so it is private.
+                return False
+
+
+class Expression(HasPragma):  # numpydoc ignore=PR01
     """Base class for expressions."""
 
     def __init__(self) -> None:
-        super().__init__()
-        self._at = None  # type: Optional[Identifier]
+        HasPragma.__init__(self)
 
-    @property
-    def at(self) -> Optional[Identifier]:
-        """Memory constrained location."""
-        return self._at
-
-    @at.setter
-    def at(self, at: Identifier) -> None:  # numpydoc ignore=PR01
-        """Set the memory location identifier."""
-        self._at = at
+    def set_pragmas(self, pragmas: List[Pragma]) -> None:
+        """Set pragmas for the equation."""
+        self._pragmas = pragmas
+        SwanItem.set_owner(self, self._pragmas)
 
 
 class TypeExpression(SwanItem):  # numpydoc ignore=PR01
@@ -850,7 +975,7 @@ class TypeExpression(SwanItem):  # numpydoc ignore=PR01
         super().__init__()
 
     @property
-    def is_defined(self) -> bool:
+    def is_predefined(self) -> bool:
         """True if type expression is a predefined type."""
         return False
 
@@ -870,7 +995,7 @@ class Luid(SwanItem):  # numpydoc ignore=PR01
 
     def __init__(self, value: str) -> None:
         super().__init__()
-        self._luid = value[1:] if value[0] == "$" else value
+        self._luid = value[1:] if value and value[0] == "$" else value
 
     @property
     def value(self) -> str:
@@ -921,6 +1046,47 @@ class Lunum(SwanItem):  # numpydoc ignore=PR01
         return hash(self.value)
 
 
+class LunumManager:
+    """Manage local unique numbers (lunum) for diagram objects."""
+
+    def __init__(self):
+        self._lunums = set()
+
+    @staticmethod
+    def int_of_lunum(lunum: Lunum) -> int:
+        """Convert a Lunum to an integer.
+        Returns -1 if invalid, or cannot be converted to an integer (too large)"""
+        if lunum.is_valid(lunum.value):
+            try:
+                return int(lunum.value[1:])  # remove '#' from lunum value
+            except ValueError:
+                return -1
+        return -1
+
+    @staticmethod
+    def get_lunum_manager(obj: SwanItem | None) -> Optional["LunumManager"]:
+        """Get the LunumManager of an object, if any."""
+        if manager := getattr(obj, "_lunum_manager", None):
+            return cast(LunumManager, manager)
+        if obj and obj.owner:
+            return LunumManager.get_lunum_manager(cast(SwanItem, obj.owner))
+        return None
+
+    def set_lunums(self, lunums: Iterable[Lunum]):
+        """Store lunums, discarding invalid ones (-1) and converting to integers."""
+        self._lunums = set(
+            li for li in (LunumManager.int_of_lunum(lu) for lu in lunums) if li != -1
+        )
+
+    def get_next_lunum(self) -> Lunum:
+        """Get the next unique local Lunum."""
+        missing = 0
+        while missing in self._lunums:
+            missing += 1
+        self._lunums.add(missing)
+        return Lunum(f"#{missing}")
+
+
 class Variable(SwanItem):  # numpydoc ignore=PR01
     """Base class for Variable and ProtectedVariable."""
 
@@ -928,11 +1094,16 @@ class Variable(SwanItem):  # numpydoc ignore=PR01
         super().__init__()
 
 
-class Equation(SwanItem):  # numpydoc ignore=PR01
+class Equation(HasPragma):  # numpydoc ignore=PR01
     """Base class for equations."""
 
     def __init__(self) -> None:
-        super().__init__()
+        HasPragma.__init__(self)
+
+    def set_pragmas(self, pragmas: List[Pragma]) -> None:
+        """Set pragmas for the equation."""
+        self._pragmas = pragmas
+        SwanItem.set_owner(self, self._pragmas)
 
 
 # =============================================
@@ -950,7 +1121,7 @@ class ProtectedItem(SwanItem):  # numpydoc ignore=PR01
     See :py:class:`Markup` for existing markups.
     """
 
-    def __init__(self, data: str, markup: str = Markup.Syntax) -> None:
+    def __init__(self, data: str = "", markup: str = Markup.Syntax) -> None:
         super().__init__()
         self._markup = markup
         self._data = data

@@ -10,44 +10,62 @@ A **forward** expression is stored as a :py:class:`Forward` class. The class hie
     Forward class diagram
 
 
-.. figure:: forward_return.svg
-    
-    Forward return
-
 .. autoclass:: Forward
-
 
 .. autoclass:: ForwardBody
 
 Dimensions
 ----------
 
+
 .. autoclass:: ForwardDim
 
-.. autoclass:: ForwardElement
+.. autoclass:: ForwardCurrentElement
 
 .. autoclass:: ForwardLHS
 
-Return
-------
+Forward returns
+---------------
+
+The base class for return *clause* is :py:class:`ForwardReturnItem`.
+A syntactically incorrect return *clause* is represented by the 
+:py:class:`ProtectedForwardReturnItem` class.
+
+.. figure:: forward_return.svg
+    
+    Forward return
+
 
 .. autoclass:: ForwardReturnItem
 
 .. autoclass:: ProtectedForwardReturnItem
 
-Item clause
-^^^^^^^^^^^
+Accumulation
+^^^^^^^^^^^^
 
-.. autoclass:: ForwardReturnItemClause
+Accumulation *clause* is represented by the :py:class:`ForwardAccuClause` class.
 
-.. autoclass:: ForwardItemClause
+.. autoclass:: ForwardAccuClause
 
-.. autoclass:: ForwardLastDefault
 
 Array clause
 ^^^^^^^^^^^^ 
 
+Returned array *clause* is represented by the :py:class:`ForwardReturnArrayClause` class,
+which references a :py:class:`ForwardArrayClause` instance and its optional identifier.
+
 .. autoclass:: ForwardReturnArrayClause
 
+Array *clause* is either:
+
+- a :py:class:`ForwardArrayClauseExpr` instance, or
+- a :py:class:`ForwardArrayClauseElement` instance, which represents the ``[array_clause]``
+  expression.
+
+
 .. autoclass:: ForwardArrayClause
+
+.. autoclass:: ForwardArrayClauseExpr
+
+.. autoclass:: ForwardArrayClauseElement
 

@@ -1,0 +1,102 @@
+########################################################
+# Pipeline used by pull requests.
+########################################################
+trigger: none
+
+resources:
+  repositories:
+    - repository: DevOps
+      type: git
+      name: ANSYS.SONE.DevOps
+      ref: releases/release-27.1
+
+parameters:
+  # by default, the prerelease label is enabled
+  - name: DisablePrereleaseLabel
+    type: boolean
+    default: false
+    displayName: "Disable Prerelease Label"
+  - name: UseContainer
+    displayName: Use Container(s)
+    default: true
+    type: boolean
+  - name: DeleteContainer
+    displayName: Delete Container(s) (No Debugging)
+    default: true
+    type: boolean
+
+
+variables:
+  - name: VersionNumber
+    value: $(Build.BuildNumber)
+  - group: globalaccesstoken
+  - group: Artifactory Information
+  - group: AzureSignTool
+  - name: ScadeOneInstallPath
+    value: "C:\\Scade One"
+  - template: "/.pipelines/CommonVariables.yml"
+  - ${{ if eq(parameters.UseContainer, true) }}:
+    - group: Artifactory Information - Overload
+    - group: K8s
+
+# KEEP THE VERSION NUMBER IN SYNC WITH THE VERSION FILE
+# VersionBase: is defined in CommonVariables.yml
+#name: 0.1.0+$(Date:yyyyMMddHHmmss)
+name: $(VersionBase)+$(Date:yyyyMMddHHmmss)
+
+stages:
+  - stage: Build
+    jobs:
+      - job: PythonAPI
+        pool:
+          ${{ if eq(parameters.UseContainer, false) }}:
+            name: SBU-SCADE-DevPool
+          ${{ if eq(parameters.UseContainer, true) }}:
+            name: $(BUILD_WIN_AGENT_POOL)
+            demands:
+              - DeleteContainer -equals ${{ parameters.DeleteContainer }}
+              - ContainerBuildEnv -equals $(ContainerBuildEnvWin)
+        steps:
+          - template: /.pipelines/ScadeOneInstall.yml
+
+          - template: /.pipelines/CommonBuildTasks.yml
+
+          - powershell: |
+              $env:PATH = "$(PYTHON_PATH);$(PYTHON_PATH)\Scripts;$env:PATH"
+              $env:ANSYSLMD_LICENSE_FILE = "1055@nicwindev01.win.ansys.com;1055@leblnxlic64.ansys.com"
+              $scr = 'make coverage'
+              & ${env:MSYS2_PATH}\usr\bin\bash.exe -lec $scr
+            displayName: Run unit tests with coverage
+            workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '$(Pipeline.Workspace)/s/ANSYS.SONE.API.pyscadeone/**/test-*.xml'
+              testRunTitle: 'Publish test results'
+            displayName: 'Publish Test Results'
+
+          - task: PublishCodeCoverageResults@2
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(Pipeline.Workspace)/s/ANSYS.SONE.API.pyscadeone/**/coverage.xml'
+
+          - ${{ if eq(parameters.UseContainer, false) }}:
+            - powershell: |
+                Remove-Item -Path '$(ScadeOneInstallPath)' -Recurse -Force
+              displayName: "Remove Scade One directory junction"
+              condition: always()
+              workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+          - template: templates/Publish/PublishToArtifactory.yml@DevOps
+            parameters:
+              pattern: "$(Pipeline.Workspace)/s/ANSYS.SONE.API.pyscadeone/dist/ansys_scadeone_core-$(VersionNumber).zip"
+              target: "S-One_Pullrequests/APIpyscadeone/APIpyscadeone-$(VersionNumber).zip"
+
+          - template: templates/PullRequest/PushCommentToPR.yml@DevOps
+            parameters:
+              Title: "Main artifacts"
+              Comment: "Download artifacts produced by PR Validation build."
+              ListOfUrls:
+                - Url: '$(Artifactory_S-One_Pullrequests_Repository)/APIpyscadeone/APIpyscadeone-$(VersionNumber).zip'
+                  Label: 'Download'

@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +27,7 @@ from platformdirs import PlatformDirs
 import re
 
 # Version must be directly defined for flit. No computation, else flit will fail
-__version__ = "0.8.2"
+__version__ = "0.9.0"
 
 m = re.match(
     r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+)   # Major, minor, patch
@@ -57,7 +58,7 @@ full_version = ".".join([version_info.major, version_info.minor, version_info.pa
 if version_info.build:
     full_version += f"+{version_info.build}"
 if version_info.pre_release:
-    full_version += " - Prerelease"
+    full_version += ".prerelease"
 
 PYSCADEONE_DIR = Path(__file__).parent
 PLATFORM_DIRS = PlatformDirs("PyScadeOne", "Ansys")

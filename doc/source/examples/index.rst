@@ -13,8 +13,8 @@ This section presents some examples using PyScadeOne:
     automaton/index
     namespace/index
     visitor/index
-    generated_code/index
-    fmu_export/index
     pywrapper/index
-    creator/index
+    creator/project/index
+    creator/automaton/index
     test_module/index
+    rules/index

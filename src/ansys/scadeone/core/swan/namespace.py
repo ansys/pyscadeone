@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -189,7 +190,7 @@ class ScopeNamespace:
         if isinstance(section, VarSection):
             for var_decl in section.var_decls:
                 if isinstance(var_decl, VarDecl) and var_decl.id.value == name:
-                    return cast(VarDecl, var_decl)
+                    return var_decl
         if isinstance(section, Diagram):
             for section in [
                 obj.section for obj in section.objects if isinstance(obj, SectionObject)

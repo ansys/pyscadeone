@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -72,7 +73,6 @@ model.load_all_modules()
 logging.basicConfig()
 logger = logging.getLogger("visitor")
 logger.setLevel(logging.ERROR)
-app.logger.logger.setLevel(logging.ERROR)
 
 
 class ReferenceVisitor(SwanVisitor):

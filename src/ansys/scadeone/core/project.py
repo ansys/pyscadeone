@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,18 +31,18 @@ from ansys.scadeone.core.common.exception import ScadeOneException
 from ansys.scadeone.core.common.storage import (
     JobFile,
     ProjectFile,
-    ProjectStorage,
     SwanFile,
 )
 from ansys.scadeone.core.common.versioning import FormatVersions
 from ansys.scadeone.core.interfaces import IProject, IScadeOne
-from ansys.scadeone.core.job import Job
+from ansys.scadeone.core.job import Job, JobType
 from ansys.scadeone.core.svc.swan_creator.job_creator import JobFactory
 from ansys.scadeone.core.model.model import Model
 from ansys.scadeone.core.svc.swan_creator.project_creator import ProjectCreator
 from ansys.scadeone.core.svc.swan_printer import swan_to_str
 from ansys.scadeone.core.common.logger import LOGGER
 from ansys.scadeone.core.swan.modules import Module
+import ansys.scadeone.core.assets as ass
 
 
 class ResourceKind(Enum):
@@ -158,6 +159,18 @@ class Resource:
         """Kind of the resource."""
         return self._kind
 
+    @property
+    def project(self) -> "Project":
+        """Project of the resource."""
+        # This is a back reference to the project, set when loading the project data
+        # It is not set in the constructor to avoid circular reference issues
+        return self._project  # type: ignore
+
+    @project.setter
+    def project(self, value: "Project") -> None:
+        """Set the project of the resource."""
+        self._project = value
+
     def _to_json_dict(self) -> Dict[str, str]:
         """Return the resource as a dictionary."""
 
@@ -179,26 +192,25 @@ class Project(IProject, ProjectCreator):
     ----------
     app : ScadeOne
         Application object.
-    project : ProjectStorage
-        Project storage object.
+    project : ProjectFile
+        Project file object.
     is_new : bool, optional
         True if the project is new, that is, it has not been loaded from a file.
     """
 
-    def __init__(self, app: IScadeOne, project: ProjectStorage, is_new: bool = False) -> None:
+    def __init__(self, app: IScadeOne, project: ProjectFile, is_new: bool = False) -> None:
         self._app = app
         self._storage = project
         self._dependencies: List[str] = []
-        self._jobs = {}
+        self._jobs: list[Job] = []
         self._resources: list[Resource] = []
         self._is_new = is_new
         self._is_modified = False
-        self._name = (
-            self._storage.path.stem if isinstance(self._storage, ProjectFile) else "New Project"
-        )
+        self._name = self._storage.path.stem
         self._version = None
-
+        self._model = Model(self)
         self._load_project_data()  # take of is_new for default value
+        self._model.load_project(self)
 
     def _load_project_data(self) -> None:
         """Load project data from the storage.
@@ -216,10 +228,16 @@ class Project(IProject, ProjectCreator):
                     kind = ResourceKind.str_to_kind(res["Kind"])
                     resource = Resource(kind, res["Path"], res.get("Key"))
                     self._resources.append(resource)
+                    resource.project = self  # set back reference to project
             except Exception as e:
                 raise ScadeOneException(f"Failed to load project data: {e}")
         else:
             self._version = FormatVersions.version("sproj")
+
+    @property
+    def name(self) -> str:
+        """Name of the project."""
+        return self._name
 
     def set_modified(self) -> None:
         """Set the project as modified."""
@@ -264,8 +282,8 @@ class Project(IProject, ProjectCreator):
 
     def _save_sproj(self) -> None:
         """Init SPROJ starting content."""
-
-        Path(self._storage.path).parent.mkdir(parents=True, exist_ok=True)
+        storage = self.storage
+        Path(storage.path).parent.mkdir(parents=True, exist_ok=True)
 
         json_data = {
             "Version": self._version,
@@ -274,49 +292,32 @@ class Project(IProject, ProjectCreator):
             "Resources": [resource._to_json_dict() for resource in self._resources],
         }
 
-        self._storage.set_content(json.dumps(json_data, indent=2))
+        storage.set_content(json.dumps(json_data, indent=2))
         self._is_modified = False
-        LOGGER.info(f"Created: {self._storage.source}")
-
-    def check_exists(self, parent_path: Union[Path, str]) -> bool:
-        """Return true if any of the project modules or sproj already exists
-
-        .. warning::
-
-           Dependencies may not be checked."""
-
-        if Path(self._storage.source).exists():
-            return True
-        for module in self.model.modules:
-            file_path = parent_path / Path(module.source)
-            if file_path.exists():
-                return True
-        return False
+        LOGGER.info(f"Created: {storage.path}")
 
     def load_jobs(self) -> List[Job]:
         """(Re)load and return all the jobs of a project."""
-        self._jobs = {}
-        if self.directory:
-            job_files = [
-                JobFile(job) for job in self.directory.glob("jobs/**/*") if job.name == ".sjob"
-            ]
-            for job in job_files:
-                job.load()
-                job_json = job.json
-                job_name = job_json["Properties"]["Name"]
-                typed_job = JobFactory.create_job(job, self)
-                if typed_job:
-                    self._jobs[job_name] = typed_job
+        self._jobs = []
+        job_files = [
+            JobFile(job) for job in self.directory.glob("jobs/**/*") if job.name == ".sjob"
+        ]
+        for job in job_files:
+            job.load()
+            typed_job = JobFactory.create_job(job, self)
+            if typed_job:
+                self._jobs.append(typed_job)
         return self.jobs
 
     def get_job(self, name: str) -> Union[Job, None]:
         """Get a job from its name."""
-        return self._jobs.get(name)
+        jb = next((job for job in self._jobs if job.name == name), None)
+        return jb
 
     @property
     def jobs(self) -> List[Job]:
         """Return job files of the project."""
-        return list(self._jobs.values())
+        return self._jobs
 
     @property
     def app(self) -> IScadeOne:
@@ -325,30 +326,104 @@ class Project(IProject, ProjectCreator):
 
     @property
     def model(self) -> Model:
-        """Access to the project model."""
-        return self.app.model
+        """Per-project model gathering this project's own modules.
+
+        To iterate modules from dependencies as well, use
+        :py:meth:`Project.all_modules`.
+        """
+        return self._model
 
     @property
     def modules(self) -> List[Module]:
-        """Loaded modules from the model"""
+        """Loaded modules from this project's model (own modules only)."""
         return self.model.modules
 
+    def all_modules(self, include_dependencies: bool = True) -> List[Module]:
+        """Return loaded modules of the project.
+
+        Parameters
+        ----------
+        include_dependencies : bool
+            When True (default), also include modules from dependencies
+            (recursively, deduplicated by source path). When False, behaves
+            like :py:attr:`Project.modules`.
+
+        Returns
+        -------
+        list[Module]
+            Loaded modules.
+        """
+        modules: List[Module] = list(self.model.modules)
+        if not include_dependencies:
+            return modules
+        seen_sources = {mod.source for mod in modules if mod.source}
+        for dep in self.dependencies(all=True):
+            for mod in dep.model.modules:
+                if mod.source and mod.source in seen_sources:
+                    continue
+                modules.append(mod)
+                if mod.source:
+                    seen_sources.add(mod.source)
+        return modules
+
     @property
-    def storage(self) -> ProjectStorage:
+    def storage(self) -> ProjectFile:
         """Project storage."""
         return self._storage
 
     @property
-    def directory(self) -> Optional[Path]:
-        """Project directory: Path if storage is a file, else None."""
-        if isinstance(self.storage, ProjectFile):
-            return Path(self.storage.path.parent.as_posix())
-        return None
+    def directory(self) -> Path:
+        """Project directory."""
+        return Path(self.storage.path.parent.as_posix())
 
     @property
     def resources(self) -> List[Resource]:
         """Project resources."""
         return self._resources
+
+    def get_all_resources(self) -> List[Resource]:
+        """Return all resources from project.
+
+        Include also resources from project dependencies.
+
+        Returns
+        -------
+        list[Resource]
+            List of all Resource objects.
+        """
+        resources = self.resources.copy()
+        for lib in self.dependencies(all=True):
+            resources.extend(lib.get_all_resources())
+        return resources
+
+    @property
+    def assets(self) -> List[ass.Asset]:
+        """Project assets.
+
+        Returns
+        -------
+        List[Asset]
+            List of Asset objects.
+        """
+        _assets: List[ass.Asset] = []
+        swan_asset = {
+            ".swan": ass.ModuleBodyAsset,
+            ".swani": ass.ModuleInterfaceAsset,
+            ".swant": ass.TestModuleAsset,
+        }
+        for swan_file in self.swan_sources():
+            suffix = swan_file.path.suffix
+            asset_class = swan_asset.get(suffix, None)
+            if asset_class:
+                asset = asset_class(swan_file.path, self)
+                _assets.append(asset)
+        # Load jobs
+        self.load_jobs()
+        # Get assets from jobs
+        for job in self.jobs:
+            if job.output_assets:
+                _assets.extend(job.output_assets)
+        return _assets
 
     def _get_swan_sources(self) -> List[SwanFile]:
         """Return Swan files of project.
@@ -358,8 +433,6 @@ class Project(IProject, ProjectCreator):
         List[SwanFile]
             List of SwanFile objects.
         """
-        if self.directory is None:
-            return []
         # glob uses Unix-style. Cannot have a fancy re, so need to check
         sources = [
             SwanFile(swan)
@@ -398,21 +471,26 @@ class Project(IProject, ProjectCreator):
         ScadeOneException
             Raise exception if a project file does not exist.
         """
-        if self.directory is None:
-            # case of a project not created from a file (future use case)
-            return []
+        project_directory = self.directory
 
         def get_path(path: str) -> Path:
             s_path = self.app.subst_in_path(path).replace("\\", "/")
             p = Path(s_path)
             if not p.is_absolute():
-                p = self.directory / p
+                p = project_directory / p
+            p = p.resolve()
             if p.exists():
                 return p
             raise ScadeOneException(f"no such file: {path}")
 
         paths = [get_path(d) for d in self._dependencies]
-        dependencies = [Project(self._app, ProjectFile(p)) for p in paths]
+        dependencies: List["Project"] = []
+        for p in paths:
+            existing = self._app.find_project(p)
+            if isinstance(existing, Project):
+                dependencies.append(existing)
+            else:
+                dependencies.append(Project(self._app, ProjectFile(p)))
         return dependencies
 
     def dependencies(self, all=False) -> List["Project"]:
@@ -435,7 +513,7 @@ class Project(IProject, ProjectCreator):
         def aux_visit(project: "Project"):
             """Auxiliary function to visit project dependencies."""
             for dep in project._get_dependencies():
-                source = dep.storage.source  # type: ignore
+                source = dep.storage.path  # type: ignore
                 if source in visited:
                     continue
                 visited[source] = dep
@@ -479,17 +557,22 @@ class Project(IProject, ProjectCreator):
             If the key name is already used in the project.
             If the file path is already in the project resources.
         """
+        _file_path = Path(file_path) if isinstance(file_path, str) else file_path
 
-        if exist_check and not Path(file_path).exists():
-            raise ScadeOneException(f"Resource file '{file_path}' does not exist.")
+        if exist_check:
+            _check_path = (
+                _file_path if _file_path.is_absolute() else (self.directory / _file_path).resolve()
+            )
+            if not _check_path.exists():
+                raise ScadeOneException(f"Resource file '{_check_path}' does not exist.")
         if key_name and key_name in [r.key for r in self.resources]:
             raise ScadeOneException(f"Resource key '{key_name}' already used in project.")
-        _file_path = Path(file_path) if isinstance(file_path, str) else file_path
         if _file_path in [r.path for r in self.resources]:
-            raise ScadeOneException(f"Resource '{file_path}' already in project.")
+            raise ScadeOneException(f"Resource '{_file_path}' already in project.")
         resource = Resource(kind, _file_path, key_name)
         self.set_modified()
         self._resources.append(resource)
+        resource.project = self  # set back reference to project
         return resource
 
     def add_dependency(self, project: IProject) -> None:
@@ -505,11 +588,19 @@ class Project(IProject, ProjectCreator):
         ScadeOneException
             If the project is the same as the current project.
         """
-        if project.storage.source == self.storage.source:
+        if not (isinstance(project.storage, ProjectFile) and isinstance(self.storage, ProjectFile)):
+            raise ScadeOneException(
+                "Cannot add dependency to or from a project without file storage."
+            )
+        proj_storage_path = project.storage.source
+        if proj_storage_path == self.storage.source:
             raise ScadeOneException("A project cannot depend on itself.")
-        rel_path = os.path.relpath(project.storage.source, str(self.directory))
-        if rel_path not in self._dependencies:
-            self._dependencies.append(rel_path)
+        try:
+            source_path = os.path.relpath(proj_storage_path, str(self.directory))
+        except ValueError:
+            source_path = os.path.abspath(proj_storage_path)
+        if source_path not in self._dependencies:
+            self._dependencies.append(source_path)
             self.set_modified()
 
     def remove_dependency(self, project: IProject) -> None:
@@ -525,9 +616,63 @@ class Project(IProject, ProjectCreator):
         ScadeOneException
             If the project is not a dependency.
         """
-        rel_path = os.path.relpath(project.storage.source, str(self.directory))
-        if rel_path in self._dependencies:
-            self._dependencies.remove(rel_path)
+        if not isinstance(project.storage, ProjectFile):
+            raise ScadeOneException("Cannot remove a dependency that does not have file storage.")
+        proj_storage_path = project.storage.source
+        try:
+            source_path = os.path.relpath(proj_storage_path, str(self.directory))
+        except ValueError:
+            source_path = os.path.abspath(proj_storage_path)
+        if source_path in self._dependencies:
+            self._dependencies.remove(source_path)
             self.set_modified()
         else:
             raise ScadeOneException("The project is not a dependency.")
+
+    def add_job(self, kind: JobType, name: str) -> Job:
+        """Add a job with kind and name given.
+
+        Parameters
+        ----------
+        kind : JobType
+            Kind of job to create.
+        name : str
+            Name of the job.
+
+        Returns
+        -------
+        Job
+            Created and saved job.
+        """
+        if not name:
+            raise ScadeOneException("Job name cannot be empty.")
+
+        self.load_jobs()
+
+        job = JobFactory.new_job(kind, name, self)
+        job.save()
+        self._jobs.append(job)
+        return job
+
+    def delete_job(self, job: Job) -> None:
+        """Delete a job given in argument.
+
+        Parameters
+        ----------
+        job : Job
+            Job instance to delete.
+
+        Raises
+        ------
+        ScadeOneException
+            If the job is not found or if storage information is missing.
+        """
+        self.load_jobs()
+
+        target_index = next((i for i, j in enumerate(self._jobs) if j.name == job.name), None)
+        if target_index is None:
+            raise ScadeOneException(f"Job '{job.name}' not found in project.")
+
+        target = self._jobs[target_index]
+        target.delete()
+        self._jobs.pop(target_index)

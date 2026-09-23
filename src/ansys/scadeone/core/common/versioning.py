@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,10 +46,10 @@ class VersionManager:
         self._formats = None
 
     @property
-    def formats(self) -> set:
-        """Get the formats as a set of strings."""
+    def formats(self) -> list:
+        """Get the formats as a list of strings."""
         if self._formats is None:
-            self._formats = set(self._format_versions.keys())
+            self._formats = list(self._format_versions.keys())
         return self._formats
 
     def get_versions(self) -> str:
@@ -60,7 +61,7 @@ class VersionManager:
             String containing the versions
         """
         buffer = "The versions for the supported format/code are:\n\n"
-        for k in sorted(self.formats):
+        for k in self.formats:
             buffer += f"- {self.description(k)}: {self.version(k)}\n"
         return buffer
 

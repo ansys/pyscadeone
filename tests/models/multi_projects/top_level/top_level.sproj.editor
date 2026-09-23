@@ -1,6 +1,7 @@
 {
   "JobsOrder": [],
   "ModulesOrder": [
-    "assets\\top_level.swan"
+    "assets\\top_level.swan",
+    "assets\\utils.swan"
   ]
 }

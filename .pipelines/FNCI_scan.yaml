@@ -1,0 +1,105 @@
+trigger: none
+
+schedules:
+- cron: "0 18 * * Fri"
+  displayName: Friday 7:00 PM (UTC+1 Paris) build
+  branches:
+    include:
+    - develop
+
+variables:
+- group: FNCI
+- group: Artifactory Information  #Required to restore NuGet packages
+- template: '/.pipelines/CommonVariables.yml'
+- name: PackagesInstallationPath
+  value: '$(Build.ArtifactStagingDirectory)\APIpyscadeone\install'
+- name: ZIPFileToScan
+  value: '$(Build.ArtifactStagingDirectory)\APIpyscadeone\ZIPFileToScan.zip'
+- name: FNCIProjectID
+  value: '10695'   # 'Scade_One_API.pyscadeone '
+- name: PYTHON_PATH
+  value: 'C:\ANSYSDEV\Python310_x64'
+
+resources:
+  repositories:
+    - repository: ANSYS.SONE.DevOps
+      type: git
+      name: ANSYS.SONE.DevOps
+      ref: releases/release-27.1
+
+jobs:
+
+########################################################
+# Scan PyScadeOne package
+########################################################
+- job: Job_Scan_pyscadeone_Packages
+  displayName: FNCI scan for pyscadeone packages
+  pool:
+    name: SBU-SCADE-DevPool
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+  - checkout: ANSYS.SONE.DevOps
+    fetchDepth: 1
+    clean: true
+  - task: JFrog.jfrog-azure-devops-extension.jfrog-generic-artifacts.JFrogGenericArtifacts@1
+    displayName: 'Download last pyscadeOne'
+    inputs:
+      command: Download
+      connection: '$(ArtifactoryV2ConnectionService)'
+      fileSpec: |
+        {
+          "files": [
+            {
+              "pattern": "S-One_Releases/APIpyscadeone/APIpyscadeone-*.zip",
+              "target": "$(Build.ArtifactStagingDirectory)/APIpyscadeone/APIpyscadeone.zip",
+              "flat": "true",
+              "sortBy": ["created"],
+              "sortOrder": "desc",
+              "limit": 1,
+              "explode": "true"
+            }
+          ]
+        }
+
+  - task: JFrog.jfrog-azure-devops-extension.jfrog-generic-artifacts.JFrogGenericArtifacts@1
+    displayName: 'Download Python 3.10.16'
+    inputs:
+      command: Download
+      connection: '$(ArtifactoryV2ConnectionService)'
+      fileSpec: |
+        {
+          "files": [
+            {
+              "pattern": "Scade_Third_Party/Windows/python/31016-ANSYS/x64/Python310_x64.zip",
+              "target": "$(Build.ArtifactStagingDirectory)/Python/python.zip",
+              "flat": "true",
+              "sortBy": ["name"],
+              "sortOrder": "desc",
+              "limit": 1,
+              "explode": "true"
+            }
+          ]
+        }
+
+  - powershell: |
+      cd "$(Build.ArtifactStagingDirectory)\APIpyscadeone"
+      $getWHLfile=Get-ChildItem -Path .\*.whl -Recurse -Force
+      $WHLpackage=$getWHLfile.Name
+      write-host "Find file: $WHLpackage"
+      $(Build.ArtifactStagingDirectory)\Python\python.exe -m pip install $WHLpackage`[frozen-dependencies`] --root "$(PackagesInstallationPath)"
+    displayName: "Install python packages"
+
+  - powershell: |
+      cd "$(PackagesInstallationPath)"
+      $SubPython=Get-ChildItem -Path . "Python" -Recurse -Directory
+      Compress-Archive -Path $SubPython.FullName -DestinationPath $(ZIPFileToScan)
+    displayName: "Create archive"
+
+  - template: templates/FNCIAnalysis.yml@ANSYS.SONE.DevOps
+    parameters:
+      ZIPFileToScan: $(ZIPFileToScan)
+      PYTHON_PATH: $(PYTHON_PATH)
+      FNCI_token: $(FNCI_token)
+      FNCIProjectID: $(FNCIProjectID)

@@ -24,6 +24,7 @@
 import abc
 import numbers
 from typing import Tuple, Optional, Any, List
+import re
 
 from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.svc.simdata.core as core
@@ -348,6 +349,9 @@ class SimDataFactory:
 class Element(defs.ElementBase):
     """Class for simdata elements"""
 
+    # Regular expression to match group names in the format '(.lbl.digit.lbl.digit.digit...)'
+    groupNameRe = re.compile(r"^\((?:\.(?:\w+|\d+))+\)$")
+
     def __init__(
         self,
         file: defs.FileBase,
@@ -425,6 +429,10 @@ class Element(defs.ElementBase):
         ElementBase
             Created child element
         """
+        if kind == defs.ElementKind.GROUP_ITEM and not self.groupNameRe.match(name):
+            raise ScadeOneException(
+                f"group item name must match the pattern '{self.groupNameRe.pattern}', got {name}"
+            )
         elem_id = dll_wrap.sde_create(
             self._elem_id,
             name,

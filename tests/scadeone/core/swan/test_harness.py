@@ -47,9 +47,6 @@ def test_module(scadeone_install_path, parser: SwanParser) -> TestModule:
     return parser.test_module(test_file)
 
 
-@pytest.mark.skip(
-    reason="This test is not working because it needs to migrate to swan version 2027"
-)
 class TestModuleLoading:
     def test_name_extension(self, test_module: TestModule) -> None:
         assert str(test_module.name) == "QuadTest"
@@ -172,7 +169,7 @@ class TestModuleLoading:
     def test_harness_block(self, parser: SwanParser) -> None:
         from ansys.scadeone.core.swan.harness import TestHarness
 
-        code = """_harness #pragma something #end harness0
+        code = """_harness #pragma something  #end harness0
 {
   diagram
     (#0 _sensor SENSOR

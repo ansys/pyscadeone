@@ -76,6 +76,26 @@ class CodeElement:
         elements = self.cgmapping._get_model_for_code(self.id)  # type: ignore[missing-attribute]
         return elements[0] if elements else None
 
+    @require_cgmapping
+    def get_type(self) -> CodeTypeBase | None:
+        """Get the type of this code element if it has a type attribute.
+
+        Returns
+        -------
+        CodeTypeBase | None
+            The code type if this element has a type, or None otherwise.
+
+        Raises
+        ------
+        ValueError
+            If no cgmapping is set on this instance.
+        """
+        if hasattr(self, "type"):
+            code_item = self.cgmapping._get_code_by_id(self.type)  # type: ignore[missing-attribute]
+            if isinstance(code_item, CodeTypeBase):
+                return code_item
+        return None
+
 
 @dataclass
 class CodeTypeBase(CodeElement):

@@ -542,6 +542,18 @@ class TestCGPragma:
             case _:
                 assert False, f"Expected CGPragma, got {pragma.kind}"
 
+    @pytest.mark.parametrize(
+        "pragma",
+        [
+            "",
+            "    ",
+        ],
+    )
+    def test_invalid_cg_pragma(self, pragma: str):
+        """Test that an invalid CG pragma returns a generic Pragma."""
+        pragma = PragmaParser().parse(f"#pragma cg {pragma} #end")
+        assert isinstance(pragma, swan.Pragma) and not isinstance(pragma, swan.CGPragma)
+
 
 class TestDocumentationPragma:
     def test_documentation_pragma(self):

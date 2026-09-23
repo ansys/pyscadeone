@@ -25,6 +25,7 @@ import argparse
 from pathlib import Path
 import os
 import sys
+import re
 
 from ansys.scadeone.core import ScadeOne, ScadeOneException, version_info
 from ansys.scadeone.core.common.logger import LOGGER, LoggerLevel
@@ -144,6 +145,16 @@ def set_install_dir_command(install_dir: str) -> bool:
 # ========================================================================================
 # Python wrapper generation
 # ========================================================================================
+def valid_output_name(value: str) -> str:
+    NAME_RE = re.compile(r"^(?!\.{1,2}$)(?!.*[ .]$)[^<>:\"/\\|?*]+$")
+    if not NAME_RE.fullmatch(value):
+        raise argparse.ArgumentTypeError(
+            f"'{value}' is not a valid name. Python wrapper name should not look like a path or contain invalid characters (<>:\"/\\|?*)"
+        )
+
+    return value
+
+
 def python_wrapper_options_parser(pw_parser: argparse.ArgumentParser):
     pw_parser.add_argument(
         "--install-dir",
@@ -160,6 +171,7 @@ def python_wrapper_options_parser(pw_parser: argparse.ArgumentParser):
     pw_parser.add_argument(
         "-o",
         "--output",
+        type=valid_output_name,
         help="Name of the Python wrapper module. By default, the name is `root_wrapper`",
     )
     pw_parser.add_argument(

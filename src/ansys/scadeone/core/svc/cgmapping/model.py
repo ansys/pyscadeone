@@ -36,7 +36,7 @@ from ansys.scadeone.core.common.logger import LOGGER
 
 if TYPE_CHECKING:
     from .mapping import MappingDataBase
-    from .code import CodeElement, CStructField, CGlobal, CStruct, CFunction
+    from .code import CodeElement, CStructField, CGlobal, CStruct, CFunction, CTypedef
 
 from .mapping import MappingRole, require_cgmapping
 
@@ -592,7 +592,6 @@ class OperatorBase(HasProbesMixin, ModelElement):
         elements = self.cgmapping._get_code_for_model(self.id, MappingRole.CYCLE_METHOD)  # type: ignore[missing-attribute]
         return cast("CFunction", elements[0]) if elements else None
 
-    @require_cgmapping
     def get_context_type(self) -> CStruct | None:
         """Get the generated context type structure.
 
@@ -607,10 +606,30 @@ class OperatorBase(HasProbesMixin, ModelElement):
             If no cgmapping is set on this instance.
         """
 
-        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.CONTEXT_TYPE)  # type: ignore[missing-attribute]
-        return cast("CStruct", elements[0]) if elements else None
+        context_typedef = self.get_context_typedef()
+        if context_typedef:
+            if model_type := context_typedef.get_type():
+                return cast("CStruct", model_type)
+        return None
 
     @require_cgmapping
+    def get_context_typedef(self) -> CTypedef | None:
+        """Get the generated context type typedef.
+
+        Returns
+        -------
+        CTypedef | None
+            The context type typedef if available, None otherwise.
+
+        Raises
+        ------
+        ValueError
+            If no cgmapping is set on this instance.
+        """
+
+        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.CONTEXT_TYPE)  # type: ignore[missing-attribute]
+        return cast("CTypedef", elements[0]) if elements else None
+
     def get_input_struct_type(self) -> CStruct | None:
         """Get the generated input structure type.
 
@@ -625,10 +644,30 @@ class OperatorBase(HasProbesMixin, ModelElement):
             If no cgmapping is set on this instance.
         """
 
-        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.INPUT_STRUCT_TYPE)  # type: ignore[missing-attribute]
-        return cast("CStruct", elements[0]) if elements else None
+        input_struct_typedef = self.get_input_struct_typedef()
+        if input_struct_typedef:
+            if model_type := input_struct_typedef.get_type():
+                return cast("CStruct", model_type)
+        return None
 
     @require_cgmapping
+    def get_input_struct_typedef(self) -> CTypedef | None:
+        """Get the generated input structure typedef.
+
+        Returns
+        -------
+        CTypedef | None
+            The input structure typedef if available, None otherwise.
+
+        Raises
+        ------
+        ValueError
+            If no cgmapping is set on this instance.
+        """
+
+        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.INPUT_STRUCT_TYPE)  # type: ignore[missing-attribute]
+        return cast("CTypedef", elements[0]) if elements else None
+
     def get_output_struct_type(self) -> CStruct | None:
         """Get the generated output structure type.
 
@@ -643,10 +682,30 @@ class OperatorBase(HasProbesMixin, ModelElement):
             If no cgmapping is set on this instance.
         """
 
-        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.OUTPUT_STRUCT_TYPE)  # type: ignore[missing-attribute]
-        return cast("CStruct", elements[0]) if elements else None
+        output_struct_typedef = self.get_output_struct_typedef()
+        if output_struct_typedef:
+            if model_type := output_struct_typedef.get_type():
+                return cast("CStruct", model_type)
+        return None
 
     @require_cgmapping
+    def get_output_struct_typedef(self) -> CTypedef | None:
+        """Get the generated output structure typedef.
+
+        Returns
+        -------
+        CTypedef | None
+            The output structure typedef if available, None otherwise.
+
+        Raises
+        ------
+        ValueError
+            If no cgmapping is set on this instance.
+        """
+
+        elements = self.cgmapping._get_code_for_model(self.id, MappingRole.OUTPUT_STRUCT_TYPE)  # type: ignore[missing-attribute]
+        return cast("CTypedef", elements[0]) if elements else None
+
     def get_obs_struct_type(self) -> CStruct | None:
         """Get the generated observation structure type.
 
@@ -661,8 +720,29 @@ class OperatorBase(HasProbesMixin, ModelElement):
             If no cgmapping is set on this instance.
         """
 
+        obs_struct_typedef = self.get_obs_struct_typedef()
+        if obs_struct_typedef:
+            if model_type := obs_struct_typedef.get_type():
+                return cast("CStruct", model_type)
+        return None
+
+    @require_cgmapping
+    def get_obs_struct_typedef(self) -> CTypedef | None:
+        """Get the generated observation structure typedef.
+
+        Returns
+        -------
+        CTypedef | None
+            The observation structure typedef if available, None otherwise.
+
+        Raises
+        ------
+        ValueError
+            If no cgmapping is set on this instance.
+        """
+
         elements = self.cgmapping._get_code_for_model(self.id, MappingRole.OBS_STRUCT_TYPE)  # type: ignore[missing-attribute]
-        return cast("CStruct", elements[0]) if elements else None
+        return cast("CTypedef", elements[0]) if elements else None
 
     @require_cgmapping
     def is_node(self) -> bool:

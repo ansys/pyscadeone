@@ -1921,18 +1921,21 @@ class PragmaParser:
             return None
         raw_key, value = pragma_tuple
         key = PragmaKey.from_string(raw_key.strip())
-        if key == PragmaKey.DIAGRAM:
-            if diagram_pragma := DiagramPragmaParser().parse(value):
-                return diagram_pragma
-            return Pragma(PragmaKey.DIAGRAM, value)
-        if key == PragmaKey.CG:
-            return CGPragma(value.strip())
-        if key == PragmaKey.SWT:
-            return TestPragma(TestPragmaKind.from_string(value.strip()))
-        if key == PragmaKey.DOC:
-            return DocumentationPragma(value)
-        if key == PragmaKey.REQUIREMENT:
-            return TraceabilityPragma(value)
+        try:
+            if key == PragmaKey.DIAGRAM:
+                if diagram_pragma := DiagramPragmaParser().parse(value):
+                    return diagram_pragma
+                return Pragma(PragmaKey.DIAGRAM, value)
+            if key == PragmaKey.CG:
+                return CGPragma(value.strip())
+            if key == PragmaKey.SWT:
+                return TestPragma(TestPragmaKind.from_string(value.strip()))
+            if key == PragmaKey.DOC:
+                return DocumentationPragma(value)
+            if key == PragmaKey.REQUIREMENT:
+                return TraceabilityPragma(value)
+        except Exception:
+            pass
         return Pragma(raw_key, value)
 
     @staticmethod

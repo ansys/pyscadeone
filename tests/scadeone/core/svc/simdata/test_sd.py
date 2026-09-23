@@ -304,6 +304,14 @@ def test_group():
     for child in e_children:
         assert child.kind == sd.ElementKind.GROUP_ITEM
         assert any(child.read_values())
+
+    # check bad group name
+    with pytest.raises(ScadeOneException) as e:
+        _ = e_group.add_child_element(".(.b)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    expected_message = (
+        r"group item name must match the pattern '^\((?:\.(?:\w+|\d+))+\)$', got .(.b)"
+    )
+    assert str(e.value) == expected_message
     f.close()
 
     remove(file_path)

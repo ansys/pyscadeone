@@ -130,16 +130,16 @@ in the module interface `MyModule`. The code to create a simulation data file wi
 
     f = sd.create_file("mySimDataFile.sd") # creates a new simulation data file
     group_element = f.add_element("inputGroup", group_expr="MyModule::MyGroup")
-    child_1 = group_element.add_child_element(".(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
-    child_2 = group_element.add_child_element(".(.2)", sd.Bool, sd.ElementKind.GROUP_ITEM)
+    child_1 = group_element.add_child_element("(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    child_2 = group_element.add_child_element("(.2)", sd.Bool, sd.ElementKind.GROUP_ITEM)
     child_b1_b_1_x = group_element.add_child_element(
-        ".(.b.1.x)", sd.Float32, sd.ElementKind.GROUP_ITEM
+        "(.b.1.x)", sd.Float32, sd.ElementKind.GROUP_ITEM
     )
     child_b1_b_1_y = group_element.add_child_element(
-        ".(.b.1.y)", sd.Float32, sd.ElementKind.GROUP_ITEM
+        "(.b.1.y)", sd.Float32, sd.ElementKind.GROUP_ITEM
     )
     child_b1_b_2 = group_element.add_child_element(
-        ".(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM
+        "(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM
     )
 
     child_1.append_values_sequence([1, 1, 1, 2, 3, 4])
@@ -157,11 +157,11 @@ The content of the file can be visualized:
     $ pyscadeone simdata --show mySimDataFile.sd
     *** Elements:
     inputGroup: 
-        GROUP_ITEM .(.1): int32: 1 | 1 | 1 | 2 | 3 | 4 |
-        GROUP_ITEM .(.2): bool: false | true | false | true | false | true |
-        GROUP_ITEM .(.b.1.x): float32: 0.1 | 0.1 | 0.1 | 0.2 | 2.3 | 2.4 |
-        GROUP_ITEM .(.b.1.y): float32: 2.5 | 2.5 | 2.5 | 2.6 | 2.7 | 2.8 |
-        GROUP_ITEM .(.b.2): int32: 10 | 11 | 12 | 12 | 12 | 12 |
+        GROUP_ITEM (.1): int32: 1 | 1 | 1 | 2 | 3 | 4 |
+        GROUP_ITEM (.2): bool: false | true | false | true | false | true |
+        GROUP_ITEM (.b.1.x): float32: 0.1 | 0.1 | 0.1 | 0.2 | 2.3 | 2.4 |
+        GROUP_ITEM (.b.1.y): float32: 2.5 | 2.5 | 2.5 | 2.6 | 2.7 | 2.8 |
+        GROUP_ITEM (.b.2): int32: 10 | 11 | 12 | 12 | 12 | 12 |
 
 In the Scade One Signal Editor, the group is represented as:
 
@@ -169,6 +169,14 @@ In the Scade One Signal Editor, the group is represented as:
    :alt: Signal Editor view of a group type
    :align: center
    :width: 60%
+
+**Notes**
+
+- When adding a group, *group_expr* specifies the group type expression, either using a name, like
+  in the example, or using an expression like ``(int32, n1:bool)``. The consistency of the *group_expr*
+  and the group child elements is checked by Scade One signal editor.
+- Group child element name must match the pattern specified by the regular expression ``^\((?:\.(?:\w+|\d+))+\)$``.
+  If not, a :py:class:`ansys.scadeone.core.common.exception.ScadeOneException` will be raised. 
 
 High-level API
 ==============

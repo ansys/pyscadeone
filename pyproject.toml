@@ -9,7 +9,8 @@ dynamic = ["version"]
 description = "Python interface for Ansys Scade One"
 readme = "README.rst"
 requires-python = ">=3.12,<3.15"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
@@ -18,7 +19,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Information Analysis",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -82,6 +82,7 @@ pyscadeone = "ansys.scadeone.core.cli:main"
 
 [tool.flit.module]
 name = "ansys.scadeone.core"
+
 
 [tool.codespell]
 skip = 'spelling_ok.txt,*.ipynb,*.dll,*.so,./.git*,./doc,./tests,./tmp,fmi*.[hc]'
@@ -222,28 +223,8 @@ title_format = "`{version} <https://github.com/ansys/pyscadeone/releases/tag/v{v
 issue_format = "`#{issue} <https://github.com/ansys/pyscadeone/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
-directory = "breaking"
-name = "Breaking"
-showcontent = true
-
-[[tool.towncrier.type]]
 directory = "added"
 name = "Added"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -252,8 +233,13 @@ name = "Dependencies"
 showcontent = true
 
 [[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
 showcontent = true
 
 [[tool.towncrier.type]]
@@ -264,6 +250,16 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "miscellaneous"
 name = "Miscellaneous"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
 showcontent = true
 
 [[tool.towncrier.type]]

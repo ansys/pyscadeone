@@ -90,9 +90,9 @@ def create_test_file(file_path: str, nb_cycles: int = 10):
     e_c.add_child_element("g")
 
     iGroup1 = f.add_element("iGroup1", group_expr="m1::group1")
-    iGroup1_1 = iGroup1.add_child_element(".(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
-    iGroup1_b_1 = iGroup1.add_child_element(".(.b.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
-    iGroup1_b_2 = iGroup1.add_child_element(".(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    iGroup1_1 = iGroup1.add_child_element("(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    iGroup1_b_1 = iGroup1.add_child_element("(.b.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    iGroup1_b_2 = iGroup1.add_child_element("(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM)
 
     # append values to elements:
     clock3 = False

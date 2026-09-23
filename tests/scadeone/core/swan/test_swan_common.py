@@ -62,9 +62,6 @@ class OwnershipVisitor(SwanVisitor):
             self.missing_owner.append(swan_obj)
 
 
-@pytest.mark.skip(
-    reason="This test is not working because it needs to migrate to swan version 2027"
-)
 class Test:
     @staticmethod
     def test_ownership_on_cc_example(cc_model):
@@ -72,7 +69,6 @@ class Test:
 
     @staticmethod
     def test_ownership_on_test_model():
-        # TODO: Check line 115 in module0.swan ('when case' and 'default' were removed)
         test_model = ownership_model()
         Test._test_ownership(test_model)
 

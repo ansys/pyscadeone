@@ -10,31 +10,33 @@ _harness harness0
     #pragma swt under_test #end
     #pragma diagram {"xy":"H7825;V7869","wh":"20000;56688"} #end)
     (#1 expr _current_cycle = 10
-    #pragma diagram {"xy":"H-46938;V-31788","wh":"22000;3200"} #end)
+    #pragma diagram {"xy":"H-49338;V-36244","wh":"22000;3200"} #end)
     (#2 def _stop_condition
-    #pragma diagram {"xy":"H-13938;V-31788","wh":"20000;3200"} #end)
+    #pragma diagram {"xy":"H-11838;V-36244","wh":"20000;3200"} #end)
     (#3 expr 1
-    #pragma diagram {"xy":"H-22975;V25584"} #end)
+    #pragma diagram {"xy":"H-22675;V26113"} #end)
     (#6 expr 2
-    #pragma diagram {"xy":"H-22975;V-16932"} #end)
+    #pragma diagram {"xy":"H-22675;V-17326"} #end)
     (#8 expr 3.14
-    #pragma diagram {"xy":"H-22975;V-9846"} #end)
+    #pragma diagram {"xy":"H-22675;V-11027"} #end)
     (#10 expr module0::RED
-    #pragma diagram {"xy":"H-26975;V-2760","wh":"16000;3200"} #end)
+    #pragma diagram {"xy":"H-26675;V-4728","wh":"16000;3200"} #end)
     (#12 expr TypesModule::Small
-    #pragma diagram {"xy":"H-29975;V4326","wh":"22000;3200"} #end)
+    #pragma diagram {"xy":"H-29675;V1570","wh":"22000;3200"} #end)
     (#13 expr true
-    #pragma diagram {"xy":"H-22975;V11412"} #end)
+    #pragma diagram {"xy":"H-22675;V7869"} #end)
     (#14 expr 2.5
-    #pragma diagram {"xy":"H-60875;V35184"} #end)
+    #pragma diagram {"xy":"H-61175;V35713"} #end)
     (#15 expr {#16}: module0::tStruct
       where
         (#16 group)
-    #pragma diagram {"xy":"H-24975;V32684","wh":"12000;10000"} #end)
+    #pragma diagram {"xy":"H-24675;V33213","wh":"12000;10000"} #end)
     (#17 expr 3
-    #pragma diagram {"xy":"H-60875;V30184"} #end)
+    #pragma diagram {"xy":"H-61175;V30713"} #end)
     (#18 expr [3, 2]
-    #pragma diagram {"xy":"H-23975;V18498","wh":"10000;3200"} #end)
+    #pragma diagram {"xy":"H-23675;V14168","wh":"10000;3200"} #end)
+    (#25 expr module0::BLUE
+    #pragma diagram {"xy":"H-27675;V20466","wh":"18000;3200"} #end)
     
     (#4 wire #1 => #2)
     (#5 wire #3 => #0 .(i0))
@@ -47,4 +49,5 @@ _harness harness0
     (#22 wire #14 => #16 .(y))
     (#23 wire #17 => #16 .(x))
     (#24 wire #18 => #0 .(i8))
+    (#26 wire #25 => #0 .(i9))
 }

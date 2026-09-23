@@ -112,8 +112,6 @@ node Graph_Op1 (i0: int32^2;
     #pragma diagram {"xy":"H-75521;V-41760"} #end)
     (#52 expr !i13
     #pragma diagram {"xy":"H-265065;V-13936"} #end)
-    (#51 expr !i15 . .l1.M1 default !i16)
-    #pragma diagram {"xy":"H-194847;V19508","wh":"70000;3200"} #end)
     (#54 expr !i14
     #pragma diagram {"xy":"H-265065;V176"} #end)
     (#55 expr !i9

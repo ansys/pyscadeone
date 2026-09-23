@@ -170,20 +170,18 @@ class TestCGMappingOperatorIOTypes:
         #     assert len(code) == 1
 
         assert operator.get_generated_element() is None  # operator code elements are all role-based
+        input_structure_typedef = operator.get_input_struct_typedef()
+        assert isinstance(input_structure_typedef, CTypedef)
         input_structure = operator.get_input_struct_type()
-        assert input_structure is not None
-        assert isinstance(input_structure, CTypedef)
-        # TODO replace this line by dedicated public method when implemented
-        input_structure = mapping._get_code_by_id(input_structure.type)
+        assert input_structure_typedef.get_type() is input_structure
         assert isinstance(input_structure, CStruct)
         assert len(input_structure.fields) == 3
         for field in input_structure.fields:
             assert isinstance(field, CStructField)
+        output_structure_typedef = operator.get_output_struct_typedef()
+        assert isinstance(output_structure_typedef, CTypedef)
         output_structure = operator.get_output_struct_type()
-        assert output_structure is not None
-        assert isinstance(output_structure, CTypedef)
-        # TODO replace this line by dedicated public method when implemented
-        output_structure = mapping._get_code_by_id(output_structure.type)
+        assert output_structure_typedef.get_type() is output_structure
         assert isinstance(output_structure, CStruct)
         assert len(output_structure.fields) == 2
         for field in output_structure.fields:
@@ -1113,12 +1111,15 @@ class TestModelOperatorNewMethods:
             if isinstance(operator, ModelOperator):
                 # Test get_context_type and get_global_context methods
                 context_type = operator.get_context_type()
+                context_typedef = operator.get_context_typedef()
                 global_context = operator.get_global_context()
 
                 # Context may or may not be available depending on the operator type
                 # Just verify that if something is returned, it's a valid object
                 if context_type is not None:
-                    assert isinstance(context_type, CStruct | CTypedef)
+                    assert isinstance(context_type, CStruct)
+                if context_typedef is not None:
+                    assert isinstance(context_typedef, CTypedef)
                 if global_context is not None:
                     assert isinstance(global_context, CGlobal)
 
@@ -1548,17 +1549,24 @@ class TestHardCodedData:
         assert init_function.name == "node0_init_module0"
         assert cycle_function.name == "node0_module0"
 
+        context_typedef = operator.get_context_typedef()
+        assert isinstance(context_typedef, CTypedef)
+        assert context_typedef.name == "outC_node0_module0"
         context_type = operator.get_context_type()
-        assert isinstance(context_type, CTypedef)
-        assert context_type.name == "outC_node0_module0"
-        # assert len(context_type.fields) == 2
+        context_type_bis = context_typedef.get_type()
+        assert context_type is context_type_bis
+        context_type = operator.get_context_type()
+        assert isinstance(context_type, CStruct)
+        assert len(context_type.fields) == 2
 
+        obs_struct_typedef = operator.get_obs_struct_typedef()
+        assert isinstance(obs_struct_typedef, CTypedef)
+        assert obs_struct_typedef.name == "obsS_node0_module0"
         obs_struct_type = operator.get_obs_struct_type()
-        assert isinstance(obs_struct_type, CTypedef)
-        assert obs_struct_type.name == "obsS_node0_module0"
-        # assert len(obs_struct_type.fields) == 4
-        # TODO implement method to get CStruct from CTypedef and uncomment
-        # these unitests for the CStruct
+        obs_struct_type_bis = obs_struct_typedef.get_type()
+        assert obs_struct_type is obs_struct_type_bis
+        assert isinstance(obs_struct_type, CStruct)
+        assert len(obs_struct_type.fields) == 6
 
         assert operator.get_source_name() == "node0_module0.c"
         assert operator.get_header_name() == "node0_module0.h"

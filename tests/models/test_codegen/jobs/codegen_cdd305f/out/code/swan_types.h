@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_TYPES_H_
@@ -25,7 +25,7 @@ typedef struct swan_variant_F {
   swan_float32 swan_value;
 } variant_F;
 
-typedef swan_float32 array_float32_3[3];
+typedef swan_float32 array_f32_3[3];
 
 /* module0::I */
 typedef struct swan_variant_I {
@@ -57,37 +57,37 @@ typedef array_2 array_1[2];
 
 #ifndef swan_cp_t_struct1_module0
 #define swan_cp_t_struct1_module0(swan_c1, swan_c2)                           \
-  (swan_assign_struct((swan_c1), (swan_c2), sizeof (t_struct1_module0)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (t_struct1_module0)))
 #endif /* swan_cp_t_struct1_module0 */
-
-#ifndef swan_cp_array_float32_3
-#define swan_cp_array_float32_3(swan_c1, swan_c2)                             \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (array_float32_3)))
-#endif /* swan_cp_array_float32_3 */
 
 #ifndef swan_cp_array_1
 #define swan_cp_array_1(swan_c1, swan_c2)                                     \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (array_1)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (array_1)))
 #endif /* swan_cp_array_1 */
-
-#ifndef swan_cp_array_2
-#define swan_cp_array_2(swan_c1, swan_c2)                                     \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (array_2)))
-#endif /* swan_cp_array_2 */
 
 #ifndef swan_cp_t_array1_module0
 #define swan_cp_t_array1_module0(swan_c1, swan_c2)                            \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (t_array1_module0)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (t_array1_module0)))
 #endif /* swan_cp_t_array1_module0 */
+
+#ifndef swan_cp_array_f32_3
+#define swan_cp_array_f32_3(swan_c1, swan_c2)                                 \
+  (swan_assign((swan_c1), (swan_c2), sizeof (array_f32_3)))
+#endif /* swan_cp_array_f32_3 */
 
 #ifndef swan_cp_array_bool_2
 #define swan_cp_array_bool_2(swan_c1, swan_c2)                                \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (array_bool_2)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (array_bool_2)))
 #endif /* swan_cp_array_bool_2 */
+
+#ifndef swan_cp_array_2
+#define swan_cp_array_2(swan_c1, swan_c2)                                     \
+  (swan_assign((swan_c1), (swan_c2), sizeof (array_2)))
+#endif /* swan_cp_array_2 */
 
 #ifndef swan_cp_t_variant1_module0
 #define swan_cp_t_variant1_module0(swan_c1, swan_c2)                          \
-  (swan_assign_union((swan_c1), (swan_c2), sizeof (t_variant1_module0)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (t_variant1_module0)))
 #endif /* swan_cp_t_variant1_module0 */
 
 #ifndef swan_eq_t_struct1_module0
@@ -97,13 +97,6 @@ extern swan_bool swan_eq_t_struct1_module0(
 #define swan_use_t_struct1_module0
 #endif /* swan_eq_t_struct1_module0 */
 
-#ifndef swan_eq_array_float32_3
-extern swan_bool swan_eq_array_float32_3(
-  const array_float32_3 *swan_c1,
-  const array_float32_3 *swan_c2);
-#define swan_use_array_float32_3
-#endif /* swan_eq_array_float32_3 */
-
 #ifdef swan_use_array_1
 #ifndef swan_eq_array_1
 extern swan_bool swan_eq_array_1(
@@ -111,14 +104,6 @@ extern swan_bool swan_eq_array_1(
   const array_1 *swan_c2);
 #endif /* swan_eq_array_1 */
 #endif /* swan_use_array_1 */
-
-#ifdef swan_use_array_2
-#ifndef swan_eq_array_2
-extern swan_bool swan_eq_array_2(
-  const array_2 *swan_c1,
-  const array_2 *swan_c2);
-#endif /* swan_eq_array_2 */
-#endif /* swan_use_array_2 */
 
 #ifdef swan_use_t_array1_module0
 #ifndef swan_eq_t_array1_module0
@@ -128,6 +113,13 @@ extern swan_bool swan_eq_t_array1_module0(
 #endif /* swan_eq_t_array1_module0 */
 #endif /* swan_use_t_array1_module0 */
 
+#ifndef swan_eq_array_f32_3
+extern swan_bool swan_eq_array_f32_3(
+  const array_f32_3 *swan_c1,
+  const array_f32_3 *swan_c2);
+#define swan_use_array_f32_3
+#endif /* swan_eq_array_f32_3 */
+
 #ifdef swan_use_array_bool_2
 #ifndef swan_eq_array_bool_2
 extern swan_bool swan_eq_array_bool_2(
@@ -135,6 +127,14 @@ extern swan_bool swan_eq_array_bool_2(
   const array_bool_2 *swan_c2);
 #endif /* swan_eq_array_bool_2 */
 #endif /* swan_use_array_bool_2 */
+
+#ifdef swan_use_array_2
+#ifndef swan_eq_array_2
+extern swan_bool swan_eq_array_2(
+  const array_2 *swan_c1,
+  const array_2 *swan_c2);
+#endif /* swan_eq_array_2 */
+#endif /* swan_use_array_2 */
 
 #ifndef swan_eq_t_variant1_module0
 extern swan_bool swan_eq_t_variant1_module0(
@@ -144,6 +144,6 @@ extern swan_bool swan_eq_t_variant1_module0(
 #endif /* swan_eq_t_variant1_module0 */
 
 #endif /* SWAN_TYPES_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** swan_types.h
 *************************************************************$ */

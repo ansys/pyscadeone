@@ -168,9 +168,6 @@ node CruiseControl (On: bool;
 """
         ],
     )
-    @pytest.mark.skip(
-        reason="This test is not working because it needs to migrate to swan version 2027"
-    )
     def test_cc(self, cc_text, tmp_path):
         code = SwanString(cc_text, "CC text")
         swan_obj = parser.operator_decl_or_def(code)

@@ -1,24 +1,36 @@
 {
-"version" : "0.1",
+"version" : "1",
+"cg_version" : "Version 2.5.0 - Build 0801 - Prerelease",
 "log_entries": [
 {
-  "timestamp" : "2024-09-18T14:01:19Z",
+  "timestamp" : "2026-08-04T16:56:49Z",
   "tool" : "SWAN-CG",
   "severity" : "INFO",
   "message_kind" : "cg_options",
   "message" : {
     "target" : "C",
-    "files" : [ "..\\..\\assets\\module0.swan", "..\\..\\assets\\module1.swan" ],
+    "files" : [
+      "..\\..\\assets\\module_const_elaborated.swan",
+      "..\\..\\assets\\module0.swan"
+    ],
     "roots" : [ "module0::oper_test_imp_node" ],
     "target_dir" : "out",
     "keep_assertions" : false,
     "wrap_c_ops" : false,
-    "significance_length" : 31,
+    "warn_error" : false,
     "name_length" : 200,
+    "max_function_parameters" : null,
     "static_locals" : false,
     "expansion" : [ "Expand", [ ] ],
+    "probe" : null,
     "globals_prefix" : "",
-    "basic" : false
+    "root_interface_as_globals" : false,
+    "basic" : false,
+    "student" : false,
+    "prototyping" : false
   }
+}],
+"warnings_count" : 0,
+"errors_count" : 0,
+"failures_count" : 0
 }
-]}

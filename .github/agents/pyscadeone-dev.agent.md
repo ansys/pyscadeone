@@ -77,7 +77,7 @@ If the user explicitly says "just do it", "no plan", or gives a one-line trivial
 
 ## Conventions (must follow)
 
-- Python 3.10–3.14 compatibility. Use modern typing (`X | None`, `list[T]`).
+- Python 3.12–3.14 compatibility. Use modern typing (`X | None`, `list[T]`).
 - **Ruff**: line length 100; numpy docstring convention (`pydocstyle.convention = "numpy"`).
 - **Docstrings**: numpydoc style; respect the `numpydoc_validation` checks active in `pyproject.toml` (e.g. SS02/SS04, PR03/PR05/PR06, GL05/GL06/GL10).
 - **Tests**: pytest, place under `tests/` matching the package layout; use `tmp_path` (base temp is `tests/pytest-tmp`); use existing fixtures in `tests/conftest.py` and helpers in `tests/test_tools/`.

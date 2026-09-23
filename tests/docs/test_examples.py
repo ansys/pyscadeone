@@ -122,7 +122,6 @@ class TestDocExamples:
             self.write("SKIPPED: requires Scade One")
             self.success += 1
 
-    @pytest.mark.skip("Wait Scade One examples in 2027.0")
     def test_examples(self, examples, capsys):
         self.success = 0
         nb_examples = len(examples)

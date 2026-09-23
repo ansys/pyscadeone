@@ -251,6 +251,7 @@ class TestPythonWrapper:
         op.inputs.i6 = True
         op.inputs.i7 = (1, 3.14)
         op.inputs.i8 = (1, 2)
+        op.inputs.i9 = wrapper_module.tColor_module0.BLUE
         op.cycle()
         assert type(op.outputs.o0) is int
         assert type(op.outputs.o1) is int
@@ -263,6 +264,7 @@ class TestPythonWrapper:
         assert type(op.outputs.o7.x) is int
         assert type(op.outputs.o7.y) is float
         assert type(op.outputs.o8) is tuple
+        assert type(op.outputs.o9) is wrapper_module.tColor_module0
         assert op.outputs.o0 == 10
         assert op.outputs.o1 == -9
         assert op.outputs.o3 == 2.75
@@ -271,6 +273,7 @@ class TestPythonWrapper:
         assert op.outputs.o6 is True
         assert op.outputs.o7 == (1, 3.14)
         assert op.outputs.o8 == (1, 2)
+        assert op.outputs.o9 == wrapper_module.tColor_module0.BLUE
 
         op.inputs.i7.y = 7.55
         op.cycle()
@@ -389,6 +392,35 @@ class TestPythonWrapper:
         sys.argv = old_sys_argv
 
         assert self._generation_ok(tmp_path / wrapper_name)
+
+    def test_wrapper_cli_raises_error_when_invalid_wrapper_name(
+        self, capsys, scadeone_install_path, wrapper_projects, tmp_path
+    ):
+        project_path = wrapper_projects["default"].storage.path
+        job_name = "CGJob4Func"
+        wrapper_name = "../sub_folder/cli_wrapper"
+
+        sys.argv = [
+            "<cmd name>",
+            "pycodewrap",
+            "--install-dir",
+            scadeone_install_path,
+            "-j",
+            job_name,
+            "-o",
+            wrapper_name,
+            "--target-dir",
+            str(tmp_path),
+            str(project_path),
+        ]
+        with pytest.raises(SystemExit) as e:
+            cli.main()
+        assert e.type is SystemExit
+        assert e.value.code == 2
+        assert (
+            'is not a valid name. Python wrapper name should not look like a path or contain invalid characters (<>:"/\\|?*)'
+            in capsys.readouterr().err
+        )
 
     @pytest.mark.parametrize(
         ("operator_name", "job_name"),

@@ -237,6 +237,32 @@ class PythonWrapper:
             return cast(gc.Enumerate, type_base).enum_name
         return ""
 
+    def _get_enum_typedef_name(self, code_type_id: int, _mapping: dict) -> str:
+        """
+        Get the name of the final typedef defining an enumeration,
+        as multiple aliases could be used in chain.
+
+        Parameters
+        ----------
+        code_type_id : int
+            Code type ID of the enumeration type
+        _mapping : dict
+            A dict of type mapping data
+
+        Returns
+        -------
+        str
+            Returns the typedef name of the enumeration
+        """
+        _elm = _mapping.get(code_type_id)
+        _name = ""
+        while _elm and _elm[0] == "typedef":
+            _name = _elm[1]["name"]
+            _elm = _mapping.get(_elm[1]["type"])
+            if _elm and _elm[0] == "enum":
+                break
+        return _name
+
     def _get_array_info(self, type_base: gc.TypeBase) -> str:
         if type_base.is_array:
             return "tuple"
@@ -284,7 +310,7 @@ class PythonWrapper:
                         f"Type {_io_dct[_elm._id]} of input {_elm.name} is not found in the mapping file."
                     )
                 if isinstance(_typ, gc.Enumerate):
-                    _typ._enum_name = _mapping[_io_dct[_elm._id]][1]["name"]
+                    _typ._enum_name = self._get_enum_typedef_name(_io_dct[_elm._id], _mapping)
                 if isinstance(_typ, gc.Structure):
                     _typ.path = _mapping[_io_dct[_elm._id]][1]["name"]
                 _nm = self._get_python_type_name(_typ, True)
@@ -315,9 +341,9 @@ class PythonWrapper:
                 )
             if isinstance(_typ, gc.Enumerate):
                 if _elm._id in _io_dct:
-                    _typ._enum_name = _mapping[_io_dct[_elm._id]][1]["name"]
+                    _typ._enum_name = self._get_enum_typedef_name(_io_dct[_elm._id], _mapping)
                 else:
-                    _typ._enum_name = _mapping[_rtn][1]["name"]
+                    _typ._enum_name = self._get_enum_typedef_name(_rtn, _mapping)
             elif isinstance(_typ, gc.Structure):
                 if _elm._id in _io_dct:
                     _typ.path = _mapping[_io_dct[_elm._id]][1]["name"]
@@ -397,7 +423,7 @@ class PythonWrapper:
                             f"Type {_fld['type']} of parameter {_fld['name']} is not found in the mapping file."
                         )
                     if isinstance(_typ, gc.Enumerate):
-                        _typ._enum_name = _mapping[_fld["type"]][1]["name"]
+                        _typ._enum_name = self._get_enum_typedef_name(_fld["type"], _mapping)
                     if isinstance(_typ, gc.Structure):
                         _typ.path = _mapping[_fld["type"]][1]["name"]
                     _rtn = self._get_python_type_name(_typ)
@@ -475,6 +501,7 @@ class PythonWrapper:
             loader=jinja2.FileSystemLoader(Path(__file__).parent / "templates"),
             trim_blocks=True,
             lstrip_blocks=True,
+            autoescape=jinja2.select_autoescape(),
         )
         template = environment.get_template("exports_wrapper.j2")
 
@@ -548,6 +575,7 @@ class PythonWrapper:
             loader=jinja2.FileSystemLoader(Path(__file__).parent / "templates"),
             trim_blocks=True,
             lstrip_blocks=True,
+            autoescape=jinja2.select_autoescape(),
         )
         template = environment.get_template("C_wrapper.j2")
 
@@ -708,6 +736,7 @@ class PythonWrapper:
             loader=jinja2.FileSystemLoader(Path(__file__).parent / "templates"),
             trim_blocks=True,
             lstrip_blocks=True,
+            autoescape=jinja2.select_autoescape(),
         )
         template = environment.get_template("Py_wrapper.j2")
 
@@ -739,6 +768,7 @@ class PythonWrapper:
             loader=jinja2.FileSystemLoader(Path(__file__).parent.parent / "common/templates"),
             trim_blocks=True,
             lstrip_blocks=True,
+            autoescape=jinja2.select_autoescape(),
         )
         template = environment.get_template("swan_config_template.h")
         _includes = "\n".join(

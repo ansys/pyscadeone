@@ -23,7 +23,12 @@
 
 import pytest
 
-from ansys.scadeone.core import ScadeOneException, __version__, full_version
+from ansys.scadeone.core import (
+    ScadeOneException,
+    _VERSION_RE,
+    full_version,
+    version_info,
+)
 from ansys.scadeone.core.model.loader import VersionMap
 from ansys.scadeone.core.common.versioning import FormatVersions
 
@@ -34,7 +39,23 @@ def swan_formats():
 
 
 def test_version():
-    assert __version__ == full_version
+    assert version_info.major == "0"
+    assert version_info.minor == "9"
+    assert version_info.patch == "dev0"
+    assert version_info.build == ""
+    assert not version_info.pre_release
+    assert full_version == "0.9.dev0"
+
+
+def test_version_patch_is_required_and_can_be_numeric_or_string():
+    numeric_patch = _VERSION_RE.fullmatch("0.9.0")
+    string_patch = _VERSION_RE.fullmatch("0.9.dev0")
+
+    assert numeric_patch is not None
+    assert numeric_patch.group("p") == "0"
+    assert string_patch is not None
+    assert string_patch.group("p") == "dev0"
+    assert _VERSION_RE.fullmatch("0.9") is None
 
 
 def test_swan_versions(swan_formats):

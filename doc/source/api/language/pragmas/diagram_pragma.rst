@@ -58,7 +58,7 @@ The format is ``{"dir": "val"}``, where *val* is one of
 
 The first letter represents the orientation of the top side of the block instance, 
 while the second letter represents the orientation of its output side.
-The default orientation is **ne**, with inputs on the left and outputs on the right.
+The default orientation is **ne**, with inputs on the left, and outputs on the right.
 A 90-degree clockwise rotation of the block instance results in a new orientation,
 while a 90-degree counter-clockwise rotation combined with a flip results in the **ws** orientation.
 

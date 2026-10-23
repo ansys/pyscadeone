@@ -4,11 +4,6 @@
   "Dependencies": [],
   "Resources": [
     {
-      "Kind": "HeaderFile",
-      "Path": "..\\imports\\import_calculate_module0.h",
-      "Key": ""
-    },
-    {
       "Kind": "SourceFile",
       "Path": "..\\imports\\import_calculate_module0.c",
       "Key": ""
@@ -24,18 +19,8 @@
       "Key": ""
     },
     {
-      "Kind": "HeaderFile",
-      "Path": "resources\\textual_func_module0.h",
-      "Key": ""
-    },
-    {
       "Kind": "SourceFile",
       "Path": "resources\\textual_func_module0.c",
-      "Key": ""
-    },
-    {
-      "Kind": "HeaderFile",
-      "Path": "resources\\half_module0.h",
       "Key": ""
     },
     {

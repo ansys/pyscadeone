@@ -1,0 +1,53 @@
+@startuml
+abstract class Check {
+ id: str
+ label: str
+ category: str
+ types: list[type[swan.SwanItem]]
+ description: str = ''
+}
+
+abstract class Rule {
+ severity: RuleSeverity
+ parameters: str = ''
+ on_start(model: swan.Model) -> RuleResult
+ before_checking_subtree(item: swan.SwanItem) -> RuleResult
+ on_check(item: swan.SwanItem) -> RuleResult
+ after_checking_subtree(item: swan.SwanItem) -> RuleResult
+ on_stop()
+ add_rule_status(item: swan.SwanItem, status: RuleStatus, message: str, local_id: str = '') -> None
+}
+
+class CamelCaseNaming {
+ id='R041'
+ label='Camel case name'
+ description='Each word composing a name shall start with an uppercase letter except the first one.'
+ category='Naming'
+ serverity=RuleSeverity.REQUIRED
+ types=[swan.SwanItem]
+}
+
+Check <|-- Rule
+Rule <|-- CamelCaseNaming
+
+enum RuleStatus {
+ OK
+ FAIL
+ ERROR
+ NA
+}
+
+enum RuleSeverity {
+ MANDATORY
+ REQUIRED
+ ADVISORY
+}
+
+class RuleResult {
+ status: RuleStatus
+ message: str = None
+}
+
+RuleStatus <|-[hidden]- RuleResult
+RuleResult <|-[hidden]- RuleSeverity
+@enduml

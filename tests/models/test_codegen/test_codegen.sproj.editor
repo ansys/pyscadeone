@@ -9,9 +9,11 @@
     "jobs\\codegen_d94d7ca\\.sjob",
     "jobs\\codegen_f7a1025\\.sjob",
     "jobs\\codegen_nok\\.sjob",
-    "jobs\\simu_d01ddb2\\.sjob"
+    "jobs\\simu_d01ddb2\\.sjob",
+    "jobs\\codegen_423137b\\.sjob"
   ],
   "ModulesOrder": [
-    "assets\\module0.swan"
+    "assets\\module0.swan",
+    "assets\\module_const_elaborated.swan"
   ]
 }

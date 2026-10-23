@@ -43,9 +43,6 @@ This library allows:
   - Reading test results
   - Reading information about the generated code
 
-- Ecosystem integration
-
-  - Exporting `FMI 2.0`_ components
 
 Prerequisites
 =============
@@ -101,7 +98,6 @@ in the `LICENSE`_ file.
 .. _ansys scade one: https://www.ansys.com/products/embedded-software/ansys-scade-one
 
 .. _SCADE Test: https://www.ansys.com/products/embedded-software/ansys-scade-test
-.. _FMI 2.0: https://fmi-standard.org/
 
 .. _.Net runtime 8.0: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 .. _official installation guidelines: https://scadeone.docs.pyansys.com/version/dev/getting_started/index.html

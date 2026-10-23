@@ -1,4 +1,4 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2027.0 graph: 2.1
 use CarTypes;
 
 use Utils;
@@ -8,20 +8,20 @@ sensor Ki: float32;
 sensor Kp: float32;
 
 node CruiseControl (On: bool;
-                    Off : bool;
-                    Set : bool;
-                    Resume : bool;
-                    QuickAccel : bool;
-                    QuickDecel : bool;
-                    Accel : CarTypes::tPercent;
-                    Brake : CarTypes::tPercent;
-                    CarSpeed : CarTypes::tSpeed;)
+                    Off: bool;
+                    Set: bool;
+                    Resume: bool;
+                    QuickAccel: bool;
+                    QuickDecel: bool;
+                    Accel: CarTypes::tPercent;
+                    Brake: CarTypes::tPercent;
+                    CarSpeed: CarTypes::tSpeed;)
   returns (CruiseSpeed: CarTypes::tSpeed default = 0.0;
-           ThrottleCmd : CarTypes::tPercent default = 0.0;
-           CruiseState : tCruiseState default = OFF;)
+           ThrottleCmd: CarTypes::tPercent default = 0.0;
+           CruiseState: tCruiseState default = OFF;)
 {
   diagram
-    (automaton $automaton0
+    (automaton #0 $automaton0
       initial state #1 Off
       #pragma diagram {"xy":"h-121881;v-3662","wh":"20000;13012"} #end :
       state #41 Enabled
@@ -30,7 +30,7 @@ node CruiseControl (On: bool;
           (#2 expr QuickDecel
           #pragma diagram {"xy":"h-36150;v54737","wh":"16000;3200"} #end)
           (#3 block CruiseSpeedManagement
-                    #pragma diagram {"xy":"h3850;v49087","wh":"20000;14000"} #end)
+          #pragma diagram {"xy":"h3850;v49087","wh":"20000;14000"} #end)
           (#4 expr Set
           #pragma diagram {"xy":"h-32150;v43637"} #end)
           (#5 expr QuickAccel
@@ -51,7 +51,7 @@ node CruiseControl (On: bool;
           
           (var
               localCruiseSpeed: CarTypes::tSpeed;)
-          (automaton $CC_On
+          (automaton #14 $CC_On
             initial state #38 state0
             #pragma diagram {"xy":"h-32150;v4276","wh":"155150;70900"} #end :
               diagram
@@ -62,7 +62,7 @@ node CruiseControl (On: bool;
                 (#18 expr Accel > PedalMin
                 #pragma diagram {"xy":"h-22625;v19783","wh":"23200;3200"} #end)
                 (#19 block {text%(or)%text}
-                           #pragma diagram {"xy":"h12875;v24450","wh":"20000;14000"} #end)
+                #pragma diagram {"xy":"h12875;v24450","wh":"20000;14000"} #end)
                 (#20 expr CarSpeed < SpeedMax
                 #pragma diagram {"xy":"h-26918;v24450","wh":"21814;3200"} #end)
                 
@@ -74,12 +74,12 @@ node CruiseControl (On: bool;
                 
                 (var
                     StdbyCond: bool;)
-                (automaton $CC_active
+                (automaton #15 $CC_active
                   initial state #35 state0
                   #pragma diagram {"xy":"h-27987;v138","wh":"81175;27600"} #end :
                     diagram
                       (#27 block Regulation
-                                 #pragma diagram {"xy":"h3537;v-1613","wh":"20000;14000"} #end)
+                      #pragma diagram {"xy":"h3537;v-1613","wh":"20000;14000"} #end)
                       (#28 expr localCruiseSpeed
                       #pragma diagram {"xy":"h-23913;v1887","wh":"23200;3200"} #end)
                       (#29 expr CarSpeed
@@ -104,7 +104,7 @@ node CruiseControl (On: bool;
                   :1: #37 unless if (not StdbyCond)
                   restart #35
                   #pragma diagram {"tp":"h-20400;v-1335|#37 h-5058 h-5059 h40587;v-1335|#35"} #end;
-                  #pragma diagram {"xy":"h0;v-12338","wh":"147150;38225"} #end)
+                #pragma diagram {"xy":"h0;v-12338","wh":"147150;38225"} #end)
             state #40 Interrupted
             #pragma diagram {"xy":"h90525;v4276","wh":"38400;11200"} #end :
               diagram
@@ -116,25 +116,25 @@ node CruiseControl (On: bool;
             :1: #40 unless if (Resume and Brake < PedalMin)
             restart #38
             #pragma diagram {"tp":"h-19200;v2650|#40 h-8633 h-8634 h77575;v2650|#38"} #end;
-            #pragma diagram {"xy":"h0;v-11613","wh":"229450;89450"} #end)
+          #pragma diagram {"xy":"h0;v-11613","wh":"229450;89450"} #end)
       :1: #1 unless if (On)
       restart #41
       #pragma diagram {"tp":"h10000;v-3104|#1 h3520 h3521 h-118725;v-10441|#41"} #end;
       :1: #41 unless if (Off)
       restart #1
       #pragma diagram {"tp":"h-118725;v-4234|#41 h-3521 h-3521 h10000;v3103|#1"} #end;
-      #pragma diagram {"xy":"H-30081;V2850","wh":"282262;140338"} #end)
+    #pragma diagram {"xy":"H-30081;V2850","wh":"282262;140338"} #end)
 }
 
 node CruiseSpeedManagement (Set: bool;
                             QuickAccel: bool;
                             QuickDecel: bool;
-                            CarSpeed : CarTypes::tSpeed;)
+                            CarSpeed: CarTypes::tSpeed;)
   returns (CruiseSpeed: CarTypes::tPercent last = CarSpeed;)
 {
   diagram
     (#26 block (Utils::Limiter \ Min: SpeedMin, Max: SpeedMax)
-               #pragma diagram {"xy":"H0;V0","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H0;V0","wh":"20000;14000"} #end)
     (#27 expr LocalCruiseSpeed
     #pragma diagram {"xy":"H-40000;V0","wh":"23200;3200"} #end)
     (#28 def CruiseSpeed
@@ -146,7 +146,7 @@ node CruiseSpeedManagement (Set: bool;
     
     (var
         LocalCruiseSpeed: CarTypes::tPercent;)
-    (activate $ActivateIf0
+    (activate #0 $ActivateIf0
       if Set
       then
         {
@@ -157,7 +157,7 @@ node CruiseSpeedManagement (Set: bool;
             #pragma diagram {"xy":"h-16600;v0","wh":"13600;3200"} #end)
             
             (#4 wire #3 => #2)
-        #pragma diagram {"xy":"h0;v-22300","wh":"83600;9200"} #end
+        #pragma diagram {"xy":"h0;v-22300","wh":"86600;9200"} #end
         }
       elsif QuickAccel
       then
@@ -178,7 +178,7 @@ node CruiseSpeedManagement (Set: bool;
             (#11 wire #7 => #10)
             (#12 wire #6 => #9)
             (#13 wire #5 => #8)
-        #pragma diagram {"xy":"h0;v-7000","wh":"83600;13000"} #end
+        #pragma diagram {"xy":"h0;v-7000","wh":"86600;13000"} #end
         }
       elsif QuickDecel
       then
@@ -199,7 +199,7 @@ node CruiseSpeedManagement (Set: bool;
             (#20 wire #15 => #14)
             (#21 wire #19 => #17)
             (#22 wire #18 => #16)
-        #pragma diagram {"xy":"h0;v10200","wh":"83600;13000"} #end
+        #pragma diagram {"xy":"h0;v10200","wh":"86600;13000"} #end
         }
       else
         {
@@ -210,14 +210,14 @@ node CruiseSpeedManagement (Set: bool;
             #pragma diagram {"xy":"h-16600;v0","wh":"24400;3200"} #end)
             
             (#25 wire #24 => #23)
-        #pragma diagram {"xy":"h0;v25500","wh":"83600;9200"} #end
+        #pragma diagram {"xy":"h0;v25500","wh":"86600;9200"} #end
         }
     #pragma diagram {"xy":"H-5750;V-41600","wh":"86600;63200"} #end)
 }
 
 function SaturateThrottle (ThrottleIn: CarTypes::tPercent;)
-  returns (ThrottleOut : CarTypes::tPercent;
-           Saturated : bool;)
+  returns (ThrottleOut: CarTypes::tPercent;
+           Saturated: bool;)
 {
   diagram
     (#0 expr ThrottleIn
@@ -276,7 +276,7 @@ function SaturateThrottle (ThrottleIn: CarTypes::tPercent;)
 
 node Regulation (CruiseSpeed: CarTypes::tSpeed;
                  CarSpeed: CarTypes::tSpeed;)
-  returns (Throttle : CarTypes::tPercent;)
+  returns (Throttle: CarTypes::tPercent;)
 {
   diagram
     (#0 expr CruiseSpeed
@@ -328,7 +328,7 @@ node Regulation (CruiseSpeed: CarTypes::tSpeed;
         (#27 group)
     #pragma diagram {"xy":"H63600;V8900"} #end)
     (#28 block SaturateThrottle
-               #pragma diagram {"xy":"H100600;V8900","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H100600;V8900","wh":"20000;14000"} #end)
     (#29 def Throttle
     #pragma diagram {"xy":"H141500;V12400","wh":"13600;3200"} #end)
     (#30 expr #31 pre #32

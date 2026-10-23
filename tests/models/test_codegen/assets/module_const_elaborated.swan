@@ -1,0 +1,46 @@
+-- version swan: 2027.0 graph: 2.1
+type t_enum = enum{a,b};
+
+type t_var = c{t_enum};
+
+type t_array = t_var^2;
+
+type t_array_int = int32^2;
+
+const elaborate const_ela_variant: t_array = c{a}^2;
+
+const elaborate const_ela_complex: t_array_int = 0^2;
+
+const elaborate const_ela_simple0: int32 = 0;
+
+const const0: int32 = 0;
+
+function oper_with_const_elaborated ()
+  returns (o0: int32;
+           o1 : t_array;
+           o2 : t_array_int;
+           o3 : int32;)
+{
+  diagram
+    (#0 expr const0
+    #pragma diagram {"xy":"H-28250;V-15500","wh":"10000;3200"} #end)
+    (#1 expr const_ela_variant
+    #pragma diagram {"xy":"H-28250;V-7325","wh":"20000;3200"} #end)
+    (#2 def o0
+    #pragma diagram {"xy":"H-2750;V-15500"} #end)
+    (#3 def o1
+    #pragma diagram {"xy":"H2250;V-7325"} #end)
+    (#4 def o2
+    #pragma diagram {"xy":"H2250;V3242"} #end)
+    (#5 expr const_ela_complex
+    #pragma diagram {"xy":"H-28250;V3242","wh":"20000;3200"} #end)
+    (#6 expr const_ela_simple0
+    #pragma diagram {"xy":"H-28250;V12684","wh":"20000;3200"} #end)
+    (#7 def o3
+    #pragma diagram {"xy":"H2250;V12684"} #end)
+    
+    (#8 wire #1 => #3)
+    (#9 wire #0 => #2)
+    (#10 wire #5 => #4)
+    (#11 wire #6 => #7)
+}

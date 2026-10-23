@@ -137,7 +137,7 @@ All expected arguments can be passed through this command. A complete list of ar
 Python wrapper class documentation
 ----------------------------------
 
-This section gives the documenation of the :py:class:`PythonWrapper` class.
+This section gives the documentation of the :py:class:`PythonWrapper` class.
 
 .. currentmodule:: ansys.scadeone.core.svc.pywrapper
 
@@ -157,7 +157,7 @@ The Python wrapper service only supports:
     - scalar, structure, enum (without pragma enum_val) and array types for inputs and outputs.
       The array and structure types can only be defined by scalar types.
     - char type is not supported
-    - imported types are not supported
+    - external types are not supported
 
 Only default code generation using separate inputs and outputs is supported. Other code generation options (such as root
 interface as global variables) are not supported.

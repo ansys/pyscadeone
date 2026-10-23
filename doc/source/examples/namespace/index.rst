@@ -7,7 +7,7 @@ Navigation using names
 
 This section present how to search a declaration from a module or from a scope using its namespace.
 The search starts on the module or scope moving up to the declarations of scope sections, operators,
-module bodies and interfaces. 
+module bodies, and interfaces.
 
 The ``QuadFlightControl`` example is used. To setup the example see 
 :ref:`ref_QuadFlightControl_python_setup`.

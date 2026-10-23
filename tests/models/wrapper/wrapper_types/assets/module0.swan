@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 use TypesModule as tType;
 
 node operator0 (i0 : int32;
@@ -8,7 +8,8 @@ node operator0 (i0 : int32;
                 i5 : tType::tSize;
                 i6 : bool;
                 i7 : tStruct;
-                i8 : tType::arrayType;)
+                i8 : tType::arrayType;
+                i9 : tAliasColor default = RED;)
   returns (o0: int32;
            o1 : int32;
            o3 : tType::floatType;
@@ -16,7 +17,8 @@ node operator0 (i0 : int32;
            o5 : tType::tSize;
            o6 : bool;
            o7 : tStruct;
-           o8 : tType::arrayType;)
+           o8 : tType::arrayType;
+           o9 : tAliasColor;)
 {
   diagram
     (#5 def o0
@@ -66,6 +68,10 @@ node operator0 (i0 : int32;
     #pragma diagram {"xy":"H-48000;V25625"} #end)
     (#34 def o8
     #pragma diagram {"xy":"H-28750;V25625"} #end)
+    (#36 expr i9
+    #pragma diagram {"xy":"H-48000;V31525"} #end)
+    (#37 def o9
+    #pragma diagram {"xy":"H-28750;V31525"} #end)
     
     (#7 wire #1 => #5, #9, #14
     #pragma diagram {"wp":"#1 h4500[v9100 #5, h2000[v5400 #9, h4000 v-2100 #14]]"} #end)
@@ -81,6 +87,7 @@ node operator0 (i0 : int32;
     (#29 wire #27 => #28)
     (#32 wire #30 => #31)
     (#35 wire #33 => #34)
+    (#38 wire #36 => #37)
 }
 
 function operator1 (i0: int32;)
@@ -102,3 +109,5 @@ type tStruct = { x : int32, y : float32 };
 sensor sensor0: int32;
 
 sensor sensor1: float32;
+
+type tAliasColor = tColor;

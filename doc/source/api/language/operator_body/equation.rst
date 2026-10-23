@@ -1,3 +1,5 @@
+.. _ref_equations:
+
 Equations
 =========
 
@@ -10,7 +12,7 @@ Equations are grouped in a **let** section.
     Equation class diagram
 
 .. autoclass:: LetSection
-    :exclude-members: to_str
+    :exclude-members: to_str, add_automaton, remove_automaton
 
 Equation with expression
 ------------------------

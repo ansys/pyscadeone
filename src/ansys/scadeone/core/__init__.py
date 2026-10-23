@@ -30,7 +30,7 @@ import re
 __version__ = "0.9.dev0"
 
 _VERSION_RE = re.compile(
-    r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+|[A-Za-z][A-Za-z0-9]*)  # Major, minor, patch
+    r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+|[A-Za-z][A-Za-z0-9]*)  # Major, minor, patch (num or dev0)
         (?:\+(?P<b>\d+))?                                         # Build (optional)
         (?:(?P<pr>\D.*))?                                         # Pre-release (optional)
     """,

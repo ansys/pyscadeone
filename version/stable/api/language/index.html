@@ -1,0 +1,748 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Swan constructs &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=f82dc3d9"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/language/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Basic classes" href="common.html" />
+    <link rel="prev" title="Model" href="../model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://scadeone.docs.pyansys.com/version/stable/api/language/index.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model.html">Model</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Swan constructs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="common.html">Basic classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_global/index.html">Module and global declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/index.html">Operator body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/index.html">Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mem_annot.html">Memory annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/index.html">Pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protected.html">Protected items</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_language/index.html">Swan Test constructs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../svc/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Helper classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">API reference</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Swan constructs</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="swan-constructs">
+<span id="ref-swan-api"></span><h1>Swan constructs<a class="headerlink" href="#swan-constructs" title="Link to this heading">#</a></h1>
+<p>This section describes the <strong>ansys.scadeone.core.swan</strong> module which contains all classes
+available to represent a Swan model.</p>
+<p>Some class descriptions use the <a class="reference external" href="https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form">Extended Backus-Naur</a>
+form to represent Swan constructs.</p>
+<p>Each class defined in this module corresponds to a Swan construct. For instance the <a class="reference internal" href="module_global/module.html#ansys.scadeone.core.swan.ModuleBody" title="ansys.scadeone.core.swan.ModuleBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleBody</span></code></a> class
+represents a Swan module body, the <a class="reference internal" href="module_global/declarations/constant.html#ansys.scadeone.core.swan.ConstDeclarations" title="ansys.scadeone.core.swan.ConstDeclarations"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstDeclarations</span></code></a> class represents constant declarations,
+and the <a class="reference internal" href="operator_body/diagram.html#ansys.scadeone.core.swan.Diagram" title="ansys.scadeone.core.swan.Diagram"><code class="xref py py-class docutils literal notranslate"><span class="pre">Diagram</span></code></a> class represents a diagram. This pattern continues for all Swan constructs.</p>
+<p>The class hierarchy closely mirrors the Swan language and its grammar. Refer to the <em>Help</em> menu in the
+Swan IDE for a complete description of the Swan language.</p>
+<p>Swan objects can be created from a Swan model read from a project or built from scratch using the classes
+described in the following sections.</p>
+<section id="swan-objects-as-strings">
+<h2>Swan objects as strings<a class="headerlink" href="#swan-objects-as-strings" title="Link to this heading">#</a></h2>
+<p>Swan objects can be complex, and pretty-printing them is often desirable. The default <cite>__str__()</cite> method is not always
+sufficient to represent a Swan object as a string. To obtain a string representation of a Swan construct,
+use the <cite>ansys.scadeone.core.swan.swan_to_str()</cite> method. Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.scadeone.core.swan</span><span class="w"> </span><span class="kn">import</span> <span class="n">swan_to_str</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">swan_to_str</span><span class="p">(</span><span class="n">my_construct</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The default <cite>__str__()</cite> method is implemented for the following classes:
+<a class="reference internal" href="common.html#ansys.scadeone.core.swan.Luid" title="ansys.scadeone.core.swan.Luid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Luid</span></code></a>,
+<a class="reference internal" href="common.html#ansys.scadeone.core.swan.Lunum" title="ansys.scadeone.core.swan.Lunum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lunum</span></code></a>,
+<a class="reference internal" href="expressions/atom.html#ansys.scadeone.core.swan.Literal" title="ansys.scadeone.core.swan.Literal"><code class="xref py py-class docutils literal notranslate"><span class="pre">Literal</span></code></a>,
+<a class="reference internal" href="common.html#ansys.scadeone.core.swan.Identifier" title="ansys.scadeone.core.swan.Identifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Identifier</span></code></a>,
+<a class="reference internal" href="common.html#ansys.scadeone.core.swan.PathIdentifier" title="ansys.scadeone.core.swan.PathIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathIdentifier</span></code></a>,
+<a class="reference internal" href="expressions/atom.html#ansys.scadeone.core.swan.Pattern" title="ansys.scadeone.core.swan.Pattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pattern</span></code></a> derived classes,
+<a class="reference internal" href="pragmas/pragma.html#ansys.scadeone.core.swan.Pragma" title="ansys.scadeone.core.swan.Pragma"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pragma</span></code></a>, and  pragma related classes (see: <a class="reference internal" href="pragmas/diagram_pragma.html#sec-diag-pragmas"><span class="std std-ref">Diagram Pragmas</span></a>), and
+<a class="reference internal" href="protected.html#ansys.scadeone.core.swan.ProtectedItem" title="ansys.scadeone.core.swan.ProtectedItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProtectedItem</span></code></a>.</p>
+</section>
+<section id="protected-object-concept">
+<h2>Protected object concept<a class="headerlink" href="#protected-object-concept" title="Link to this heading">#</a></h2>
+<p>The Swan editor allows the user to enter syntactically invalid Swan code. Such code is <em>protected</em> to become acceptable tokens
+for the Swan parser. See <a class="reference internal" href="protected.html#ref-protected-items"><span class="std std-ref">Protected items</span></a> for more details.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="common.html">Basic classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="common.html#swanitem-class">SwanItem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html#haspragma-class">HasPragma class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html#identifier-classes">Identifier classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_global/index.html">Module and global declarations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_global/module.html">Modules and Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_global/declarations/index.html">Type and global flow declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_global/operator_decl.html">Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="operator_body/index.html">Operator body</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/scope.html">Operator sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/var.html">Variable declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/equation.html">Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/activation.html">Activations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/automaton.html">State machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/formal_props.html">Formal properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/emission.html">Emissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operator_body/diagram.html">Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="expressions/index.html">Expressions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="expressions/atom.html">Identifiers and atoms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/basic_expr.html">Bitwise, boolean, arithmetic, relational, sequential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/composite.html">Array, structure and variant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/selection.html">Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/sequential.html">Sequential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/instance.html">Operator instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions/forward.html">Forward expression</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group.html">Groups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="group.html#group-construction">Group construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group.html#group-projection-and-renaming">Group projection and renaming</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mem_annot.html">Memory annotations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pragmas/index.html">Pragmas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/pragma.html">Pragma</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/diagram_pragma.html">Diagram Pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/cg_pragmas.html">Code generation pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/documentation_pragma.html">Documentation pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/traceability_pragma.html">Traceability pragmas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pragmas/test_pragmas.html">Test pragmas</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="protected.html">Protected items</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="protected.html#protection-class">Protection class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protected.html#list-of-protected-items">List of protected items</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protected.html#markup-helper">Markup helper</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#swan-objects-as-strings">Swan objects as strings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protected-object-concept">Protected object concept</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/api/language/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

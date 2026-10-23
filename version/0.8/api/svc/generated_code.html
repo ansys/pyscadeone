@@ -1,0 +1,1628 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Generated code &#8212; PyScadeOne</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=f82dc3d9"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/svc/generated_code';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://scadeone.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulation data" href="simdata.html" />
+    <link rel="prev" title="Swan model visitor" href="navigation/visitor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://scadeone.docs.pyansys.com/version/stable/api/svc/generated_code.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyScadeOne - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyScadeOne - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contrib.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyscadeone" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scadeone.html">ScadeOne app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project.html">Project management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language/index.html">Swan constructs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_language/index.html">Swan Test constructs</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Services</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="navigation/index.html">Model navigation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Generated code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simdata.html">Simulation data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_results.html">Test results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fmu_export.html">FMU export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project_creator.html">Project creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pywrapper.html">Python wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Project jobs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Helper classes</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Services</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Generated code</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="generated-code">
+<span id="ref-generated-code"></span><h1>Generated code<a class="headerlink" href="#generated-code" title="Link to this heading">#</a></h1>
+<p>This section contains the classes related to Scade One Generated Code.</p>
+<p>It relies on the JSON mapping file generated by Scade One CG via a code generation job defined in a Scade One project.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.scadeone.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScadeOne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.scadeone.core.svc.generated_code</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneratedCode</span>
+
+<span class="k">with</span> <span class="n">ScadeOne</span><span class="p">()</span> <span class="k">as</span> <span class="n">app</span><span class="p">:</span>
+   <span class="n">project</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">load_project</span><span class="p">(</span><span class="s1">&#39;project.sproj&#39;</span><span class="p">)</span>
+   <span class="n">code_gen</span> <span class="o">=</span> <span class="n">GeneratedCode</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;CodeGen&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>From the <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.GeneratedCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneratedCode</span></code></a> object, methods are provided to navigate in the model as it is defined in the mapping file
+in order to get the corresponding generated code artifacts.</p>
+<p>The next sections describe:</p>
+<ul class="simple">
+<li><p>the <a class="reference internal" href="#ref-gc-main-class"><span class="std std-ref">main class</span></a> for generated code <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.GeneratedCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneratedCode</span></code></a>,</p></li>
+<li><p>the <a class="reference internal" href="#ref-gc-model-classes"><span class="std std-ref">classes</span></a> related to model elements,</p></li>
+<li><p>the <a class="reference internal" href="#ref-gc-code-classes"><span class="std std-ref">classes</span></a> related to generated code.</p></li>
+</ul>
+<section id="main-class">
+<span id="ref-gc-main-class"></span><h2>Main class<a class="headerlink" href="#main-class" title="Link to this heading">#</a></h2>
+<p>This section describes the main class for generated code.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">GeneratedCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../project.html#ansys.scadeone.core.project.Project" title="ansys.scadeone.core.project.Project"><span class="pre">Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generated code main class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>project: Project</strong></dt><dd><p>Current project.</p>
+</dd>
+<dt><strong>job_name: str</strong></dt><dd><p>Code generation name.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.decompose_code_type">
+<span class="sig-name descname"><span class="pre">decompose_code_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.decompose_code_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns as a dictionary with the C type name, category, and sub elements of a given type element.</p>
+<p>The dictionary content is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ret_type</span> <span class="p">:</span><span class="o">:=</span> <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;str&gt;&quot;</span><span class="p">,</span> <span class="c1"># C name</span>
+               <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;array|struct|enum|union|typedef|predefined_type&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;elements&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">sub_elements</span><span class="o">&gt;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>where <em>sub_elements</em> depends on the category:</p>
+<dl class="simple">
+<dt>array</dt><dd><p>dictionary of the form:</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s2">&quot;base_type&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ret_type</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1"># base type of the array</span>
+  <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">}</span>            <span class="c1"># size of the array</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>struct</dt><dd><p>list of dictionaries, such as:</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># field name</span>
+  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ret_type</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1"># field type data</span>
+  <span class="s2">&quot;pointer&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>    <span class="c1"># True if field is a pointer type</span>
+  <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="nb">list</span> <span class="p">}</span>      <span class="c1"># optional list of integer or constant names</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>enum</dt><dd><p>dictionary of the form:</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s2">&quot;tag_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># internal tag name for the enum</span>
+  <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="p">}</span> <span class="c1"># list of names corresponding to the enum values</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>union</dt><dd><p>list of dictionaries, such as:</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># variant field name</span>
+  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ret_type</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1"># variant field type data</span>
+  <span class="s2">&quot;enum_value&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">}</span> <span class="c1"># optional integer value</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>predefined_type</dt><dd><p>the value is None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns (as a dictionary) the code data corresponding to given code identifier.</p>
+<ul class="simple">
+<li><p>code_index: position of the element in the code section list</p></li>
+<li><p>parent_category: category (declarations, function, struct, enum, union) of the parent
+code element</p></li>
+<li><p>parent_name: name of the parent code element</p></li>
+<li><p>parent_id: code identifier of the parent code element</p></li>
+<li><p>category: category (declarations, function, struct, enum, union) of the code element</p></li>
+<li><p>content: data content (the element itself)</p></li>
+<li><p>index: position of the element in the declaration</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_id">
+<span class="sig-name descname"><span class="pre">get_code_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns the code identifier associated to a given model identifier for a given <em>role</em>.</p>
+<p>If <em>silent</em> is set to True, the functions returns -1 in case no code is found. Otherwise,
+exception is raised.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_ids">
+<span class="sig-name descname"><span class="pre">get_code_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.14)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_ids" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of code identifiers associated to a given model identifier
+(as a Generator of code, role tuples).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_type_id_mapping">
+<span class="sig-name descname"><span class="pre">get_code_type_id_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_code_type_id_mapping" title="Link to this definition">#</a></dt>
+<dd><p>Get type mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Return a dict where key is ID and values are a tuple of data type and parameters</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_elaboration_function">
+<span class="sig-name descname"><span class="pre">get_elaboration_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_elaboration_function" title="Link to this definition">#</a></dt>
+<dd><p>Returns the elaboration C function for the operator,
+if any or None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_field_value">
+<span class="sig-name descname"><span class="pre">get_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_field_value" title="Link to this definition">#</a></dt>
+<dd><p>Get value(s) of the field from a dict with its given name</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>dta</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>The input data</p>
+</dd>
+<dt><strong>field</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of field</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]]</dt><dd><p>Return value(s) of the field</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_function_parameters">
+<span class="sig-name descname"><span class="pre">get_function_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_function_parameters" title="Link to this definition">#</a></dt>
+<dd><p>Get parameters of a function</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id_model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model.</p>
+</dd>
+<dt><strong>role: str</strong></dt><dd><p>One of “CycleMethod, “ResetMethod”, “InitMethod”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Return a tuple including list of inputs and context parameter name.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_interface_file">
+<span class="sig-name descname"><span class="pre">get_interface_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_interface_file" title="Link to this definition">#</a></dt>
+<dd><p>Returns (as a dictionary) the interface file data corresponding to given model identifier.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id_model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Returns the interface file data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_method_data">
+<span class="sig-name descname"><span class="pre">get_method_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_method_data" title="Link to this definition">#</a></dt>
+<dd><p>Get data of a method with its name given</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id_model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model</p>
+</dd>
+<dt><strong>method_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of model</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Return a dict of method data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_element">
+<span class="sig-name descname"><span class="pre">get_model_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve_def</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_element" title="Link to this definition">#</a></dt>
+<dd><p>Returns the model element with its given ID. If <em>resolve_def</em> is set to True,
+and the element is a NamedType, the definition of the NamedType is resolved and returned</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>model_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model</p>
+</dd>
+<dt><strong>resolve_def</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>If True, resolve NamedType definition, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>Return a list of model type and its parameters</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_elements">
+<span class="sig-name descname"><span class="pre">get_model_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.14)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_elements" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of model elements defined in the mapping file
+(as a Generator of MapElem objects).</p>
+<p>If <em>filter</em> is set, returns only the elements of the given category
+(elaboration, predefined_type, array, struct, enum, variant, named_type, sensor,
+operator, mono).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_id_mapping">
+<span class="sig-name descname"><span class="pre">get_model_id_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_id_mapping" title="Link to this definition">#</a></dt>
+<dd><p>Get model mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Return a dict with key is ID and values are a tuple of data type and parameters</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_monomorphic_instance">
+<span class="sig-name descname"><span class="pre">get_model_monomorphic_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelMonomorphicInstance"><span class="pre">ModelMonomorphicInstance</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_monomorphic_instance" title="Link to this definition">#</a></dt>
+<dd><p>Returns the <em>ModelMonomorphicInstance</em> object corresponding
+to given operator path name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_monomorphic_instances">
+<span class="sig-name descname"><span class="pre">get_model_monomorphic_instances</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelMonomorphicInstance"><span class="pre">ModelMonomorphicInstance</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_monomorphic_instances" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of <em>ModelMonomorphicInstance</em> objects for the mapping file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_operator">
+<span class="sig-name descname"><span class="pre">get_model_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperator"><span class="pre">ModelOperator</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_operator" title="Link to this definition">#</a></dt>
+<dd><p>Returns the <em>ModelOperator</em> object corresponding to given operator path name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_operators">
+<span class="sig-name descname"><span class="pre">get_model_operators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperator"><span class="pre">ModelOperator</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_operators" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of <em>ModelOperator</em> objects for the mapping file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_sensor">
+<span class="sig-name descname"><span class="pre">get_model_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelSensor" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelSensor"><span class="pre">ModelSensor</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_sensor" title="Link to this definition">#</a></dt>
+<dd><p>Returns the <em>ModelSensor</em> object corresponding to given sensor path name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_sensors">
+<span class="sig-name descname"><span class="pre">get_model_sensors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelSensor" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelSensor"><span class="pre">ModelSensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_model_sensors" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of <em>ModelSensor</em> objects for the mapping file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_operator_name">
+<span class="sig-name descname"><span class="pre">get_operator_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_operator_name" title="Link to this definition">#</a></dt>
+<dd><p>Get an operator name</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id_model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of operator if it’s found in the model</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_role_type">
+<span class="sig-name descname"><span class="pre">get_role_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_role_type" title="Link to this definition">#</a></dt>
+<dd><p>Get the role of a type with its ID given</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>id_model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of model</p>
+</dd>
+<dt><strong>id_code</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>ID of type given</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Returns a role name</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.get_type">
+<span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_type_elt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_type_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.get_type" title="Link to this definition">#</a></dt>
+<dd><p>Get type data with its ID given</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>c_type_elt</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></span></dt><dd><p>Code type element</p>
+</dd>
+<dt><strong>c_type_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Code type ID</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeBase</span></code>]</dt><dd><p>An instance of TypeBase</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.code" title="Link to this definition">#</a></dt>
+<dd><p>Returns the ‘code’ data section.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.generated_code_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generated_code_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.generated_code_dir" title="Link to this definition">#</a></dt>
+<dd><p>Returns the generated code directory path name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.is_code_generated">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_code_generated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.is_code_generated" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the code is generated for the job.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.mapping">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mapping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.mapping" title="Link to this definition">#</a></dt>
+<dd><p>Returns the mapping file as a dictionary.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.GeneratedCode.root_operators">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_operators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode.root_operators" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of root operators names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="model-classes">
+<span id="ref-gc-model-classes"></span><h2>Model classes<a class="headerlink" href="#model-classes" title="Link to this heading">#</a></h2>
+<p>Model classes are used to represent the model elements:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.ModelOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOperator</span></code></a> represents a model operator</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelMonomorphicInstance</span></code></a> represents a monomorphic instance (after generic type resolution)</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariable" title="ansys.scadeone.core.svc.generated_code.ModelVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariable</span></code></a> represents a model variable (input or output)</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic" title="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariableMonomorphic</span></code></a> represents a monomorphic variable (after generic type resolution)</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelSensor" title="ansys.scadeone.core.svc.generated_code.ModelSensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelSensor</span></code></a> represents a model sensor</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">oper_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperatorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOperatorBase</span></code></a></p>
+<p>Class for model operator.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>oper_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.cycle_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cycle_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.cycle_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the cycle method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.init_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.init_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the init method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariable" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariable"><span class="pre">ModelVariable</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.inputs" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of inputs for the operator (as ModelVariable objects).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.instances">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.instances" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of instances for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.is_expanded">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_expanded</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.is_expanded" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the operator is expanded (inlined)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.is_imported">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_imported</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.is_imported" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the operator is an imported operator</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.is_root">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_root</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.is_root" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the operator is a root operator</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.is_specialized">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_specialized</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.is_specialized" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the operator is specialized</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariable" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariable"><span class="pre">ModelVariable</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.outputs" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of outputs for the operator (as ModelVariable objects).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.path" title="Link to this definition">#</a></dt>
+<dd><p>Returns the Scade One operator path</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.reset_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.reset_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the reset method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperator.watches">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">watches</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperator.watches" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of watches for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelMonomorphicInstance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">oper_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperatorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelOperatorBase</span></code></a></p>
+<p>Class for monomorphic instance of polymorphic model operator.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>oper_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.cycle_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cycle_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.cycle_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the cycle method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.init_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.init_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the init method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariableMonomorphic"><span class="pre">ModelVariableMonomorphic</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.inputs" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of inputs for the operator (as ModelVariableMonomorphic objects).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.instances">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.instances" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of instances for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariableMonomorphic"><span class="pre">ModelVariableMonomorphic</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.outputs" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of outputs for the operator (as ModelVariableMonomorphic objects).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.path" title="Link to this definition">#</a></dt>
+<dd><p>Returns the Scade One operator path</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.reset_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.reset_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the reset method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperator"><span class="pre">ModelOperator</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.source" title="Link to this definition">#</a></dt>
+<dd><p>Returns ModelOperator object source of the monomorphic instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.watches">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">watches</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance.watches" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of watches for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperator"><span class="pre">ModelOperator</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariableBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariableBase</span></code></a></p>
+<p>Class for model variables (inputs or outputs) of operator.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>var_elem: mapping file element</p></li>
+<li><p>parent: <em>ModelOperator</em> object of the parent operator</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.full_name">
+<span class="sig-name descname"><span class="pre">full_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.full_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns variable name taking into account group item(s) to suffix the name when applicable
+(main separator between the operator variable name and group item(s) name can be changed,
+default is ‘_’)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.code_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.code_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the variable as defined in the generated C function.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.code_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.code_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns the generated C code data corresponding to the variable type.
+(‘name’: C type name, ‘category’: type category and ‘elements’: sub elements of the type)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.group_items">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group_items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.group_items" title="Link to this definition">#</a></dt>
+<dd><p>Returns the group item(s) associated with variable (only applicable for group type).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the variable name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariable.parent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperator" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperator"><span class="pre">ModelOperator</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariable.parent" title="Link to this definition">#</a></dt>
+<dd><p>Returns the model operator object owning the variable</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelVariableMonomorphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelMonomorphicInstance"><span class="pre">ModelMonomorphicInstance</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariableBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariableBase</span></code></a></p>
+<p>Class for model variables (inputs or outputs) of monomorphic instance of operator.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>var_elem: mapping file element</p></li>
+<li><p>parent: <em>ModelMonomorphicInstance</em> object of the parent monomorphic instance</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.code_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.code_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the variable as defined in the generated C function.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.code_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.code_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns the generated C code data corresponding to the variable type.
+(‘name’: C type name, ‘category’: type category and ‘elements’: sub elements of the type)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.parent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelMonomorphicInstance" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelMonomorphicInstance"><span class="pre">ModelMonomorphicInstance</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.parent" title="Link to this definition">#</a></dt>
+<dd><p>Returns the model operator object owning the variable</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelVariable" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelVariable"><span class="pre">ModelVariable</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableMonomorphic.source" title="Link to this definition">#</a></dt>
+<dd><p>Returns ModelVariable object source of the monomorphic instance variable.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelSensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelObject" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelObject</span></code></a></p>
+<p>Class for model sensors.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>var_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.load_code_data">
+<span class="sig-name descname"><span class="pre">load_code_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.load_code_data" title="Link to this definition">#</a></dt>
+<dd><p>Forces the assignment of code name and type.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.code_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.code_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the variable as defined in the generated C function.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.code_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.code_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns the generated C code data corresponding to the sensor type.
+(‘name’: C type name, ‘category’: type category and ‘elements’: sub elements of the type)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.code_type_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_type_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.code_type_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the sensor C type name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelSensor.path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelSensor.path" title="Link to this definition">#</a></dt>
+<dd><p>Returns the Scade One sensor path</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="code-classes">
+<span id="ref-gc-code-classes"></span><h2>Code classes<a class="headerlink" href="#code-classes" title="Link to this heading">#</a></h2>
+<p>Generated code classes are used to represent the generated code elements:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.CFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">CFunction</span></code></a> represents a C function</p></li>
+<li><p><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CParameter" title="ansys.scadeone.core.svc.generated_code.CParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CParameter</span></code></a> represents a C parameter</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">CFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_container_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CDeclaration" title="ansys.scadeone.core.svc.generated_code.generated_code.CDeclaration"><code class="xref py py-class docutils literal notranslate"><span class="pre">CDeclaration</span></code></a></p>
+<p>Class for a generated C function.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>function_elem: mapping file element</p></li>
+<li><p>code_container_index: position in the list of code container elements</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction.get_implementation_file">
+<span class="sig-name descname"><span class="pre">get_implementation_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction.get_implementation_file" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the enclosed implementation C file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction.get_interface_file">
+<span class="sig-name descname"><span class="pre">get_interface_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction.get_interface_file" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the enclosed interface C header file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction.name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the function name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction.parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CParameter" title="ansys.scadeone.core.svc.generated_code.generated_code.CParameter"><span class="pre">CParameter</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction.parameters" title="Link to this definition">#</a></dt>
+<dd><p>Returns the function parameters as a list of CParameter objects.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CFunction.return_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CFunction.return_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns the function return type as raw mapping file dictionary data, if any.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">CParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.MappingObject" title="ansys.scadeone.core.svc.generated_code.generated_code.MappingObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">MappingObject</span></code></a></p>
+<p>Class for a parameter of a generated C function.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>param_elem: mapping file element</p></li>
+</ul>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.is_const">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_const</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.is_const" title="Link to this definition">#</a></dt>
+<dd><p>Indicates if the parameter is a const type</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.is_pointer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_pointer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.is_pointer" title="Link to this definition">#</a></dt>
+<dd><p>Indicates if the parameter is a pointer</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the parameter name</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.param_type_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">param_type_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.param_type_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns the type id of the parameter</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.signature">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">signature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.signature" title="Link to this definition">#</a></dt>
+<dd><p>Returns the parameter type signature (taking into account is_pointer and is_const).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CParameter.type_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CParameter.type_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the parameter type name</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="base-classes">
+<h2>Base classes<a class="headerlink" href="#base-classes" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelOperatorBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">oper_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelObject" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelObject</span></code></a></p>
+<p>Base class for model operator or monomorphic instance of an operator.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>oper_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.cycle_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cycle_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.cycle_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the cycle method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.init_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.init_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the init method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.instances">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.instances" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of instances for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.path" title="Link to this definition">#</a></dt>
+<dd><p>Returns the Scade One operator path</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.reset_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.CFunction" title="ansys.scadeone.core.svc.generated_code.generated_code.CFunction"><span class="pre">CFunction</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.reset_method" title="Link to this definition">#</a></dt>
+<dd><p>Returns the reset method C function for the operator (as a CFunction object), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelOperatorBase.watches">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">watches</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase.watches" title="Link to this definition">#</a></dt>
+<dd><p>Returns the list of watches for the operator (as raw data, to be completed).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelVariableBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelObject" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelObject</span></code></a></p>
+<p>Base class for model variables (operators inputs or outputs).</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>var_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableBase.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableBase.code_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase.code_name" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the variable as defined in the generated C function.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableBase.code_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase.code_type" title="Link to this definition">#</a></dt>
+<dd><p>Returns the generated C code data corresponding to the variable type.
+(‘name’: C type name, ‘category’: type category and ‘elements’: sub elements of the type)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelVariableBase.parent">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.ModelOperatorBase" title="ansys.scadeone.core.svc.generated_code.generated_code.ModelOperatorBase"><span class="pre">ModelOperatorBase</span></a></em><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelVariableBase.parent" title="Link to this definition">#</a></dt>
+<dd><p>Returns the model operator object owning the variable</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">ModelObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelObject" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.MappingObject" title="ansys.scadeone.core.svc.generated_code.generated_code.MappingObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">MappingObject</span></code></a></p>
+<p>Base Class for mapping file model elements.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>model_elem: mapping file element</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.ModelObject.get_code_elem">
+<span class="sig-name descname"><span class="pre">get_code_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.ModelObject.get_code_elem" title="Link to this definition">#</a></dt>
+<dd><p>Returns the data associated to the model element, if any.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CDeclaration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">CDeclaration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">decl_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_container_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CDeclaration" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.MappingObject" title="ansys.scadeone.core.svc.generated_code.generated_code.MappingObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">MappingObject</span></code></a></p>
+<p>Base class for C declaration
+(function, global, macro, predefined_type, struct, array, enum, union, typedef, imported_type).</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>decl_elem: mapping file element</p></li>
+<li><p>code_container_index: position in the list of code container elements</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CDeclaration.get_implementation_file">
+<span class="sig-name descname"><span class="pre">get_implementation_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CDeclaration.get_implementation_file" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the enclosed implementation C file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.CDeclaration.get_interface_file">
+<span class="sig-name descname"><span class="pre">get_interface_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.CDeclaration.get_interface_file" title="Link to this definition">#</a></dt>
+<dd><p>Returns the name of the enclosed interface C header file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.scadeone.core.svc.generated_code.MappingObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.scadeone.core.svc.generated_code.</span></span><span class="sig-name descname"><span class="pre">MappingObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.scadeone.core.svc.generated_code.GeneratedCode" title="ansys.scadeone.core.svc.generated_code.generated_code.GeneratedCode"><span class="pre">GeneratedCode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.scadeone.core.svc.generated_code.MappingObject" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Base class for all mapping file elements.</p>
+<ul class="simple">
+<li><p>gen_code: <em>GeneratedCode</em> object</p></li>
+<li><p>mapping_elem: mapping file element</p></li>
+</ul>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-class">Main class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-classes">Model classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-classes">Code classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#base-classes">Base classes</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/api/svc/generated_code.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+<link rel="stylesheet" href="../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

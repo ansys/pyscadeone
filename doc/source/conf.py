@@ -23,7 +23,7 @@ from ansys.scadeone.core.common.versioning import FormatVersions  # noqa
 project = "PyScadeOne"
 copyright = "© 2026-2027 Synopsys, Inc. and ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
-version = f"{version_info.major}.{version_info.minor}"
+version = f"{version_info.major}.{version_info.minor}.{version_info.patch}"
 release = f"{version}{' - Prerelease' if version_info.pre_release else ''}"
 
 # Selection of documentation parts

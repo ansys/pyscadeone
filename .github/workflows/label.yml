@@ -33,6 +33,8 @@ jobs:
       contents: read # Adding write permission to allow applying labels to PRs
       pull-requests: write # Adding read permission to allow checking out the code
     runs-on: ubuntu-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
 
     # Label based on modified files

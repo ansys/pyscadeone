@@ -10,8 +10,8 @@ typedef struct Ctx_operator0_module0 {
 /* module0::operator0 */
 extern void operator0_module0(
   /* i0 */
-  const array_int32_4 *i0,
-  /* o0 */array_int32_4 * restrict o0,
+  const array_i32_4 *i0,
+  /* o0 */array_i32_4 * restrict o0,
   outC_operator0_module0 * restrict outC);
 
 #ifndef SWAN_NO_EXTERN_CALL_TO_RESET

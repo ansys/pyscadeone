@@ -20,14 +20,12 @@ This library allows:
   - reading and execution of :ref:`jobs <ref_jobs>`
   - reading and editing :ref:`simulation data <ref_sim_data>` files
   - reading :ref:`test results <ref_test_results>`
-  - reading information about the :ref:`generated code <ref_generated_code>`
+  - reading the :ref:`cg mapping file <ref_cgmapping>`
 
 - ecosystem integration
 
   - wrapping generated code as Python code via a :ref:`Python wrapper <ref_python_wrapper>` service
    
-  - :ref:`exporting FMI 2.0 <ref_fmu_export>` components
-      - For more information, consult the `FMI website <https://fmi-standard.org/>`_.
 
 .. grid:: 3
 

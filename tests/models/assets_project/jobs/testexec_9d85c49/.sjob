@@ -1,0 +1,15 @@
+{
+  "Version": "2.1",
+  "Kind": "TestExecution",
+  "Properties": {
+    "Name": "TestExecutionJob0",
+    "RootDeclarations": [
+      ""
+    ],
+    "CustomArguments": "",
+    "TestResultFile": "testResults.json"
+  },
+  "InputPaths": [
+    "assets/testModule.swant"
+  ]
+}

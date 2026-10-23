@@ -1,1 +1,4 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2027.0 graph: 2.1
+use utils;
+
+const const0: int32 = utils::C;

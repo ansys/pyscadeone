@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +37,7 @@ from ansys.scadeone.core.common.storage import SwanStorage, SwanString
 from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as Swan
-from tools import log_diff  # type: ignore
+from test_tools import log_diff  # type: ignore
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -110,7 +111,7 @@ def check_fragment(rule, fragment: Union[SwanStorage, str], no_markup=False, dif
     code = SwanString(fragment) if isinstance(fragment, str) else fragment
     obj = rule(code)
     obj_str = dbg_str(obj)
-    cmp_string(code.content(), obj_str, no_markup, diff)
+    cmp_string(code.content(), obj_str, no_markup, diff)  # type: ignore
 
 
 def check_expr(expr: str, diff=False):
@@ -123,13 +124,61 @@ def check_decl(expr: str, diff=False):
     check_fragment(parser.declaration, SwanString(expr), diff=diff)
 
 
-def check_body(code: str, no_markup=False, diff=False):
-    "Check Swan module body"
+def check_body(code: Union[str, tuple[str, str]], no_markup=False, diff=False):
+    """Check a Swan module body by parsing it and comparing its debug string.
+    This helper parses a Swan module body from source text, converts the parsed
+    object into a debug string, and compares that string to an expected value.
+    It is intended for use in tests: on mismatch the comparison helper will
+    signal a test failure (typically by raising an AssertionError or printing a
+    diff).
+
+    Parameters
+    ----------
+    code : Union[str, tuple[str, str]]
+        Either a single source string to parse, or a tuple (source, expected).
+        If a tuple is given, the first element is used as the input source and
+        the second element is the expected debug/string representation to compare
+        against. If a single string is given, the same string is used as the
+        expected representation.
+    no_markup : bool, optional
+        If True, perform the comparison without considering markup. Passed
+        through to cmp_string. Defaults to False.
+    diff : bool, optional
+        If True, request a unified diff on mismatch. Passed through to
+        cmp_string. Defaults to False.
+    Returns
+    -------
+    None
+        This function does not return a value; it asserts correctness via the
+        comparison helper.
+    Raises
+    ------
+    AssertionError
+        Raised when the generated debug string does not match the expected
+        representation (behavior depends on cmp_string used in the test suite).
+    Notes
+    -----
+    Before parsing, the current Swan version string (from gen_swan_version()) is
+    prepended to the source. The function uses SwanString to wrap the source,
+    parser.module_body to parse it, dbg_str to obtain a string representation,
+    and cmp_string to perform the comparison.
+    Examples
+    --------
+    # Compare a source string to itself (sanity check)
+    check_body("module foo ...")
+    # Provide explicit expected output and request a diff on mismatch
+    check_body(("module foo ...", "expected debug representation"), diff=True)
+    """
+    if isinstance(code, tuple):
+        code, expected = code
+    else:
+        expected = code
     code = f"{gen_swan_version()}\n{code}"
+    expected = f"{gen_swan_version()}\n{expected}"
     swan = SwanString(code)
     obj = parser.module_body(swan)
     obj_str = dbg_str(obj)
-    cmp_string(code, obj_str, no_markup, diff)
+    cmp_string(expected, obj_str, no_markup, diff)
 
 
 def check_section(code: SwanString, no_markup=False, diff=False):
@@ -160,6 +209,7 @@ class TestDecl:
 
     def test_constant_init(self):
         decl = parser.declaration(SwanString("const C: int32 = 41+1;"))
+        assert isinstance(decl, Swan.ConstDeclarations)
         constant = decl.constants[0]
         assert isinstance(constant, Swan.ConstDecl)
         assert isinstance(constant, Swan.ConstDecl)
@@ -306,40 +356,14 @@ class TestExpression:
         self.gen_expr_test(f"x {op} y")
 
     @pytest.mark.parametrize(
-        "clock_expr",
-        [
-            "CK",
-            "not CK",
-            "(CK match A)",
-            "(CK match A::B)",
-            "(CK match A::B _)",
-            "(CK match A::B {})",
-            "(CK match 'X')",
-            "(CK match 42)",
-            "(CK match -42)",
-            "(CK match -42_ui32)",
-            "(CK match true)",
-            "(CK match false)",
-            "(CK match _)",
-            "(CK match default)",
-        ],
-    )
-    def test_clock_expr(self, clock_expr):
-        # clock expr
-        self.gen_expr_test(f"X when {clock_expr}")
-
-    @pytest.mark.parametrize(
         "expr",
         [
             "last 'X",
-            "X when match A::B",
             "(X :> A::B)",
             "window <<17>> (1, 3) (a, b)",
-            "merge (a, b) (c, d) ",
             # port expr
             "#123",
             "$foo",
-            "self",
         ],
     )
     def test_misc_expr(self, expr):
@@ -372,14 +396,14 @@ class TestExpression:
             "(x . [1].f[4][5].g default 0)",
             "(42 + 1)^n",
             "[a, b, c]",
-            "{1, 3, 3}",
-            "{4, 5, (42 + 1)} : x::y",
+            "{1, 3, 3}: T",
+            "{4, 5, (42 + 1)}: x::y",
             "X {3}",
             "{syntax%foo bar%syntax} {x: 3, y: 4}",
-            "(X with .f = 42; [0] = 666)",
+            "(X with .f = 42; [0] = 666;)",
             r"""(X with {syntax%foo bar%syntax} = 4;
                             [0] = 666;
-                            .f[4].j = {syntax%hello!%syntax})""",
+                            .f[4].j = {syntax%hello!%syntax};)""",
         ],
     )
     def test_composite_expr(self, oracle):
@@ -406,25 +430,27 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "forward <<42>> returns ()",
+            "forward <<1>> returns ()",
             "forward $foo <<42>> returns ()",
-            "forward <<42>> <<40 + 2>> returns ()",
-            "forward <<42>> with <<X>> returns ()",
-            "forward <<42>> with <<X>> u = U; [v] = V; [[y]] = Y; returns ()",
-            "forward <<42>> with <<X>> returns (Z)",
-            "forward <<42>> with <<X>> returns (Z: last = 42)",
-            "forward <<42>> with <<X>> returns (Z: default = 42)",
-            "forward <<42>> with <<X>> returns (Z: last = 666 default = 42)",
-            "forward <<42>> with <<X>> returns (Z: last = default = 42)",
-            "forward <<42>> with <<X>> unless STRONG returns ()",
-            "forward <<42>> with <<X>> until WEAK returns ()",
-            "forward <<42>> with <<X>> var x: int8; var y; until WEAK returns ()",
-            "forward restart <<N>> unless {%$$$%} until {%£££%} returns ()",
-            r"forward resume <<N>> unless {stx%$$$%stx} until {%£££%} returns ()",
-            "forward <<42>> returns ([ID: last = 42], X = [[Z]])",
-            r"forward resume <<N>> unless {stx%$$$%stx} until {stx%£££%stx} "
+            "forward <<2>> <<40 + 2>> returns ()",
+            "forward <<3>> with <<X>> returns ()",
+            "forward <<4>> with <<X>> u = U; [v] = V; [[y]] = Y; returns ()",
+            "forward <<5>> with <<X>> returns (Z)",
+            "forward <<6>> with <<X>> returns (Z: last = 42)",
+            "forward <<7>> with <<X>> returns (Z default 42)",
+            "forward <<8>> with <<X>> returns (lbl: Z default 42)",
+            "forward <<9>> with <<X>> returns ([[42]])",
+            "forward <<10>> with <<X>> returns ([[X default 42]])",
+            "forward <<11>> with <<X>> returns (lbl: [[X]])",
+            "forward <<12>> with <<X>> unless STRONG returns ()",
+            "forward <<13>> with <<X>> until WEAK returns ()",
+            "forward <<14>> with <<X>> var x: int8; var y; until WEAK returns ()",
+            "forward restart <<N1>> unless {%$$$%} until {%£££%} returns ()",
+            r"forward resume <<N2>> unless {stx%$$$%stx} until {%£££%} returns ()",
+            "forward <<15>> returns ([ID default 42], lbl1: [[z]])",
+            r"forward resume <<N3>> unless {stx%$$$%stx} until {stx%£££%stx} "
             + r"returns ({syntax%$$$%syntax})",
-            r"forward {dim%$$$%dim} returns ([ID: last = 42], X = [[Z]])",
+            r"forward {dim%$$$%dim} returns (V, [S], l1: last = 0, l2: [ID default 42])",
         ],
     )
     def test_fwd(self, oracle):
@@ -433,11 +459,13 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "Op ()",
+            "Op()",
             "P::Op $luid ()",
-            "Op (x, y)",
-            "Op ((42 + 1), y)",
+            "Op(x, y)",
+            "Op((42 + 1), y)",
             "Op <<41 + 1, 666>> ()",
+            "Op #pragma swt under_test #end (42)",
+            "Op $luid  #pragma swt under_test #end (42)",
         ],
     )
     def test_instances(self, oracle):
@@ -447,11 +475,11 @@ class TestExpression:
         "oracle",
         [
             "pack <<k, n>> (V)",
-            "reverse (V)",
-            "flatten (V)",
-            "transpose (V)",
-            "transpose {4} (V)",
-            "transpose {4, 5} (V)",
+            "reverse(V)",
+            "flatten(V)",
+            "transpose(V)",
+            "transpose {4}(V)",
+            "transpose {4, 5}(V)",
         ],
     )
     def test_prefix_op(self, oracle):
@@ -460,15 +488,15 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "(map Op) ()",
-            "(fold Op) ()",
-            "(mapfold Op) ()",
-            "(mapi Op) ()",
-            "(foldi Op) ()",
-            "(mapfoldi Op) ()",
-            "(map (map Op)) ()",
-            "(map (map Op) <<5>>) ()",
-            "(map {empty%%empty}) ()",
+            "(map Op)()",
+            "(fold Op)()",
+            "(mapfold Op)()",
+            "(mapi Op)()",
+            "(foldi Op)()",
+            "(mapfoldi Op)()",
+            "(map (map Op))()",
+            "(map (map Op) <<5>>)()",
+            "(map {empty%%empty})()",
         ],
     )
     def test_iterators(self, oracle):
@@ -477,10 +505,9 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "(activate (map op) every ck) ()",  # clock_expr tested elsewhere
-            "(activate operator every cond default value) ()",
-            "(activate operator every cond last value) ()",
-            "(restart operator every cond) ()",
+            "(activate operator every cond default value)()",
+            "(activate operator every cond last value)()",
+            "(restart operator every cond)()",
         ],
     )
     def test_activate(self, oracle):
@@ -489,18 +516,18 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "(function x => x + 1) ()",
-            "(node x => O -> pre x) ()",
-            "(function x, y => x + y) ()",
+            "(function x => x + 1)()",
+            "(node x => O -> pre x)()",
+            "(function x, y => x + y)()",
             """(function x, y
                        var z;
                        let z = x * y;
-                       => z) ()""",
+                       => z)()""",
             r"""((function (x; y) returns (a; b)
                      { var X;
                        let z = x * y;
-                     }) \ x = 2) ()""",
-            "42 = (function (x) returns (y) y = 6 * x;) (7)",
+                     }) \ x = 2)()""",
+            "42 = (function (x) returns (y) y = 6 * x;)(7)",
         ],
     )
     def test_anonymous(self, oracle):
@@ -509,15 +536,15 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            "(+) (1, 2, 4, 5)",
-            "(*) ()",
-            "(@) ()",
-            "(and) ()",
-            "(or) ()",
-            "(xor) ()",
-            "(land) ()",
-            "(lor) ()",
-            "(lxor) ()",
+            "(+)(1, 2, 4, 5)",
+            "(*)()",
+            "(@)()",
+            "(and)()",
+            "(or)()",
+            "(xor)()",
+            "(land)()",
+            "(lor)()",
+            "(lxor)()",
         ],
     )
     def test_nary(self, oracle):
@@ -526,9 +553,9 @@ class TestExpression:
     @pytest.mark.parametrize(
         "oracle",
         [
-            r"(G \ _, 42) ()",
-            r"(G \ _, 42, i = 40 + 2) ()",
-            r"((function x, y => x * y) \ x = 2) ()",
+            r"(G \ _, 42)()",
+            r"(G \ _, 42, i = 40 + 2)()",
+            r"((function x, y => x * y) \ x = 2)()",
         ],
     )
     def test_partial(self, oracle):
@@ -555,22 +582,35 @@ class TestOperator:
     def test_empty(self, decl):
         check_body(decl)
 
-    def test_var(self):
-        oracle = """
-node FOO () returns ()
+    @pytest.mark.parametrize(
+        "oracle",
+        [
+            """
+node Basic () returns ()
 {
     var X: int8;
 }
-"""
-        check_body(oracle)
-        oracle = """
-node FOO () returns ()
+""",
+            """
+node DefaultLast () returns ()
 {
-    var clock #pragma cg probe #end X1: int8 default = 42 last = 666;
+    var #pragma cg probe #end X1: int8 default = 42 last = 666;
         X2;
     var X3;
 }
-"""
+""",
+            """
+node Delay () returns ()
+{
+    var X1: int8 delay0;
+        X2: int8 delay1;
+    var X3: int8 loopback I1;
+    var X4: int8 delay0 loopback I1, I2, I3;
+}
+""",
+        ],
+    )
+    def test_var(self, oracle):
         check_body(oracle)
 
     def test_formal_emit(self):
@@ -820,9 +860,10 @@ class TestDiagram:
                  where
                    (#3 group)
                    (#4 group))""",
+            "(#3 $o0 expr (#2, a: #1))",
         ],
     )
-    def test_def_expr(self, object):
+    def test_def_expr_blocks(self, object):
         self.check(object)
 
     @pytest.mark.parametrize(
@@ -846,7 +887,6 @@ class TestDiagram:
         "source,target",
         [
             ["#123", "#456"],
-            ["self", "self"],
             ["()", "()"],
             ["#123", "#456, #789"],
             ["#123 .()", "()"],
@@ -922,10 +962,20 @@ sensor S1: int8; S2: int8;""",
                   var x;
                   let x = a; b = x;
                }""",
+            # textual operator definition
+            """{text%function F_def (a: int8;) returns (b: int8;) b = a;%text}""",
+            # textual operator declaration
+            """{text%function F_decl (a: int8;) returns (b: int8;);%text}""",
+            # There should not be a signature in a body. But if it the case, it should be rewritten as text.
+            """{signature%function F_decl (a: int8;) returns (b: int8;);%signature}""",
         ],
     )
     def test_module(self, code):
-        check_body(code)
+        if code.startswith("{signature"):
+            expected = code.replace("signature", "text")
+            check_body((code, expected))
+        else:
+            check_body(code)
 
     @pytest.mark.parametrize(
         "name,expected",
@@ -1082,7 +1132,7 @@ class TestInPlaceModification:
             # port
             "(#421 at Y)",
             "($hello at Y)",
-            "(self at Y)",
+            "(($hello at X) at Y)",
         ],
     )
     def test_expr_basic(self, expr):
@@ -1144,8 +1194,6 @@ class TestInPlaceModification:
         "expr",
         [
             "(window <<42>> (I1, I2, I3) (X, Y, Z) at Y)",
-            "(merge (A, B) at Y)",
-            "(merge (A1, B1, C1) (A2, B2, C2) (A3, B3, C3) at Y)",
         ],
     )
     def test_expr_multigroup(self, expr):
@@ -1180,7 +1228,7 @@ class TestInPlaceModification:
             "(P1::Op <<42>> $call1 (1, 2, 3) at Y)",
             "(transpose {1, 2} <<42>> $call1 (1, 2, 3) at Y)",
             "((restart OP every TICK) <<42>> $call1 (1, 2, 3) at Y)",
-            "((function x => x + 1) (i0) at Y)",
+            "((function x => x + 1)(i0) at Y)",
             r"((map (OP \ x: 0)) <<42>> (i0) at Y)",
         ],
     )

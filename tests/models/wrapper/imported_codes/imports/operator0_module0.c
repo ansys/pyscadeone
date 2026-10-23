@@ -1,19 +1,18 @@
-#include "swan_sensors.h"
-#include "swan_consts.h"
+#include "swan_types.h"
 #include "operator0_module0.h"
 
 /* module0::operator0 */
 void operator0_module0(
     /* i0 */
-    const array_int32_4 *i0,
-    /* o0 */ array_int32_4 *restrict o0,
+    const array_i32_4 *i0,
+    /* o0 */ array_i32_4 *restrict o0,
     outC_operator0_module0 *restrict outC)
 {
   swan_size i1;
 
   for (i1 = 0; i1 < 4; i1++)
   {
-    (*o0)[i1] = (*i0)[i1] * swan_lit_int32(10);
+    (*o0)[i1] = (*i0)[i1] * swan_lit_i32(10);
   }
 }
 

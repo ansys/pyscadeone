@@ -1,10 +1,13 @@
 {
   "JobsOrder": [
     "jobs\\codegen_715c827\\.sjob",
+    "jobs\\codegen_5997a0e\\.sjob",
     "jobs\\simu_8f8cdc8\\.sjob"
   ],
   "ModulesOrder": [
     "assets\\module0.swan",
-    "assets\\test_module1.swant"
+    "assets\\test_module1.swant",
+    "assets\\module0_elab.swan",
+    "assets\\test_module1_elab.swant"
   ]
 }

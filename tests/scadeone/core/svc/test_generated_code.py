@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,28 +20,58 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# cSpell: ignore cfunction
-
-from pathlib import Path
+import shutil
 
 import pytest
 
-from ansys.scadeone.core import ScadeOne
 from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.job import CodeGenerationJob
 from ansys.scadeone.core.svc.generated_code import GeneratedCode
 
-# Tests require path on Scade One. check if it is installed
-s_one_install = Path(r"C:\Scade One")
+
+# To remove all generated code
+_remove_swan_cg_code = False
+
+
+@pytest.fixture(scope="module")
+def codegen_project(app):
+    project = app.load_project("tests/models/test_codegen/test_codegen.sproj")
+    if not project:
+        raise RuntimeError("Failed to load project.")
+    project.load_jobs()
+    return project
+
+
+@pytest.fixture(scope="module", autouse=True)
+def generate_code_for_test_project(codegen_project):
+    for job in codegen_project.jobs:
+        if not isinstance(job, CodeGenerationJob):
+            continue
+        if job.name in ("CodeGenNoExecution", "CodeGenInvalidMapping"):
+            continue
+        cg_out = job.storage.path.parent / "out"
+        if _remove_swan_cg_code:
+            shutil.rmtree(str(cg_out), ignore_errors=True)
+        if cg_out.exists():
+            continue
+        result = job.run()
+        if result.code != 0:
+            raise RuntimeError(f"Code generation job '{job.name}' failed with code {result.code}.")
 
 
 class TestGeneratedCode:
-    def _get_gen_code(self, job_name) -> GeneratedCode:
-        app = ScadeOne()
-        prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
-        return GeneratedCode(prj, job_name)
+    @staticmethod
+    def _get_gen_code(job_name, codegen_project) -> GeneratedCode:
+        cg_job = codegen_project.get_job(job_name)
+        if not isinstance(cg_job, CodeGenerationJob):
+            raise RuntimeError(f"Job '{job_name}' is not a code generation job.")
+        code_gen_dir = cg_job.storage.path.parent / "out"
+        if not code_gen_dir.exists() and job_name != "CodeGenNoExecution":
+            raise RuntimeError(f"Generated code of {job_name} does not exist.")
+        return GeneratedCode(codegen_project, job_name)
 
-    def _check_cfunction(self, op, cfunc, role):
+    @staticmethod
+    def _check_cfunction(op, cfunc, role):
         if cfunc is not None:
             code = op.get_code_elem(role)
             intf = cfunc.get_interface_file()
@@ -87,11 +118,9 @@ class TestGeneratedCode:
             assert True
 
     @pytest.mark.parametrize("job_name", ["", "foo", "Simu"])
-    def test_init_no_job(self, job_name):
-        app = ScadeOne()
-        prj = app.load_project("tests/models/test_codegen/test_codegen.sproj")
+    def test_init_no_job(self, codegen_project, job_name):
         try:
-            GeneratedCode(prj, job_name)
+            GeneratedCode(codegen_project, job_name)
             assert False
         except ScadeOneException as error:
             assert error.args[0] == f'Generated code: no CodeGeneration kind job named "{job_name}"'
@@ -99,29 +128,29 @@ class TestGeneratedCode:
     @pytest.mark.parametrize(
         ("generated", "job_name"), [(True, "CodeGenForFMU"), (False, "CodeGenNoExecution")]
     )
-    def test_is_generated_code(self, generated, job_name):
-        gc = self._get_gen_code(job_name)
+    def test_is_generated_code(self, generated, job_name, codegen_project):
+        gc = self._get_gen_code(job_name, codegen_project)
         assert generated == gc.is_code_generated
         if generated:
             assert gc.generated_code_dir is not None
 
-    def test_error_no_generated_code(self):
+    def test_error_no_generated_code(self, codegen_project):
         job_name = "CodeGenNoExecution"
-        gc = self._get_gen_code(job_name)
+        gc = self._get_gen_code(job_name, codegen_project)
         try:
             assert gc.mapping is None
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: code is not generated for job {job_name}"
 
-    def test_wrong_mapping(self):
-        gc = self._get_gen_code("CodeGenInvalidMapping")
+    def test_wrong_mapping(self, codegen_project):
+        gc = self._get_gen_code("CodeGenInvalidMapping", codegen_project)
         try:
             assert gc.mapping is None
         except ScadeOneException as error:
             assert "Generated code: cannot open mapping file" in error.args[0]
 
-    def test_root_operators(self):
-        gc = self._get_gen_code("CodeGen1")
+    def test_root_operators(self, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         for op_name in gc.root_operators:
             root_op = gc.get_model_operator(op_name)
             assert root_op.is_root
@@ -129,16 +158,16 @@ class TestGeneratedCode:
     @pytest.mark.parametrize(
         "oper_name", ["", "foo", "oper_misc1", "module0::oper_poly[][T=int32]"]
     )
-    def test_operator_error(self, oper_name):
-        gc = self._get_gen_code("CodeGen1")
+    def test_operator_error(self, oper_name, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         try:
             gc.get_model_operator(oper_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no operator named {oper_name}"
 
-    def test_operators(self):
+    def test_operators(self, codegen_project):
         expected = ["module0::oper_misc1", "module0::oper_misc2", "module0::oper_poly"]
-        gc = self._get_gen_code("CodeGen1")
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         obtained = []
         for op in gc.get_model_operators():
             obtained.append(op.path)
@@ -151,21 +180,29 @@ class TestGeneratedCode:
             assert False
 
     @pytest.mark.parametrize(
-        ("oper", "watches", "instances", "is_root", "is_imported", "is_expanded", "is_specialized"),
+        ("oper", "watches", "instances", "is_root", "is_external", "is_expanded", "is_specialized"),
         [
             ("module0::oper_misc1", 0, 1, True, False, False, False),
             ("module0::oper_poly", 0, 0, False, False, False, False),
         ],
     )
     def test_operator_attributes(
-        self, oper, watches, instances, is_root, is_imported, is_expanded, is_specialized
+        self,
+        oper,
+        watches,
+        instances,
+        is_root,
+        is_external,
+        is_expanded,
+        is_specialized,
+        codegen_project,
     ):
-        gc = self._get_gen_code("CodeGen1")
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         op = gc.get_model_operator(oper)
         assert len(op.watches) == watches
         assert len(op.instances) == instances
         assert op.is_root == is_root
-        assert op.is_imported == is_imported
+        assert op.is_external == is_external
         assert op.is_expanded == is_expanded
         assert op.is_specialized == is_specialized
 
@@ -177,8 +214,8 @@ class TestGeneratedCode:
             ("CodeGenForFMU", "module0::oper_for_fmu", True, False, False),
         ],
     )
-    def test_operator_methods(self, job, oper, cycle, init, reset):
-        gc = self._get_gen_code(job)
+    def test_operator_methods(self, job, oper, cycle, init, reset, codegen_project):
+        gc = self._get_gen_code(job, codegen_project)
         op = gc.get_model_operator(oper)
         assert (op.cycle_method is not None) == cycle
         assert (op.init_method is not None) == init
@@ -188,16 +225,16 @@ class TestGeneratedCode:
         self._check_cfunction(op, op.reset_method, "ResetMethod")
 
     @pytest.mark.parametrize("mono_name", ["", "foo", "module0::oper_poly", "module0::oper_poly[]"])
-    def test_mono_instance_error(self, mono_name):
-        gc = self._get_gen_code("CodeGen1")
+    def test_mono_instance_error(self, mono_name, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         try:
             gc.get_model_monomorphic_instance(mono_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no monomorphic instance named {mono_name}"
 
-    def test_mono_instances(self):
+    def test_mono_instances(self, codegen_project):
         expected = [("module0::oper_poly[][T=int32]", "module0::oper_poly")]
-        gc = self._get_gen_code("CodeGen1")
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         obtained = []
         for op in gc.get_model_monomorphic_instances():
             obtained.append((op.path, op.source.path))
@@ -214,8 +251,8 @@ class TestGeneratedCode:
         ("oper", "watches", "instances", "source"),
         [("module0::oper_poly[][T=int32]", 0, 0, "module0::oper_poly")],
     )
-    def test_mono_instance_attributes(self, oper, watches, instances, source):
-        gc = self._get_gen_code("CodeGen1")
+    def test_mono_instance_attributes(self, oper, watches, instances, source, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         op = gc.get_model_monomorphic_instance(oper)
         assert len(op.watches) == watches
         assert len(op.instances) == instances
@@ -225,8 +262,8 @@ class TestGeneratedCode:
         ("oper", "cycle", "init", "reset"),
         [("module0::oper_poly[][T=int32]", True, False, False)],
     )
-    def test_mono_instance_methods(self, oper, cycle, init, reset):
-        gc = self._get_gen_code("CodeGen1")
+    def test_mono_instance_methods(self, oper, cycle, init, reset, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         op = gc.get_model_monomorphic_instance(oper)
         assert (op.cycle_method is not None) == cycle
         assert (op.init_method is not None) == init
@@ -239,14 +276,14 @@ class TestGeneratedCode:
         "sensor_name",
         ["", "foo", "sensor_int", "module0::oper_misc1", "module0::oper_poly[][T=int32]"],
     )
-    def test_sensor_error(self, sensor_name):
-        gc = self._get_gen_code("CodeGen1")
+    def test_sensor_error(self, sensor_name, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         try:
             gc.get_model_sensor(sensor_name)
         except ScadeOneException as error:
             assert error.args[0] == f"Generated code: no sensor named {sensor_name}"
 
-    def test_sensors(self):
+    def test_sensors(self, codegen_project):
         expected = [
             "module0::sensor_int",
             "module0::sensor_enum",
@@ -257,7 +294,7 @@ class TestGeneratedCode:
             "module0::sensor_float",
             "module0::sensor_bool",
         ]
-        gc = self._get_gen_code("CodeGenForFMU")
+        gc = self._get_gen_code("CodeGenForFMU", codegen_project)
         obtained = []
         for sen in gc.get_model_sensors():
             obtained.append(sen.path)
@@ -280,7 +317,7 @@ class TestGeneratedCode:
             "watches",
             "instances",
             "is_root",
-            "is_imported",
+            "is_external",
             "is_expanded",
             "is_specialized",
         ),
@@ -290,14 +327,22 @@ class TestGeneratedCode:
         ],
     )
     def test_sensor_attributes(
-        self, sensor, watches, instances, is_root, is_imported, is_expanded, is_specialized
+        self,
+        sensor,
+        watches,
+        instances,
+        is_root,
+        is_external,
+        is_expanded,
+        is_specialized,
+        codegen_project,
     ):
-        gc = self._get_gen_code("CodeGen1")
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         op = gc.get_model_operator(sensor)
         assert len(op.watches) == watches
         assert len(op.instances) == instances
         assert op.is_root == is_root
-        assert op.is_imported == is_imported
+        assert op.is_external == is_external
         assert op.is_expanded == is_expanded
         assert op.is_specialized == is_specialized
 
@@ -310,7 +355,7 @@ class TestGeneratedCode:
             ("CodeGenForFMU", "module0::oper_for_fmu"),
         ],
     )
-    def test_oper_parameters(self, job, oper):
+    def test_oper_parameters(self, job, oper, codegen_project):
         def _check_var(var, input_direction, separator=""):
             name = var.name
             full_name = var.full_name(separator)
@@ -321,7 +366,7 @@ class TestGeneratedCode:
                 # check that it is the return of the function or a polymorphic param
                 assert code_type == {} or var.parent.cycle_method.return_type == code_type
 
-        gc = self._get_gen_code(job)
+        gc = self._get_gen_code(job, codegen_project)
         oper = gc.get_model_operator(oper)
         for i in oper.inputs:
             _check_var(i, True, ".")
@@ -334,7 +379,7 @@ class TestGeneratedCode:
             ("CodeGen1", "module0::oper_poly[][T=int32]"),
         ],
     )
-    def test_mono_instance_parameters(self, job, oper):
+    def test_mono_instance_parameters(self, job, oper, codegen_project):
         def _check_var(var, input_direction):
             source = var.source
             name = source.name
@@ -348,7 +393,7 @@ class TestGeneratedCode:
                 # check that it is the return of the function
                 assert var.parent.cycle_method.return_type == code_type
 
-        gc = self._get_gen_code(job)
+        gc = self._get_gen_code(job, codegen_project)
         oper = gc.get_model_monomorphic_instance(oper)
         for i in oper.inputs:
             _check_var(i, True)
@@ -356,8 +401,8 @@ class TestGeneratedCode:
             _check_var(o, False)
 
     @pytest.mark.parametrize("role", ["", "foo"])
-    def test_wrong_code_id(self, role):
-        gc = self._get_gen_code("CodeGen1")
+    def test_wrong_code_id(self, role, codegen_project):
+        gc = self._get_gen_code("CodeGen1", codegen_project)
         try:
             gc.get_code_id(0, role)
             assert False

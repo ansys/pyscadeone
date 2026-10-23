@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default configuration for Linux, do not modify -->
+<ModulesLocationConfiguration>
+  <JobLauncherBinLocation>tools/job_launcher/scade_one_job_launcher</JobLauncherBinLocation>
+  <SimulatorLocation>tools/simulator</SimulatorLocation>
+  <ScadeOneLibrariesLocation>libraries</ScadeOneLibrariesLocation>
+</ModulesLocationConfiguration>

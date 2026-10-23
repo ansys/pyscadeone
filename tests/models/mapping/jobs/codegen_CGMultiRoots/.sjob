@@ -1,0 +1,28 @@
+{
+  "Version": "2.3",
+  "Kind": "CodeGeneration",
+  "Properties": {
+    "RootDeclarations": [
+      "module0::function0",
+      "module0::node0",
+      "module0::operator0",
+      "module0::operator1"
+    ],
+    "Name": "CGMultiRoots",
+    "CustomArguments": "",
+    "Expansion": "None",
+    "ExpansionExp": "",
+    "ExpansionNoExp": "",
+    "NameLength": "200",
+    "KeepAssume": "False",
+    "GlobalsPrefix": "",
+    "UseMacros": "False",
+    "StaticLocals": "False",
+    "Probes": "True",
+    "RootInterfaceAsGlobals": "False",
+    "MaxFunctionParameters": ""
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

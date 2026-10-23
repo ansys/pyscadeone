@@ -1,2 +1,2 @@
 pysimdata 2.4.0.075.zip
-DotnetParser 2.4.0.365.zip
+DotnetParser 2.5.0.457.zip

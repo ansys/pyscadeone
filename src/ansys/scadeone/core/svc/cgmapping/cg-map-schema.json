@@ -1,0 +1,1297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cg-map-schema.json",
+  "title": "Swan Code Generator mapping",
+  "description": "JSON schema for Swan Code generator output mapping file",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "file format version"
+    },
+    "model": {
+      "type": "array",
+      "description": "elements related to Swan Model",
+      "items": {
+        "$ref": "#/$defs/ModelDeclaration"
+      }
+    },
+    "code": {
+      "type": "array",
+      "description": "elements related to C Code",
+      "items": {
+        "$ref": "#/$defs/CodeContainer"
+      }
+    },
+    "mapping": {
+      "type": "array",
+      "description": "mappings between model and code",
+      "items": {
+        "$ref": "#/$defs/Mapping"
+      }
+    }
+  },
+  "required": [
+    "model",
+    "code",
+    "mapping"
+  ],
+  "$defs": {
+    "ModelDeclaration": {
+      "description": "Model declaration",
+      "oneOf": [
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "predefined_type"
+            },
+            {
+              "$ref": "#/$defs/ModelPredefinedType"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "array"
+            },
+            {
+              "$ref": "#/$defs/ModelArray"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "struct"
+            },
+            {
+              "$ref": "#/$defs/ModelStruct"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "enum"
+            },
+            {
+              "$ref": "#/$defs/ModelEnum"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "variant"
+            },
+            {
+              "$ref": "#/$defs/ModelVariant"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "named_type"
+            },
+            {
+              "$ref": "#/$defs/ModelNamedType"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "const"
+            },
+            {
+              "$ref": "#/$defs/ModelConstant"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "sensor"
+            },
+            {
+              "$ref": "#/$defs/ModelSensor"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "operator"
+            },
+            {
+              "$ref": "#/$defs/ModelOperator"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "mono"
+            },
+            {
+              "$ref": "#/$defs/ModelMonoOperator"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    },
+    "ModelPredefinedType": {
+      "description": "Model predefined type",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ModelArray": {
+      "description": "Model array type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "base_type": {
+          "type": "integer"
+        },
+        "size": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "base_type",
+        "size"
+      ],
+      "additionalProperties": false
+    },
+    "ModelStruct": {
+      "description": "Model structure type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelStructField"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "ModelStructField": {
+      "description": "Model structure field",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ModelEnum": {
+      "description": "Model enum type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelEnumValue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "ModelEnumValue": {
+      "description": "Model enum type value",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "ModelVariant": {
+      "description": "Model variant type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "constructors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelVariantConstructor"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "constructors"
+      ],
+      "additionalProperties": false
+    },
+    "ModelVariantConstructor": {
+      "description": "Model variant type constructor",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ModelNamedType": {
+      "description": "Model named type",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "ModelConstant": {
+      "description": "Model constant",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "external": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ModelSensor": {
+      "description": "Model sensor",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ModelOperator": {
+      "description": "Model operator",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "root": {
+          "type": "boolean"
+        },
+        "external": {
+          "type": "boolean"
+        },
+        "expanded": {
+          "type": "boolean"
+        },
+        "specialize": {
+          "type": "integer"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelVariable"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelVariable"
+          }
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Probe"
+          }
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelInstance"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "ModelMonoOperator": {
+      "description": "Model operator monomorphization",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "src": {
+          "type": "integer"
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelTypeParameter"
+          }
+        },
+        "size_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelSizeParameter"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelMonoVariable"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelMonoVariable"
+          }
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Probe"
+          }
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelInstance"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "src"
+      ],
+      "additionalProperties": false
+    },
+    "ModelTypeParameter": {
+      "description": "Model monomorphization operator type parameter",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ModelSizeParameter": {
+      "description": "Model monomorphization operator size parameter",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "GroupProjection": {
+      "description": "Group projection",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "ModelVariable": {
+      "description": "Model variable",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "projection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GroupProjection"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ModelMonoVariable": {
+      "description": "Model variable monomorphization",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "src": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "src"
+      ],
+      "additionalProperties": false
+    },
+    "Probe": {
+      "description": "Model element marked as probe",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "projection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GroupProjection"
+          }
+        },
+        "kind": {
+          "enum": [
+            "Input",
+            "Output",
+            "Local",
+            "Wire"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "ModelInstance": {
+      "description": "Model instance of an operator/loop",
+      "oneOf": [
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "operator"
+            },
+            {
+              "$ref": "#/$defs/ModelOperatorInstance"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "loop"
+            },
+            {
+              "$ref": "#/$defs/ModelLoopInstance"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    },
+    "ModelOperatorInstance": {
+      "description": "Model instance of an operator",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "integer"
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Probe"
+          }
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelInstance"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "operator"
+      ],
+      "additionalProperties": false
+    },
+    "ModelLoopInstance": {
+      "description": "Model loop",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "bound": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "Iterator",
+            "Forward"
+          ]
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Probe"
+          }
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ModelInstance"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "bound"
+      ],
+      "additionalProperties": false
+    },
+    "CodeContainer": {
+      "description": "Generated code item (interface file, optional implementation file and declarations)",
+      "type": "object",
+      "properties": {
+        "interface_file": {
+          "type": "string"
+        },
+        "implementation_file": {
+          "type": "string"
+        },
+        "declarations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CDeclaration"
+          }
+        },
+        "user_provided": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "interface_file"
+      ],
+      "additionalProperties": false
+    },
+    "CDeclaration": {
+      "description": "C declaration",
+      "oneOf": [
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "function"
+            },
+            {
+              "$ref": "#/$defs/CFunction"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "global"
+            },
+            {
+              "$ref": "#/$defs/CGlobal"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "macro"
+            },
+            {
+              "$ref": "#/$defs/CMacro"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "predefined_type"
+            },
+            {
+              "$ref": "#/$defs/CPredefinedType"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "struct"
+            },
+            {
+              "$ref": "#/$defs/CStruct"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "array"
+            },
+            {
+              "$ref": "#/$defs/CArray"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "enum"
+            },
+            {
+              "$ref": "#/$defs/CEnum"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "union"
+            },
+            {
+              "$ref": "#/$defs/CUnion"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "typedef"
+            },
+            {
+              "$ref": "#/$defs/CTypedef"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "external_type"
+            },
+            {
+              "$ref": "#/$defs/CExternalType"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    },
+    "CFunction": {
+      "description": "C function declaration",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "return_type": {
+          "type": "integer"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CParameter"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "CParameter": {
+      "description": "C function parameter",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "pointer": {
+          "type": "boolean"
+        },
+        "const": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "CGlobal": {
+      "description": "C global variable",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "CMacro": {
+      "description": "C macro",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "CPredefinedType": {
+      "description": "C predefined type",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "CArray": {
+      "description": "C array type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "base_type": {
+          "type": "integer"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "copy": {
+          "type": "integer"
+        },
+        "equality": {
+          "type": "integer"
+        },
+        "equality_use": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "base_type",
+        "size"
+      ],
+      "additionalProperties": false
+    },
+    "CStruct": {
+      "description": "C structure type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CStructField"
+          }
+        },
+        "copy": {
+          "type": "integer"
+        },
+        "equality": {
+          "type": "integer"
+        },
+        "equality_use": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "CStructField": {
+      "description": "C structure field",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "pointer": {
+          "type": "boolean"
+        },
+        "size": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "CEnum": {
+      "description": "C enum type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CEnumValue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "CEnumValue": {
+      "description": "C enum type value",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "user_value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "CUnion": {
+      "description": "C union type definition",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CUnionVariant"
+          }
+        },
+        "copy": {
+          "type": "integer"
+        },
+        "equality": {
+          "type": "integer"
+        },
+        "equality_use": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "variants"
+      ],
+      "additionalProperties": false
+    },
+    "CUnionVariant": {
+      "description": "C union type variant",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "enum_value": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "enum_value",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "CTypedef": {
+      "description": "C typedef",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "copy": {
+          "type": "integer"
+        },
+        "equality": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "CExternalType": {
+      "description": "C external type",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "scalar": {
+          "type": "boolean"
+        },
+        "init": {
+          "type": "integer"
+        },
+        "copy": {
+          "type": "integer"
+        },
+        "equality": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "Mapping": {
+      "description": "Mapping Swan model <-> generated code",
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "integer"
+        },
+        "code_id": {
+          "type": "integer"
+        },
+        "role": {
+          "enum": [
+            "CycleMethod",
+            "ResetMethod",
+            "InitMethod",
+            "ContextType",
+            "InputStructType",
+            "OutputStructType",
+            "ObsStructType",
+            "GlobalContext",
+            "GlobalObsStruct",
+            "ObsStructField",
+            "ComputedFlag",
+            "ElaborationFunction"
+          ]
+        }
+      },
+      "required": [
+        "model_id",
+        "code_id"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

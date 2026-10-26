@@ -53,7 +53,7 @@ frozen-dependencies = [
 tests = ["pytest>=9.0.3", "pytest-cov>=7.1.0", "click>=8.3.3", "fmpy>=0.3.29"]
 doc = [
     "ansys-sphinx-theme==1.8.2",
-    "numpydoc==1.10.0",
+    "numpydoc==1.11.0",
     "pillow==12.2.0",
     "pytest-sphinx==0.7.1",
     "sphinx==9.1.0",

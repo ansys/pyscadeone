@@ -68,7 +68,7 @@ checks = [
     "pre-commit==4.6.0",
     "pyrefly==1.1.1",
     "ruff==0.15.20",
-    "vale==3.13.0.0",
+    "vale==3.25.1.0",
 ]
 
 [project.urls]

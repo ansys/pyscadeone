@@ -36,7 +36,7 @@ dependencies = [
 frozen-dependencies = [
     # Indirect dependencies,
     "attrs==26.1.0",
-    "cffi==2.0.0",
+    "cffi==2.1.1",
     "clr-loader==0.3.1",
     "jsonschema-specifications==2025.9.1",
     "markupsafe==3.0.3",

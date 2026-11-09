@@ -36,7 +36,7 @@ dependencies = [
 frozen-dependencies = [
     # Indirect dependencies,
     "attrs==26.1.0",
-    "cffi==2.0.0",
+    "cffi==2.1.1",
     "clr-loader==0.3.1",
     "jsonschema-specifications==2025.9.1",
     "markupsafe==3.0.3",
@@ -52,13 +52,13 @@ frozen-dependencies = [
 ]
 tests = ["pytest>=9.0.3", "pytest-cov>=7.1.0", "click>=8.3.3", "fmpy>=0.3.29"]
 doc = [
-    "ansys-sphinx-theme==1.8.2",
+    "ansys-sphinx-theme==1.12.0",
     "numpydoc==1.11.0",
-    "pillow==12.2.0",
+    "pillow==13.0.0",
     "pytest-sphinx==0.7.1",
     "sphinx==9.1.0",
     "sphinx-autobuild==2025.8.25",
-    "sphinx-autodoc-typehints==3.10.3",
+    "sphinx-autodoc-typehints==3.17.5",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.7.0",
     "sphinx-jinja==2.0.2",

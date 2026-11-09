@@ -27,7 +27,7 @@ from platformdirs import PlatformDirs
 import re
 
 # Version must be directly defined for flit. No computation, else flit will fail
-__version__ = "0.9.dev0"
+__version__ = "0.9.0"
 
 _VERSION_RE = re.compile(
     r"""(?P<M>\d+)\.(?P<m>\d+)\.(?P<p>\d+|[A-Za-z][A-Za-z0-9]*)  # Major, minor, patch (num or dev0)

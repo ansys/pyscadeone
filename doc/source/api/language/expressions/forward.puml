@@ -12,16 +12,16 @@ ForwardBody *-- "0..1" Expression: until
 ForwardBody *-- "0..1" Expression: unless
 
 class ForwardDim {
-    expr: Expression (optional)
-    id: Identifier (optional)
-    protected: str (optional)
+    size: Expression (optional)
+    dim_id: Identifier (optional)
+    is_protected: str (optional)
 }
 
-ForwardDim *-- "*" ForwardElement
-class ForwardElement {
+ForwardDim *-- "*" ForwardCurrentElement
+class ForwardCurrentElement {
     expr: Expression
 }
-ForwardElement *-- ForwardLHS
+ForwardCurrentElement *-- ForwardLHS
 
 @enduml
 

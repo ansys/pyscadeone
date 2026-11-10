@@ -1,0 +1,24 @@
+-- version swan: 2027.0 graph: 2.1
+node operator0 (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 def o0
+    #pragma diagram {"xy":"H-2950;V-9500"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-18450;V-9500"} #end)
+    
+    (#2 wire #1 => #0)
+}
+
+node operator1 (i0: int32;)
+  returns (o0: int32;)
+{
+  diagram
+    (#0 def o0
+    #pragma diagram {"xy":"H-2950;V-9500"} #end)
+    (#1 expr i0
+    #pragma diagram {"xy":"H-18450;V-9500"} #end)
+    
+    (#2 wire #1 => #0)
+}

@@ -4,17 +4,18 @@
 
 
 void oper_imp_node_module0(
-  const array_int32_4 *i1,
+  const array_i32_4 *i1,
+  array_i32_4 * restrict o1,
   outC_oper_imp_node_module0 *outC)
 {
     swan_int32 i;
     if (outC->init) {
         outC->init = swan_false;    
-        swan_cp_array_int32_4(&outC->o1, i1);
+        swan_cp_array_i32_4(o1, i1);
     }
     else{        
         for(i=0;i<4;i++){
-            outC->o1[i] = *i1[i] + 1;
+            *o1[i] = *i1[i] + 1;
         }
     }
 
@@ -22,11 +23,7 @@ void oper_imp_node_module0(
 
 void oper_imp_node_init_module0(outC_oper_imp_node_module0 *outC)
 {
-    int i;
     outC->init = swan_true;
-    for(i=0;i<4;i++){
-        outC->o1[i] = 0;
-    }
 }
 
 

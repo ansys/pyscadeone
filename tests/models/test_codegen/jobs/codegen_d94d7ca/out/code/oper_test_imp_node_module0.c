@@ -1,48 +1,41 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.2.0 - Build 0420 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
-#include "swan_consts.h"
-#include "swan_sensors.h"
+#include "oper_imp_func_module0.h"
 #include "oper_test_imp_node_module0.h"
 
-
+/* module0::oper_test_imp_node */
 void oper_test_imp_node_module0(
-  const array_int32_4 *i0,
-  outC_oper_test_imp_node_module0 *outC)
+  /* i0 */
+  const array_i32_4 *i0,
+  /* o0 */array_i32_4 * restrict o0,
+  /* o1 */array_i32_4 * restrict o1,
+  outC_oper_test_imp_node_module0 * restrict outC)
 {
-  oper_imp_node_module0(i0, &outC->Ctx_1oper_imp_node);
-  swan_cp_array_int32_4(
-    &outC->o1,
-    (const array_int32_4 *) &outC->Ctx_1oper_imp_node.o1);
-  oper_imp_func_module0(i0, &outC->o0);
+  /* #1: */ oper_imp_func_module0(i0, o0);
+  /* #5: */ oper_imp_node_module0(i0, o1, &outC->Ctx_oper_imp_node1);
 }
 
 #ifndef SWAN_USER_DEFINED_INIT
-void oper_test_imp_node_init_module0(outC_oper_test_imp_node_module0 *outC)
+void oper_test_imp_node_init_module0(
+  outC_oper_test_imp_node_module0 * restrict outC)
 {
-  swan_size idx1;
-  swan_size idx;
-
-  for (idx = 0; idx < 4; idx++) {
-    outC->o1[idx] = swan_lit_int32(0);
-  }
-  for (idx1 = 0; idx1 < 4; idx1++) {
-    outC->o0[idx1] = swan_lit_int32(0);
-  }
-  oper_imp_node_init_module0(&outC->Ctx_1oper_imp_node);
+  /* #5: */ oper_imp_node_init_module0(&outC->Ctx_oper_imp_node1);
 }
 #endif /* SWAN_USER_DEFINED_INIT */
 
 
 #ifndef SWAN_NO_EXTERN_CALL_TO_RESET
-void oper_test_imp_node_reset_module0(outC_oper_test_imp_node_module0 *outC)
+void oper_test_imp_node_reset_module0(
+  outC_oper_test_imp_node_module0 * restrict outC)
 {
-  oper_imp_node_reset_module0(&outC->Ctx_1oper_imp_node);
+  /* #5: */ oper_imp_node_reset_module0(&outC->Ctx_oper_imp_node1);
 }
 #endif /* SWAN_NO_EXTERN_CALL_TO_RESET */
 
 
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.2.0 - Build 0420 
+
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** oper_test_imp_node_module0.c
 *************************************************************$ */

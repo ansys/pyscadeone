@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,48 +27,91 @@ This module contains the classes for variable declarations:
 - ProtectedVariable, for syntactically incorrect variable definition
 """
 
+from enum import Enum, auto
 from typing import Optional, Union, List
 
 import ansys.scadeone.core.swan.common as common
-from ansys.scadeone.core.swan.expressions import ClockExpr
 from ansys.scadeone.core.swan.pragmas import CGPragma, CGPragmaKind
 
 
+class VarInitDelay(Enum):
+    """Enum for variable initialization information."""
+
+    #: No initialization.
+    DelayNone = auto()
+
+    #: Variable must be initialized for the first cycle.
+    Delay0 = auto()
+
+    #: Variable does not need to be initialized for the first cycle.
+    Delay1 = auto()
+
+    def __str__(self) -> str:
+        return self.name.lower()
+
+
 class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
-    """Class for variable declaration."""
+    """Class for variable declaration.
+
+    Parameters
+    ----------
+    id: common.Identifier
+        Variable identifier.
+    is_starred: bool, optional
+        True if variable is starred. Default is False.
+    at: Optional[common.Identifier], optional
+        Memory constrained output. Name of the memory place. Note: *is_output* must be True. Default is None.
+    type: Optional[common.GroupTypeExpression], optional
+        Variable type. Default is None.
+    init_type: VarInitDelay, optional
+        Variable initialization delay. Default is VarInitDelay.DelayNone.
+    causality_type: Optional[List[common.Identifier]], optional
+        Variable causality_type attributes. Default is None.
+    default: Optional[common.Expression], optional
+        Variable default expression. Default is None.
+    last: Optional[common.Expression], optional
+        Variable last expression. Default is None.
+    pragmas: Optional[list[common.Pragma]], optional
+        List of pragmas. Default is None.
+
+    """
 
     def __init__(
         self,
         id: common.Identifier,
-        is_clock: bool = False,
         is_starred: bool = False,
         at: Optional[common.Identifier] = None,
         type: Optional[common.GroupTypeExpression] = None,
-        when: Optional[ClockExpr] = None,
+        init_type: VarInitDelay = VarInitDelay.DelayNone,
+        causality_type: Optional[List[common.Identifier]] = None,
         default: Optional[common.Expression] = None,
         last: Optional[common.Expression] = None,
         pragmas: Optional[list[common.Pragma]] = None,
     ) -> None:
         common.Declaration.__init__(self, id, pragmas)
-        self._is_clock = is_clock
         self._is_starred = is_starred
         self._at = at
         self._type = type
-        self._when = when
+        self._init_type = init_type
+        self._causality_type = causality_type or []
         self._default = default
         self._last = last
         self._is_input = False
         self._is_output = False
         common.SwanItem.set_owner(self, self._type)
-        common.SwanItem.set_owner(self, self._when)
         common.SwanItem.set_owner(self, self._default)
         common.SwanItem.set_owner(self, self._last)
         common.SwanItem.set_owner(self, self._at)
 
     @property
-    def is_clock(self) -> bool:
-        """True when variable is a clock."""
-        return self._is_clock
+    def init_type(self) -> VarInitDelay:
+        """Variable initialization delay."""
+        return self._init_type
+
+    @property
+    def causality_type(self) -> List[common.Identifier]:
+        """Variable causality_type attributes."""
+        return self._causality_type
 
     @property
     def is_starred(self) -> bool:
@@ -89,11 +133,6 @@ class VarDecl(common.Declaration, common.Variable):  # numpydoc ignore=PR01
     def type(self) -> Union[common.GroupTypeExpression, None]:
         """Variable type."""
         return self._type
-
-    @property
-    def when(self) -> Union[ClockExpr, None]:
-        """Variable clock."""
-        return self._when
 
     @property
     def default(self) -> Union[common.Expression, None]:
@@ -134,6 +173,6 @@ class ProtectedVariable(
 ):  # numpydoc ignore=PR01
     """Protected variable definition as a string."""
 
-    def __init__(self, data: str, pragmas: List[common.Pragma] = None) -> None:
+    def __init__(self, data: str, pragmas: Optional[List[common.Pragma]] = None) -> None:
         common.ProtectedItem.__init__(self, data, common.Markup.Var)
         common.HasPragma.__init__(self, pragmas)

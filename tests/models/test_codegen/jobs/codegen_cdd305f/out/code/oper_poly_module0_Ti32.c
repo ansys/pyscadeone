@@ -1,8 +1,7 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #include "swan_sensors.h"
-#include "swan_consts.h"
 #include "oper_poly_module0_Ti32.h"
 
 /* module0::oper_poly */
@@ -17,6 +16,6 @@ swan_int32 oper_poly_module0_Ti32(/* i0 */swan_int32 i0)
 
 
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** oper_poly_module0_Ti32.c
 *************************************************************$ */

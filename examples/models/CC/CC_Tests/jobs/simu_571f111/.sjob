@@ -11,5 +11,7 @@
     "SimulationInputType": "Harness",
     "TestHarness": "CC_Test::Test"
   },
-  "InputPaths": []
+  "InputPaths": [
+    "assets/CC_Test.swant"
+  ]
 }

@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_oper_for_fmu_module0_H_
@@ -10,7 +10,7 @@
 extern void oper_for_fmu_module0(
   /* i0 */swan_int32 i0,
   /* i1 */
-  const array_float32_3 *i1,
+  const array_f32_3 *i1,
   swan_int8 g1_i2,
   swan_float32 g2_i2,
   /* i3 */
@@ -42,6 +42,6 @@ extern void oper_for_fmu_module0(
 
 
 #endif /* SWAN_oper_for_fmu_module0_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** oper_for_fmu_module0.h
 *************************************************************$ */

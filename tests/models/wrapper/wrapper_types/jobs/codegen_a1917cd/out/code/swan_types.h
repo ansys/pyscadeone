@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_TYPES_H_
@@ -30,14 +30,17 @@ typedef struct swan_tag_tStruct_module0 {
   swan_float32 /* module0::y */ y;
 } tStruct_module0;
 
+/* module0::tAliasColor */
+typedef tColor_module0 tAliasColor_module0;
+
 #ifndef swan_cp_tStruct_module0
 #define swan_cp_tStruct_module0(swan_c1, swan_c2)                             \
-  (swan_assign_struct((swan_c1), (swan_c2), sizeof (tStruct_module0)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (tStruct_module0)))
 #endif /* swan_cp_tStruct_module0 */
 
 #ifndef swan_cp_arrayType_TypesModule
 #define swan_cp_arrayType_TypesModule(swan_c1, swan_c2)                       \
-  (swan_assign_array((swan_c1), (swan_c2), sizeof (arrayType_TypesModule)))
+  (swan_assign((swan_c1), (swan_c2), sizeof (arrayType_TypesModule)))
 #endif /* swan_cp_arrayType_TypesModule */
 
 #ifdef swan_use_tStruct_module0
@@ -57,6 +60,6 @@ extern swan_bool swan_eq_arrayType_TypesModule(
 #endif /* swan_use_arrayType_TypesModule */
 
 #endif /* SWAN_TYPES_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** swan_types.h
 *************************************************************$ */

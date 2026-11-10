@@ -1,0 +1,43 @@
+steps:
+
+  - task: JFrog.jfrog-azure-devops-extension.jfrog-generic-artifacts.JFrogGenericArtifacts@1
+    displayName: 'Download Deployer from Artifactory'
+    inputs:
+      command: Download
+      connection: '$(ArtifactoryV2ConnectionService)'
+      fileSpec: |
+        {
+          "files": [
+            {
+              "pattern": "S-One_Releases/Deployer/win-x64/",
+              "target": "$(Build.ArtifactStagingDirectory)/deployer/deployer.zip",
+              "explode": "true",
+              "flat": "true",
+              "sortBy": ["created"],
+              "sortOrder": "desc",
+              "limit": 1
+            }
+          ]
+        }
+
+  - powershell: |
+      $Platform="win-x64"
+      write-host "Execute Deployer ....."
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment third-parties$(DeployerEnvironmentSuffix) --name MinGW --output "$(ScadeOneInstallPath)\contrib\mingw64"
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name Examples --output "$(ScadeOneInstallPath)\examples"
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name Libraries --output "$(ScadeOneInstallPath)\libraries"
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name JobLauncher --output "$(ScadeOneInstallPath)\tools\job_launcher" --platform $Platform
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name Simulator --output "$(ScadeOneInstallPath)\tools\simulator" --platform $Platform
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name SwanCG --output "$(ScadeOneInstallPath)\tools" --platform $Platform
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe install --environment releases$(DeployerEnvironmentSuffix) --name licensing --output "$(ScadeOneInstallPath)" --version $(ACL_version) --platform $Platform
+    
+      write-host "Configure JobLauncher ....."
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe configure --name JobLauncher --properties cgBinLocation="../swan_cg.exe" SimulatorBinLocation="../simulator/swan_sim.exe" LibrariesDirLocation="../../libraries" --target "$(ScadeOneInstallPath)\tools\job_launcher"
+      write-host "-- JobLauncher configuration file --"
+      Get-Content "$(ScadeOneInstallPath)\tools\job_launcher\Configuration\modulesLocation.config"
+
+      write-host "Configure Simulator ....."
+      $(Build.ArtifactStagingDirectory)\deployer\deployer.exe configure --name Simulator --properties AclDirLocation="../.." --target "$(ScadeOneInstallPath)\tools\simulator"
+      write-host "-- Simulator configuration file --"
+      Get-Content "$(ScadeOneInstallPath)\tools\simulator\Configuration\modulesLocation.config"
+    displayName: 'Execute Deployer & configure JobLauncher'        

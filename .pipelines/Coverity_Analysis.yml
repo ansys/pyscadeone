@@ -1,0 +1,28 @@
+trigger: none
+
+schedules:
+- cron: "0 18 * * Fri"
+  displayName: Friday 7:00 PM (UTC+1 Paris) build
+  branches:
+    include:
+    - develop
+
+variables:
+- group: Coverity
+
+resources:
+  repositories:
+    - repository: ANSYS.SONE.DevOps
+      type: git
+      name: ANSYS.SONE.DevOps
+      ref: releases/release-27.1
+
+jobs:
+- job: Phase1
+  timeoutInMinutes: $[ variables['COVERITY_TIMEOUT'] ]
+  pool:
+    name: SBU-SCADE-DevPool
+    demands: CoverityApp
+  steps:
+
+  - template: templates/coverity-analysis.yml@ANSYS.SONE.DevOps

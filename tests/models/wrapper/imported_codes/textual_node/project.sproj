@@ -4,11 +4,6 @@
   "Dependencies": [],
   "Resources": [
     {
-      "Kind": "HeaderFile",
-      "Path": "..\\imports\\operator0_module0.h",
-      "Key": ""
-    },
-    {
       "Kind": "SourceFile",
       "Path": "..\\imports\\operator0_module0.c",
       "Key": ""

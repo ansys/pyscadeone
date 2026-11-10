@@ -1,10 +1,10 @@
--- version swan: 2025.0 graph: 2.0
+-- version swan: 2027.0 graph: 2.1
 node #pragma kcg expand #end PID (set_point: 'T;
-                                  measure : 'T;
-                                  Kp : 'T;
-                                  Ki : 'T;
-                                  Kd : 'T;
-                                  dt : 'T;)
+                                  measure: 'T;
+                                  Kp: 'T;
+                                  Ki: 'T;
+                                  Kd: 'T;
+                                  dt: 'T;)
   returns (command: 'T;)
   where 'T float
 {
@@ -96,7 +96,7 @@ node #pragma kcg expand #end PID (set_point: 'T;
     (#51 expr Kd
     #pragma diagram {"xy":"H-33100;V17900"} #end)
     (#52 block {text%(+)%text}
-               #pragma diagram {"xy":"H14800;V16000","wh":"20000;14000"} #end)
+    #pragma diagram {"xy":"H14800;V16000","wh":"20000;14000"} #end)
     
     (#53 wire #20 => #18
     #pragma diagram {"wp":"#20 h3500 v-4500 h-37600 v6300 #18"} #end)
@@ -139,8 +139,8 @@ node #pragma kcg expand #end PID (set_point: 'T;
 }
 
 function #pragma kcg expand #end Limiter (dataIn: 'T;
-                                          Max : 'T;
-                                          Min : 'T;)
+                                          Max: 'T;
+                                          Min: 'T;)
   returns (dataOut: 'T;)
   where 'T numeric
 {
@@ -212,7 +212,7 @@ function #pragma kcg expand #end abs (i: 'T;)
       else
         {
           diagram
-            (#4 expr - i
+            (#4 expr -i
             #pragma diagram {"xy":"h-9000;v0"} #end)
             (#5 def o
             #pragma diagram {"xy":"h9000;v0"} #end)
@@ -224,8 +224,8 @@ function #pragma kcg expand #end abs (i: 'T;)
 }
 
 node #pragma kcg expand #end ramp (start: 'T;
-                                   limit : 'T;
-                                   incr : 'T;)
+                                   limit: 'T;
+                                   incr: 'T;)
   returns (data: 'T;)
   where 'T numeric
 {
@@ -250,7 +250,7 @@ node #pragma kcg expand #end ramp (start: 'T;
     #pragma diagram {"xy":"H21000;V11300"} #end)
     (#11 expr incr
     #pragma diagram {"xy":"H1600;V9400","wh":"8800;3200"} #end)
-    (#12 expr (0 :> 'T)
+    (#12 expr 0 :> 'T
     #pragma diagram {"xy":"H-1400;V13200","wh":"14800;3200"} #end)
     (#13 expr #14 < #15
       where

@@ -1,8 +1,6 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
-#include "swan_sensors.h"
-#include "swan_consts.h"
 #include "node0_module0.h"
 
 /* module0::node0 */
@@ -13,22 +11,23 @@ void node0_module0(
   /* o1 */swan_float32 * restrict o1,
   outC_node0_module0 * restrict outC)
 {
-  if (outC->ini_reg_reg) {
-    outC->o0_reg_reg = i0;
+  swan_int32 tmp1;
+
+  tmp1 = (swan_int32) i1;
+  if (outC->ini_reg) {
+    outC->o0_reg = i0;
+    outC->ini_reg = swan_false;
   }
-  if (outC->ini_reg_reg) {
-    outC->ini_reg_reg = swan_false;
-  }
-  *o0 = (swan_int32) i1 + outC->o0_reg_reg;
-  *o1 = (swan_float32) ((swan_int32) i1 - outC->o0_reg_reg);
-  outC->o0_reg_reg = *o0;
+  *o0 = tmp1 + outC->o0_reg;
+  *o1 = (swan_float32) (tmp1 - outC->o0_reg);
+  outC->o0_reg = *o0;
 }
 
 #ifndef SWAN_USER_DEFINED_INIT
 void node0_init_module0(outC_node0_module0 * restrict outC)
 {
-  outC->o0_reg_reg = swan_lit_int32(0);
-  outC->ini_reg_reg = swan_true;
+  outC->o0_reg = swan_lit_i32(0);
+  outC->ini_reg = swan_true;
 }
 #endif /* SWAN_USER_DEFINED_INIT */
 
@@ -36,13 +35,13 @@ void node0_init_module0(outC_node0_module0 * restrict outC)
 #ifndef SWAN_NO_EXTERN_CALL_TO_RESET
 void node0_reset_module0(outC_node0_module0 * restrict outC)
 {
-  outC->ini_reg_reg = swan_true;
+  outC->ini_reg = swan_true;
 }
 #endif /* SWAN_NO_EXTERN_CALL_TO_RESET */
 
 
 
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** node0_module0.c
 *************************************************************$ */

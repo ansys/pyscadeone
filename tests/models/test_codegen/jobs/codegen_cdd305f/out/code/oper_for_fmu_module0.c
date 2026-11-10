@@ -1,15 +1,14 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #include "swan_sensors.h"
-#include "swan_consts.h"
 #include "oper_for_fmu_module0.h"
 
 /* module0::oper_for_fmu */
 void oper_for_fmu_module0(
   /* i0 */swan_int32 i0,
   /* i1 */
-  const array_float32_3 *i1,
+  const array_f32_3 *i1,
   swan_int8 g1_i2,
   swan_float32 g2_i2,
   /* i3 */
@@ -38,12 +37,12 @@ void oper_for_fmu_module0(
   /* o9 */t_variant1_module0 * restrict o9,
   /* o10 */array_1 * restrict o10)
 {
+  (*o5)[1] = i0 < swan_lit_i32(3);
   *o0 = i0;
-  (*o5)[0] = i0 == swan_lit_int32(0);
-  (*o5)[1] = i0 < swan_lit_int32(3);
-  *o2 = (*o5)[0] || i5 == sensor_enum_module0 || swan_eq_array_float32_3(
+  (*o5)[0] = i0 == swan_lit_i32(0);
+  *o2 = (*o5)[0] || i5 == sensor_enum_module0 || swan_eq_array_f32_3(
       i1,
-      (const array_float32_3 *) &sensor_array_module0) ||
+      (const array_f32_3 *) &sensor_array_module0) ||
     swan_eq_t_variant1_module0(
       i7,
       (const t_variant1_module0 *) &sensor_variant_module0) || i6 ==
@@ -66,6 +65,6 @@ void oper_for_fmu_module0(
 
 
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** oper_for_fmu_module0.c
 *************************************************************$ */

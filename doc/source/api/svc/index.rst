@@ -11,10 +11,11 @@ built up on the low-level data structures representing a Swan model, a project, 
    :maxdepth: 1
 
    navigation/index
-   generated_code
+   cgmapping/index
    simdata
    test_results
-   fmu_export
    project_creator
    pywrapper
    jobs
+   assets
+   rules/index

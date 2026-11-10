@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +23,12 @@
 
 import pytest
 
-from ansys.scadeone.core import ScadeOneException, __version__, version_info
+from ansys.scadeone.core import (
+    ScadeOneException,
+    __version__,
+    _VERSION_RE,
+    full_version,
+)
 from ansys.scadeone.core.model.loader import VersionMap
 from ansys.scadeone.core.common.versioning import FormatVersions
 
@@ -33,7 +39,18 @@ def swan_formats():
 
 
 def test_version():
-    assert __version__ == ".".join((version_info.major, version_info.minor, version_info.patch))
+    assert __version__ == full_version
+
+
+def test_version_patch_is_required_and_can_be_numeric_or_string():
+    numeric_patch = _VERSION_RE.fullmatch("0.9.0")
+    string_patch = _VERSION_RE.fullmatch("0.9.dev0")
+
+    assert numeric_patch is not None
+    assert numeric_patch.group("p") == "0"
+    assert string_patch is not None
+    assert string_patch.group("p") == "dev0"
+    assert _VERSION_RE.fullmatch("0.9") is None
 
 
 def test_swan_versions(swan_formats):

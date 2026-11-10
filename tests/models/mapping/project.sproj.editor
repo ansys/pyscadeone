@@ -1,0 +1,12 @@
+{
+  "JobsOrder": [
+    "jobs\\codegen_CGGlobalIn\\.sjob",
+    "jobs\\codegen_CGMultiRoots\\.sjob",
+    "jobs\\codegen_CGStandardIn\\.sjob",
+    "jobs\\codegen_CGStructIn\\.sjob"
+  ],
+  "ModulesOrder": [
+    "assets\\module0.swan",
+    "assets\\module1.swant"
+  ]
+}

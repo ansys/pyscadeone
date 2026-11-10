@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 {text%function textual_func (i0: int32 ^ 4)
       returns (o0: int32 ^ 4);%text}
 

@@ -1,4 +1,4 @@
--- version swan: 2025.2 graph: 2.1
+-- version swan: 2027.0 graph: 2.1
 #pragma use pragma #end use basic;
 
 node op_blocks (i0: int32;)

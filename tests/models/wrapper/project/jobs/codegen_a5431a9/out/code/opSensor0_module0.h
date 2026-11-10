@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_opSensor0_module0_H_
@@ -12,6 +12,6 @@ extern swan_int32 opSensor0_module0(void);
 
 
 #endif /* SWAN_opSensor0_module0_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** opSensor0_module0.h
 *************************************************************$ */

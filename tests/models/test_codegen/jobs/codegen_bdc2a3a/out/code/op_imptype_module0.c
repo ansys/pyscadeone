@@ -1,8 +1,6 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0777 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
-#include "swan_sensors.h"
-#include "swan_consts.h"
 #include "op_imptype_module0.h"
 
 /* module0::op_imptype */
@@ -16,6 +14,6 @@ void op_imptype_module0(
 
 
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0777 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** op_imptype_module0.c
 *************************************************************$ */

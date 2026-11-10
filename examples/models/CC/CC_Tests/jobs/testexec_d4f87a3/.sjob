@@ -1,0 +1,15 @@
+{
+  "Version": "2.2",
+  "Kind": "TestExecution",
+  "Properties": {
+    "RootDeclarations": [
+      "CC_Test::Test"
+    ],
+    "Name": "TestExecutionJob1",
+    "CustomArguments": "",
+    "TestResultFile": "testResults.json"
+  },
+  "InputPaths": [
+    "assets/CC_Test.swant"
+  ]
+}

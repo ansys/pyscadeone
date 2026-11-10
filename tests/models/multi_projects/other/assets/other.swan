@@ -1,0 +1,8 @@
+-- version swan: 2027.0 graph: 2.1
+use common;
+
+use utils;
+
+const C: common::T = 0;
+
+const C2: float32 = utils::C;

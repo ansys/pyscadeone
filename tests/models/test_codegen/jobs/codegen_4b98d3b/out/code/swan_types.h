@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.2.0 - Build 0420 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_TYPES_H_
@@ -7,6 +7,6 @@
 #include "swan_config.h"
 
 #endif /* SWAN_TYPES_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.2.0 - Build 0420 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0801 - Prerelease 
 ** swan_types.h
 *************************************************************$ */

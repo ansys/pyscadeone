@@ -1,0 +1,25 @@
+{
+  "Version": "2.3",
+  "Kind": "CodeGeneration",
+  "Properties": {
+    "RootDeclarations": [
+      "module0::computeFunction"
+    ],
+    "Name": "CGStandardIn",
+    "CustomArguments": "",
+    "Expansion": "None",
+    "ExpansionExp": "",
+    "ExpansionNoExp": "",
+    "NameLength": "255",
+    "KeepAssume": "False",
+    "GlobalsPrefix": "",
+    "UseMacros": "False",
+    "StaticLocals": "False",
+    "Probes": "False",
+    "RootInterfaceAsGlobals": "False",
+    "MaxFunctionParameters": ""
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

@@ -1,12 +1,12 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #include "swan_types.h"
 
-#ifdef swan_use_array_int32_4
-swan_bool swan_eq_array_int32_4(
-  const array_int32_4 *swan_c1,
-  const array_int32_4 *swan_c2)
+#ifdef swan_use_array_i32_4
+swan_bool swan_eq_array_i32_4(
+  const array_i32_4 *swan_c1,
+  const array_i32_4 *swan_c2)
 {
   swan_bool swan_equ;
   swan_size swan_ci;
@@ -17,8 +17,8 @@ swan_bool swan_eq_array_int32_4(
   }
   return swan_equ;
 }
-#endif /* swan_use_array_int32_4 */
+#endif /* swan_use_array_i32_4 */
 
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** swan_types.c
 *************************************************************$ */

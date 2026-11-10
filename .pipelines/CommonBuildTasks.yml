@@ -1,0 +1,59 @@
+steps:
+  - checkout: self
+    path: s/ANSYS.SONE.API.pyscadeone
+    fetchDepth: 1
+    clean: true
+
+  # Update the version number in the Python file with build number
+  # and set the prerelease flag to True if the DisablePrereleaseLabel is set to false.
+  # The prerelease flag is disabled by default in the source code.
+  - powershell: |
+      $FileContent = Get-Content -Path $(VersionFile) -Raw
+      if ($env:DisablePrereleaseLabel -eq 'true') {
+        $FileContent = $FileContent -replace '(?m)^__version__.*','__version__ = "$(VersionNumber)"'
+        $tag = "prerelease-disabled"
+      } else {
+        $FileContent = $FileContent -replace '(?m)^__version__.*','__version__ = "$(VersionNumber).prerelease"'
+        $tag = "prerelease-enabled"
+      }
+      Set-Content -Path $(VersionFile) -Value "$FileContent"
+      Write-Host "--------------"
+      Write-Host "tag: $tag"
+      Write-Host "Version line:"
+      Select-string -Path '$(VersionFile)' -Pattern '__version__ ='
+    displayName: "Update version in Python file"
+    workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+  - template: templates/SignFile.yml@DevOps
+    parameters:
+      SignIn: '$(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone\src\ansys\scadeone\core\libs'
+      SignWhat: 'ansys.sone.*.dll$|.*_sd.so$|.*_sd.dll$'
+
+  - powershell: |
+      $env:PATH = "$(PYTHON_PATH);$(PYTHON_PATH)\Scripts;$env:PATH"
+      $scr = @'
+      echo PATH: $PATH
+      echo Python version:
+      python --version
+      rm -rf .venv
+      yes | make setup
+      '@
+      & ${env:MSYS2_PATH}\usr\bin\bash.exe -lec $scr
+    displayName: Setup Environment
+    workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+  - powershell: |
+      $env:PATH = "$(PYTHON_PATH);$(PYTHON_PATH)\Scripts;$env:PATH"
+      $scr = 'make distrib'
+      & ${env:MSYS2_PATH}\usr\bin\bash.exe -lec $scr
+    displayName: Generate Distribution
+    workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+
+  - powershell: |
+      $env:PATH = "$(PYTHON_PATH);$(PYTHON_PATH)\Scripts;$env:PATH"
+      $env:ANSYSLMD_LICENSE_FILE = "1055@nicwindev01.win.ansys.com;1055@leblnxlic64.ansys.com"
+      $scr = 'make is_smoke'
+      & ${env:MSYS2_PATH}\usr\bin\bash.exe -lec $scr
+    displayName: Run smoke test
+    workingDirectory: $(Pipeline.Workspace)\s\ANSYS.SONE.API.pyscadeone
+

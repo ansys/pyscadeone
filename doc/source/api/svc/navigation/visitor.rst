@@ -129,7 +129,7 @@ Or one can take the default code and write specific processing. Example for an o
 SwanVisitor class
 -----------------
 
-This section describes the methods of the :py:class:`SwanVisitor`.
+This section describes the methods of the :py:class:`SwanVisitor` class.
 
 .. py:class:: SwanVisitor
     :canonical: ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor
@@ -153,3 +153,9 @@ This section describes the methods of the :py:class:`SwanVisitor`.
         :param owner: owner of the *swan_object*. The *owner* is **None** for the root visited object.
         :param owner_property: the name of the property in the *owner* which corresponds to the visited *swan_obj*.
             It is **None** for the root visited object.
+
+
+.. toctree::
+   :maxdepth: 2
+
+   visitor_module

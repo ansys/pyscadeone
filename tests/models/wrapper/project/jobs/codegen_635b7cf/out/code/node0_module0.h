@@ -1,4 +1,4 @@
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** Command: swan_cg.exe config.json
 *************************************************************$ */
 #ifndef SWAN_node0_module0_H_
@@ -6,9 +6,9 @@
 
 #include "swan_types.h"
 
-typedef struct Ctx_node0_module0 {
-  swan_int32 o0_reg_reg;
-  swan_bool ini_reg_reg;
+typedef struct swan_tag_outC_node0_module0 {
+  swan_int32 o0_reg;
+  swan_bool ini_reg;
 } outC_node0_module0;
 
 /* module0::node0 */
@@ -30,6 +30,6 @@ extern void node0_init_module0(outC_node0_module0 * restrict outC);
 
 
 #endif /* SWAN_node0_module0_H_ */
-/* $ Ansys Scade One - Swan Code Generator - Version 2.4.0 - Build 0622 - Prerelease 
+/* $ Ansys Scade One - Swan Code Generator - Version 2.5.0 - Build 0987 - Prerelease 
 ** node0_module0.h
 *************************************************************$ */

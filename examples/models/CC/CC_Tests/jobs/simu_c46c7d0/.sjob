@@ -1,0 +1,18 @@
+{
+  "Version": "2.2",
+  "Kind": "Simulation",
+  "Properties": {
+    "RootDeclarations": [
+      ""
+    ],
+    "Name": "SimulationJob1",
+    "CustomArguments": "",
+    "FileScenario": "",
+    "SimulationInputType": "Harness",
+    "TestHarness": "CC_Test::Test",
+    "UseCycleTime": "False"
+  },
+  "InputPaths": [
+    "assets/CC_Test.swant"
+  ]
+}

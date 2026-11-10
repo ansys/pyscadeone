@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -75,7 +76,7 @@ class TypeClass(IntEnum):
     ARRAY = 2
     ENUM = 3
     VARIANT = 4
-    IMPORTED = 5
+    EXTERNAL = 5
 
 
 class PredefinedType(IntEnum):
@@ -133,7 +134,7 @@ class DataClass(IntEnum):
     ENUM = 3
     VARIANT = 4
     UNTYPED_VARIANT_CONSTRUCTOR = 5
-    IMPORTED = 6
+    EXTERNAL = 6
 
 
 class FileOpenMode(IntEnum):

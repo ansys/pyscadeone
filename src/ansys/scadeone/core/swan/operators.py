@@ -1,6 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
-# SPDX-FileCopyrightText: 2022 - 2024 ANSYS, Inc.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,10 +32,13 @@ from ansys.scadeone.core.svc.swan_creator.operator_creator import (
     OperatorCreator,
 )
 import ansys.scadeone.core.swan.common as common
+from ansys.scadeone.core.common.exception import ScadeOneException
+from ansys.scadeone.core.common.logger import LOGGER
 
 from .diagram import Diagram
 from .scopes import Scope
 from .typedecl import VariableTypeExpression
+from .common import Variable
 
 
 class TypeConstraint(common.SwanItem):  # numpydoc ignore=PR01
@@ -55,6 +58,8 @@ class TypeConstraint(common.SwanItem):  # numpydoc ignore=PR01
         self._is_protected = isinstance(type_vars, str)
         self._type_vars = type_vars
         self._kind = kind
+        if not isinstance(self._type_vars, str):
+            common.SwanItem.set_owner(self, self._type_vars)
 
     @property
     def is_protected(self) -> bool:
@@ -203,6 +208,63 @@ class OperatorDeclaration(OperatorDeclarationDefinitionBase, OperatorDeclaration
             pragmas,
         )
 
+    def get_definition(self) -> Optional["OperatorDefinition"]:
+        """Return the definition of this operator, if any.
+
+        An operator declaration in a module body is always external.
+
+        If the operator declaration is in a module interface, one looks for any definition in body."""
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for operator declaration {self.id.value}")
+        # An operator declaration may appear in a body or in an interface.
+        if module.is_body:
+            return (
+                None  # operator declaration in body is always external, so no definition in body.
+            )
+        # in an interface, look for definition in body
+        if (
+            (mod := module.body())  # type: ignore
+            and (decl := mod.get_declaration(self.id.value, local_only=True))
+            and isinstance(decl, OperatorDefinition)
+        ):
+            return decl
+        return None
+
+    @property
+    def is_external(self) -> bool:
+        """True when operator has no definition."""
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for operator declaration {self.id.value}")
+        # An operator declaration may appear in a body or in an interface.
+        if module.is_body:
+            # In a body, operator declaration is always external
+            # Check of alternative declaration in body
+            if (
+                (mod := module.body())  # type: ignore
+                and (decl := mod.get_declaration(self.id.value, local_only=True))
+                and isinstance(decl, OperatorDeclaration)
+            ):
+                LOGGER.warning(
+                    f"Declaration {self.id.value} is declared in interface and body of module {module.get_full_path()}."
+                )
+                # No check for definition inside the body.
+                return True
+        # In an interface, look for definition in body, if any.
+        # Interface declaration is external if there is no definition in the body.
+        if (self.get_definition()) is not None:
+            # found a definition in body, so not external.
+            return False
+        # Check of alternative declaration in body
+        if (
+            (mod := module.body())  # type: ignore
+            and (decl := mod.get_declaration(self.id.value, local_only=True))
+            and isinstance(decl, OperatorDeclaration)
+        ):
+            LOGGER.warning(
+                f"Declaration {self.id.value} is declared in interface and body of module {module.get_full_path()}."
+            )
+        return True
+
 
 class OperatorDefinition(OperatorDeclarationDefinitionBase, OperatorCreator):
     """Operator definition, with a body.
@@ -235,7 +297,8 @@ class OperatorDefinition(OperatorDeclarationDefinitionBase, OperatorCreator):
             specialization,
             pragmas,
         )
-        self._body = body
+        self._body = body  # type: ignore
+        self._lunum_manager = common.LunumManager()
 
     @property
     def body(self) -> Optional[Union[Scope, common.Equation]]:
@@ -257,6 +320,57 @@ class OperatorDefinition(OperatorDeclarationDefinitionBase, OperatorCreator):
         return isinstance(self.body, common.Equation)
 
     @property
+    def is_public(self) -> bool:
+        """True when operator is public.
+
+        An operator is public when:
+        - it is declared in a module interface,
+        - or it is defined in a module body, but the module has no interface.
+        """
+        # Proceed with simple checks.
+        # Other cases, like multiple declarations of same object
+        # or another object kind with same name is not handled.
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for operator {self.id.value}")
+        # An operator definition can only be in a body.
+        if (interface := module.interface()) is None:  # type: ignore
+            # no interface, so all declarations are public.
+            return True
+        # module has an interface
+        if (decl := interface.get_declaration(self.id.value, local_only=True)) and isinstance(
+            decl, OperatorDeclaration
+        ):
+            return True
+        else:
+            # declaration is not in interface, so it is private.
+            return False
+
+    def get_declaration(self) -> Optional[OperatorDeclaration]:
+        """Return the declaration of this operator, if any.
+
+        Look for declaration in interface, if any."""
+        if (module := self.module) is None:
+            raise ScadeOneException(f"No module for operator {self.id.value}")
+        # An operator definition can only be in a body, by construction
+        # Look for declaration in interface, if any.
+        if (interface := module.interface()) is None:  # type: ignore
+            # no interface, so no declaration.
+            return None
+        # look for declaration in interface
+        if (decl := interface.get_declaration(self.id.value, local_only=True)) and isinstance(
+            decl, OperatorDeclaration
+        ):
+            return decl
+        return None
+
+    @property
+    def is_external(self) -> bool:
+        """Always False.
+
+        Note that a body cannot be None in a final model."""
+        return False
+
+    @property
     def diagrams(self) -> List[Diagram]:
         """Return a list of diagram declarations."""
         if not self.has_body or self.is_equation_body:
@@ -267,3 +381,40 @@ class OperatorDefinition(OperatorDeclarationDefinitionBase, OperatorCreator):
             for diag in filter(lambda x: isinstance(x, Diagram), body.sections)
             if diag
         ]
+
+    def get_local_variables(self) -> List[Variable]:
+        """Return the list of all local variables declared for this operator definition.
+        Local variables are collected from :py:class:`Scope` and recursively from all :py:class:`Diagram` sections of the
+        operator. The returned list aggregates :py:attr:`Scope.local_variables` and :py:attr:`Diagram.local_variables`
+        properties.
+
+        Returns
+        -------
+        List[Variable]
+            List of Variables found from the current operator definition.
+        """
+        if not self.has_body or self.is_equation_body:
+            return []
+        local_variables = []
+        body = cast(Scope, self.body)
+        local_variables.extend(body.local_variables)
+        for diagram in [section for section in body.sections if isinstance(section, Diagram)]:
+            OperatorDefinition._get_diagram_local_variables(diagram, local_variables)
+        return local_variables
+
+    @staticmethod
+    def _get_diagram_local_variables(diagram: Diagram, local_variables: list[Variable]) -> None:
+        """Recursive method for visiting all local variables of each diagram including subdiagrams. Exploration in
+        depth relies on property :py:attr:`Diagram.diagrams`.
+
+        Parameters
+        ----------
+        diagram : Diagram
+            Diagram to visit.
+
+        local_variables : list[Variable]
+            List of local variables collected during the exploration.
+        """
+        local_variables.extend(diagram.local_variables)
+        for subdiagram in diagram.diagrams:
+            OperatorDefinition._get_diagram_local_variables(subdiagram, local_variables)

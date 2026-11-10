@@ -1,0 +1,14 @@
+{
+  "Version": "2.1",
+  "Kind": "ModelCheck",
+  "Properties": {
+    "RootDeclarations": [
+      "module0::operator0"
+    ],
+    "Name": "ModelCheckJob0",
+    "CustomArguments": ""
+  },
+  "InputPaths": [
+    "assets/module0.swan"
+  ]
+}

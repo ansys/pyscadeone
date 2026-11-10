@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,15 +21,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-# THIS MODULE CONTAINS THE CLASSES FOR TEST HARNESS AND TEST MODULE
-# THIS IS NOT YET FULLY IMPLEMENTED
-
 from typing import Union, List, Optional, Callable, cast
+from ansys.scadeone.core.common.exception import ScadeOneException
 import ansys.scadeone.core.swan.common as common
 from ansys.scadeone.core.swan.variable import VarDecl
 from ansys.scadeone.core.swan.typedecl import Uint64Type, BoolType
-from ansys.scadeone.core.swan.modules import Module, UseDirective, GlobalDeclaration
+from ansys.scadeone.core.swan.groupdecl import TypeGroupTypeExpression
+from ansys.scadeone.core.swan.modules import Module, UseDirective
 from ansys.scadeone.core.swan.scopes import Scope
 from ansys.scadeone.core.swan.diagram import DiagramObject
 from ansys.scadeone.core.svc.swan_creator.module_creator import TestModuleCreator
@@ -95,6 +94,7 @@ class SetSensorBlock(DiagramObject):  # numpydoc ignore=PR01
     ) -> None:
         super().__init__(lunum, luid, locals, pragmas)
         self._sensor = sensor
+        common.SwanItem.set_owner(self, self._sensor)
 
     @property
     def sensor(self) -> Union[common.PathIdentifier, common.ProtectedItem]:
@@ -119,9 +119,17 @@ class TestHarness(
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
         common.Declaration.__init__(self, id, pragmas)
-        self._body = body
-        self._inputs = [VarDecl(common.Identifier("_current_cycle"), type=Uint64Type())]
-        self._outputs = [VarDecl(common.Identifier("_stop_condition"), type=BoolType())]
+        self._body = body  # type: ignore
+        self._inputs = [
+            VarDecl(common.Identifier("_current_cycle"), type=TypeGroupTypeExpression(Uint64Type()))
+        ]
+        self._outputs = [
+            VarDecl(common.Identifier("_stop_condition"), type=TypeGroupTypeExpression(BoolType()))
+        ]
+        common.SwanItem.set_owner(self, self._id)
+        common.SwanItem.set_owner(self, self._inputs)
+        common.SwanItem.set_owner(self, self._outputs)
+        self._lunum_manager = common.LunumManager()
 
     @property
     def body(self) -> Optional[Union[Scope, common.Equation]]:
@@ -131,6 +139,25 @@ class TestHarness(
             self._body = body
             self.set_owner(self, self._body)
         return self._body
+
+    @property
+    def is_public(self) -> bool:
+        """The property does not make sense for a test harness, as it does not belong
+        to the Swan language, but it is inherited from a common.Declaration.
+
+
+        The `ScadeOneException` exception is raised when accessing this property.
+        """
+        raise ScadeOneException("TestHarness does not support is_public property.")
+
+    @property
+    def is_external(self) -> bool:
+        """The property does not make sense for a test harness, as it does not belong
+        to the Swan language, but it is inherited from a common.Declaration.
+
+        The `ScadeOneException` exception is raised when accessing this property.
+        """
+        raise ScadeOneException("TestHarness does not support is_external property.")
 
 
 class TestModule(Module, TestModuleCreator):  # numpydoc ignore=PR01
@@ -142,7 +169,7 @@ class TestModule(Module, TestModuleCreator):  # numpydoc ignore=PR01
         self,
         name: common.PathIdentifier,
         use_directives: Optional[List[UseDirective]] = None,
-        declarations: Optional[List[GlobalDeclaration]] = None,
+        declarations: Optional[List[common.ModuleItem]] = None,
         pragmas: Optional[List[common.Pragma]] = None,
     ) -> None:
         Module.__init__(self, name, use_directives, declarations, pragmas)

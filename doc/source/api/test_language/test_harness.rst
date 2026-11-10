@@ -4,7 +4,7 @@ Test harness
 .. currentmodule:: ansys.scadeone.core.swan
 
 
-A test harness is a particular operator that can be declared only in a test module `(*.swant)` and with the following specificities:
+A test harness is a particular operator that can be declared only in a test module `(*.swant)` and with the following characteristics:
 
 - It has no declared I/Os.
 - It has one implicit input `_current_cycle: uint64`; intended to contain the current cycle counter.

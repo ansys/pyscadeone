@@ -11,8 +11,8 @@ Installation
 
 .. _PyPi: https://pypi.org/project/ansys-scadeone-core/
 
-PyScadeOne is compatible with any Python version strictly greater than Python 3.9. 
-It has been tested with Python 3.10 and 3.12. It can be found on `PyPi`_ 
+PyScadeOne is compatible with Python versions from 3.11 to 3.13.
+It has been tested with Python 3.11, 3.12 and 3.13. It can be found on `PyPi`_
 and it also distributed as a wheel package with the Scade One tool. 
 
 To install PyScadeOne use the command:
@@ -98,8 +98,4 @@ Limitations
 - :ref:`ref_python_wrapper` limitations:
 
   - Two sensors with the same name in different modules cannot be correctly generated.
-
-- Swan language limitations:
-
-  - The optional *luid* of a **diagram** construct is ignored.
 

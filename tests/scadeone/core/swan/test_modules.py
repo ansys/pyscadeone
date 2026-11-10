@@ -1,5 +1,6 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
+#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +22,12 @@
 # SOFTWARE.
 
 from typing import cast
-import pytest
 
 from ansys.scadeone.core.common.versioning import gen_swan_version
 from ansys.scadeone.core.common.storage import SwanString
 from ansys.scadeone.core.model.loader import SwanParser
 import ansys.scadeone.core.swan as swan
 from ansys.scadeone.core.swan import Module, PathIdentifier
-
-
-@pytest.fixture
-def parser(unit_test_logger):
-    return SwanParser(unit_test_logger)
 
 
 def gen_code(swan: str, module: str) -> SwanString:

@@ -1,12 +1,14 @@
-Pragma
-======
+.. _ref_pragmas:
+
+Pragmas
+=======
 
 .. currentmodule:: ansys.scadeone.core.swan
 
 From a lexical point of view, pragmas are of the form ``#pragma...#end`` where ``...`` is
 any text, with ``##`` to denotes ``#`` to avoid confusion with an enclosed ``#end``. 
 Practical pragmas are of the form ``#pragma pragma_name <some content> #end`` 
-where *some content* is any character string, including spaces and newlines.
+where *some content* is any character string, including spaces, and newlines.
 
 A :py:class:`Pragma` object stores a pragma information as a *key* for the pragma name and a *value*
 for the pragma content (*value* can be empty). The :py:class:`Pragma` class is the base class for all pragmas, 

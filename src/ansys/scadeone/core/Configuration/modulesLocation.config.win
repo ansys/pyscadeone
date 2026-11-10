@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default configuration for Windows, do not modify -->
+<ModulesLocationConfiguration>
+  <JobLauncherBinLocation>tools/job_launcher/scade_one_job_launcher.exe</JobLauncherBinLocation>
+  <SimulatorLocation>tools/simulator</SimulatorLocation>
+  <ScadeOneLibrariesLocation>libraries</ScadeOneLibrariesLocation>
+  <MingwLocation>contrib/mingw64</MingwLocation>
+</ModulesLocationConfiguration>

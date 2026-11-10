@@ -1,5 +1,5 @@
 {
-  "Version": "2.2",
+  "Version": "2.3",
   "Kind": "CodeGeneration",
   "Properties": {
     "RootDeclarations": [
@@ -11,11 +11,12 @@
     "ExpansionExp": "",
     "ExpansionNoExp": "",
     "NameLength": "200",
-    "SignificanceLength": "31",
+    "MaxFunctionParameters": "",
     "KeepAssume": "False",
     "GlobalsPrefix": "",
     "UseMacros": "False",
-    "StaticLocals": "False"
+    "StaticLocals": "False",
+    "Probes": "False"
   },
   "InputPaths": [
     "assets/CC.swan"

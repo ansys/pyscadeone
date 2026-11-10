@@ -1,0 +1,12 @@
+-- version swan: 2027.0 graph: 2.1
+type M1_Ex_arr = int32^3;
+
+type M1_Ex_str = {s1: int32, s2: bool, s3: M1_Ex_arr};
+
+type M1_Ex_enum = enum {red, green, blue};
+
+group M1_Ex_group = (g1:bool, g2: int32, g3: float32);
+
+const M1_Ex_C2: int32 = 1;
+
+const M1_Ex_C3: int32 = 3;

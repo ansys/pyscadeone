@@ -1,6 +1,8 @@
 {
   "JobsOrder": [
-    "jobs\\simu_571f111\\.sjob"
+    "jobs\\simu_571f111\\.sjob",
+    "jobs\\testexec_d4f87a3\\.sjob",
+    "jobs\\simu_c46c7d0\\.sjob"
   ],
   "ModulesOrder": [
     "assets\\CC_Test.swant"

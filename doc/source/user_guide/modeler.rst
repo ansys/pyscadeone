@@ -20,9 +20,10 @@ A *ScadeOne* instance is created with the following code:
 .. literalinclude:: quad_flight_control.py
     :lines: 14
 
-where :py:attr:`ScadeOne.install_dir` is the location of Scade One installation and it could take a string or
+where *install_dir* is the location of Scade One installation and it could take a string or
 a :py:class:`pathlib.Path` object as value. The *app* object is then used to access projects.
 
+See :py:class:`ansys.scadeone.core.ScadeOne` for more details about the *install_dir* parameter.
 
 Swan projects
 -------------

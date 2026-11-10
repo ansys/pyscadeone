@@ -49,7 +49,7 @@ A state may have a body, as a scope and may have transitions as :py:class:`Trans
 transitions belongs to the strong or weak lists.
 
 .. autoclass:: State
-
+    :exclude-members: add_local_variable, add_section
 
 Transitions
 -----------

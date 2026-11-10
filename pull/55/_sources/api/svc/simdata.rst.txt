@@ -24,7 +24,7 @@ Covered features
   * Stimuli operator: a value must be defined at first cycle, for next steps the ``none`` type means that a previous value is held.
   * Simulator trace: a ``none`` value means that the variable clock is false.
 
-* Support of all Swan types, imported types (stored as a byte array) and combinations of them (native support of Variants & Groups).
+* Support of all Swan types, external types (stored as a byte array) and combinations of them (native support of Variants & Groups).
 
   * Data support: structure, table (when the table size is a static constant), enum, string.
   * Limitations: partial data is not supported. All values of a complex type must be given.
@@ -50,6 +50,13 @@ Performance
 
 Examples
 ========
+
+This section gives some examples of using the API to create and edit simulation data files. It describes how to 
+create elements for composite types (struct, variant, group) and fill them with values. 
+It also shows how to preview the content of a `.sd` file as text.
+
+For type definitions, see :ref:`ref_sim_data_type_defs` section. See :py:meth:`Element.append_value` 
+for the correspondence between Python values and simulation data types.
 
 Simulation data file preview command line
 -----------------------------------------
@@ -112,7 +119,7 @@ The Simdata representation of a group is a container used to organize related el
 representing the group has the name of the group itself, but does not hold values; its child elements do.
 
 The group representation is flattened: child elements are represented as individual elements in the simulation data file.
-Child elements are identified by their path in the group hierarchy, using positions and names.
+Child elements are identified by their path in the group hierarchy, using positions, and names.
 
 Suppose one defines a group type in Swan as follows: `group MyGroup = (int32, bool, b:((x:float32, y:float32), int32))` 
 in the module interface `MyModule`. The code to create a simulation data file with this group type is:
@@ -123,16 +130,16 @@ in the module interface `MyModule`. The code to create a simulation data file wi
 
     f = sd.create_file("mySimDataFile.sd") # creates a new simulation data file
     group_element = f.add_element("inputGroup", group_expr="MyModule::MyGroup")
-    child_1 = group_element.add_child_element(".(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
-    child_2 = group_element.add_child_element(".(.2)", sd.Bool, sd.ElementKind.GROUP_ITEM)
+    child_1 = group_element.add_child_element("(.1)", sd.Int32, sd.ElementKind.GROUP_ITEM)
+    child_2 = group_element.add_child_element("(.2)", sd.Bool, sd.ElementKind.GROUP_ITEM)
     child_b1_b_1_x = group_element.add_child_element(
-        ".(.b.1.x)", sd.Float32, sd.ElementKind.GROUP_ITEM
+        "(.b.1.x)", sd.Float32, sd.ElementKind.GROUP_ITEM
     )
     child_b1_b_1_y = group_element.add_child_element(
-        ".(.b.1.y)", sd.Float32, sd.ElementKind.GROUP_ITEM
+        "(.b.1.y)", sd.Float32, sd.ElementKind.GROUP_ITEM
     )
     child_b1_b_2 = group_element.add_child_element(
-        ".(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM
+        "(.b.2)", sd.Int32, sd.ElementKind.GROUP_ITEM
     )
 
     child_1.append_values_sequence([1, 1, 1, 2, 3, 4])
@@ -150,11 +157,11 @@ The content of the file can be visualized:
     $ pyscadeone simdata --show mySimDataFile.sd
     *** Elements:
     inputGroup: 
-        GROUP_ITEM .(.1): int32: 1 | 1 | 1 | 2 | 3 | 4 |
-        GROUP_ITEM .(.2): bool: false | true | false | true | false | true |
-        GROUP_ITEM .(.b.1.x): float32: 0.1 | 0.1 | 0.1 | 0.2 | 2.3 | 2.4 |
-        GROUP_ITEM .(.b.1.y): float32: 2.5 | 2.5 | 2.5 | 2.6 | 2.7 | 2.8 |
-        GROUP_ITEM .(.b.2): int32: 10 | 11 | 12 | 12 | 12 | 12 |
+        GROUP_ITEM (.1): int32: 1 | 1 | 1 | 2 | 3 | 4 |
+        GROUP_ITEM (.2): bool: false | true | false | true | false | true |
+        GROUP_ITEM (.b.1.x): float32: 0.1 | 0.1 | 0.1 | 0.2 | 2.3 | 2.4 |
+        GROUP_ITEM (.b.1.y): float32: 2.5 | 2.5 | 2.5 | 2.6 | 2.7 | 2.8 |
+        GROUP_ITEM (.b.2): int32: 10 | 11 | 12 | 12 | 12 | 12 |
 
 In the Scade One Signal Editor, the group is represented as:
 
@@ -162,6 +169,14 @@ In the Scade One Signal Editor, the group is represented as:
    :alt: Signal Editor view of a group type
    :align: center
    :width: 60%
+
+**Notes**
+
+- When adding a group, *group_expr* specifies the group type expression, either using a name, like
+  in the example, or using an expression like ``(int32, n1:bool)``. The consistency of the *group_expr*
+  and the group child elements is checked by Scade One signal editor.
+- Group child element name must match the pattern specified by the regular expression ``^\((?:\.(?:\w+|\d+))+\)$``.
+  If not, a :py:class:`ansys.scadeone.core.common.exception.ScadeOneException` will be raised. 
 
 High-level API
 ==============
@@ -174,28 +189,60 @@ The following functions are used to create or open a simulation data file,
 and to create user types definitions for elements, which can be then be filled with values
 from Python values.
 
+File creation and edition functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:py:func:`open_file`, :py:func:`create_file` and :py:func:`edit_file` functions return a :py:class:`File` object, 
+which can be used as a context manager.
+
+Example of using the context manager support for a file:
+
+.. code:: python
+
+    import ansys.scadeone.core.svc.simdata as sd
+
+    # instead of:
+    # my_file = sd.create_file("mySimDataFile.sd")
+    # try:
+    with sd.create_file("mySimDataFile.sd") as my_file:
+        my_element = my_file.add_element("myElement", sd.Float32)
+        my_element.append_values_sequence([0.1, 0.2, 0.3])
+
 .. autofunction:: open_file
 .. autofunction:: create_file
 .. autofunction:: edit_file
+
+Type creation functions
+^^^^^^^^^^^^^^^^^^^^^^^
+
 .. autofunction:: create_array_type
 .. autofunction:: create_struct_type
 .. autofunction:: create_enum_type
 .. autofunction:: create_variant_type
-.. autofunction:: create_imported_type
+.. autofunction:: create_external_type
+
 
 High-level classes
 ------------------
 
 Following classes are used to manipulate simulation data files and their content:
 
+
 - :py:class:`File` is returned by :py:func:`open_file`, :py:func:`create_file` and :py:func:`edit_file`.
 
 - :py:class:`Element` is created by :py:meth:`File.add_element` or :py:meth:`Element.add_child_element`.
 
+File class
+^^^^^^^^^^
+
 .. autoclass:: File
+
+Element class
+^^^^^^^^^^^^^ 
 
 .. autoclass:: Element
 
+.. _ref_sim_data_type_defs:
 
 Type definitions
 ================ 
@@ -246,6 +293,8 @@ Example of using a predefined type (float 32 here) for new element and a custom 
 
 Type-related classes
 --------------------
+
+.. currentmodule:: ansys.scadeone.core.svc.simdata.defs
 
 .. automodule:: ansys.scadeone.core.svc.simdata.defs
     :exclude-members: ElementBase, FileBase

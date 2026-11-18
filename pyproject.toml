@@ -60,7 +60,7 @@ doc = [
     "sphinx-autobuild==2025.8.25",
     "sphinx-autodoc-typehints==3.17.5",
     "sphinx-copybutton==0.5.2",
-    "sphinx-design==0.7.0",
+    "sphinx-design==0.8.0",
     "sphinx-jinja==2.0.2",
 ]
 checks = [

@@ -60,15 +60,15 @@ doc = [
     "sphinx-autobuild==2025.8.25",
     "sphinx-autodoc-typehints==3.17.5",
     "sphinx-copybutton==0.5.2",
-    "sphinx-design==0.7.0",
+    "sphinx-design==0.8.0",
     "sphinx-jinja==2.0.2",
 ]
 checks = [
     "codespell==2.4.3",
     "pre-commit==4.7.0",
     "pyrefly==1.4.1",
-    "ruff==0.17.4",
-    "vale==3.26.0.1",
+    "ruff==0.17.5",
+    "vale==3.27.0.0",
 ]
 
 [project.urls]

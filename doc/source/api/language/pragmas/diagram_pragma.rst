@@ -26,7 +26,7 @@ Coordinates
 Coordinates are used to define positions in the diagram. They represent a point with an absolute or relative position.
 The :py:class:`Coordinates` class defines a point with its x and y coordinates. A :py:class:`Coordinate` 
 represents a single coordinate, which can be absolute or relative depending on the :py:class:`Position` information. 
-The letters "h" and "v" stand for horizontal and vertical positions, respectively, with capitalization indicating *absolute* or *relative* values.
+The letters "h" and "v" stand for horizontal and vertical positions, respectively. Capitalization indicates whether a position is *absolute* or *relative*.
 
 Example: ``{"xy": "H100,V200"}`` specifies an absolute position at x=100 and y=200.
 
@@ -105,7 +105,7 @@ The grammar for a path is as follows:
      coordinate = COORD ',' COORD
      branches = '['' path ( ',' path ) * ']'
 
-Where *path_info* is the path information, starting with a *path_anchor* and followed by a *path*. 
+The *path_info* contains a *path_anchor* followed by a *path*.
 A *path* consists of a list of *moves* and ends with a *path_anchor* or *branches*.
 
 COORD:

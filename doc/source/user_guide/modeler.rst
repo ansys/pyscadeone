@@ -114,8 +114,7 @@ Here are some examples:
 
 In the following example, the :py:meth:`ansys.scadeone.core.model.Model.find_declaration`
 is used to filter a specific operator. In that case, the search (and the load) stops
-when the requested operator is found. As we will use Swan constructs, we need to import
-their definitions:
+when the requested operator is found. To use Swan constructs, import their definitions:
 
 .. code:: python
 

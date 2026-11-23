@@ -91,6 +91,8 @@ maxdepth
 ME
 Modelica
 MODELISAR
+Monomorphized
+monomorphization
 Mult
 multigroup
 my_app
@@ -107,6 +109,7 @@ path_id
 path_info
 pathid
 pathlib
+pathname
 platformdirs
 powershell
 pragma
@@ -162,6 +165,7 @@ texpr
 toctree
 tomli
 typedecl
+Typedef
 ulonglong
 unary
 Unary

@@ -6,7 +6,7 @@ Declaration base classes
 .. currentmodule:: ansys.scadeone.core.swan
 
 The :py:class:`Declaration` class serves as the base class for all declarations of constructs with an identifier. 
-Declarations of the same kind (e.g., constant, type, sensor, group) are *grouped* into a list of declarations,
+Declarations of the same kind (for example, constant, type, sensor, group) are *grouped* into a list of declarations,
 contained within classes derived from :py:class:`GlobalDeclaration`. 
 
 .. figure:: global.svg

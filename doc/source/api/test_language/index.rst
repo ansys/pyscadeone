@@ -23,6 +23,6 @@ To include a Test module in a Model, use the :py:meth:`Model.add_test_module()` 
 
 To get a Test module, use the :py:meth:`Model.get_test_module()` method.
 
-If the :py:meth:`Model.load_all_modules()` method is called, all project modules including Test modules will be loaded.
+If the :py:meth:`Model.load_all_modules()` method is called, all project modules, including Test modules, are loaded.
 
 See also :ref:`ref_test_creation`. 

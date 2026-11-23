@@ -143,7 +143,7 @@ This section describes the methods of the :py:class:`SwanVisitor` class.
     A method is provided for each Swan class. The method name is *visit_<SwanClass>*.
     For instance, for the :py:class:`OperatorDefinition` class, the method is *visit_OperatorDefinition*.
     The method provides the traversal of the object and its properties. It should be overridden
-    for a specific processing. Look at source in `ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor.py`.
+    for a specific processing. Look at the source file ``ansys.scadeone.core.svc.swan_visitor.SwanVisitor.visitor.py``.
 
     .. py:method:: visit_<SwanClass>(swan_obj: object, owner: object, property: str) -> None
 

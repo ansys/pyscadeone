@@ -1,4 +1,4 @@
-Array, structure and variant
+Array, structure, and variant
 ============================
 
 .. toctree::

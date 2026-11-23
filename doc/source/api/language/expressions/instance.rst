@@ -40,7 +40,7 @@ Operator expressions
 
 The :py:class:`OperatorExpression` class is used to represent an operator
 expression. The :py:class:`OperatorExpressionInstance` class is used to represent an operator
-expression instance, which corresponds to the syntax "*( operator_expression )*".
+expression instance, which corresponds to the syntax "*( operator_expression )*."
 
 .. figure:: op_expr.svg
 

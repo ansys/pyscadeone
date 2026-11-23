@@ -22,7 +22,7 @@ It contains the various blocks (see figure) and connections using
 Diagram objects
 ---------------
 
-This section describes the **expr**, **def** and **block** 
+This section describes the **expr**, **def**, and **block**
 related classes.
 
 .. vale Google.Headings = off
@@ -105,7 +105,7 @@ Sections
 --------
 
 The :py:class:`SectionObject` contains a Swan *section*, that is
-to say, a **let**, **var**, **diagram**, **assert**, **assume** or **guarantee** section.
+to say, a **let**, **var**, **diagram**, **assert**, **assume**, or **guarantee** section.
 
 .. autoclass:: SectionObject
 

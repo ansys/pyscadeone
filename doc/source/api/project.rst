@@ -19,9 +19,8 @@ is used to manage Scade One projects.
 
 .. currentmodule:: ansys.scadeone.core.project
 
-Projects are used by :py:class:`ScadeOne` objects, and projects have a link to 
-the application. To deal with the cross-links, we use the :py:class:`IProject` interface.
-
+Projects are associated with :py:class:`ScadeOne` objects, and projects have a link to
+the application. The :py:class:`IProject` interface is used to handle the cross-links.
 
 
 .. autoclass:: IProject

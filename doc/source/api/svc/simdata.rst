@@ -29,9 +29,9 @@ Covered features
   * Data support: structure, table (when the table size is a static constant), enum, string.
   * Limitations: partial data is not supported. All values of a complex type must be given.
 
-* The variables are organized as a tree of <scope>/<scope>/…/<variable>, each scope and variable has an optional Swan kind: sensors, inputs, outputs, probes, assume, guarantee and so on.
+* The variables are organized as a tree of <scope>/<scope>/…/<variable>, each scope and variable has an optional Swan kind: sensors, inputs, outputs, probes, assume, guarantee, and so on.
 * Possibility to specify a *repetition* of a signal or part of it. 
-* Possibility to open an existing file for modification: elements, types and values.
+* Possibility to open an existing file for modification: elements, types, and values.
 
 Design principles
 -----------------
@@ -176,7 +176,7 @@ In the Scade One Signal Editor, the group is represented as:
   in the example, or using an expression like ``(int32, n1:bool)``. The consistency of the *group_expr*
   and the group child elements is checked by Scade One signal editor.
 - Group child element name must match the pattern specified by the regular expression ``^\((?:\.(?:\w+|\d+))+\)$``.
-  If not, a :py:class:`ansys.scadeone.core.common.exception.ScadeOneException` will be raised. 
+  If not, a :py:class:`ansys.scadeone.core.common.exception.ScadeOneException` is raised.
 
 High-level API
 ==============

@@ -42,8 +42,8 @@ A :py:class:`CodeContainer` represents a code unit associated with a pair of C f
 - an **interface file** (``.h`` header)
 - an optional **implementation file** (``.c`` source)
 
-Each container holds a list of :py:class:`CDeclaration` items (functions, variables, types, macros, ...)
-that are declared or defined in those files.
+Each container holds a list of :py:class:`CDeclaration` items, including functions, variables, types, and macros.
+These items are declared or defined in the associated files.
 
 A container can also be marked as **user-provided**, meaning it needs to be provided by the user.
 
